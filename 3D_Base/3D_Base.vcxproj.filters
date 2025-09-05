@@ -177,6 +177,7 @@
     <ClCompile Include="Source\test.cpp">
       <Filter>Source\test</Filter>
     </ClCompile>
+    <ClCompile Include="Source\CBoundingSphere\CBoundingSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\CDirectX11.h">
@@ -239,9 +240,6 @@
     <ClInclude Include="Source\CEnemy.h">
       <Filter>Source\GameObject\StaticMeshObject\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CBoundingSphere.h">
-      <Filter>Source\BoundingSphere</Filter>
-    </ClInclude>
     <ClInclude Include="Source\CShot.h">
       <Filter>Source\GameObject\StaticMeshObject\Shot</Filter>
     </ClInclude>
@@ -269,6 +267,8 @@
     <ClInclude Include="Source\CRay.h">
       <Filter>Source\Ray</Filter>
     </ClInclude>
+    <ClInclude Include="Source\CBoundingSphere\CBoundingSphere.h" />
+    <ClInclude Include="Source\CBoundingSphere.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">

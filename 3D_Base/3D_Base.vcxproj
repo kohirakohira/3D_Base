@@ -120,7 +120,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>Source\Effekseer\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Effekseer\include;Source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\CBoundingSphere.cpp" />
+    <ClCompile Include="Source\CBoundingSphere\CBoundingSphere.cpp" />
     <ClCompile Include="Source\CCharacter.cpp" />
     <ClCompile Include="Source\CEffect.cpp" />
     <ClCompile Include="Source\CEnemy.cpp" />
@@ -190,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\CBoundingSphere.h" />
+    <ClInclude Include="Source\CBoundingSphere\CBoundingSphere.h" />
     <ClInclude Include="Source\CCharacter.h" />
     <ClInclude Include="Source\CEffect.h" />
     <ClInclude Include="Source\CEnemy.h" />
