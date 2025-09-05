@@ -2,6 +2,11 @@
 #include "CSoundManager.h"
 #include "CEffect.h"	//Effekseerを使うためのクラス
 
+
+//けす？
+
+
+
 //コンストラクタ.
 CGame::CGame( CDirectX9& pDx9, CDirectX11& pDx11, HWND hWnd )
 	: m_pDx9			( &pDx9 )
