@@ -6,8 +6,6 @@
 #include "CBoundingSphere\\CBoundingSphere.h"
 #include "CRay.h"
 
-// 変更履歴
-
 /************************************************************
 *	スタティックメッシュオブジェクトクラス.
 **/
