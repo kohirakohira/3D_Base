@@ -3,6 +3,9 @@
 #include <d3d9.h>		//描画する用.
 #include <string>
 
+//カメラクラス
+
+
 CCamera::CCamera()
 	: m_TargetPos	(0.f, 0.f, 0.f)
 	, m_TargetRotY	(0.f)

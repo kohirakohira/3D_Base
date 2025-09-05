@@ -126,4 +126,5 @@ public:
 	// ŠÈˆÕŠÔ‚ğ~‚ß‚é•Ï”.
 	int m_StopTimeCount;
 
+
 };

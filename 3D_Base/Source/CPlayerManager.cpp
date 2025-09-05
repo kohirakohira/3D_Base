@@ -21,6 +21,7 @@ CPlayerManager::~CPlayerManager()
 //インスタンス生成.
 void CPlayerManager::Initialize()
 {
+
 	//一旦COMの仮実装
 	m_pPlayers.clear();
 	m_pPlayers.reserve(PLAYER_MAX);
@@ -147,10 +148,7 @@ std::shared_ptr<CPlayer> CPlayerManager::GetControlPlayer(int index)
 void CPlayerManager::SwitchActivePlayer()
 {
 	//プレイヤーがCOMPlayerであれば
-	if (IsCom && m_ActivePlayerIndex <= 2)
-	{
 		m_ActivePlayerIndex = (m_ActivePlayerIndex + 1) % m_pPlayers.size();
-	}
 
 }
 

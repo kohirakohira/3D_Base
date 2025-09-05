@@ -1,9 +1,22 @@
 #include "CPlayer.h"
 #include <d3dx9math.h>
+#include "CShotManager.h"
+
+//COMクラス
+//今はCOMの動き全体
 
 class CComPlayer 
 	: public CPlayer
 {
+public:
+	enum class ComState
+	{
+		Idle,		//停止
+		Shot,		//弾うつ
+		LockOn,		//ターゲットに向かう
+
+	};
+
 public:
 	CComPlayer();
 	~CComPlayer() override;
@@ -16,11 +29,11 @@ public:
 	void ClearTarget();
 
 	//チューニング値,m_を付け忘れたのであとで修正する
-	float MoveSpeed;		// 1フレームの前進量
-	float TurnStep;			// 1フレームの回頭量
-	float AimTurnStep;		// 砲塔回頭の1フレーム量
-	float KeepDistance;		// この距離を保つ
-	float CannonHeight;		// 砲塔の高さオフセッ
+	float MoveSpeed;			// 1フレームの前進量
+	float TurnStep;				// 1フレームの回頭量
+	float AimTurnStep;			// 砲塔回頭の1フレーム量
+	float KeepDistance;			// この距離を保つ
+	float CannonHeight;			// 砲塔の高さオフセッ
 	float m_AvoidRadius;		// ほかCOMから離れる半径
 	float m_AvoidWeight;		// 分離ベクトルの重み(0で無効.1強め)
 
@@ -29,8 +42,9 @@ public:
 
 private:
 	std::shared_ptr<CPlayer> m_Target;	//追尾対象
-	bool m_Registered;	//インスタンス登録管理
-
+	bool m_Registered;					//インスタンス登録管理
+	ComState m_ComState;				//COMの状態
+private:
 	//内部処理
 	void SanitizeParams();
 	void TickChaseTo(const D3DXVECTOR3& targetPos);
@@ -47,5 +61,8 @@ private:
 
 	//COMインスタンスの静的レジストリ
 	static std::vector<CComPlayer*>& Instances();
+
+	//ランダムをベクトル-0.1fから0.1
+	void RandDir();
 
 };

@@ -2,6 +2,7 @@
 #include "CBody.h"
 #include "CCannon.h"
 #include <cmath>
+#include <random>
 
 #undef min
 
@@ -15,16 +16,31 @@ std::vector<CComPlayer*>& CComPlayer::Instances() {
     return registry;
 }
 
+void CComPlayer::RandDir()
+{
+    static  std::random_device rd;
+    static std::mt19937 gen(rd());
+
+    std::discrete_distribution<> dist({
+            25,
+            25,
+            25,
+            25});
+
+
+}
+
 CComPlayer::CComPlayer()
-    : MoveSpeed     (0.10f)    
-    , TurnStep      (0.08f)
-    , AimTurnStep   (0.12f)
-    , KeepDistance  (9.0f)   // 0ならベタ詰め
-    , CannonHeight  (0.3f)
-    , m_Target      (nullptr)
-    , m_AvoidRadius ( 10.0f )   //COMが重ならないようにする
-    , m_AvoidWeight ( 0.8f )
-    , m_Registered  ( false )
+    : MoveSpeed         (0.10f)    
+    , TurnStep          (0.08f)
+    , AimTurnStep       (0.12f)
+    , KeepDistance      (9.0f)   // 0ならベタ詰め
+    , CannonHeight      (0.3f)
+    , m_Target          (nullptr)
+    , m_AvoidRadius     ( 10.0f )   //COMが重ならないようにする
+    , m_AvoidWeight     ( 0.8f )
+    , m_Registered      ( false )
+    , m_ComState        ( ComState::LockOn )
 {
 }
 
@@ -49,6 +65,7 @@ void CComPlayer::Initialize(int id)
         Instances().push_back(this);
         m_Registered = true;
     }
+
 }
 
 void CComPlayer::SetTarget(std::shared_ptr<CPlayer> player)
@@ -81,7 +98,7 @@ void CComPlayer::SanitizeParams()
     if (CannonHeight == 0.0f)   CannonHeight    = 0.3f;
     if (KeepDistance < 0.0f)    KeepDistance    = 0.0f;
     if (m_AvoidRadius < 0.0f)   m_AvoidRadius   = 0.0f;
-    if (m_AvoidWeight < 0.0f)   m_AvoidWeight  = 0.0f;
+    if (m_AvoidWeight < 0.0f)   m_AvoidWeight   = 0.0f;
 }
 
 // [-π,π]に正規化
@@ -203,6 +220,7 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
         const float dist = std::sqrtf(d2);
         if (KeepDistance > 0.0f) {
             const float remain = dist - KeepDistance;
+            RandDir();  //ランダムで決定する
             if (remain <= 0.0f) {
                 step = 0.0f;    //これ以上は詰めない
             }
@@ -265,24 +283,61 @@ void CComPlayer::Update()
 
     // ターゲット不在でも見た目は更新
     std::shared_ptr<CBody> body = Body();
-    if (!body) { if (auto c = Cannon()) c->CCharacter::Update(); return; }
+    if (!body) { if (auto cannon = Cannon()) cannon->CCharacter::Update(); return; }
 
     // 追尾対象がなければ回頭も移動もせず、そのまま更新
     if (!m_Target) {
         body->CCharacter::Update();
-        if (auto c = Cannon()) c->CCharacter::Update();
+        if (auto cannon = Cannon()) cannon->CCharacter::Update();
         return;
     }
 
     // 自己ターゲットは無視
     if (m_Target.get() == this) {
         body->CCharacter::Update();
-        if (auto c = Cannon()) c->CCharacter::Update();
+        if (auto cannon = Cannon()) cannon->CCharacter::Update();
         return;
     }
 
+    switch (m_ComState)
+    {
+    case CComPlayer::ComState::Idle:
+        break;
+    case CComPlayer::ComState::Shot:
+        break;
+    case CComPlayer::ComState::LockOn:
+        const D3DXVECTOR3 tp = m_Target->GetPosition();
+        TickAimTo(tp);
+        TickChaseTo(tp);
+        break;
+    }
 
     const D3DXVECTOR3 tp = m_Target->GetPosition();
     TickChaseTo(tp);
     TickAimTo(tp);
 }
+
+#if 0
+void CComPlayer::ComShot()
+{
+    //不正値制限
+    SanitizeParams();
+
+    std::shared_ptr<CCannon> cannon = Cannon();
+    if (!cannon) { if (auto cannon = Cannon()) cannon->CCharacter::Update(); return; }
+
+    if (m_Target.get() == this)
+    {
+        cannon->CCharacter::Update();
+        if (auto cannon = Cannon()) cannon->CCharacter::Update();
+        return;
+    }
+
+    if (m_Target)
+    {
+        m_pShotManager->Update();
+        m_pShotManager->SetReload(2, cannon->GetPosition(), cannon->GetRotation().y);
+    }
+
+}
+#endif

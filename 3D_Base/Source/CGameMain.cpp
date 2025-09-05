@@ -9,6 +9,7 @@
 #include "CDirectX11.h"
 
 
+
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd					( hWnd )
 
@@ -99,7 +100,7 @@ void CGameMain::Update()
 			m_pCameras[i]->SetTargetRotY(yaw);
 		}
 		m_pCameras[i]->Update();
-
+		
 	}
 
 
@@ -192,14 +193,14 @@ void CGameMain::Draw()
 			//プレイヤーを描画.ここで全員描く
 			for (int players = 0; players < PLAYER_MAX; ++players)
 			{
-				if (auto p = m_pPlayerManager->GetControlPlayer(players))
+				if (auto player = m_pPlayerManager->GetControlPlayer(players))
 				{
-					p->Draw(view, proj, light, paramC);
+					player->Draw(view, proj, light, paramC);
 				}
 			}
 
 			// 弾描画
-			m_pShotManager->Draw(m_pCameras[0]->m_mView, m_pCameras[0]->m_mProj, m_pCameras[0]->m_Light, m_pCameras[0]->m_Camera);
+			m_pShotManager->Draw(view, proj, light, paramC);
 
 			//地面描画
 			if (owner) m_pGround->SetPlayer(*owner);
@@ -219,17 +220,21 @@ void CGameMain::Draw()
 		std::shared_ptr<CCamera> camera = m_pCameras[i];
 
 		std::shared_ptr<CPlayer> owner = m_pPlayerManager->GetControlPlayer(i);
-			////////デバッグテキストの描画
-			//////m_pDbgText->SetColor(0.9f, 0.6f, 0.f);	//色の設定
-			//////m_pDbgText->Render(_T("ABCD"), 10, 100);
 
+#if 0
+			//デバッグテキストの描画
+			m_pDbgText->SetColor(0.9f, 0.6f, 0.f);	//色の設定
+			m_pDbgText->Render(_T("ABCD"), 10, 100);
+#endif
 		//1ビュー分を描画
 		DrawOneViewport(camera, owner);
-			////////デバッグテキスト(数値入り)の描画
-			//////m_pDbgText->SetColor(1.f, 0.f, 0.f);
-			//////TCHAR dbgText[64];
-			//////_stprintf_s(dbgText, _T("Float:%f, %f"), 1.f, 2.2f);
-			//////m_pDbgText->Render(dbgText, 10, 110);
+#if 0
+			//デバッグテキスト(数値入り)の描画
+			m_pDbgText->SetColor(1.f, 0.f, 0.f);
+			TCHAR dbgText[64];
+			_stprintf_s(dbgText, _T("Float:%f, %f"), 1.f, 2.2f);
+			m_pDbgText->Render(dbgText, 10, 110);
+#endif
 	}
 
 
