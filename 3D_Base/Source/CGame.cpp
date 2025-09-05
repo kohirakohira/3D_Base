@@ -1,6 +1,11 @@
 #include "CGame.h"
 #include "CSoundManager.h"
 
+
+//けす？
+
+
+
 //コンストラクタ.
 CGame::CGame(HWND hWnd )
 	: m_hWnd			( hWnd )
