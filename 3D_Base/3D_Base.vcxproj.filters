@@ -141,7 +141,7 @@
     <ClCompile Include="Source\CEnemy.cpp">
       <Filter>Source\GameObject\StaticMeshObject\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CBoundingSphere\CBoundingSphere.cpp">
+    <ClCompile Include="Source\BoundingSphere\CBoundingSphere.cpp">
       <Filter>Source\BoundingSphere</Filter>
     </ClCompile>
     <ClCompile Include="Source\CShot.cpp">
@@ -320,7 +320,7 @@
     <ClInclude Include="Source\CSelectIcon.h" />
     <ClInclude Include="Source\CMultiInputKeyManager.h" />
     <ClInclude Include="Source\CPlayerManager.h" />
-    <ClInclude Include="Source\CBoundingSphere\CBoundingSphere.h" />
+    <ClInclude Include="Source\BoundingSphere\CBoundingSphere.h" />
     <ClInclude Include="Source\GameObject\CGameObject.h" />
   </ItemGroup>
   <ItemGroup>

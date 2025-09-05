@@ -2,7 +2,7 @@
 
 #include "GameObject//CGameObject.h" // ゲームオブジェクトクラス
 #include "CSkinMesh.h"
-#include "CBoundingSphere\\CBoundingSphere.h"
+#include "BoundingSphere\\CBoundingSphere.h"
 
 /************************************************************
 *	スキンメッシュオブジェクトクラス.
