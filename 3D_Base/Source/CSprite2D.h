@@ -7,9 +7,6 @@
 //align()		:(強制的に)16byteで使用する
 #define ALIGN16 _declspec( align(16) )
 
-//前方宣言.
-class CDirectX11;
-
 /**************************************************
 *	スプライト2Dクラス.
 **/
@@ -28,7 +25,7 @@ public:
 	//スプライト構造体
 	struct SPRITE_STATE
 	{
-		WHSIZE Disp;	//表示幅高さ
+		WHSIZE Disp;	//描画幅高さ
 		WHSIZE Base;	//元画像幅高さ
 		WHSIZE Stride;	//1コマあたりの幅高さ
 	};
@@ -55,7 +52,7 @@ public:
 	~CSprite2D();	//デストラクタ.
 
 	//初期化.
-	HRESULT Init(CDirectX11& pDx11, LPCTSTR lpFileName, SPRITE_STATE& pSs );
+	HRESULT Init(LPCTSTR lpFileName, SPRITE_STATE& pSs );
 
 	//解放.
 	void Release();
@@ -90,6 +87,13 @@ public:
 	//回転軸Zを設定(Roll).
 	void SetRotationZ(float z){	m_vRotation.z = z;	}
 
+	//UV情報を設定.
+	void SetUVInfomation(D3DXVECTOR2 uv, bool flg) 
+	{
+		m_UV = uv; 
+		m_MoveFlag = flg;
+	}
+
 	//拡大縮小情報を設定.
 	void SetScale(const D3DXVECTOR3& vScale) { m_vScale = vScale; }
 
@@ -105,9 +109,10 @@ public:
 	//最大パターン数(マス目)を取得
 	POINTS GetPatternMax() const { return m_PatternMax; }
 
+	//描画ごとにビューポート設定
+	void SetViewPortSize(float w, float h);
 
 private:
-	CDirectX11*				m_pDx11;
 	ID3D11Device*			m_pDevice11;
 	ID3D11DeviceContext*	m_pContext11;
 
@@ -125,9 +130,11 @@ private:
 	D3DXVECTOR3		m_vRotation;	//回転.
 	D3DXVECTOR3		m_vScale;		//拡縮.
 
-	D3DXVECTOR2		m_UV;		//テクスチャUV座標.
+	D3DXVECTOR2		m_UV;			//テクスチャUV座標※テクスチャを動かす用.
 
-	float			m_Alpha;	//α値(0:透明、1:完全不透明).
+	bool			m_MoveFlag;		//テクスチャの動かすか否か.
+
+	float			m_Alpha;		//α値(0:透明、1:完全不透明).
 
 	SPRITE_STATE	m_SpriteState;	//スプライト情報
 	POINTS			m_PatternNo;	//パターン番号(マス目)

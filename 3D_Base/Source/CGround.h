@@ -15,9 +15,10 @@ public:
 
 	virtual void Update() override;
 
-	//プレイヤーを設定
-	void SetPlayer(CCharacter& pPlayer) { m_pPlayer = &pPlayer; }
+	//プレイヤーを設定.
+	void SetPlayer( CCharacter& pPlayer ) { m_pPlayer = &pPlayer; }
 
 protected:
 	CCharacter* m_pPlayer;
+
 };

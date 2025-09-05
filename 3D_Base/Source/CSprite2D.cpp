@@ -6,8 +6,7 @@ const TCHAR SHADER_NAME[] = _T( "Data\\Shader\\Sprite2D.hlsl" );
 
 //コンストラクタ.
 CSprite2D::CSprite2D()
-	: m_pDx11			( nullptr )
-	, m_pDevice11		( nullptr )
+	: m_pDevice11		( nullptr )
 	, m_pContext11		( nullptr )
 	, m_pVertexShader	( nullptr )
 	, m_pVertexLayout	( nullptr )
@@ -20,6 +19,7 @@ CSprite2D::CSprite2D()
 	, m_vRotation		()
 	, m_vScale			( 1.0f, 1.0f, 1.0f )
 	, m_UV				( 0.0f, 0.0f )
+	, m_MoveFlag		( false )
 	, m_Alpha			( 1.0f )
 	, m_SpriteState		()
 	, m_PatternNo		()
@@ -36,20 +36,17 @@ CSprite2D::~CSprite2D()
 	//別のところで管理しているのでここではnullptrを入れて初期化.
 	m_pContext11 = nullptr;
 	m_pDevice11 = nullptr;
-	m_pDx11 = nullptr;
 }
 
 //初期化.
 //	ID3D11Device* pDevice11 外部で作成して持ってくる。
 //	ID3D11DeviceContext* pContext11 外部で作成して持ってくる。
 HRESULT CSprite2D::Init(
-	CDirectX11& pDx11,
 	LPCTSTR lpFileName,
 	SPRITE_STATE& pSs)
 {
-	m_pDx11 = &pDx11;
-	m_pDevice11 = m_pDx11->GetDevice();		//実態は別のところにある.他とも共有している.
-	m_pContext11 = m_pDx11->GetContext();	//実態は別のところにある.他とも共有している.
+	m_pDevice11 = CDirectX11::GetInstance().GetDevice();		//実態は別のところにある.他とも共有している.
+	m_pContext11 = CDirectX11::GetInstance().GetContext();	//実態は別のところにある.他とも共有している.
 
 	m_SpriteState = pSs;
 
@@ -310,8 +307,8 @@ HRESULT CSprite2D::CreateSampler()
 	//テクスチャ用のサンプラ構造体.
 	D3D11_SAMPLER_DESC samDesc;
 	ZeroMemory( &samDesc, sizeof( samDesc ) );
-	samDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;//リニアフィルタ（線形補間）.
-						//POINT:高速だが粗い.
+	samDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;	//リニアは中間色がある.
+														//ポインタはガビガビ.
 	samDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;	//ラッピングモード（WRAP:繰り返し）.
 	samDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -378,14 +375,31 @@ void CSprite2D::Render()
 		//カラー.
 		cb.vColor = D3DXVECTOR4( 1.0f, 1.0f, 1.0f, m_Alpha );
 
-		//テクスチャ座標(UV座標)
-		//１マスあたりの割合にパターン番号(マス目)をかけて座標を設定する
-		cb.vUV.x =
-			m_SpriteState.Stride.w / m_SpriteState.Base.w
-			* static_cast<float>(m_PatternNo.x);
-		cb.vUV.y =
-			m_SpriteState.Stride.h / m_SpriteState.Base.h
-			* static_cast<float>(m_PatternNo.y);
+		//テクスチャの動き.
+		if (m_MoveFlag == false)
+		{
+			//テクスチャ座標(UV座標)
+			//１マスあたりの割合にパターン番号(マス目)をかけて座標を設定する
+			cb.vUV.x =
+				m_SpriteState.Stride.w / m_SpriteState.Base.w
+				* static_cast<float>(m_PatternNo.x);
+			cb.vUV.y =
+				m_SpriteState.Stride.h / m_SpriteState.Base.h
+				* static_cast<float>(m_PatternNo.y);
+		}
+		else
+		{
+			//定数宣言.
+			const float MOVE_SPEAD = 0.001f;
+
+			//背景の動き.
+			m_UV.x += MOVE_SPEAD;
+			m_UV.y -= MOVE_SPEAD;
+
+			//テクスチャの移動.
+			cb.vUV.x = m_UV.x;
+			cb.vUV.y = m_UV.y;
+		}
 
 		//ビューポートの幅、高さを渡す
 		cb.fViewPortWidth	= static_cast<float>( WND_W );
@@ -418,12 +432,17 @@ void CSprite2D::Render()
 	m_pContext11->PSSetShaderResources( 0, 1, &m_pTexture );
 
 	//アルファブレンド有効にする.
-	m_pDx11->SetAlphaBlend( true );
+	CDirectX11::GetInstance().SetAlphaBlend( true );
 
 	//プリミティブをレンダリング.
 	m_pContext11->Draw(4, 0);//板ポリ（頂点4つ分）.
 
 	//アルファブレンド無効にする.
-	m_pDx11->SetAlphaBlend( false );
+	CDirectX11::GetInstance().SetAlphaBlend( false );
 
+}
+
+void CSprite2D::SetViewPortSize(float w, float h)
+{
+	SHADER_CONSTANT_BUFFER m_ShaderConstant;	//コンスタントバッファ
 }

@@ -1,10 +1,10 @@
 #include "CPlayer.h"
-#include "CSoundManager.h"
 
 CPlayer::CPlayer()
-	: m_TurnSpeed	(0.1f)	//きっちりやりたい場合はラジアン値を設定すること
-	, m_MoveSpeed	(0.1f)
-	, m_MoveState	( enMoveState::Stop )
+	: m_pBody	( nullptr )
+	, m_pCannon	( nullptr )
+	, m_Hp		( 2 )
+	, m_PlayerID()
 {
 }
 
@@ -12,106 +12,85 @@ CPlayer::~CPlayer()
 {
 }
 
+void CPlayer::Initialize(int id)
+{
+	m_PlayerID = id;
+
+	//インスタンスを生成
+	m_pBody = std::make_shared<CBody>(id);
+	m_pCannon = std::make_shared<CCannon>(id);
+}
+
+void CPlayer::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
+{
+	m_pBody->AttachMesh(pBody);
+	m_pCannon->AttachMesh(pCannon);
+}
+
+void CPlayer::SetTankPosition(const D3DXVECTOR3& pos)
+{
+	m_pBody->SetPosition(pos);		// 車体座標指定
+	m_pCannon->SetPosition(pos);	// 砲塔座標指定
+}
+
+void CPlayer::SetTankRotation(const D3DXVECTOR3& pos)
+{
+	m_pBody->SetRotation(pos);		// 車体回転指定
+	m_pCannon->SetRotation(pos);	// 砲塔回転指定
+}
+   
 void CPlayer::Update()
 {
-#if 1
-	//前進
-	if (GetAsyncKeyState(VK_UP) & 0x8000) {
-		m_MoveState = enMoveState::Forward;
-	}
-	//後退
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
-		m_MoveState = enMoveState::Backward;
-	}
-	if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
-		m_vRotation.y += m_TurnSpeed;
-	}
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
-		m_vRotation.y -= m_TurnSpeed;
-	}
+	m_pBody->Update();
 
-	RadioControl();
-#else
-	float add_value = 0.1f;
-	if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
-		m_vPosition.y += add_value;
-	}
-	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
-		m_vPosition.y -= add_value;
-	}
-	if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
-		m_vPosition.x += add_value;
-	}
-	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
-		m_vPosition.x -= add_value;
-	}
-#endif
-	//前回のフレームで弾を飛ばしているかも知れないのでfalseにする
-	m_Shot = false;
+	// 砲塔の位置を更新
+	D3DXVECTOR3 pos = m_pBody->GetPosition();
+	pos.y += 0.3f; // 砲塔の座標を合わせる
+	m_pCannon->SetPosition(pos); // 砲塔座標更新
 
-	//弾を飛ばしたい!
-	if (GetAsyncKeyState('Z') & 0x8000) {
-		m_Shot = true;
+	m_pCannon->Update();
+}
 
-		//SEの再生
-		CSoundManager::PlaySE(CSoundManager::SE_Jump);
-	}
-	
-	//レイの位置をプレイヤーの座標にそろえる
-	m_pRayY->Position = m_vPosition;
-	//地面めり込み回避のためプレイヤーの位置よりも少し上にしておく
-	m_pRayY->Position.y += 0.2f;
-	m_pRayY->RotationY = m_vRotation.y;
+void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
+{
+	m_pBody->Draw(View, Proj, Light, Camera);
+	m_pCannon->Draw(View, Proj, Light, Camera);
+}
 
-	//十字（前後左右に伸ばした）レイの設定
-	for (int dir = 0; dir < CROSSRAY::max; dir++)
+D3DXVECTOR3 CPlayer::GetCannonPosition() const
+{
+	if (m_pCannon)
 	{
-		m_pCrossRay->Ray[dir].Position = m_vPosition;
-		m_pCrossRay->Ray[dir].Position.y += 0.2f;
-		m_pCrossRay->Ray[dir].RotationY = m_vRotation.y;
+		return m_pCannon->GetPosition();
 	}
-
-
-	CCharacter::Update();
-}
-
-void CPlayer::Draw(
-	D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
-{
-	CCharacter::Draw( View, Proj, Light, Camera );
-}
-
-//ラジオ操作
-void CPlayer::RadioControl()
-{
-	//Z軸ベクトル(Z+方向への単位ベクトル)
-	//※大きさ（長さ）が１のベクトルを単位ベクトルという
-	D3DXVECTOR3 vecAxisZ(0.f, 0.f, 1.f);
-
-	//Y方向の回転行列
-	D3DXMATRIX mRotationY;
-	//Y軸回転行列を作成
-	D3DXMatrixRotationY(
-		&mRotationY,		//(out)行列
-		m_vRotation.y);		//プレイヤーのY方向の回転値
-
-	//Y軸回転行列を使ってZ軸ベクトルを座標変換する
-	D3DXVec3TransformCoord(
-		&vecAxisZ,		//(out)Z軸ベクトル
-		&vecAxisZ,		//(in)Z軸ベクトル
-		&mRotationY);	//Y軸回転行列
-
-	//移動状態によって処理を分ける
-	switch (m_MoveState) {
-	case enMoveState::Forward:	//前進
-		m_vPosition += vecAxisZ * m_MoveSpeed;
-		break;
-	case enMoveState::Backward:	//後退
-		m_vPosition -= vecAxisZ * m_MoveSpeed;
-		break;
-	default:
-		break;
+	else
+	{
+		return GetPosition();
 	}
-	//上記の移動処理が終われば停止状態にしておく
-	m_MoveState = enMoveState::Stop;
 }
+
+float CPlayer::GetCannonYaw() const
+{
+	if (m_pCannon)
+	{
+		return m_pCannon->GetRotation().y;
+	}
+	else
+	{
+		return GetRotation().y;
+	}
+}
+
+D3DXVECTOR3 CPlayer::GetPosition() const
+{
+	if (m_pBody)return m_pBody->GetPosition();	//常にbodyの実位置を返す
+	return CCharacter::GetPosition();
+}
+
+D3DXVECTOR3 CPlayer::GetRotation() const
+{
+	if (m_pBody)return m_pBody->GetPosition();
+	return CCharacter::GetRotation();
+}
+
+

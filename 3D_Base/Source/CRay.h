@@ -3,9 +3,6 @@
 //警告についてのコード分析を無効にする.4005:再定義.
 #pragma warning(disable:4005)
 
-//前方宣言.
-class CDirectX11;
-
 //レイ構造体
 struct RAY
 {
@@ -17,27 +14,8 @@ struct RAY
 	RAY() : Axis(), Position(), Length(), RotationY() {}
 };
 
-//レイ構造体（十字）
-struct CROSSRAY
-{
-	enum enDir { ZF, ZB, XL, XR, max };
-	RAY Ray[enDir::max];
-
-	CROSSRAY() : Ray()
-	{
-		Ray[enDir::ZF].Axis = D3DXVECTOR3( 0.f, 0.f, 1.f );
-		Ray[enDir::ZB].Axis = D3DXVECTOR3( 0.f, 0.f,-1.f );
-		Ray[enDir::XL].Axis = D3DXVECTOR3(-1.f, 0.f, 0.f );
-		Ray[enDir::XR].Axis = D3DXVECTOR3( 1.f, 0.f, 0.f );
-
-		for (int i = 0; i < enDir::max; i++) {
-			Ray[i].Length = 1.f;
-		}
-	}
-};
-
 /**************************************************
-*	レイ（線分）表示クラス.
+*	レイ（線分）描画クラス.
 **/
 class CRay
 {
@@ -63,7 +41,7 @@ public:
 	~CRay();	//デストラクタ.
 
 	//初期化.
-	HRESULT Init(CDirectX11& pDx11, RAY& pRay);
+	HRESULT Init(RAY& pRay);
 
 	//解放.
 	void Release();
@@ -77,16 +55,15 @@ public:
 	void Render(D3DXMATRIX& mView, D3DXMATRIX& mProj, RAY Ray);
 
 private:
-	CDirectX11*				m_pDx11;
-	ID3D11Device*			m_pDevice11;
-	ID3D11DeviceContext*	m_pContext11;
+	ID3D11Device* m_pDevice11;
+	ID3D11DeviceContext* m_pContext11;
 
-	ID3D11VertexShader*		m_pVertexShader;	//頂点シェーダ.
-	ID3D11InputLayout*		m_pVertexLayout;	//頂点レイアウト.
-	ID3D11PixelShader*		m_pPixelShader;		//ピクセルシェーダ.
-	ID3D11Buffer*			m_pConstantBuffer;	//コンスタントバッファ.
+	ID3D11VertexShader* m_pVertexShader;	//頂点シェーダ.
+	ID3D11InputLayout* m_pVertexLayout;	//頂点レイアウト.
+	ID3D11PixelShader* m_pPixelShader;		//ピクセルシェーダ.
+	ID3D11Buffer* m_pConstantBuffer;	//コンスタントバッファ.
 
-	ID3D11Buffer*			m_pVertexBuffer;	//頂点バッファ.
+	ID3D11Buffer* m_pVertexBuffer;	//頂点バッファ.
 
 	D3DXVECTOR3		m_vPosition;	//座標.
 	D3DXVECTOR3		m_vRotation;	//回転.

@@ -22,12 +22,8 @@ const TCHAR APP_NAME[]	= _T( "3DSTG" );
 CMain::CMain()
 	//初期化リスト.
 	: m_hWnd	( nullptr )
-	, m_pDx9	( nullptr )
-	, m_pDx11	( nullptr )
 	, m_pGame	( nullptr )
 {
-	m_pDx9	= new CDirectX9();
-	m_pDx11 = new CDirectX11();
 }
 
 
@@ -37,8 +33,6 @@ CMain::CMain()
 CMain::~CMain()
 {
 	SAFE_DELETE( m_pGame );
-	SAFE_DELETE( m_pDx11 );
-	SAFE_DELETE( m_pDx9 );
 
 	DeleteObject( m_hWnd );
 }
@@ -51,36 +45,27 @@ void CMain::Update()
 	m_pGame->Update();
 
 	//バックバッファをクリアにする.
-	m_pDx11->ClearBackBuffer();
+	CDirectX11::GetInstance().ClearBackBuffer();
 
 	//描画処理.
 	m_pGame->Draw();
 	
-	//画面に表示.
-	m_pDx11->Present();
+	//画面に描画.
+	CDirectX11::GetInstance().Present();
 }
 
 
 //構築処理.
 HRESULT CMain::Create()
 {
-	//DirectX9構築.
-	if (FAILED(m_pDx9->Create(m_hWnd)))
-	{
-		return E_FAIL;
-	}
+	//DirectX11の生成.
+	CDirectX9::GetInstance().Create(m_hWnd);
 
-	//DirectX11構築.
-	if( FAILED( m_pDx11->Create( m_hWnd ) ) )
-	{
-		return E_FAIL;
-	}
+	//DirectX11の生成.
+	CDirectX11::GetInstance().Create(m_hWnd);
 
 	//ゲームクラスのインスタンス生成.
-	m_pGame = new CGame( *m_pDx9, *m_pDx11, m_hWnd );
-
-	//ゲームクラスの構築（Loadも含める）.
-	m_pGame->Create();
+	m_pGame = new CGame(m_hWnd );
 
 	return S_OK;
 }
@@ -98,12 +83,9 @@ HRESULT CMain::LoadData()
 //解放処理.
 void CMain::Release()
 {
-	if( m_pDx11 != nullptr ){
-		m_pDx11->Release();
-	}
-	if (m_pDx9 != nullptr) {
-		m_pDx9->Release();
-	}
+	//リーリス関数.
+	CDirectX11::GetInstance().Release();
+	CDirectX9::GetInstance().Release();
 }
 
 
@@ -178,7 +160,7 @@ HRESULT CMain::InitWindow(
 	}
 
 	//--------------------------------------.
-	//	ウィンドウ表示位置の調整.
+	//	ウィンドウ描画位置の調整.
 	//--------------------------------------.
 	//この関数内でのみ使用する構造体をここで定義.
 	struct RECT_WND
@@ -195,8 +177,8 @@ HRESULT CMain::InitWindow(
 	GetWindowRect( hDeskWnd, &recDisplay );
 
 	//センタリング.
-	rectWindow.x = ( recDisplay.right - width ) / 2;	//表示位置x座標.
-	rectWindow.y = ( recDisplay.bottom - height ) / 2;	//表示位置y座標.
+	rectWindow.x = ( recDisplay.right - width ) / 2;	//描画位置x座標.
+	rectWindow.y = ( recDisplay.bottom - height ) / 2;	//描画位置y座標.
 #endif//ENABLE_WINDOWS_CENTERING
 
 	//--------------------------------------.
@@ -232,7 +214,7 @@ HRESULT CMain::InitWindow(
 		APP_NAME,					//アプリ名.
 		WND_TITLE,					//ウィンドウタイトル.
 		dwStyle,					//ウィンドウ種別(普通).
-		rectWindow.x, rectWindow.y,	//表示位置x,y座標.
+		rectWindow.x, rectWindow.y,	//描画位置x,y座標.
 		rectWindow.w, rectWindow.h,	//ウィンドウ幅,高さ.
 		nullptr,					//親ウィンドウハンドル.
 		nullptr,					//メニュー設定.
@@ -243,7 +225,7 @@ HRESULT CMain::InitWindow(
 		return E_FAIL;
 	}
 
-	//ウィンドウの表示.
+	//ウィンドウの描画.
 	ShowWindow( m_hWnd, SW_SHOW );
 	UpdateWindow( m_hWnd );
 

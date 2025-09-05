@@ -2,8 +2,6 @@
 #include <Windows.h>
 
 //クラスの前方宣言.
-class CDirectX9;
-class CDirectX11;
 class CGame;
 
 /**************************************************
@@ -35,7 +33,5 @@ private:
 
 private:
 	HWND			m_hWnd;	//ウィンドウハンドル.
-	CDirectX9*		m_pDx9;	//DirectX9セットアップクラス
-	CDirectX11*		m_pDx11;//DirectX11セットアップクラス.
 	CGame*			m_pGame;
 };

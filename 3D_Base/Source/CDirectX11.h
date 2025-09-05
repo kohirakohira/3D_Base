@@ -23,7 +23,16 @@
 class CDirectX11
 {
 public:
-	CDirectX11();
+	//インスタンス取得(唯一のアクセス経路).
+	//※関数の前にstaticを付けることでインスタンス生成しなくても使用できる.
+	static CDirectX11& GetInstance()
+	{
+		//唯一のインスタンスを作成する.
+		//※staticで作成されたので2回目以降は、下の1行は無視される.
+		static CDirectX11 s_Instance;	//s_:staticの意味.
+		return s_Instance;
+	}
+
 	~CDirectX11();
 
 	//DirectX11構築.
@@ -38,7 +47,7 @@ public:
 
 	//バックバッファクリア関数.
 	void ClearBackBuffer();
-	//表示.
+	//描画.
 	void Present();
 
 	//デバイスを取得.
@@ -46,7 +55,16 @@ public:
 	//デバイスコンテキストを取得.
 	ID3D11DeviceContext* GetContext() const { return m_pContext11; }
 
-private:
+private://外部からアクセス不可能.
+	//外部からコンストラクタへのアクセスを禁止する.
+	CDirectX11();
+	//コピーコンストラクタによるコピーを禁止する.
+	//「=delete」で関数の定義を削除できる.
+	CDirectX11(const CDirectX11& rhs) = delete;
+	//代入演算子によるコピーを禁止する.
+	//operator(オペレータ):演算子のオーバーロードで、演算の中身を拡張できる.
+	CDirectX11& operator = (const CDirectX11& rhs) = delete;
+
 	//デバイスとスワップチェイン作成.
 	HRESULT CreateDeviceAndSwapChain(
 		HWND hWnd, UINT uFPS, UINT uWidth, UINT uHeight );

@@ -11,10 +11,8 @@ const TCHAR SHADER_NAME[] = _T( "Data\\Shader\\StaticMesh.hlsl" );
 
 //コンストラクタ.
 CStaticMesh::CStaticMesh()
-	: m_pDx9				( nullptr )
-	, m_pDevice9			( nullptr )
+	: m_pDevice9			( nullptr )
 
-	, m_pDx11				( nullptr )
 	, m_pDevice11			( nullptr )
 	, m_pContext11			( nullptr )
 
@@ -52,15 +50,12 @@ CStaticMesh::~CStaticMesh()
 }
 
 //初期化関数.
-HRESULT CStaticMesh::Init(
-	CDirectX9& pDx9, CDirectX11& pDx11, LPCTSTR lpFileName )
+HRESULT CStaticMesh::Init(LPCTSTR lpFileName )
 {
-	m_pDx9 = &pDx9;
-	m_pDevice9 = m_pDx9->GetDevice();
+	m_pDevice9 = CDirectX9::GetInstance().GetDevice();
 
-	m_pDx11 = &pDx11;
-	m_pDevice11 = m_pDx11->GetDevice();
-	m_pContext11 = m_pDx11->GetContext();
+	m_pDevice11 = CDirectX11::GetInstance().GetDevice();
+	m_pContext11 = CDirectX11::GetInstance().GetContext();
 
 	//ファイル読み込み.
 	if( FAILED( LoadXMesh( lpFileName ) ))
@@ -417,10 +412,8 @@ void CStaticMesh::Release()
 
 	m_pContext11 = nullptr;
 	m_pDevice11 = nullptr;
-	m_pDx11 = nullptr;
 
 	m_pDevice9 = nullptr;
-	m_pDx9 = nullptr;
 }
 
 //===========================================================

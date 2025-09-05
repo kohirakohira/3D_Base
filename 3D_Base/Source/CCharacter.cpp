@@ -2,20 +2,17 @@
 
 CCharacter::CCharacter()
 	: m_Shot		(false)
-	, m_pRayY		( nullptr )
-	, m_pCrossRay	( nullptr )
-{
-	m_pRayY = new RAY();
-	m_pRayY->Axis = D3DXVECTOR3(0.f, -1.f, 0.f);	//‰ºŒü‚«‚ÌŽ²
-	m_pRayY->Length = 10.f;		//‚Æ‚è‚ ‚¦‚¸10‚É‚µ‚Ä‚¨‚­
 
-	m_pCrossRay = new CROSSRAY();
+	, m_pRayY		( nullptr )
+{
+	m_pRayY = std::make_shared<RAY>();
+	m_pRayY->Axis = D3DXVECTOR3(0.f, -1.f, 0.f);	//‰ºŒü‚«‚ÌŽ².
+	m_pRayY->Length = 10.f;		//‚Æ‚è‚ ‚¦‚¸10‚É‚µ‚Ä‚¨‚­.
 }
 
 CCharacter::~CCharacter()
 {
-	SAFE_DELETE( m_pCrossRay );
-	SAFE_DELETE( m_pRayY );
+	//SAFE_DELETE( m_pRayY );
 }
 
 void CCharacter::Update()

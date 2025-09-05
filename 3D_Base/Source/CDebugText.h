@@ -63,6 +63,12 @@ public:
 		m_Color.z = b;
 	}
 
+	//フォントのサイズ設定.
+	void SetFontSize(float size)
+	{
+		m_FontSize = size;
+	}
+
 private:
 	//シェーダ作成.
 	HRESULT CreateShader();
@@ -96,6 +102,7 @@ private:
 	ID3D11SamplerState*			m_pSampleLinear;	//サンプラ:テクスチャに各種フィルタをかける.
 
 	float			m_Alpha;	//α値(0:透明、1:完全不透明).
+	float			m_FontSize;	//フォントの大きさ.
 
 	D3DXVECTOR3		m_Color;	//色(RGB)
 	float			m_Kerning[SPRITE_MAX];	//カーニング
