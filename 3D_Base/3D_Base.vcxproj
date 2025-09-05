@@ -220,6 +220,7 @@
     <ClInclude Include="Source\CBody.h" />
     <ClInclude Include="Source\CBoundingBox.h" />
     <ClInclude Include="Source\CBoundingSphere.h" />
+    <ClInclude Include="Source\CBoundingSphere\CBoundingSphere.h" />
     <ClInclude Include="Source\CCamera.h" />
     <ClInclude Include="Source\CCannon.h" />
     <ClInclude Include="Source\CCharacter.h" />
