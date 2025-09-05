@@ -1,4 +1,13 @@
 #include "CShot.h"
+#include <cmath>
+
+static constexpr int kDefaultShotLifeFrames = 180; //3秒間
+
+//yowから前方向の単位ベクトルをつくる
+D3DXVECTOR3 CShot::ForwardFromYaw(float yaw)
+{
+	return D3DXVECTOR3(std::sinf(yaw), 0.0f, std::cosf(yaw));
+}
 
 CShot::CShot()
 	: m_Shot()
@@ -11,14 +20,39 @@ CShot::~CShot()
 
 void CShot::Initialize(int id)
 {
-	for (int i = 0; i < ShotMax; i++)
-	{
-		m_Shot[i].m_Display = false;
-	}
+	m_ID = id;
+
+	//既定は非表示・寿命0
+	m_Shot = Shot{};
+	m_Shot.m_Display = false;
+	m_Shot.m_DisplayTime = 0;
 }
 
 void CShot::Update()
 {
+	if (!m_Shot.m_Display) return;
+
+	//平面移動
+	D3DXVECTOR3 pos = GetPosition();
+	pos += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed;
+
+	//重力
+	if (m_Shot.m_Gravity != 0.0f)
+	{
+		//下向きに落とす設計
+		m_Shot.m_MoveSpeed -= m_Shot.m_Gravity;
+		m_Shot.m_Velocity -= m_Shot.m_Gravity;
+		pos.y += m_Shot.m_Velocity;
+	}
+
+	SetPosition(pos);
+
+	if (m_Shot.m_DisplayTime > 0) --m_Shot.m_DisplayTime;
+	if (m_Shot.m_DisplayTime <= 0) {
+		m_Shot.m_Display = false;
+	}
+
+#if 0
 	for (int i = 0; i < ShotMax; i++)
 	{
 		if (m_Shot[i].m_Display == true) {
@@ -38,20 +72,37 @@ void CShot::Update()
 			}
 		}
 	}
+#endif
 }
 
 void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
+	if (!m_Shot.m_Display) return;
+	CStaticMeshObject::Draw(View, Proj, Light, Camera);
+#if 0
 	for (int i = 0; i < ShotMax; i++)
 	{
 		if (m_Shot[i].m_Display == true) {
 			CStaticMeshObject::Draw(View, Proj, Light, Camera);
 		}
 	}
+#endif
 }
 
 void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 {
+
+	//ワールド座標
+	SetPosition(Pos);
+	SetRotation(D3DXVECTOR3(0.0f, RotY, 0.0f));
+
+	//進行方向と各種リセット
+	m_Shot.m_MoveDirection = ForwardFromYaw(RotY);
+	m_Shot.m_Velocity = 0.0f;
+	m_Shot.m_DisplayTime = (m_Shot.m_DisplayTime > 0) ? m_Shot.m_DisplayTime : kDefaultShotLifeFrames;
+	m_Shot.m_Display = true;
+
+#if 0
 	for (int i = 0; i < ShotMax; i++)
 	{
 		if (m_Shot[i].m_Display == true) return;
@@ -79,13 +130,10 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 			&m_Shot[i].m_MoveDirection,	// (in) Z軸ベクトル
 			&mRotationY);		// Y軸回転行列
 	}
+#endif
 }
 
 bool CShot::IsActive() const
 {
-	for (int i = 0; i < ShotMax; i++)
-	{
-		if (m_Shot[i].m_Display) return true;
-	}
-	return false;
+	return m_Shot.m_Display && (m_Shot.m_DisplayTime > 0);
 }

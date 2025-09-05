@@ -52,7 +52,6 @@ void CCamera::Update()
 	float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
 	D3DXMatrixPerspectiveFovLH(&m_mProj, fovY, aspect, 0.1f, 100.0f);
 
-
 	//SetCamera.Draw側で使う構造体を追尾結果にあわせて更新
 	m_Camera.vPosition = m_Position;
 	m_Camera.vLook = m_LookAt;
@@ -161,6 +160,7 @@ void CCamera::SetTargetRotY(float rotY)
 {
 	m_TargetRotY = rotY;
 }
+
 
 void CCamera::FreeMove()
 {

@@ -6,6 +6,8 @@ CPlayerManager::CPlayerManager()
 	, m_ActivePlayerIndex(0)
 {
 }
+
+
 //PlayerがCComPlayerならそのポインタにキャストして返す.そうでなければnullptr
 static inline bool IsCom(const std::shared_ptr<CPlayer>& player) 
 {

@@ -39,6 +39,7 @@ public:
 	
 	D3DXVECTOR3& GetLookPosition() { return m_Camera.vLook; }
 
+
 public:
 	//Ž©—RˆÚ“®.
 	void FreeMove();

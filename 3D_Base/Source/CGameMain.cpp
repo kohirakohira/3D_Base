@@ -53,7 +53,6 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pCameras					()
 
 	, m_Timer						( nullptr )
-
 {
 	//最初のシーンをメインにする.
 	m_SceneType = CSceneType::Main;
@@ -100,7 +99,10 @@ void CGameMain::Update()
 			m_pCameras[i]->SetTargetRotY(yaw);
 		}
 		m_pCameras[i]->Update();
+
 	}
+
+
 
 //エフェクト
 #if 0

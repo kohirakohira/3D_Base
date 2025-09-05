@@ -55,6 +55,7 @@ void CShotManager::SetReload(int playerIndex, const D3DXVECTOR3& pos, float rotY
 
 void CShotManager::Update()
 {
+
 	for (auto& playerShots : m_pShots)
 	{
 		for (auto& shot : playerShots)
