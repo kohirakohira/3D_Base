@@ -61,7 +61,7 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 		m_vRotation.y = RotY;		// ’e‚ÌŒü‚«(Œ©‚½–Ú)‚à•Ï‚¦‚é
 		m_Shot[i].m_Display = true;
 		m_Shot[i].m_Velocity = 0.f;
-		m_Shot[i].m_DisplayTime = FPS * 3;
+		m_Shot[i].m_DisplayTime = FPS * 12;
 
 
 		// ZŽ²ƒxƒNƒgƒ‹
