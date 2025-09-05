@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 #include "CGameObject.h"
 #include "CStaticMesh.h"
@@ -20,15 +21,15 @@ public:
 	virtual void Draw( D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera ) override;
 
 	//メッシュを接続する.
-	void AttachMesh( CStaticMesh& pMesh ){
-		m_pMesh = &pMesh;
+	void AttachMesh(std::shared_ptr<CStaticMesh> pMesh ){
+		m_pMesh = pMesh;
 	}
 	//メッシュを切り離す.
 	void DetachMesh(){
 		m_pMesh = nullptr;
 	}
 	//バウンディングスフィア取得
-	CBoundingSphere* GetBSphere() const {
+	std::shared_ptr<CBoundingSphere> GetBSphere() const {
 		return m_pBSphere;
 	}
 	//モデルに合わせたバウンディングスフィア作成のラッパー関数
@@ -43,25 +44,19 @@ public:
 
 	//レイとメッシュの当たり判定
 	bool IsHitForRay(
-		const RAY& pRay,					//レイ構造体
-		float* pDistance,					//(out)距離
-		D3DXVECTOR3* pIntersect,			//(out)交差点
-		D3DXVECTOR3* pNormal = nullptr);	//(out)法線(ベクトル)
-
-	//壁からの位置を計算する
-	void CalculatePositionFromWall(CROSSRAY* pCrossRay);
+		const RAY& pRay,			//レイ構造体
+		float* pDistance,			//(out)距離
+		D3DXVECTOR3* pIntersect);	//(out)交差点
 
 private:
-	//交差位置のポリゴンの頂点を見つける
+	//交差位置のポリゴンの超連を見つける.
 	HRESULT FindVerticesOnPoly(
 		LPD3DXMESH pMesh,
 		DWORD dwPolyIndex,
-		D3DXVECTOR3* pVertices);	//(out)頂点情報
-
-	//回転値調整（１周以上している時の調整）
-	void ClampDirection(float* dir);	//再帰関数
+		D3DXVECTOR3* pVertices );
 
 protected:
-	CStaticMesh*		m_pMesh;
-	CBoundingSphere*	m_pBSphere;
+	std::shared_ptr<CStaticMesh>		m_pMesh;
+	std::shared_ptr<CBoundingSphere>	m_pBSphere;
+
 };

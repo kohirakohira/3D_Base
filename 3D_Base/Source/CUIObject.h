@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 #include "CGameObject.h"
 
@@ -20,8 +21,8 @@ public:
 	virtual void Draw();
 
 	//スプライトを接続する.
-	void AttachSprite( CSprite2D& pSprite ){
-		m_pSprite = &pSprite;
+	void AttachSprite(std::shared_ptr<CSprite2D> pSprite ){
+		m_pSprite = pSprite;
 	}
 	//スプライトを切り離す.
 	void DetachSprite(){
@@ -39,6 +40,6 @@ protected:
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override final;
 
 protected:
-	CSprite2D*	m_pSprite;
+	std::shared_ptr<CSprite2D>	m_pSprite;
 	POINTS		m_PatternNo;	//パターン番号(マス目)
 };

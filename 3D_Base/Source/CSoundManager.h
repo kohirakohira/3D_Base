@@ -13,16 +13,26 @@ public:
 	enum enList
 	{
 		BGM_Bonus,	//ボーナスステージ.
-		SE_Jump,	//ジャンプ.
-		SE_Clear,	//クリア.
+		BGM_Title,	//タイトルステージ.
+		BGM_Clear,	//クリアステージ.
+		BGM_Over,	//ゲームオーバーステージ.
+
+		SE_Click,		//決定.
+		SE_Shot,		//発射.
+		SE_Explosion,	//爆発.
+		SE_Clear,		//クリア.
 
 		//音が増えたら「ここ」に追加してください.
 		max,		//最大数.
 	};
 
 public:
-	//インスタンス取得(唯一のアクセス経路).
-	//※関数の前にstaticを付けることでインスタンス生成しなくても使用できる.
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	//			シングルトン化↓.
+	//--------------------------------------------------------------------------------------------------------------------------------------
+
+		//インスタンス取得(唯一のアクセス経路).
+		//※関数の前にstaticを付けることでインスタンス生成しなくても使用できる.
 	static CSoundManager* GetInstance()
 	{
 		//唯一のインスタンスを作成する.
@@ -30,25 +40,27 @@ public:
 		static CSoundManager s_Instance;	//s_:staticの意味.
 		return &s_Instance;
 	}
-
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	//			シングルトン化↑.
+	//--------------------------------------------------------------------------------------------------------------------------------------
 
 	~CSoundManager();
 
 	//サウンドデータ読込関数.
-	bool Load( HWND hWnd );
+	bool Load(HWND hWnd);
 	//サウンドデータ解放関数.
 	void Release();
 
 	//SEを再生する.
-	static void PlaySE( enList list ) {
+	static void PlaySE(enList list) {
 		CSoundManager::GetInstance()->m_pSound[list]->PlaySE();
 	}
 	//ループ再生する.
-	static void PlayLoop( enList list ) {
+	static void PlayLoop(enList list) {
 		CSoundManager::GetInstance()->m_pSound[list]->PlayLoop();
 	}
 	//停止する.
-	static void Stop( enList list ) {
+	static void Stop(enList list) {
 		CSoundManager::GetInstance()->m_pSound[list]->Stop();
 	}
 
@@ -57,11 +69,11 @@ private://外部からアクセス不可能.
 	CSoundManager();
 	//コピーコンストラクタによるコピーを禁止する.
 	//「=delete」で関数の定義を削除できる.
-	CSoundManager( const CSoundManager& rhs ) = delete;
+	CSoundManager(const CSoundManager& rhs) = delete;
 	//代入演算子によるコピーを禁止する.
 	//operator(オペレータ):演算子のオーバーロードで、演算の中身を拡張できる.
-	CSoundManager& operator = ( const CSoundManager& rhs ) = delete;
+	CSoundManager& operator = (const CSoundManager& rhs) = delete;
 
 private:
-	CSound*		m_pSound[enList::max];
+	CSound* m_pSound[enList::max];
 };
