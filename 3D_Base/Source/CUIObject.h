@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject//CGameObject.h" // ゲームオブジェクトクラス
 
+#include <iostream>
 #include "CSprite2D.h"
 
 /************************************************************

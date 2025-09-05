@@ -3,7 +3,7 @@
 
 #include "GameObject//CGameObject.h"
 #include "CStaticMesh.h"
-#include "CBoundingSphere.h"
+#include "CBoundingSphere\\CBoundingSphere.h"
 #include "CRay.h"
 
 /************************************************************
