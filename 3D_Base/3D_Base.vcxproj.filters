@@ -82,6 +82,9 @@
     <Filter Include="Source\Ray">
       <UniqueIdentifier>{0e6bb0f7-e448-43fd-a433-9d5e15a472b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\test">
+      <UniqueIdentifier>{f4b84c26-64af-4f11-ba8d-a5316f5de62d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\CDirectX11.cpp">
@@ -170,6 +173,9 @@
     </ClCompile>
     <ClCompile Include="Source\CRay.cpp">
       <Filter>Source\Ray</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\test.cpp">
+      <Filter>Source\test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
