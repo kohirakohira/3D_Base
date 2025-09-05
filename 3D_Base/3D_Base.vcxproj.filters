@@ -102,9 +102,6 @@
     <ClCompile Include="Source\CSpriteObject.cpp">
       <Filter>Source\GameObject\SpriteObject</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CGameObject.cpp">
-      <Filter>Source\GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="Source\CMain.cpp">
       <Filter>Source\Main</Filter>
     </ClCompile>
@@ -177,6 +174,7 @@
     <ClCompile Include="Source\test.cpp">
       <Filter>Source\test</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GameObject\CGameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\CDirectX11.h">
@@ -196,9 +194,6 @@
     </ClInclude>
     <ClInclude Include="Source\CSpriteObject.h">
       <Filter>Source\GameObject\SpriteObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CGameObject.h">
-      <Filter>Source\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Source\CMain.h">
       <Filter>Source\Main</Filter>
@@ -269,6 +264,7 @@
     <ClInclude Include="Source\CRay.h">
       <Filter>Source\Ray</Filter>
     </ClInclude>
+    <ClInclude Include="Source\GameObject\CGameObject.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">

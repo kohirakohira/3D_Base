@@ -84,7 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Effekseer\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Effekseer\include;Source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -101,7 +101,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Effekseer\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Effekseer\include;Source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -120,7 +120,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>Source\Effekseer\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Effekseer\include;Source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -139,7 +139,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>Source\Effekseer\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Effekseer\include;Source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -172,7 +172,6 @@
     <ClCompile Include="Source\CDirectX9.cpp" />
     <ClCompile Include="Source\CExplosion.cpp" />
     <ClCompile Include="Source\CGame.cpp" />
-    <ClCompile Include="Source\CGameObject.cpp" />
     <ClCompile Include="Source\CMain.cpp" />
     <ClCompile Include="Source\CPlayer.cpp" />
     <ClCompile Include="Source\CSprite2D.cpp" />
@@ -181,6 +180,7 @@
     <ClCompile Include="Source\CStaticMeshObject.cpp" />
     <ClCompile Include="Source\CUIObject.cpp" />
     <ClCompile Include="Source\CZako.cpp" />
+    <ClCompile Include="Source\GameObject\CGameObject.cpp" />
     <ClCompile Include="Source\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -207,7 +207,6 @@
     <ClInclude Include="Source\CDirectX9.h" />
     <ClInclude Include="Source\CExplosion.h" />
     <ClInclude Include="Source\CGame.h" />
-    <ClInclude Include="Source\CGameObject.h" />
     <ClInclude Include="Source\CMain.h" />
     <ClInclude Include="Source\CPlayer.h" />
     <ClInclude Include="Source\CSprite2D.h" />
@@ -216,6 +215,7 @@
     <ClInclude Include="Source\CStaticMeshObject.h" />
     <ClInclude Include="Source\CUIObject.h" />
     <ClInclude Include="Source\CZako.h" />
+    <ClInclude Include="Source\GameObject\CGameObject.h" />
     <ClInclude Include="Source\Global.h" />
     <ClInclude Include="Source\MyMacro.h" />
     <ClInclude Include="Source\stdafx.h" />
