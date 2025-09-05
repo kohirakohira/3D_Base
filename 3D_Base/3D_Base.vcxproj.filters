@@ -102,9 +102,6 @@
     <ClCompile Include="Source\CSpriteObject.cpp">
       <Filter>Source\GameObject\SpriteObject</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CGameObject.cpp">
-      <Filter>Source\GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="Source\CMain.cpp">
       <Filter>Source\Main</Filter>
     </ClCompile>
@@ -144,7 +141,7 @@
     <ClCompile Include="Source\CEnemy.cpp">
       <Filter>Source\GameObject\StaticMeshObject\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CBoundingSphere.cpp">
+    <ClCompile Include="Source\CBoundingSphere\CBoundingSphere.cpp">
       <Filter>Source\BoundingSphere</Filter>
     </ClCompile>
     <ClCompile Include="Source\CShot.cpp">
@@ -177,6 +174,8 @@
     <ClCompile Include="Source\test.cpp">
       <Filter>Source\test</Filter>
     </ClCompile>
+    <ClCompile Include="Source\CBody.cpp" />
+    <ClCompile Include="Source\CBoundingBox.cpp" />
     <ClCompile Include="Source\CBoundingSphere\CBoundingSphere.cpp" />
     <ClCompile Include="Source\CBody.cpp" />
     <ClCompile Include="Source\CBoundingBox.cpp" />
@@ -195,16 +194,16 @@
     <ClCompile Include="Source\CItemBox.cpp" />
     <ClCompile Include="Source\CItemBoxManager.cpp" />
     <ClCompile Include="Source\CKeyInput.cpp" />
-    <ClCompile Include="Source\GameDebug.cpp" />
-    <ClCompile Include="Source\CTameshi.cpp" />
-    <ClCompile Include="Source\CTimer.cpp" />
-    <ClCompile Include="Source\CXInput.cpp" />
-    <ClCompile Include="Source\CShotManager.cpp" />
+    <ClCompile Include="Source\CPlayerManager.cpp" />
     <ClCompile Include="Source\CSceneBase.cpp" />
     <ClCompile Include="Source\CSceneManager.cpp" />
     <ClCompile Include="Source\CSelectIcon.cpp" />
-    <ClCompile Include="Source\CMultiInputKeyManager.cpp" />
-    <ClCompile Include="Source\CPlayerManager.cpp" />
+    <ClCompile Include="Source\CShotManager.cpp" />
+    <ClCompile Include="Source\CTameshi.cpp" />
+    <ClCompile Include="Source\CTimer.cpp" />
+    <ClCompile Include="Source\CXInput.cpp" />
+    <ClCompile Include="Source\GameDebug.cpp" />
+    <ClCompile Include="Source\GameObject\CGameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\CDirectX11.h">
@@ -224,9 +223,6 @@
     </ClInclude>
     <ClInclude Include="Source\CSpriteObject.h">
       <Filter>Source\GameObject\SpriteObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CGameObject.h">
-      <Filter>Source\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Source\CMain.h">
       <Filter>Source\Main</Filter>

@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
 
-#include "CGameObject.h"
+#include "GameObject//CGameObject.h"
 #include "CStaticMesh.h"
-#include "CBoundingSphere.h"
+#include "CBoundingSphere\\CBoundingSphere.h"
 #include "CRay.h"
 
 /************************************************************

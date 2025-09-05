@@ -1,15 +1,14 @@
 #pragma once
+#include "GameObject//CGameObject.h" // ゲームオブジェクトクラス
+
 #include <iostream>
-
-#include "CGameObject.h"
-
 #include "CSprite2D.h"
 
 /************************************************************
 *	UIオブジェクトクラス.
 **/
 class CUIObject
-	: public CGameObject
+	: public CGameObject // ゲームオブジェクトクラスを継承
 {
 public:
 	CUIObject();

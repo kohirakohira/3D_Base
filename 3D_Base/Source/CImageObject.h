@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-#include "CGameObject.h"
+#include "GameObject//CGameObject.h"
 #include "CSprite2D.h"
 
 //-----‰æ‘œƒNƒ‰ƒX.-----
