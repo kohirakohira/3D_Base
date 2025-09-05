@@ -176,7 +176,6 @@
     </ClCompile>
     <ClCompile Include="Source\CBody.cpp" />
     <ClCompile Include="Source\CBoundingBox.cpp" />
-    <ClCompile Include="Source\CBoundingSphere\CBoundingSphere.cpp" />
     <ClCompile Include="Source\CBody.cpp" />
     <ClCompile Include="Source\CBoundingBox.cpp" />
     <ClCompile Include="Source\CCamera.cpp" />

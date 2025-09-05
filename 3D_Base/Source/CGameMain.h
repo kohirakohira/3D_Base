@@ -74,9 +74,13 @@ public:
 	std::shared_ptr<CSprite2D>		m_pSprite2DTimerFrame;	//制限時間の枠.
 	std::shared_ptr<CSprite2D>		m_pSprite2DTimer;		//制限時間の時計枠.
 
-	//スタティックメッシュオブジェクトクラス.
+	//スタティックメッシュオブジェクトクラス(UI).
 	std::shared_ptr<CUIObject>		m_pSpriteTimerFrame;
 	std::shared_ptr<CUIObject>		m_pSpriteTimer;
+	std::shared_ptr<CUIObject>		m_pSpritePlayerIcon[PLAYER_MAX]; //プレイヤーアイコン.
+
+
+
 
 	//ゲームで扱うスプライトデータ(使いまわす資源).
 	std::unique_ptr<CSprite3D>		m_pSpriteGround;
