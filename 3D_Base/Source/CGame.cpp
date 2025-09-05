@@ -3,7 +3,7 @@
 #include "CEffect.h"	//Effekseerを使うためのクラス
 
 
-//けす？
+//けす？いいえ
 
 
 
