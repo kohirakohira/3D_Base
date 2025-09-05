@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CGameObject.h"
+#include "GameObject//CGameObject.h" // ゲームオブジェクトクラス
 #include "CSkinMesh.h"
 #include "CBoundingSphere.h"
 
@@ -8,7 +8,7 @@
 *	スキンメッシュオブジェクトクラス.
 **/
 class CSkinMeshObject
-	: public CGameObject
+	: public CGameObject // ゲームオブジェクトクラスを継承
 {
 public:
 	CSkinMeshObject();

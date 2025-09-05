@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CGameObject.h"
+#include "GameObject//CGameObject.h"
 #include "CStaticMesh.h"
 #include "CBoundingSphere.h"
 #include "CRay.h"
