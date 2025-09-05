@@ -151,14 +151,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\CBody.cpp" />
+    <ClCompile Include="Source\CBoundingBox.cpp" />
     <ClCompile Include="Source\CBoundingSphere.cpp" />
     <ClCompile Include="Source\CBoundingSphere\CBoundingSphere.cpp" />
+    <ClCompile Include="Source\CCamera.cpp" />
+    <ClCompile Include="Source\CCannon.cpp" />
     <ClCompile Include="Source\CCharacter.cpp" />
+    <ClCompile Include="Source\CChoiceImage.cpp" />
+    <ClCompile Include="Source\CComPlayer.cpp" />
     <ClCompile Include="Source\CEffect.cpp" />
     <ClCompile Include="Source\CEnemy.cpp" />
+    <ClCompile Include="Source\CGameMain.cpp" />
+    <ClCompile Include="Source\CGameResult.cpp" />
+    <ClCompile Include="Source\CGameSettings.cpp" />
+    <ClCompile Include="Source\CGameTitle.cpp" />
     <ClCompile Include="Source\CGround.cpp" />
+    <ClCompile Include="Source\CImageObject.cpp" />
+    <ClCompile Include="Source\CImguiManager.cpp" />
+    <ClCompile Include="Source\CInputKeyManager.cpp" />
+    <ClCompile Include="Source\CInputManager.cpp" />
+    <ClCompile Include="Source\CItemBox.cpp" />
+    <ClCompile Include="Source\CItemBoxManager.cpp" />
+    <ClCompile Include="Source\CKeyInput.cpp" />
+    <ClCompile Include="Source\CMultiInputKeyManager.cpp" />
+    <ClCompile Include="Source\CPlayerManager.cpp" />
     <ClCompile Include="Source\CRay.cpp" />
+    <ClCompile Include="Source\CSceneBase.cpp" />
+    <ClCompile Include="Source\CSceneManager.cpp" />
+    <ClCompile Include="Source\CSelectIcon.cpp" />
     <ClCompile Include="Source\CShot.cpp" />
+    <ClCompile Include="Source\CShotManager.cpp" />
     <ClCompile Include="Source\CSkinMesh.cpp" />
     <ClCompile Include="Source\CSkinMeshObject.cpp" />
     <ClCompile Include="Source\CSkinMeshParser.cpp" />
@@ -180,8 +203,12 @@
     <ClCompile Include="Source\CSprite3D.cpp" />
     <ClCompile Include="Source\CStaticMesh.cpp" />
     <ClCompile Include="Source\CStaticMeshObject.cpp" />
+    <ClCompile Include="Source\CTameshi.cpp" />
+    <ClCompile Include="Source\CTimer.cpp" />
     <ClCompile Include="Source\CUIObject.cpp" />
+    <ClCompile Include="Source\CXInput.cpp" />
     <ClCompile Include="Source\CZako.cpp" />
+    <ClCompile Include="Source\GameDebug.cpp" />
     <ClCompile Include="Source\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -190,13 +217,37 @@
     <ClCompile Include="Source\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\CBody.h" />
+    <ClInclude Include="Source\CBoundingBox.h" />
     <ClInclude Include="Source\CBoundingSphere.h" />
+    <ClInclude Include="Source\CCamera.h" />
+    <ClInclude Include="Source\CCannon.h" />
     <ClInclude Include="Source\CCharacter.h" />
+    <ClInclude Include="Source\CChoiceImage.h" />
+    <ClInclude Include="Source\CComPlayer.h" />
     <ClInclude Include="Source\CEffect.h" />
     <ClInclude Include="Source\CEnemy.h" />
+    <ClInclude Include="Source\CGameMain.h" />
+    <ClInclude Include="Source\CGameResult.h" />
+    <ClInclude Include="Source\CGameSettings.h" />
+    <ClInclude Include="Source\CGameTitle.h" />
     <ClInclude Include="Source\CGround.h" />
+    <ClInclude Include="Source\CImageObject.h" />
+    <ClInclude Include="Source\CImguiManager.h" />
+    <ClInclude Include="Source\CInputKeyManager.h" />
+    <ClInclude Include="Source\CInputManager.h" />
+    <ClInclude Include="Source\CItemBox.h" />
+    <ClInclude Include="Source\CItemBoxManager.h" />
+    <ClInclude Include="Source\CKeyInput.h" />
+    <ClInclude Include="Source\CMultiInputKeyManager.h" />
+    <ClInclude Include="Source\CPlayerManager.h" />
     <ClInclude Include="Source\CRay.h" />
+    <ClInclude Include="Source\CSceneBase.h" />
+    <ClInclude Include="Source\CSceneManager.h" />
+    <ClInclude Include="Source\CSceneType.h" />
+    <ClInclude Include="Source\CSelectIcon.h" />
     <ClInclude Include="Source\CShot.h" />
+    <ClInclude Include="Source\CShotManager.h" />
     <ClInclude Include="Source\CSkinMesh.h" />
     <ClInclude Include="Source\CSkinMeshObject.h" />
     <ClInclude Include="Source\CSkinMeshParser.h" />
@@ -215,9 +266,14 @@
     <ClInclude Include="Source\CSprite3D.h" />
     <ClInclude Include="Source\CStaticMesh.h" />
     <ClInclude Include="Source\CStaticMeshObject.h" />
+    <ClInclude Include="Source\CTameshi.h" />
+    <ClInclude Include="Source\CTimer.h" />
     <ClInclude Include="Source\CUIObject.h" />
+    <ClInclude Include="Source\CXInput.h" />
     <ClInclude Include="Source\CZako.h" />
+    <ClInclude Include="Source\GameDebug.h" />
     <ClInclude Include="Source\Global.h" />
+    <ClInclude Include="Source\ItemType.h" />
     <ClInclude Include="Source\MyMacro.h" />
     <ClInclude Include="Source\stdafx.h" />
   </ItemGroup>
