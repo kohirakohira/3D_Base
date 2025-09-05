@@ -204,6 +204,7 @@
     <ClCompile Include="Source\CXInput.cpp" />
     <ClCompile Include="Source\GameDebug.cpp" />
     <ClCompile Include="Source\GameObject\CGameObject.cpp" />
+    <ClCompile Include="Source\CMultiInputKeyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\CDirectX11.h">
@@ -290,7 +291,6 @@
     <ClInclude Include="Source\CRay.h">
       <Filter>Source\Ray</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CBoundingSphere.h" />
     <ClInclude Include="Source\CBody.h" />
     <ClInclude Include="Source\CBoundingBox.h" />
     <ClInclude Include="Source\CCamera.h" />
@@ -320,6 +320,8 @@
     <ClInclude Include="Source\CSelectIcon.h" />
     <ClInclude Include="Source\CMultiInputKeyManager.h" />
     <ClInclude Include="Source\CPlayerManager.h" />
+    <ClInclude Include="Source\CBoundingSphere\CBoundingSphere.h" />
+    <ClInclude Include="Source\GameObject\CGameObject.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">
