@@ -1,4 +1,4 @@
-#include "CBoundingSphere.h"
+#include "CBoundingSphere\\CBoundingSphere.h"
 
 CBoundingSphere::CBoundingSphere()
 	: m_Position	()
