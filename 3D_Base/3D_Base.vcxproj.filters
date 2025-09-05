@@ -177,6 +177,8 @@
     <ClCompile Include="Source\CBody.cpp" />
     <ClCompile Include="Source\CBoundingBox.cpp" />
     <ClCompile Include="Source\CBoundingSphere\CBoundingSphere.cpp" />
+    <ClCompile Include="Source\CBody.cpp" />
+    <ClCompile Include="Source\CBoundingBox.cpp" />
     <ClCompile Include="Source\CCamera.cpp" />
     <ClCompile Include="Source\CCannon.cpp" />
     <ClCompile Include="Source\CChoiceImage.cpp" />
@@ -192,7 +194,6 @@
     <ClCompile Include="Source\CItemBox.cpp" />
     <ClCompile Include="Source\CItemBoxManager.cpp" />
     <ClCompile Include="Source\CKeyInput.cpp" />
-    <ClCompile Include="Source\CMultiInputKeyManager.cpp" />
     <ClCompile Include="Source\CPlayerManager.cpp" />
     <ClCompile Include="Source\CSceneBase.cpp" />
     <ClCompile Include="Source\CSceneManager.cpp" />
@@ -289,9 +290,9 @@
     <ClInclude Include="Source\CRay.h">
       <Filter>Source\Ray</Filter>
     </ClInclude>
+    <ClInclude Include="Source\CBoundingSphere.h" />
     <ClInclude Include="Source\CBody.h" />
     <ClInclude Include="Source\CBoundingBox.h" />
-    <ClInclude Include="Source\CBoundingSphere\CBoundingSphere.h" />
     <ClInclude Include="Source\CCamera.h" />
     <ClInclude Include="Source\CCannon.h" />
     <ClInclude Include="Source\CChoiceImage.h" />
@@ -307,19 +308,18 @@
     <ClInclude Include="Source\CItemBox.h" />
     <ClInclude Include="Source\CItemBoxManager.h" />
     <ClInclude Include="Source\CKeyInput.h" />
-    <ClInclude Include="Source\CMultiInputKeyManager.h" />
-    <ClInclude Include="Source\CPlayerManager.h" />
+    <ClInclude Include="Source\GameDebug.h" />
+    <ClInclude Include="Source\ItemType.h" />
+    <ClInclude Include="Source\CTameshi.h" />
+    <ClInclude Include="Source\CTimer.h" />
+    <ClInclude Include="Source\CXInput.h" />
+    <ClInclude Include="Source\CShotManager.h" />
     <ClInclude Include="Source\CSceneBase.h" />
     <ClInclude Include="Source\CSceneManager.h" />
     <ClInclude Include="Source\CSceneType.h" />
     <ClInclude Include="Source\CSelectIcon.h" />
-    <ClInclude Include="Source\CShotManager.h" />
-    <ClInclude Include="Source\CTameshi.h" />
-    <ClInclude Include="Source\CTimer.h" />
-    <ClInclude Include="Source\CXInput.h" />
-    <ClInclude Include="Source\GameDebug.h" />
-    <ClInclude Include="Source\GameObject\CGameObject.h" />
-    <ClInclude Include="Source\ItemType.h" />
+    <ClInclude Include="Source\CMultiInputKeyManager.h" />
+    <ClInclude Include="Source\CPlayerManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">
