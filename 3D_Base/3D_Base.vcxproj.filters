@@ -55,9 +55,6 @@
     <Filter Include="Source\GameObject\StaticMeshObject\Ground">
       <UniqueIdentifier>{c0909161-a275-4022-abee-68c4d2751ed4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\GameObject\StaticMeshObject\Character\Enemy">
-      <UniqueIdentifier>{f66a17ed-2bb7-41ce-a5f2-6bcc4aaf4f2b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\BoundingSphere">
       <UniqueIdentifier>{fed4633c-ed5b-4e9f-ba05-83315a3f326f}</UniqueIdentifier>
     </Filter>
@@ -69,15 +66,6 @@
     </Filter>
     <Filter Include="Source\Effect">
       <UniqueIdentifier>{e40c6298-c0aa-4516-93c4-44ff036cc619}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\SkinMesh">
-      <UniqueIdentifier>{7772785f-4812-48b4-a2c0-c8e86f9204a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\GameObject\SkinMeshObject">
-      <UniqueIdentifier>{d80e67ff-b793-45c4-87c9-2da8a23887d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\GameObject\SkinMeshObject\Zako">
-      <UniqueIdentifier>{49a075e4-f16c-41b1-af3f-ba30558ab264}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Ray">
       <UniqueIdentifier>{0e6bb0f7-e448-43fd-a433-9d5e15a472b0}</UniqueIdentifier>
@@ -141,9 +129,6 @@
     <ClCompile Include="Source\CGround.cpp">
       <Filter>Source\GameObject\StaticMeshObject\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CEnemy.cpp">
-      <Filter>Source\GameObject\StaticMeshObject\Character\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Source\CBoundingSphere.cpp">
       <Filter>Source\BoundingSphere</Filter>
     </ClCompile>
@@ -159,23 +144,92 @@
     <ClCompile Include="Source\CEffect.cpp">
       <Filter>Source\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CSkinMesh.cpp">
-      <Filter>Source\SkinMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CSkinMeshParser.cpp">
-      <Filter>Source\SkinMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CSkinMeshObject.cpp">
-      <Filter>Source\GameObject\SkinMeshObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CZako.cpp">
-      <Filter>Source\GameObject\SkinMeshObject\Zako</Filter>
-    </ClCompile>
     <ClCompile Include="Source\CRay.cpp">
       <Filter>Source\Ray</Filter>
     </ClCompile>
     <ClCompile Include="Source\test.cpp">
       <Filter>Source\test</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CBody.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CBoundingBox.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CCamera.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CCannon.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CChoiceImage.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CComPlayer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CGameMain.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CGameResult.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CGameSettings.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CGameTitle.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CImageObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CImguiManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CInputKeyManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CInputManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CItemBox.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CItemBoxManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CKeyInput.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CMultiInputKeyManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CPlayerManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CSceneBase.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CSceneManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CSelectIcon.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CShotManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CTameshi.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CTimer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CXInput.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameDebug.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,9 +290,6 @@
     <ClInclude Include="Source\CGround.h">
       <Filter>Source\GameObject\StaticMeshObject\Ground</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CEnemy.h">
-      <Filter>Source\GameObject\StaticMeshObject\Character\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Source\CBoundingSphere.h">
       <Filter>Source\BoundingSphere</Filter>
     </ClInclude>
@@ -254,20 +305,95 @@
     <ClInclude Include="Source\CEffect.h">
       <Filter>Source\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CSkinMesh.h">
-      <Filter>Source\SkinMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CSkinMeshParser.h">
-      <Filter>Source\SkinMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CSkinMeshObject.h">
-      <Filter>Source\GameObject\SkinMeshObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CZako.h">
-      <Filter>Source\GameObject\SkinMeshObject\Zako</Filter>
-    </ClInclude>
     <ClInclude Include="Source\CRay.h">
       <Filter>Source\Ray</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CBody.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CBoundingBox.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CCamera.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CCannon.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CChoiceImage.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CComPlayer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CGameMain.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CGameResult.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CGameSettings.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CGameTitle.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CImageObject.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CImguiManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CInputKeyManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CInputManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CItemBox.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CItemBoxManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CKeyInput.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CMultiInputKeyManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CPlayerManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CSceneBase.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CSceneManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CSceneType.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CSelectIcon.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CShotManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CTameshi.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CTimer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CXInput.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameDebug.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ItemType.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

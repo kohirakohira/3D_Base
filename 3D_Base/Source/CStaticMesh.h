@@ -7,10 +7,6 @@
 //align()		:(強制的に)16byte で使用する.
 #define ALIGN16	_declspec( align(16) )
 
-//前方宣言.
-class CDirectX9;
-class CDirectX11;
-
 
 /**************************************************
 *	スタティックメッシュクラス	
@@ -107,7 +103,7 @@ public:
 	CStaticMesh();		//コンストラクタ.
 	~CStaticMesh();		//デストラクタ.
 
-	HRESULT Init( CDirectX9& pDx9, CDirectX11& pDx11, LPCTSTR lpFileName );
+	HRESULT Init(LPCTSTR lpFileName );
 
 	//解放関数.
 	void Release();
@@ -171,11 +167,9 @@ private:
 
 private:
 	//Dx9.
-	CDirectX9*				m_pDx9;
 	LPDIRECT3DDEVICE9		m_pDevice9;	//Dx9デバイスオブジェクト.
 
 	//Dx11.
-	CDirectX11*				m_pDx11;
 	ID3D11Device*			m_pDevice11;	//デバイスｵﾌﾞｼﾞｪｸﾄ.
 	ID3D11DeviceContext*	m_pContext11;	//デバイスコンテキスト.
 

@@ -41,6 +41,8 @@ HRESULT CDirectX11::Create(HWND hWnd)
 
 	//各種テクスチャとそれに付帯する各種ビュー（画面）を作成.
 	//	バックバッファ準備：カラーバッファレンダーターゲットビュー.
+
+
 	if( FAILED(
 		CreateColorBackBufferRTV() ) )
 	{
@@ -125,7 +127,7 @@ HRESULT CDirectX11::CreateDeviceAndSwapChain(
 	sd.BufferDesc.Format	= DXGI_FORMAT_R8G8B8A8_UNORM;		//フォーマット（32ビットカラー）.
 	sd.BufferDesc.RefreshRate.Numerator		= uFPS;				//リフレッシュレート（分母） ※FPS:60.
 	sd.BufferDesc.RefreshRate.Denominator	= 1;				//リフレッシュレート（分子）.
-	sd.BufferUsage			= DXGI_USAGE_RENDER_TARGET_OUTPUT;	//使い方（表示先）.
+	sd.BufferUsage			= DXGI_USAGE_RENDER_TARGET_OUTPUT;	//使い方（描画先）.
 	sd.OutputWindow			= hWnd;		//ウィンドウハンドル.
 	sd.SampleDesc.Count		= 1;		//マルチサンプルの数.
 	sd.SampleDesc.Quality	= 0;		//マルチサンプルのクオリティ.
@@ -351,7 +353,7 @@ void CDirectX11::ClearBackBuffer()
 }
 
 
-//表示.
+//描画.
 void CDirectX11::Present()
 {
 	m_pSwapChain->Present( 0, 0 );

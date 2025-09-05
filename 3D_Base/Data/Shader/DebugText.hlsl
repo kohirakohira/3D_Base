@@ -26,7 +26,7 @@ struct VS_OUTPUT
 };
 
 //頂点シェーダ.
-//主にモデルの頂点の表示位置を決定する.
+//主にモデルの頂点の描画位置を決定する.
 VS_OUTPUT VS_Main(
 	float4 Pos	: POSITION,
 	float2 UV	: TEXCOORD )
