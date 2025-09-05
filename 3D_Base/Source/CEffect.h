@@ -49,12 +49,12 @@ public:
 	};
 
 	//ƒCƒ“ƒXƒ^ƒ“ƒXŽæ“¾(—Bˆê‚ÌƒAƒNƒZƒXŒo˜H)
-	static CEffect* GetInstance()
+	static CEffect& GetInstance()
 	{
 		//—Bˆê‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ðì¬‚·‚é
 		//¦static‚Åì¬‚³‚ê‚½‚Ì‚Å‚Q‰ñ–ÚˆÈ~‚Í‰º‚Ì‚Ps‚Í–³Ž‹‚³‚ê‚é
 		static CEffect s_Instance;	//s_:static‚ÌˆÓ–¡
-		return &s_Instance;
+		return s_Instance;
 	}
 	~CEffect();
 
@@ -80,44 +80,44 @@ public:
 	// §ŒäŒn
 	//-----------------------------------
 	//Ä¶
-	static ::EsHandle Play( enList listNo, const D3DXVECTOR3& pos) {
-		CEffect* pE = CEffect::GetInstance();
-		return pE->m_pManager->Play(pE->m_pEffect[listNo], pos.x, pos.y, pos.z);
+	static ::EsHandle Play(enList listNo, const D3DXVECTOR3& pos) {
+		CEffect& pE = CEffect::GetInstance();
+		return pE.m_pManager->Play(pE.m_pEffect[listNo], pos.x, pos.y, pos.z);
 	}
 	//’âŽ~
 	static void Stop(::EsHandle handle) {
-		CEffect::GetInstance()->m_pManager->StopEffect(handle);
+		CEffect::GetInstance().m_pManager->StopEffect(handle);
 	}
 	//‘S‚Ä’âŽ~
 	static void StopAll() {
-		CEffect::GetInstance()->m_pManager->StopAllEffects();
+		CEffect::GetInstance().m_pManager->StopAllEffects();
 	}
 	//ˆêŽž’âŽ~
 	static void Paused(::EsHandle handle, bool paused) {
-		CEffect::GetInstance()->m_pManager->SetPaused(handle, paused);
+		CEffect::GetInstance().m_pManager->SetPaused(handle, paused);
 	}
 	//Ä¶‘¬“x‚ÌÝ’è
 	static void SetSpeed(::EsHandle handle, float speed) {
-		CEffect::GetInstance()->m_pManager->SetSpeed(handle, speed);
+		CEffect::GetInstance().m_pManager->SetSpeed(handle, speed);
 	}
 	//ˆÊ’u‚ðŽw’è‚·‚é
 	static void SetLocation(::EsHandle handle, D3DXVECTOR3 pos) {
-		CEffect::GetInstance()->m_pManager->
+		CEffect::GetInstance().m_pManager->
 			SetLocation(handle, ::EsVec3(pos.x, pos.y, pos.z));
 	}
 	//‰ñ“]‚ðŽw’è‚·‚é
 	static void SetRotation(::EsHandle handle, D3DXVECTOR3 rot) {
-		CEffect::GetInstance()->m_pManager->
+		CEffect::GetInstance().m_pManager->
 			SetRotation(handle, rot.x, rot.y, rot.z);
 	}
 	//‰ñ“]‚ðŽw’è‚·‚éiŽ²‰ñ“]j
 	static void SetRotation(::EsHandle handle, D3DXVECTOR3 vAxis, float angle){
-		CEffect::GetInstance()->m_pManager->
+		CEffect::GetInstance().m_pManager->
 			SetRotation(handle, ::EsVec3(vAxis.x, vAxis.y, vAxis.z), angle);
 	}
 	//ƒTƒCƒY‚ðŽw’è‚·‚é
 	static void SetScale(::EsHandle handle, D3DXVECTOR3 scale) {
-		CEffect::GetInstance()->m_pManager->
+		CEffect::GetInstance().m_pManager->
 			SetScale(handle, scale.x, scale.y, scale.z);
 	}
 

@@ -19,6 +19,7 @@ CDebugText::CDebugText()
 	, m_Alpha			( 1.0f )
 	, m_Color			( 1.f, 1.f, 1.f )
 	, m_Kerning			()
+	, m_FontSize		( 0.f )
 {
 }
 
@@ -356,7 +357,7 @@ void CDebugText::RenderFont(int FontIndex, float x, float y)
 	D3DXMATRIX	mTrans, mScale;
 
 	//拡大縮小行列.
-	D3DXMatrixScaling( &mScale, 1.f, 1.f, 1.f );
+	D3DXMatrixScaling( &mScale, m_FontSize, m_FontSize, 1.f );
 
 	//平行行列（平行移動）.
 	D3DXMatrixTranslation( &mTrans, x, y, 0.f );
@@ -442,6 +443,6 @@ void CDebugText::Render(LPCTSTR text, int x, int y)
 		//フォントレンダリング
 		RenderFont( index, fx, fy );
 
-		fx += m_Kerning[index];
+		fx += m_Kerning[index] * m_FontSize;
 	}
 }
