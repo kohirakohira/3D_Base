@@ -28,7 +28,7 @@ void CShot::Update()
 			// 加速度に重力が与えられていく
 			m_Shot[i].m_Velocity -= m_Shot[i].m_Gravity;
 			// 加速度にYを与える
-			m_vPosition.y += m_Shot[i].m_Velocity;
+			m_vPosition.y += m_Shot[i].m_Velocity / 2 * m_Shot[i].m_Gravity;
 
 			m_Shot[i].m_DisplayTime--;
 			if (m_Shot[i].m_DisplayTime < 0) {
@@ -44,7 +44,8 @@ void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camer
 {
 	for (int i = 0; i < ShotMax; i++)
 	{
-		if (m_Shot[i].m_Display == true) {
+		if (m_Shot[i].m_Display == true) 
+		{
 			CStaticMeshObject::Draw(View, Proj, Light, Camera);
 		}
 	}
@@ -60,7 +61,7 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 		m_vRotation.y = RotY;		// 弾の向き(見た目)も変える
 		m_Shot[i].m_Display = true;
 		m_Shot[i].m_Velocity = 0.f;
-		m_Shot[i].m_DisplayTime = FPS * 1;
+		m_Shot[i].m_DisplayTime = FPS * 3;
 
 
 		// Z軸ベクトル
