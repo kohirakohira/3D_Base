@@ -56,6 +56,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pCameras					()
 
 	, m_Timer						( nullptr )
+	, m_pSpritePlayerIcon			()
 
 {
 	//最初のシーンをメインにする.
@@ -71,7 +72,7 @@ CGameMain::~CGameMain()
 void CGameMain::Update()
 {
 	//BGMのループ再生.
-	CSoundManager::PlayLoop(CSoundManager::BGM_Bonus);
+	CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
 	//プレイヤー全員更新
 	m_pPlayerManager->Update();
@@ -172,41 +173,41 @@ void CGameMain::Draw()
 	const float H = static_cast<float>(WND_H);
 
 	//2x2分割の定義
-	const int COLS = 2;
-	const int ROWS = 2;
+	const int COLS = 1;
+	const int ROWS = 1;
 	const int MAX_VIEWS = COLS * ROWS;					//分割して表示できる最大ビュー数
 	const int VIEWS = std::min(PLAYER_MAX, MAX_VIEWS);	//minで小さいほうに合わせる
 
 	//1ビューポート分を描画する処理をラムダにまとめる
 	auto DrawOneViewport = [&](std::shared_ptr<CCamera> camera, std::shared_ptr<CPlayer> owner)
+	{
+		//カメラ更新
+		camera->Update();
+
+		//スナップショットをconst参照でキャプチャ
+		D3DXMATRIX& view	= camera->m_mView;
+		D3DXMATRIX& proj	= camera->m_mProj;
+		LIGHT&		light	= camera->m_Light;
+		CAMERA&		paramC	= camera->m_Camera;
+
+		//プレイヤーを描画.ここで全員描く
+		for (int players = 0; players < PLAYER_MAX; ++players)
 		{
-			//カメラ更新
-			camera->Update();
-
-			//スナップショットをconst参照でキャプチャ
-			D3DXMATRIX& view	= camera->m_mView;
-			D3DXMATRIX& proj	= camera->m_mProj;
-			LIGHT&		light	= camera->m_Light;
-			CAMERA&		paramC	= camera->m_Camera;
-
-			//プレイヤーを描画.ここで全員描く
-			for (int players = 0; players < PLAYER_MAX; ++players)
+			if (auto p = m_pPlayerManager->GetControlPlayer(players))
 			{
-				if (auto p = m_pPlayerManager->GetControlPlayer(players))
-				{
-					p->Draw(view, proj, light, paramC);
-				}
+				p->Draw(view, proj, light, paramC);
 			}
+		}
 
-			// 弾描画
-			m_pShotManager->Draw(m_pCameras[0]->m_mView, m_pCameras[0]->m_mProj, m_pCameras[0]->m_Light, m_pCameras[0]->m_Camera);
+		// 弾描画
+		m_pShotManager->Draw(m_pCameras[0]->m_mView, m_pCameras[0]->m_mProj, m_pCameras[0]->m_Light, m_pCameras[0]->m_Camera);
 
-			//地面描画
-			if (owner) m_pGround->SetPlayer(*owner);
-			m_pGround->Draw(view, proj, light, paramC);
+		//地面描画
+		if (owner) m_pGround->SetPlayer(*owner);
+		m_pGround->Draw(view, proj, light, paramC);
 
-			//エフェクトもここでやる
-		};
+		//エフェクトもここでやる
+	};
 
 	//分割ビューのループ
 	for (int i = 0; i < VIEWS; ++i)
@@ -272,28 +273,48 @@ void CGameMain::Init()
 		m_pCameras[i]->SetLightPos(0.f, 2.f, 5.f);
 
 	}
-
+	//地面の大きさ設定.
 	m_pGround->SetScale(0.4f, 0.4f, 0.4f);
 
-	
+
+////-----中心表示用座標-----.
+//	//制限時間枠の画像の設定.
+//	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
+//	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
+//	//制限時間円の画像の設定.
+//	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
+//	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
+
+
+
+//-----中間発表用-----.
 	//制限時間枠の画像の設定.
-	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
+	m_pSpriteTimerFrame->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
 	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
-	//制限時間枠の画像の設定.
-	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
+	//制限時間円の画像の設定.
+	m_pSpriteTimer->SetPosition(WND_W - 160.f, WND_H - 96.f, 0.f);
 	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
-
 
 
 	//制限時間の文字サイズ.
 	m_pDbgText->SetFontSize(5.0f);
 
+////-----中心表示用座標-----.
+//	//ゲームで遊べる(クリア画面に遷移する)時間※引数.
+//	m_Timer->StartTimer(TIME);
+//	m_Timer->SetDebugFont(m_pDbgText);
+//	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
+
+//-----中間発表用-----.
 	//ゲームで遊べる(クリア画面に遷移する)時間※引数.
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
-	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
+	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);
+
 }
 
 void CGameMain::Destroy()
@@ -385,6 +406,9 @@ void CGameMain::Create()
 	//制限時間のインスタンス生成.
 	m_Timer = std::make_shared<CTimer>();
 
+	//プレイヤーアイコンのインスタンス生成.
+	m_pSpritePlayerIcon = std::make_shared<CUIObject>();
+
 
 }
 
@@ -414,8 +438,8 @@ HRESULT CGameMain::LoadData()
 		256, 256		//アニメーションをしないので、0でいい.
 	};
 	//制限時間の枠の読み込み.
-	m_pSprite2DTimerFrame->Init(_T("Data\\Texture\\Image\\TimerFrame.png"), WH_SIZE);
-	m_pSprite2DTimer->Init(_T("Data\\Texture\\Image\\Timer.png"), TIMER_SIZE);
+	m_pSprite2DTimerFrame->Init(_T("Data\\Texture\\UI\\TimerFrame.png"), WH_SIZE);
+	m_pSprite2DTimer->Init(_T("Data\\Texture\\UI\\Timer.png"), TIMER_SIZE);
 
 	//画像をアタッチ.
 	m_pSpriteTimerFrame->AttachSprite(m_pSprite2DTimerFrame);

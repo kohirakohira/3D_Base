@@ -89,7 +89,7 @@ public:
 	//スタティックメッシュオブジェクトクラス(UI).
 	std::shared_ptr<CUIObject>		m_pSpriteTimerFrame;
 	std::shared_ptr<CUIObject>		m_pSpriteTimer;
-	std::shared_ptr<CUIObject>		m_pSpritePlayerIcon[PLAYER_MAX]; //プレイヤーアイコン.
+	std::shared_ptr<CUIObject>		m_pSpritePlayerIcon; //プレイヤーアイコン.
 
 
 
