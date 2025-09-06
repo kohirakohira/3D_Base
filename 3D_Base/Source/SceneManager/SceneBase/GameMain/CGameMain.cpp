@@ -15,10 +15,18 @@
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd					( hWnd )
 
+	//画像.
 	, m_pSprite2DTimerFrame			( nullptr )
 	, m_pSprite2DTimer				( nullptr )
+	, m_pSprite2DPlayerIcon			( nullptr )
+	, m_pSprite2DKillNomber			( nullptr )
+	, m_pSprite2DHitPoint			( nullptr )
+	//画像の設定.
 	, m_pSpriteTimerFrame			( nullptr )
 	, m_pSpriteTimer				( nullptr )
+	, m_pSpritePlayerIcon			( nullptr )
+	, m_pSpriteKillNomber			( nullptr )
+	, m_pSpriteHitPoint				()
 
 	, m_pSpriteGround				( nullptr )
 	, m_pSpritePlayer				( nullptr )
@@ -26,6 +34,7 @@ CGameMain::CGameMain(HWND hWnd)
 
 	, m_pStaticMeshGround			( nullptr )
 	, m_pStaticMeshBSphere			( nullptr )
+	, m_pStaticMeshItemBox			( nullptr )
 
 	// 戦車
 	, m_pStaticMesh_TankBodyRed		( nullptr )
@@ -56,7 +65,8 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pCameras					()
 
 	, m_Timer						( nullptr )
-	, m_pSpritePlayerIcon			()
+
+	, m_pItemBoxManager				( nullptr )
 
 {
 	//最初のシーンをメインにする.
@@ -105,6 +115,9 @@ void CGameMain::Update()
 		}
 		m_pCameras[i]->Update();
 	}
+
+	//アイテムの動作.
+	m_pItemBoxManager->Update();
 
 #if 0
 	//Effect制御
@@ -206,6 +219,9 @@ void CGameMain::Draw()
 		if (owner) m_pGround->SetPlayer(*owner);
 		m_pGround->Draw(view, proj, light, paramC);
 
+		//アイテムボックス描画.
+		m_pItemBoxManager->Draw(m_pCameras[0]->m_mView, m_pCameras[0]->m_mProj, m_pCameras[0]->m_Light, m_pCameras[0]->m_Camera);
+
 		//エフェクトもここでやる
 	};
 
@@ -245,17 +261,26 @@ void CGameMain::Draw()
 	pContext->RSSetViewports(1, &fullvp);
 
 
+
 	//前後関係無視.
 	CDirectX11::GetInstance().SetDepth(false);
-	//タイトルの描画.
+	//タイマーの枠の描画.
 	m_pSpriteTimerFrame->Draw();
+	//タイマーの描画.
 	m_pSpriteTimer->Draw();
+	//プレイヤー番号の描画.
+	m_pSpritePlayerIcon->Draw();
+	//キル数の描画.
+	m_pSpriteKillNomber->Draw();
+	//HPの描画.
+	for (int i = 0; i < HP_MAX; i++)
+	{
+		m_pSpriteHitPoint[i]->Draw();
+	}
 	CDirectX11::GetInstance().SetDepth(true);
 
 	//タイマー描画.
 	m_Timer->Draw();
-
-
 }
 
 void CGameMain::Init()
@@ -276,6 +301,10 @@ void CGameMain::Init()
 	//地面の大きさ設定.
 	m_pGround->SetScale(0.4f, 0.4f, 0.4f);
 
+	//アイテムボックスの設定.
+	m_pItemBoxManager->SetPosition(-10.f, 20.f, 0.f);
+	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
+	m_pItemBoxManager->SetScale(0.3f, 0.3f, 0.3f);
 
 ////-----中心表示用座標-----.
 //	//制限時間枠の画像の設定.
@@ -298,6 +327,57 @@ void CGameMain::Init()
 	m_pSpriteTimer->SetPosition(WND_W - 160.f, WND_H - 96.f, 0.f);
 	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
+
+
+////-----中心表示用座標-----.
+//	//.
+//	m_pSpritePlayerIcon->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
+//	m_pSpritePlayerIcon->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpritePlayerIcon->SetScale(1.f, 1.f, 0.f);
+
+//-----中間発表用-----.
+	//プレイヤー番号の画像の設定.
+	m_pSpritePlayerIcon->SetPosition(0.f, WND_H - 256.f, 0.f);
+	m_pSpritePlayerIcon->SetRotation(0.f, 0.f, 0.f);
+	m_pSpritePlayerIcon->SetScale(1.f, 1.f, 0.f);
+
+
+////-----中心表示用座標-----.
+//	//.
+//	m_pSpriteKillNomber->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
+//	m_pSpriteKillNomber->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpriteKillNomber->SetScale(1.f, 1.f, 0.f);
+
+//-----中間発表用-----.
+	//プレイヤー番号の画像の設定.
+	m_pSpriteKillNomber->SetPosition(0.f, 0.f, 0.f);
+	m_pSpriteKillNomber->SetRotation(0.f, 0.f, 0.f);
+	m_pSpriteKillNomber->SetScale(0.7f, 0.7f, 0.7f);
+
+
+////-----中心表示用座標-----.
+//	//.
+//	m_pSpriteHitPoint->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
+//	m_pSpriteHitPoint->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpriteHitPoint->SetScale(1.f, 1.f, 0.f);
+
+//-----中間発表用-----.
+	//HPの画像の設定.
+	for (int i = 0; i < HP_MAX; i++)
+	{
+		if (i <= 0)
+		{
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
+		}
+		else
+		{
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 , 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
+		}
+	}
 
 
 	//制限時間の文字サイズ.
@@ -332,10 +412,20 @@ void CGameMain::Create()
 	//UIObjectのインスタンス生成.
 	m_pSpriteTimerFrame = std::make_shared<CUIObject>();
 	m_pSpriteTimer		= std::make_shared<CUIObject>();
+	m_pSpritePlayerIcon = std::make_shared<CUIObject>();
+	m_pSpriteKillNomber = std::make_shared<CUIObject>();
+	//HPの分だけ生成.
+	for (int i = 0; i < HP_MAX; i++)
+	{
+		m_pSpriteHitPoint[i] = std::make_shared<CUIObject>();
+	}
 
 	//UI系のインスタンス生成.
-	m_pSprite2DTimerFrame = std::make_shared<CSprite2D>();
-	m_pSprite2DTimer	  = std::make_shared<CSprite2D>();
+	m_pSprite2DTimerFrame	= std::make_shared<CSprite2D>();
+	m_pSprite2DTimer		= std::make_shared<CSprite2D>();
+	m_pSprite2DPlayerIcon	= std::make_shared<CSprite2D>();
+	m_pSprite2DKillNomber	= std::make_shared<CSprite2D>();
+	m_pSprite2DHitPoint		= std::make_shared<CSprite2D>();
 
 	//スプライトのインスタンス作成.
 	m_pSpriteGround = std::make_unique<CSprite3D>();
@@ -348,7 +438,7 @@ void CGameMain::Create()
 	//スタティックメッシュのインスタンス作成
 	m_pStaticMeshGround			= std::make_shared<CStaticMesh>();
 	m_pStaticMeshBSphere		= std::make_shared<CStaticMesh>();
-
+	m_pStaticMeshItemBox		= std::make_shared<CStaticMesh>();
 
 	// 戦車のメッシュ.
 	m_pStaticMesh_TankBodyRed		= std::make_shared<CStaticMesh>();
@@ -406,9 +496,9 @@ void CGameMain::Create()
 	//制限時間のインスタンス生成.
 	m_Timer = std::make_shared<CTimer>();
 
-	//プレイヤーアイコンのインスタンス生成.
-	m_pSpritePlayerIcon = std::make_shared<CUIObject>();
-
+	//アイテムマネージャークラスのインスタンス生成.
+	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
+	m_pItemBoxManager->Create();
 
 }
 
@@ -437,13 +527,30 @@ HRESULT CGameMain::LoadData()
 		256, 256,		//元画像の幅,高さ.
 		256, 256		//アニメーションをしないので、0でいい.
 	};
+	//タイマー枠画像のスプライト設定.
+	CSprite2D::SPRITE_STATE ICON_SIZE = {
+		256, 256,		//描画幅,高さ.
+		256, 256,		//元画像の幅,高さ.
+		256, 256		//アニメーションをしないので、0でいい.
+	};
 	//制限時間の枠の読み込み.
-	m_pSprite2DTimerFrame->Init(_T("Data\\Texture\\UI\\TimerFrame.png"), WH_SIZE);
-	m_pSprite2DTimer->Init(_T("Data\\Texture\\UI\\Timer.png"), TIMER_SIZE);
+	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\TimerFrame.png"), WH_SIZE);
+	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer.png"), TIMER_SIZE);
+	m_pSprite2DPlayerIcon	->Init(_T("Data\\Texture\\UI\\OneP.png"), ICON_SIZE);
+	m_pSprite2DKillNomber	->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE);
+	m_pSprite2DHitPoint		->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE);
 
 	//画像をアタッチ.
-	m_pSpriteTimerFrame->AttachSprite(m_pSprite2DTimerFrame);
-	m_pSpriteTimer->AttachSprite(m_pSprite2DTimer);
+	m_pSpriteTimerFrame	->AttachSprite(m_pSprite2DTimerFrame);
+	m_pSpriteTimer		->AttachSprite(m_pSprite2DTimer);
+	m_pSpritePlayerIcon	->AttachSprite(m_pSprite2DPlayerIcon);
+	m_pSpriteKillNomber	->AttachSprite(m_pSprite2DKillNomber);
+	//HPの分だけアタッチ.
+	for (int i = 0; i < HP_MAX; i++)
+	{
+		m_pSpriteHitPoint[i]->AttachSprite(m_pSprite2DHitPoint);
+	}
+
 
 	//地面スプライトの構造体
 	CSprite3D::SPRITE_STATE SSGround;
@@ -476,6 +583,7 @@ HRESULT CGameMain::LoadData()
 	//--------------------------------------------------------------------------
 	//スタティックメッシュの読み込み
 	m_pStaticMeshGround->Init(_T("Data\\Mesh\\Static\\Stage\\stage.x"));
+	m_pStaticMeshItemBox->Init(_T("Data\\Mesh\\Static\\ItemBox\\ItemBox.x"));
 
 	// 戦車(赤)
 	m_pStaticMesh_TankBodyRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Body\\Body.x"));
@@ -535,6 +643,12 @@ HRESULT CGameMain::LoadData()
 
 	//スタティックメッシュを設定
 	m_pGround->AttachMesh(m_pStaticMeshGround);
+
+	//アイテムボックスマネージャーにメッシュを設定.
+	m_pItemBoxManager->AttachMesh(m_pStaticMeshItemBox);
+
+
+
 	////バウンディングスフィアの作成.
 	//m_pPlayer->CreateBSphareForMesh(*m_pStaticMeshBSphere);
 
