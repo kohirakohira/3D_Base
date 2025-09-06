@@ -31,6 +31,8 @@
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // 戦車：砲塔クラス
 
+#include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"//アイテムボックスマネージャークラス.
+
 #include "Camera//CCamera.h" //カメラクラス
 
 //--------------------------------
@@ -72,6 +74,11 @@ public:
 	CSceneType GetSceneType() const override;
 
 public:
+	//定数宣言.
+	static constexpr int HP_MAX = 2;			//最大HP.
+
+
+
 	//ウィンドウハンドル.
 	HWND		m_hWnd;
 
@@ -83,13 +90,18 @@ public:
 	std::shared_ptr<CDebugText>		m_pDbgText;
 
 	//ゲーム内で扱うUI系.
-	std::shared_ptr<CSprite2D>		m_pSprite2DTimerFrame;	//制限時間の枠.
-	std::shared_ptr<CSprite2D>		m_pSprite2DTimer;		//制限時間の時計枠.
+	std::shared_ptr<CSprite2D>		m_pSprite2DTimerFrame;			//制限時間の枠.
+	std::shared_ptr<CSprite2D>		m_pSprite2DTimer;				//制限時間の時計枠.
+	std::shared_ptr<CSprite2D>		m_pSprite2DPlayerIcon;			//プレイヤー番号画像.
+	std::shared_ptr<CSprite2D>		m_pSprite2DKillNomber;			//キル数の画像.
+	std::shared_ptr<CSprite2D>		m_pSprite2DHitPoint;			//HPの画像.
 
 	//スタティックメッシュオブジェクトクラス(UI).
-	std::shared_ptr<CUIObject>		m_pSpriteTimerFrame;
-	std::shared_ptr<CUIObject>		m_pSpriteTimer;
+	std::shared_ptr<CUIObject>		m_pSpriteTimerFrame; //制限時間の枠.
+	std::shared_ptr<CUIObject>		m_pSpriteTimer;		 //制限時間の時計枠.
 	std::shared_ptr<CUIObject>		m_pSpritePlayerIcon; //プレイヤーアイコン.
+	std::shared_ptr<CUIObject>		m_pSpriteKillNomber; //キル数アイコン.
+	std::shared_ptr<CUIObject>		m_pSpriteHitPoint[HP_MAX];	 //HPアイコン.
 
 
 
@@ -102,8 +114,7 @@ public:
 	//スタティックメッシュ(使いまわす資源)
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshGround;		//地面
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshBSphere;		//バウンディングスフィア(当たり判定用).
-
-
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshItemBox;		//アイテムボックス.
 
 	// 戦車
 	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyRed;		// 車体赤
@@ -135,6 +146,9 @@ public:
 
 	//タイマークラス.
 	std::shared_ptr<CTimer>						m_Timer;
+
+	//アイテムボックスマネージャークラス.
+	std::shared_ptr<CItemBoxManager>			m_pItemBoxManager;
 
 	// シーン列挙変数.
 	CSceneType		m_SceneType;
