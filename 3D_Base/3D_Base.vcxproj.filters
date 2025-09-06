@@ -86,8 +86,6 @@
     </ClCompile>
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.cpp" />
     <ClCompile Include="Source\Collision\BoudingBox\CBoundingBox.cpp" />
-    <ClCompile Include="Source\CBody.cpp" />
-    <ClCompile Include="Source\CBoundingBox.cpp" />
     <ClCompile Include="Source\Camera\CCamera.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.cpp" />

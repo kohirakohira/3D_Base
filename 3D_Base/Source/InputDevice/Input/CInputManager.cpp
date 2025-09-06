@@ -2,9 +2,9 @@
 #include <cmath>
 
 CInputManager::CInputManager(DWORD ID)
-    : m_XInput(nullptr)
-    , m_KeyInput(nullptr)
-    , m_UseKeyInput(false)
+    : m_XInput      (nullptr)
+    , m_KeyInput    (nullptr)
+    , m_UseKeyInput (false)
 {
     m_XInput = new CXInput(ID);
 
