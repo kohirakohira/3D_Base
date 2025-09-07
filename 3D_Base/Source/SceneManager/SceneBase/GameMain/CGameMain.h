@@ -97,11 +97,11 @@ public:
 	std::shared_ptr<CSprite2D>		m_pSprite2DHitPoint;			//HPの画像.
 
 	//スタティックメッシュオブジェクトクラス(UI).
-	std::shared_ptr<CUIObject>		m_pSpriteTimerFrame; //制限時間の枠.
-	std::shared_ptr<CUIObject>		m_pSpriteTimer;		 //制限時間の時計枠.
-	std::shared_ptr<CUIObject>		m_pSpritePlayerIcon; //プレイヤーアイコン.
-	std::shared_ptr<CUIObject>		m_pSpriteKillNomber; //キル数アイコン.
-	std::shared_ptr<CUIObject>		m_pSpriteHitPoint[HP_MAX];	 //HPアイコン.
+	std::shared_ptr<CUIObject>		m_pSpriteTimerFrame;			//制限時間の枠.
+	std::shared_ptr<CUIObject>		m_pSpriteTimer;					//制限時間の時計枠.
+	std::shared_ptr<CUIObject>		m_pSpritePlayerIcon;			//プレイヤーアイコン.
+	std::shared_ptr<CUIObject>		m_pSpriteKillNomber;			//キル数アイコン.
+	std::shared_ptr<CUIObject>		m_pSpriteHitPoint[HP_MAX];		//HPアイコン.
 
 
 

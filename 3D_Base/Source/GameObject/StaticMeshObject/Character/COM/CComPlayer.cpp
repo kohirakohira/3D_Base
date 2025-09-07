@@ -85,7 +85,7 @@ void CComPlayer::SanitizeParams()
     if (CannonHeight == 0.0f)   CannonHeight    = 0.3f;
     if (KeepDistance < 0.0f)    KeepDistance    = 0.0f;
     if (m_AvoidRadius < 0.0f)   m_AvoidRadius   = 0.0f;
-    if (m_AvoidWeight < 0.0f)   m_AvoidWeight = 0.0f;
+    if (m_AvoidWeight < 0.0f)   m_AvoidWeight   = 0.0f;
 }
 
 // [-ƒÎ,ƒÎ]‚É³‹K‰»

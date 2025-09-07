@@ -22,10 +22,10 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pSprite2DKillNomber			( nullptr )
 	, m_pSprite2DHitPoint			( nullptr )
 	//画像の設定.
-	, m_pSpriteTimerFrame			( nullptr )
-	, m_pSpriteTimer				( nullptr )
-	, m_pSpritePlayerIcon			( nullptr )
-	, m_pSpriteKillNomber			( nullptr )
+	, m_pSpriteTimerFrame			()
+	, m_pSpriteTimer				()
+	, m_pSpritePlayerIcon			()
+	, m_pSpriteKillNomber			()
 	, m_pSpriteHitPoint				()
 
 	, m_pSpriteGround				( nullptr )
@@ -169,7 +169,7 @@ void CGameMain::Update()
 	}
 
 	// Cキー押されたら操作プレイヤー切り替え
-	if (GetAsyncKeyState('C') & 0x0001)
+	if (GetKey('C') & 0x8000)
 	{
 		m_pPlayerManager->SwitchActivePlayer();
 	}
@@ -186,8 +186,8 @@ void CGameMain::Draw()
 	const float H = static_cast<float>(WND_H);
 
 	//2x2分割の定義
-	const int COLS = 1;
-	const int ROWS = 1;
+	const int COLS = 2;		//2を1にしたら一画面、2なら四画面.
+	const int ROWS = 2;		//2を1にしたら一画面、2なら四画面.
 	const int MAX_VIEWS = COLS * ROWS;					//分割して表示できる最大ビュー数
 	const int VIEWS = std::min(PLAYER_MAX, MAX_VIEWS);	//minで小さいほうに合わせる
 
@@ -212,15 +212,33 @@ void CGameMain::Draw()
 			}
 		}
 
-		// 弾描画
-		m_pShotManager->Draw(m_pCameras[0]->m_mView, m_pCameras[0]->m_mProj, m_pCameras[0]->m_Light, m_pCameras[0]->m_Camera);
+		//弾描画.
+		m_pShotManager->Draw(view, proj, light, paramC);
 
 		//地面描画
 		if (owner) m_pGround->SetPlayer(*owner);
 		m_pGround->Draw(view, proj, light, paramC);
 
 		//アイテムボックス描画.
-		m_pItemBoxManager->Draw(m_pCameras[0]->m_mView, m_pCameras[0]->m_mProj, m_pCameras[0]->m_Light, m_pCameras[0]->m_Camera);
+		m_pItemBoxManager->Draw(view, proj, light, paramC);
+
+//4画面の時の表示.
+	//前後関係無視.
+		CDirectX11::GetInstance().SetDepth(false);
+		//タイマーの枠の描画.
+		m_pSpriteTimerFrame->Draw();
+		//タイマーの描画.
+		m_pSpriteTimer->Draw();
+		//プレイヤー番号の描画.
+		m_pSpritePlayerIcon->Draw();
+		//キル数の描画.
+		m_pSpriteKillNomber->Draw();
+		//HPの描画.
+		for (int i = 0; i < HP_MAX; i++)
+		{
+			m_pSpriteHitPoint[i]->Draw();
+		}
+		CDirectX11::GetInstance().SetDepth(true);
 
 		//エフェクトもここでやる
 	};
@@ -261,23 +279,23 @@ void CGameMain::Draw()
 	pContext->RSSetViewports(1, &fullvp);
 
 
-
-	//前後関係無視.
-	CDirectX11::GetInstance().SetDepth(false);
-	//タイマーの枠の描画.
-	m_pSpriteTimerFrame->Draw();
-	//タイマーの描画.
-	m_pSpriteTimer->Draw();
-	//プレイヤー番号の描画.
-	m_pSpritePlayerIcon->Draw();
-	//キル数の描画.
-	m_pSpriteKillNomber->Draw();
-	//HPの描画.
-	for (int i = 0; i < HP_MAX; i++)
-	{
-		m_pSpriteHitPoint[i]->Draw();
-	}
-	CDirectX11::GetInstance().SetDepth(true);
+////1画面の時の表示.
+//	//前後関係無視.
+//	CDirectX11::GetInstance().SetDepth(false);
+//	//タイマーの枠の描画.
+//	m_pSpriteTimerFrame->Draw();
+//	//タイマーの描画.
+//	m_pSpriteTimer->Draw();
+//	//プレイヤー番号の描画.
+//	m_pSpritePlayerIcon->Draw();
+//	//キル数の描画.
+//	m_pSpriteKillNomber->Draw();
+//	//HPの描画.
+//	for (int i = 0; i < HP_MAX; i++)
+//	{
+//		m_pSpriteHitPoint[i]->Draw();
+//	}
+//	CDirectX11::GetInstance().SetDepth(true);
 
 	//タイマー描画.
 	m_Timer->Draw();
