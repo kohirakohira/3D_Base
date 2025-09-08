@@ -4,8 +4,8 @@
 
 //-----外部クラス-----
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
-#include "Collision//BoundingSphere//CBoundingSphere.h"
-#include "Collision/Ray//CRay.h" // レイクラス
+#include "Collision//Shape//Volume//BoundingSphere//CBoundingSphere.h"
+#include "Collision//Shape//Ray//CRay.h" // レイクラス
 
 /************************************************************
 *	スタティックメッシュオブジェクトクラス.

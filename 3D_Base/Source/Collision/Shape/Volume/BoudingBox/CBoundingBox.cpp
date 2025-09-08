@@ -1,4 +1,4 @@
-#include "Collision//BoudingBox//CBoundingBox.h" // バウンディングボックスクラス
+#include "Collision//Shape//Volume//BoudingBox//CBoundingBox.h" // バウンディングボックスクラス
 
 CBoundingBox::CBoundingBox()
 {

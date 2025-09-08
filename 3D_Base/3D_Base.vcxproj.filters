@@ -72,22 +72,20 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\CGround.cpp">
       <Filter>Source\GameObject\StaticMeshObject\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Collision\BoundingSphere\CBoundingSphere.cpp">
+    <ClCompile Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.cpp">
       <Filter>Source\BoundingSphere</Filter>
     </ClCompile>
     <ClCompile Include="Source\Assets\Effect\CEffect.cpp">
       <Filter>Source\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Collision\Ray\CRay.cpp">
+    <ClCompile Include="Source\Collision\Shape\Ray\CRay.cpp">
       <Filter>Source\Ray</Filter>
     </ClCompile>
     <ClCompile Include="Source\Tameshi\test.cpp">
       <Filter>Source\test</Filter>
     </ClCompile>
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.cpp" />
-    <ClCompile Include="Source\Collision\BoudingBox\CBoundingBox.cpp" />
-    <ClCompile Include="Source\CBody.cpp" />
-    <ClCompile Include="Source\CBoundingBox.cpp" />
+    <ClCompile Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.cpp" />
     <ClCompile Include="Source\Camera\CCamera.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.cpp" />
@@ -126,6 +124,8 @@
     <ClCompile Include="Source\GameObject\SpriteObject\CSpriteObject.cpp" />
     <ClCompile Include="Source\GameObject\SpriteObject\Explosion\CExplosion.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\CShot.cpp" />
+    <ClCompile Include="Source\Collision\Collider\CCollider.cpp" />
+    <ClCompile Include="Source\Collision\CollisionManager\CCollisionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Global.h">
@@ -158,11 +158,11 @@
     <ClInclude Include="Source\Assets\Effect\CEffect.h">
       <Filter>Source\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Collision\Ray\CRay.h">
+    <ClInclude Include="Source\Collision\Shape\Ray\CRay.h">
       <Filter>Source\Ray</Filter>
     </ClInclude>
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.h" />
-    <ClInclude Include="Source\Collision\BoudingBox\CBoundingBox.h" />
+    <ClInclude Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.h" />
     <ClInclude Include="Source\Camera\CCamera.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.h" />
@@ -186,7 +186,7 @@
     <ClInclude Include="Source\SceneManager\SceneType\CSceneType.h" />
     <ClInclude Include="Source\InputDevice\Matuoka\CMultiInputKeyManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerManager\CPlayerManager.h" />
-    <ClInclude Include="Source\Collision\BoundingSphere\CBoundingSphere.h" />
+    <ClInclude Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.h" />
     <ClInclude Include="Source\GameObject\CGameObject.h" />
     <ClInclude Include="Source\GameObject\UI\ChoiceImage\CChoiceImage.h" />
     <ClInclude Include="Source\GameObject\UI\CUIObject\CUIObject.h" />
@@ -204,6 +204,8 @@
     <ClInclude Include="Source\GameObject\SpriteObject\CSpriteObject.h" />
     <ClInclude Include="Source\GameObject\SpriteObject\Explosion\CExplosion.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Shot\CShot.h" />
+    <ClInclude Include="Source\Collision\Collider\CCollider.h" />
+    <ClInclude Include="Source\Collision\CollisionManager\CCollisionManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">
