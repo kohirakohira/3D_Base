@@ -307,19 +307,10 @@ void CGameMain::Draw()
 	m_pSpriteTimerFrame->Draw();
 	//タイマーの描画.
 	m_pSpriteTimer->Draw();
-	////プレイヤー番号の描画.
-	//m_pSpritePlayerIcon[0]->Draw();
-	////キル数の描画.
-	//m_pSpriteKillNomber[0]->Draw();
-	////HPの描画.
-	//for (int i = 0; i < HP_MAX; i++)
-	//{
-	//	m_pSpriteHitPoint[i]->Draw();
-	//}
-	CDirectX11::GetInstance().SetDepth(true);
-
 	//タイマー描画.
 	m_Timer->Draw();
+	CDirectX11::GetInstance().SetDepth(true);
+
 }
 
 void CGameMain::Init()
