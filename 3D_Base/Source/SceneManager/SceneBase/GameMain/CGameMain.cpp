@@ -213,6 +213,7 @@ void CGameMain::Draw()
 			}
 		}
 
+//ƒIƒuƒWƒFƒNƒg‚Ì•`‰æ.
 		//’e•`‰æ.
 		m_pShotManager->Draw(view, proj, light, paramC);
 
