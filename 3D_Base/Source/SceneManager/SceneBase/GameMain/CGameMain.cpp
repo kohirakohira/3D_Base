@@ -187,8 +187,8 @@ void CGameMain::Draw()
 	const float H = static_cast<float>(WND_H);
 
 	//2x2分割の定義
-	const int COLS = 1;		//2を1にしたら一画面、2なら四画面.
-	const int ROWS = 1;		//2を1にしたら一画面、2なら四画面.
+	const int COLS = 2;		//2を1にしたら一画面、2なら四画面.
+	const int ROWS = 2;		//2を1にしたら一画面、2なら四画面.
 	const int MAX_VIEWS = COLS * ROWS;					//分割して表示できる最大ビュー数
 	const int VIEWS = std::min(PLAYER_MAX, MAX_VIEWS);	//minで小さいほうに合わせる
 
@@ -261,30 +261,30 @@ void CGameMain::Draw()
 			//////_stprintf_s(dbgText, _T("Float:%f, %f"), 1.f, 2.2f);
 			//////m_pDbgText->Render(dbgText, 10, 110);
 
-////4画面の時の表示.
-//		//前後関係無視.
-//		CDirectX11::GetInstance().SetDepth(false);
-//		//プレイヤー番号の描画.
-//		switch (i)
-//		{
-//		case 0:
-//			m_pSpritePlayerIcon[i]->Draw();
-//			break;
-//		case 1:
-//			m_pSpritePlayerIcon[i]->Draw();
-//			break;
-//		case 2:
-//			m_pSpritePlayerIcon[i]->Draw();
-//			break;
-//		case 3:
-//			m_pSpritePlayerIcon[i]->Draw();
-//			break;
-//		default:
-//			break;
-//		}
-//		//キル数の描画.
-//		m_pSpriteKillNomber[i]->Draw();
-//		CDirectX11::GetInstance().SetDepth(true);
+//4画面の時の表示.
+		//前後関係無視.
+		CDirectX11::GetInstance().SetDepth(false);
+		//プレイヤー番号の描画.
+		switch (i)
+		{
+		case 0:
+			m_pSpritePlayerIcon[i]->Draw();
+			break;
+		case 1:
+			m_pSpritePlayerIcon[i]->Draw();
+			break;
+		case 2:
+			m_pSpritePlayerIcon[i]->Draw();
+			break;
+		case 3:
+			m_pSpritePlayerIcon[i]->Draw();
+			break;
+		default:
+			break;
+		}
+		//キル数の描画.
+		m_pSpriteKillNomber[i]->Draw();
+		CDirectX11::GetInstance().SetDepth(true);
 
 	}
 
@@ -307,15 +307,15 @@ void CGameMain::Draw()
 	m_pSpriteTimerFrame->Draw();
 	//タイマーの描画.
 	m_pSpriteTimer->Draw();
-	//プレイヤー番号の描画.
-	m_pSpritePlayerIcon[0]->Draw();
-	//キル数の描画.
-	m_pSpriteKillNomber[0]->Draw();
-	//HPの描画.
-	for (int i = 0; i < HP_MAX; i++)
-	{
-		m_pSpriteHitPoint[i]->Draw();
-	}
+	////プレイヤー番号の描画.
+	//m_pSpritePlayerIcon[0]->Draw();
+	////キル数の描画.
+	//m_pSpriteKillNomber[0]->Draw();
+	////HPの描画.
+	//for (int i = 0; i < HP_MAX; i++)
+	//{
+	//	m_pSpriteHitPoint[i]->Draw();
+	//}
 	CDirectX11::GetInstance().SetDepth(true);
 
 	//タイマー描画.
@@ -345,27 +345,27 @@ void CGameMain::Init()
 	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
 	m_pItemBoxManager->SetScale(0.3f, 0.3f, 0.3f);
 
-////-----中心表示用座標-----.
-//	//制限時間枠の画像の設定.
-//	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
-//	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
-//	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
-//	//制限時間円の画像の設定.
-//	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
-//	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
-//	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
-
-
-
-//-----中間発表用-----.
+//-----中心表示用座標-----.
 	//制限時間枠の画像の設定.
-	m_pSpriteTimerFrame->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
+	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
 	//制限時間円の画像の設定.
-	m_pSpriteTimer->SetPosition(WND_W - 160.f, WND_H - 96.f, 0.f);
+	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
 	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
+
+
+
+////-----中間発表用-----.
+//	//制限時間枠の画像の設定.
+//	m_pSpriteTimerFrame->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
+//	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
+//	//制限時間円の画像の設定.
+//	m_pSpriteTimer->SetPosition(WND_W - 160.f, WND_H - 96.f, 0.f);
+//	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
 
 
 ////-----中心表示用座標-----.
@@ -455,17 +455,17 @@ void CGameMain::Init()
 	//制限時間の文字サイズ.
 	m_pDbgText->SetFontSize(5.0f);
 
-////-----中心表示用座標-----.
-//	//ゲームで遊べる(クリア画面に遷移する)時間※引数.
-//	m_Timer->StartTimer(TIME);
-//	m_Timer->SetDebugFont(m_pDbgText);
-//	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
-
-//-----中間発表用-----.
+//-----中心表示用座標-----.
 	//ゲームで遊べる(クリア画面に遷移する)時間※引数.
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
-	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);
+	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
+
+////-----中間発表用-----.
+//	//ゲームで遊べる(クリア画面に遷移する)時間※引数.
+//	m_Timer->StartTimer(TIME);
+//	m_Timer->SetDebugFont(m_pDbgText);
+//	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);
 
 }
 
