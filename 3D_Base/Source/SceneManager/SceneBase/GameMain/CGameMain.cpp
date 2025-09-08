@@ -343,7 +343,7 @@ void CGameMain::Init()
 	//アイテムボックスの設定.
 	m_pItemBoxManager->SetPosition(-10.f, 20.f, 0.f);
 	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
-	m_pItemBoxManager->SetScale(0.3f, 0.3f, 0.3f);
+	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
 
 //-----中心表示用座標-----.
 	//制限時間枠の画像の設定.

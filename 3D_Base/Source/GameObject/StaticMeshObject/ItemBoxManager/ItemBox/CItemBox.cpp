@@ -69,7 +69,7 @@ void CItemBox::GravityMath()
 
 	if (m_vPosition.y < 0.5f)
 	{
-		m_vPosition.y = 0.5f;
+		m_vPosition.y = 0.2f;
 		InitialSpeed = 0.f;
 	}
 }
