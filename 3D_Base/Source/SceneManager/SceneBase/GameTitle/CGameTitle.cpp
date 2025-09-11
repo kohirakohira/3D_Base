@@ -313,10 +313,10 @@ HRESULT CGameTitle::LoadData()
 	//タイトルスプライトの読み込み.
 	m_pSpriteTitle->Init( _T("Data\\Texture\\Image\\Title.png"), WH_SIZE);
 	//選択肢スプライトの読み込み.
-	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Choice.png"), C_SIZE);
+	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Select\\Choice.png"), C_SIZE);
 	//選択肢スプライトの読み込み.
-	m_SpritePlaySelect->Init(_T("Data\\Texture\\UI\\PlaySelectImg.png"), SL_SIZE);
-	m_SpriteEndSelect->Init(_T("Data\\Texture\\UI\\EndSelectImg.png"), SL_SIZE);
+	m_SpritePlaySelect->Init(_T("Data\\Texture\\UI\\Select\\PlaySelectImg.png"), SL_SIZE);
+	m_SpriteEndSelect->Init(_T("Data\\Texture\\UI\\Select\\EndSelectImg.png"), SL_SIZE);
 
 	//画像の設定.
 	m_pSpriteTitleImg->AttachSprite(m_pSpriteTitle);
