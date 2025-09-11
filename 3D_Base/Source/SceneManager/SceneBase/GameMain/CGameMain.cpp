@@ -117,6 +117,12 @@ void CGameMain::Update()
 		m_pCameras[i]->Update();
 	}
 
+	//UI.
+	for (int i = 0; i < HP_MAX; i++)
+	{
+		m_pSpriteHitPoint[i]->Draw();
+	}
+
 	//ƒAƒCƒeƒ€‚Ì“®ì.
 	m_pItemBoxManager->Update();
 
