@@ -124,6 +124,7 @@
     <ClCompile Include="Source\GameObject\SpriteObject\CSpriteObject.cpp" />
     <ClCompile Include="Source\GameObject\SpriteObject\Explosion\CExplosion.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\CShot.cpp" />
+    <ClCompile Include="Source\Quaternions\Quaternions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Global.h">
@@ -202,6 +203,7 @@
     <ClInclude Include="Source\GameObject\SpriteObject\CSpriteObject.h" />
     <ClInclude Include="Source\GameObject\SpriteObject\Explosion\CExplosion.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Shot\CShot.h" />
+    <ClInclude Include="Source\Quaternions\Quaternions.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">

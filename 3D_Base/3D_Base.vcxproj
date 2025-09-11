@@ -167,6 +167,7 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CCharacter.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.cpp" />
     <ClCompile Include="Source\Assets\Effect\CEffect.cpp" />
+    <ClCompile Include="Source\Quaternions\Quaternions.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameMain\CGameMain.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameResult\CGameResult.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.cpp" />
@@ -224,6 +225,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CCharacter.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.h" />
     <ClInclude Include="Source\Assets\Effect\CEffect.h" />
+    <ClInclude Include="Source\Quaternions\Quaternions.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameMain\CGameMain.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameResult\CGameResult.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.h" />
