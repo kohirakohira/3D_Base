@@ -609,8 +609,8 @@ HRESULT CGameMain::LoadData()
 		256, 256		//アニメーションをしないので、0でいい.
 	};
 	//制限時間の枠の読み込み.
-	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE);
-	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE);
+	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\TimerFrame.png"), WH_SIZE);
+	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer.png"), TIMER_SIZE);
 	m_pSprite2DKillNomber	->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE);
 	m_pSprite2DHitPoint		->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE);
 
@@ -633,19 +633,19 @@ HRESULT CGameMain::LoadData()
 		switch (i)
 		{
 			case 0:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\OneP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\OneP.png"), ICON_SIZE);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 			case 1:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TwoP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\TwoP.png"), ICON_SIZE);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 			case 2:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TreeP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\TreeP.png"), ICON_SIZE);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 			case 3:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\FourP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\FourP.png"), ICON_SIZE);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 		default:
