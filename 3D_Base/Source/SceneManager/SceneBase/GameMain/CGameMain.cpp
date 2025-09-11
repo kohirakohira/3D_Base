@@ -69,6 +69,8 @@ CGameMain::CGameMain(HWND hWnd)
 
 	, m_pItemBoxManager				( nullptr )
 
+	, m_Rot							( 0.0f )
+
 {
 	//最初のシーンをメインにする.
 	m_SceneType = CSceneType::Main;
@@ -84,6 +86,17 @@ void CGameMain::Update()
 {
 	//BGMのループ再生.
 	CSoundManager::PlayLoop(CSoundManager::BGM_Main);
+
+//-----メイン演出用-----.
+	
+	//Iconを回転させる.
+	m_Rot += 0.2f;
+	
+	
+	
+	
+	
+//-----メイン演出用-----.
 
 	//プレイヤー全員更新
 	m_pPlayerManager->Update();
@@ -115,12 +128,6 @@ void CGameMain::Update()
 			m_pCameras[i]->SetTargetRotY(yaw);
 		}
 		m_pCameras[i]->Update();
-	}
-
-	//UI.
-	for (int i = 0; i < HP_MAX; i++)
-	{
-		m_pSpriteHitPoint[i]->Draw();
 	}
 
 	//アイテムの動作.
@@ -236,6 +243,7 @@ void CGameMain::Draw()
 		//UI.
 		for (int i = 0; i < HP_MAX; i++)
 		{
+			m_pSpriteHitPoint[i]->SetRotation(0.f, m_Rot, 0.f);
 			m_pSpriteHitPoint[i]->Draw();
 		}
 		CDirectX11::GetInstance().SetDepth(true);
@@ -424,13 +432,8 @@ void CGameMain::Init()
 	}
 
 
-////-----中心表示用座標-----.
-//	//.
-//	m_pSpriteHitPoint->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
-//	m_pSpriteHitPoint->SetRotation(0.f, 0.f, 0.f);
-//	m_pSpriteHitPoint->SetScale(1.f, 1.f, 0.f);
 
-//-----中間発表用-----.
+//-----4画面用-----.
 	//HPの画像の設定.
 	for (int i = 0; i < HP_MAX; i++)
 	{

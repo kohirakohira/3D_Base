@@ -73,7 +73,7 @@ public:
 	//シーンの種類.
 	CSceneType GetSceneType() const override;
 
-public:
+public:		//クラス用.
 	//定数宣言.
 	static constexpr int HP_MAX = 2;			//最大HP.
 	static constexpr int PLAYERNUM_MAX = 4;		//プレイヤー番号.
@@ -102,9 +102,6 @@ public:
 	std::array<std::shared_ptr<CUIObject>, HP_MAX>			m_pSpriteHitPoint;				//HPアイコン.
 	std::shared_ptr<CUIObject>								m_pSpriteTimerFrame;			//制限時間の枠.
 	std::shared_ptr<CUIObject>								m_pSpriteTimer;					//制限時間の時計枠.
-
-
-
 
 	//ゲームで扱うスプライトデータ(使いまわす資源).
 	std::unique_ptr<CSprite3D>		m_pSpriteGround;
@@ -153,7 +150,10 @@ public:
 	// シーン列挙変数.
 	CSceneType		m_SceneType;
 
+public:		//変数用.
 	// 簡易時間を止める変数.
-	int m_StopTimeCount;
+	int		m_StopTimeCount;
+	//Iconの回転用.
+	float	m_Rot;
 
 };
