@@ -1,7 +1,6 @@
 #include "CShot.h"
 
 CShot::CShot()
-	: m_Shot()
 {
 }
 
@@ -11,14 +10,42 @@ CShot::~CShot()
 
 void CShot::Initialize(int id)
 {
+	m_Display = false;
+	m_MoveSpeed = 0.2f;
+	m_LifeFramesInit = 120;
+	m_Gravity = 0.1f;
+	m_VelocityY = 0.0f;
+	m_MoveDirection = D3DXVECTOR3(0.f, 0.f, 1.f);
+
+#if 0
 	for (int i = 0; i < ShotMax; i++)
 	{
 		m_Shot[i].m_Display = false;
 	}
+#endif
 }
 
 void CShot::Update()
 {
+
+	if (!m_Display) return;
+
+	//…•½ˆÚ“®
+	m_vPosition += m_MoveDirection * m_MoveSpeed;
+
+	////‚’¼
+	//if (m_Gravity != 0.0f)
+	//{
+	//	m_VelocityY -= m_Gravity;
+	//	m_vPosition.y += m_VelocityY;
+	//}
+
+	//’eŽõ–½
+	if (--m_LifeFrames <= 0) {
+		m_Display = false;
+	}
+
+#if 0
 	for (int i = 0; i < ShotMax; i++)
 	{
 		if (m_Shot[i].m_Display == true) {
@@ -38,21 +65,29 @@ void CShot::Update()
 			}
 		}
 	}
+#endif
 }
 
 void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	for (int i = 0; i < ShotMax; i++)
-	{
-		if (m_Shot[i].m_Display == true) 
-		{
-			CStaticMeshObject::Draw(View, Proj, Light, Camera);
-		}
-	}
+	if (!m_Display) return;
+	CStaticMeshObject::Draw(View, Proj, Light, Camera);
 }
 
 void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 {
+	//’e‚ðV‹K”­ŽË‚Æ‚µ‚Ä‰Šú‰»
+	m_vPosition = Pos;
+	m_vRotation.y = RotY;		// ’e‚ÌŒü‚«(Œ©‚½–Ú)‚à•Ï‚¦‚é
+
+	//‘O•û‚ðY‰ñ“]rotY‚Å‰ñ‚µ‚½•ûŒü‚ðˆÚ“®•ûŒü‚É‚·‚é
+	m_MoveDirection = D3DXVECTOR3(std::sinf(RotY), 0.0f, std::cosf(RotY));	//³‹K‰»
+	m_VelocityY = 0.0f;
+
+	m_LifeFrames = (m_LifeFramesInit > 0) ? m_LifeFramesInit : 120;
+	m_Display = true;
+
+#if 0
 	for (int i = 0; i < ShotMax; i++)
 	{
 		if (m_Shot[i].m_Display == true) return;
@@ -80,13 +115,6 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 			&m_Shot[i].m_MoveDirection,	// (in) ZŽ²ƒxƒNƒgƒ‹
 			&mRotationY);		// YŽ²‰ñ“]s—ñ
 	}
+#endif
 }
 
-bool CShot::IsActive() const
-{
-	for (int i = 0; i < ShotMax; i++)
-	{
-		if (m_Shot[i].m_Display) return true;
-	}
-	return false;
-}

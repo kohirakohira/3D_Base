@@ -99,8 +99,11 @@ void CGameMain::Update()
 					player->GetCannon()->GetRotation().y);
 			}
 		}
-		m_pShotManager->Update();
 	}
+
+	m_pShotManager->Update();
+
+
 
 	//カメラ追従＆更新.砲塔基準
 	for (int i = 0; i < PLAYER_MAX; i++)
@@ -169,7 +172,7 @@ void CGameMain::Update()
 	}
 
 	// Cキー押されたら操作プレイヤー切り替え
-	if (GetAsyncKeyState('C') & 0x0001)
+	if (GetKey('C') & 0x0001)
 	{
 		m_pPlayerManager->SwitchActivePlayer();
 	}
@@ -186,8 +189,8 @@ void CGameMain::Draw()
 	const float H = static_cast<float>(WND_H);
 
 	//2x2分割の定義
-	const int COLS = 1;
-	const int ROWS = 1;
+	const int COLS = 2;
+	const int ROWS = 2;
 	const int MAX_VIEWS = COLS * ROWS;					//分割して表示できる最大ビュー数
 	const int VIEWS = std::min(PLAYER_MAX, MAX_VIEWS);	//minで小さいほうに合わせる
 
@@ -213,14 +216,14 @@ void CGameMain::Draw()
 		}
 
 		// 弾描画
-		m_pShotManager->Draw(m_pCameras[0]->m_mView, m_pCameras[0]->m_mProj, m_pCameras[0]->m_Light, m_pCameras[0]->m_Camera);
+		m_pShotManager->Draw(view, proj, light, paramC);
 
 		//地面描画
 		if (owner) m_pGround->SetPlayer(*owner);
 		m_pGround->Draw(view, proj, light, paramC);
 
 		//アイテムボックス描画.
-		m_pItemBoxManager->Draw(m_pCameras[0]->m_mView, m_pCameras[0]->m_mProj, m_pCameras[0]->m_Light, m_pCameras[0]->m_Camera);
+		m_pItemBoxManager->Draw(view, proj, light, paramC);
 
 		//エフェクトもここでやる
 	};
@@ -394,6 +397,8 @@ void CGameMain::Init()
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);
+
+	m_pPlayerManager->SetShotManager(m_pShotManager);
 
 }
 

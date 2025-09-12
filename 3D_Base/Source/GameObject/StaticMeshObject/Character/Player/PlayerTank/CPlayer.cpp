@@ -49,6 +49,7 @@ void CPlayer::Update()
 	m_pCannon->SetPosition(pos); // –C“ƒÀ•WXV
 
 	m_pCannon->Update();
+
 }
 
 void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)

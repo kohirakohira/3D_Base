@@ -19,16 +19,48 @@ std::vector<CComPlayer*>& CComPlayer::Instances() {
     return registry;
 }
 
+//砲口のワールド座標とヨー角を計算
+void CComPlayer::ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const
+{
+	auto body  = Body();
+	auto cannon  = Cannon();
+
+    D3DXVECTOR3 base(0, 0, 0);
+	float yaw = 0.0f;
+
+    if (body) {
+        base = body->GetPosition();
+        yaw = body->GetRotation().y;
+	}
+
+    if (cannon) {
+      //砲塔があれば向きを優先
+		if (!body) base = cannon->GetPosition();
+		yaw = cannon->GetRotation().y;
+    }
+
+    base.y += CannonHeight; //砲塔の高さオフセット
+	const D3DXVECTOR3 forwared = ForwardFromYaw(yaw);
+
+	outpos = base + forwared * MuzzleOffsetZ;   //砲身先端オフセット
+    outYaw = yaw;
+}
+
 CComPlayer::CComPlayer()
-    : MoveSpeed(0.10f)     // 見やすい初期値
-    , TurnStep(0.08f)
-    , AimTurnStep(0.12f)
-    , KeepDistance(9.0f)   // 0ならベタ詰め
-    , CannonHeight(0.3f)
-    , m_Target(nullptr)
-    , m_AvoidRadius ( 3.0f )
-    , m_AvoidWeight ( 0.8f )
-    , m_Registered ( false )
+    : MoveSpeed             (0.10f)     // 見やすい初期値
+    , TurnStep              (0.08f)
+    , AimTurnStep           (0.12f)
+    , KeepDistance          (9.0f)      // 0ならベタ詰め
+    , CannonHeight          (0.3f)
+    , m_Target              (nullptr)
+    , m_AvoidRadius         ( 3.0f )
+    , m_AvoidWeight         ( 0.8f )
+    , m_Registered          ( false )
+    , m_ShotCD              ( 120 )
+    , ShotCooldownFrames    ( 120 )
+    , FireAngleEpsDeg       ( 5.0f )
+	, MuzzleOffsetZ         ( 0.7f ) 
+    , m_ActiveType          (ActiveType::player)    //最初はプレイヤー
 {
 }
 
@@ -86,6 +118,10 @@ void CComPlayer::SanitizeParams()
     if (KeepDistance < 0.0f)    KeepDistance    = 0.0f;
     if (m_AvoidRadius < 0.0f)   m_AvoidRadius   = 0.0f;
     if (m_AvoidWeight < 0.0f)   m_AvoidWeight = 0.0f;
+
+	if (ShotCooldownFrames <= 0) ShotCooldownFrames = 30;
+    if (FireAngleEpsDeg <= 0.0f) FireAngleEpsDeg = 8.0f;
+    if (m_ShotCD < 0) m_ShotCD = 0;
 }
 
 // [-π,π]に正規化
@@ -261,6 +297,7 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
     cannon->SetPosition(base);
     cannon->SetRotation(D3DXVECTOR3(0.0f, cyaw, 0.0f));
     cannon->CCharacter::Update();
+
 }
 
 void CComPlayer::Update()
@@ -269,19 +306,19 @@ void CComPlayer::Update()
 
     // ターゲット不在でも見た目は更新
     std::shared_ptr<CBody> body = Body();
-    if (!body) { if (auto c = Cannon()) c->CCharacter::Update(); return; }
+    if (!body) { if (auto cannon = Cannon()) cannon->CCharacter::Update(); return; }
 
     // 追尾対象がなければ回頭も移動もせず、そのまま更新
     if (!m_Target) {
         body->CCharacter::Update();
-        if (auto c = Cannon()) c->CCharacter::Update();
+        if (auto cannon = Cannon()) cannon->CCharacter::Update();
         return;
     }
 
     // 自己ターゲットは無視
     if (m_Target.get() == this) {
         body->CCharacter::Update();
-        if (auto c = Cannon()) c->CCharacter::Update();
+        if (auto cannon = Cannon()) cannon->CCharacter::Update();
         return;
     }
 
@@ -289,4 +326,44 @@ void CComPlayer::Update()
     const D3DXVECTOR3 tp = m_Target->GetPosition();
     TickChaseTo(tp);
     TickAimTo(tp);
+
+    //レイとボディの位置を揃える
+    m_pRayY->Position = body->GetPosition();
+
+    //地面めり込み回避
+    m_pRayY->Position.y += 0.2f;
+    m_pRayY->RotationY = body->GetRotation().y;
+
+
+    //----弾発射処理----//あとで関数にするかクラスにする
+    //自動射撃
+    if (auto mgr = m_pShotManager.lock()) { //有効ならshared_ptr取得
+		if (m_ShotCD > 0) --m_ShotCD; //クールダウン減少
+
+        D3DXVECTOR3 muzzle; float yaw = 0.f;
+		ComputeMuzzle(muzzle, yaw);
+
+		D3DXVECTOR3 toTarget = m_Target->GetPosition() - muzzle;
+		toTarget.y = 0.0f; //水平面のみ
+		const float dist2 = toTarget.x * toTarget.x + toTarget.z * toTarget.z;
+        if (dist2 > 1e-6f) {
+			const float desired = std::atan2f(toTarget.x, toTarget.z);
+			const float err = std::fabs(Wrap(desired - yaw)) ; 
+            if (err <= ToRad(FireAngleEpsDeg) && m_ShotCD == 0) {
+				mgr->SetReload(m_PlayerID, muzzle, yaw);    
+				m_ShotCD = ShotCooldownFrames; //クールダウンリセット
+            }
+        }
+   }
+
+    switch (m_ActiveType)
+    {
+    case CComPlayer::ActiveType::player:
+        std::shared_ptr<CPlayer>;
+        break;
+    case CComPlayer::ActiveType::com:
+        std::shared_ptr<CComPlayer>;
+        break;
+    }
+
 }

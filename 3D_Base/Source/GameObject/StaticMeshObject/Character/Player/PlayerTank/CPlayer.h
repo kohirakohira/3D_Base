@@ -14,6 +14,14 @@ class CPlayer
 	: public CCharacter
 {
 public:
+	//COMかプレイヤー
+	enum class Type
+	{
+		com,
+		player
+	};
+
+public:
 	CPlayer();
 	virtual ~CPlayer() override;
 
@@ -43,6 +51,12 @@ public:
 	float GetCannonYaw() const;
 	D3DXVECTOR3 GetCannonPosition() const;
 
+	//タイプのセット＆ゲット
+	void SetType(Type type) { m_Type = type; }
+	Type GetType() const { return m_Type; }
+
+public:
+	Type m_Type;				//操作する対象のタイプ
 
 protected:
 

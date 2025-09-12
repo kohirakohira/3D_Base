@@ -36,6 +36,9 @@ void CPlayerManager::Initialize()
 		{
 			auto com = std::make_shared<CComPlayer>();
 			com->Initialize(i);
+			if (m_ShotManager) {
+				com->AttachShotManager(m_ShotManager);
+			}
 			m_pPlayers.push_back(std::move(com));
 		}
 
@@ -74,7 +77,8 @@ void CPlayerManager::Update()
 
 	//操作プレイヤーを更新
 	if (m_ActivePlayerIndex >= 0 && m_ActivePlayerIndex < count) {
-		m_pPlayers[m_ActivePlayerIndex]->Update();
+		if(!IsCom(m_pPlayers[m_ActivePlayerIndex]))	//プレイヤーかどうかを判定
+		m_pPlayers[m_ActivePlayerIndex]->Update();	//ここで直接指定してしまっている？
 	}
 
 	//基本ターゲットを決める
@@ -113,8 +117,41 @@ void CPlayerManager::Update()
 			com->Update();
 		}
 	}
+}
+
+void CPlayerManager::SwitchActivePlayer()
+{
+#if 0
+	//一旦操作プレイヤーから新しくCOMをつくって切り替える
+	auto& player = m_pPlayers[m_ActivePlayerIndex];
+	D3DXVECTOR3 player_pos = player->GetPosition();
+
+	auto com = std::shared_ptr<CComPlayer>();
+	com->SetPosition(player_pos);
+
+	m_ActivePlayerIndex = (m_ActivePlayerIndex + 1) % m_pPlayers.size();
+	
+
+	player = com;
+	//m_pPlayers[m_ActivePlayerIndex] = (m_pPlayers[m_ActivePlayerIndex]);
+
+	if (m_ActivePlayerIndex < 1 && IsCom(player))
+	{
+		player->Update();
+	}
+#endif
+
+	auto com = std::shared_ptr<CComPlayer>();
+	if (m_pPlayers.size() <= 1)
+	{
+		m_ActivePlayerIndex = (m_ActivePlayerIndex + 1) % m_pPlayers.size();
+	}
+
+	m_ActivePlayerIndex = (m_ActivePlayerIndex + 1) % m_pPlayers.size();
+	m_pPlayers[m_ActivePlayerIndex]->SetType(CPlayer::Type::player);
 
 }
+
 
 void CPlayerManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
@@ -126,6 +163,7 @@ void CPlayerManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAME
 
 D3DXVECTOR3 CPlayerManager::GetPosition()
 {
+	//コンテナが空なら0,0,0を返す
 	if (m_pPlayers.empty()) return D3DXVECTOR3(0, 0, 0);
 	return m_pPlayers[m_ActivePlayerIndex]->GetPosition();
 }
@@ -148,10 +186,6 @@ std::shared_ptr<CPlayer> CPlayerManager::GetControlPlayer(int index)
 //	return nullptr;
 //}
 
-void CPlayerManager::SwitchActivePlayer()
-{
-	m_ActivePlayerIndex = (m_ActivePlayerIndex + 1) % m_pPlayers.size();
-}
 
 D3DXVECTOR3 CPlayerManager::GetPosition(int index) const
 {
@@ -181,6 +215,18 @@ void CPlayerManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::shared_p
 	{
 		player->SetCBody(body);
 		player->SetCCannon(cannon);
+	}
+}
+
+void CPlayerManager::SetShotManager(std::shared_ptr<CShotManager>& mgr)
+{
+	m_ShotManager = mgr;
+
+	//すでにいる前COMに渡す　
+	for (auto& up : m_pPlayers) {
+		if (auto* com = dynamic_cast<CComPlayer*>(up.get())) {	//CComPlayerなら生のポインタにして渡す.所有権は渡さない
+			com->AttachShotManager(m_ShotManager);	//weak_ptrに渡す
+		}
 	}
 }
 
