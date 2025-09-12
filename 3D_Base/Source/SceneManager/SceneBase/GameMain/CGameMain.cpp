@@ -16,6 +16,7 @@ CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd					( hWnd )
 
 	//画像.
+	, m_pSprite2DTimerArrow			( nullptr )
 	, m_pSprite2DTimerFrame			( nullptr )
 	, m_pSprite2DTimer				( nullptr )
 	, m_pSprite2DKillNomber			( nullptr )
@@ -25,6 +26,7 @@ CGameMain::CGameMain(HWND hWnd)
 	//画像の設定.
 	, m_pSpriteTimerFrame			()
 	, m_pSpriteTimer				()
+	, m_pSpriteTimerArrow			()
 	, m_pSpritePlayerIcon			()
 	, m_pSpriteKillNomber			()
 	, m_pSpriteHitPoint				()
@@ -71,6 +73,8 @@ CGameMain::CGameMain(HWND hWnd)
 
 	, m_Rot							( 0.0f )
 
+	, time							( 0.0f )
+
 {
 	//最初のシーンをメインにする.
 	m_SceneType = CSceneType::Main;
@@ -90,7 +94,7 @@ void CGameMain::Update()
 //-----メイン演出用-----.
 	
 	//Iconを回転させる.
-	m_Rot += 0.2f;
+	m_Rot += 0.02f;
 	
 	
 	
@@ -132,6 +136,15 @@ void CGameMain::Update()
 
 	//アイテムの動作.
 	m_pItemBoxManager->Update();
+	
+	//定数宣言.
+	const float PI = 3.14159265358979f;
+	//時計の針の回転.
+	float remaining = m_Timer->GetRemainingTime();
+	float totle = 90.f;
+	time = (remaining / totle) * 360;
+	float angle = time * (PI / 180);
+	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, angle);
 
 #if 0
 	//Effect制御
@@ -242,7 +255,7 @@ void CGameMain::Draw()
 		//UI.
 		for (int i = 0; i < HP_MAX; i++)
 		{
-			m_pSpriteHitPoint[i]->SetRotation(0.f, m_Rot, 0.f);
+			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, m_Rot);
 			m_pSpriteHitPoint[i]->Draw();
 		}
 		CDirectX11::GetInstance().SetDepth(true);
@@ -320,6 +333,8 @@ void CGameMain::Draw()
 	m_pSpriteTimerFrame->Draw();
 	//タイマーの描画.
 	m_pSpriteTimer->Draw();
+	//タイマーの描画.
+	m_pSpriteTimerArrow->Draw();
 	//タイマー描画.
 	m_Timer->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
@@ -329,7 +344,7 @@ void CGameMain::Draw()
 void CGameMain::Init()
 {
 	//定数宣言.
-	static constexpr float TIME = 90.f;
+	static constexpr int TIME = 90.0;
 
 	//カメラ位置設定.
 	for (int i = 0; i < PLAYER_MAX; i++)
@@ -350,33 +365,18 @@ void CGameMain::Init()
 	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
 
 //-----中心表示用座標-----.
-	//制限時間枠の画像の設定.
+	//制限時間枠の画像設定.
 	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
-	//制限時間円の画像の設定.
+	//制限時間円の画像設定.
 	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
 	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
-
-
-
-////-----中間発表用-----.
-//	//制限時間枠の画像の設定.
-//	m_pSpriteTimerFrame->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
-//	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
-//	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
-//	//制限時間円の画像の設定.
-//	m_pSpriteTimer->SetPosition(WND_W - 160.f, WND_H - 96.f, 0.f);
-//	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
-//	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
-
-
-////-----中心表示用座標-----.
-//	//.
-//	m_pSpritePlayerIcon->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
-//	m_pSpritePlayerIcon->SetRotation(0.f, 0.f, 0.f);
-//	m_pSpritePlayerIcon->SetScale(1.f, 1.f, 0.f);
+	//時計の針の画像設定.
+	m_pSpriteTimerArrow->SetPosition(WND_W / 2.f - 42.f, WND_H / 2 , 0.f);
+	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, 0.f);
+	m_pSpriteTimerArrow->SetScale(0.25f, 0.25f, 0.f);
 
 //-----中間発表用-----.
 	//プレイヤー番号の画像の設定.
@@ -438,13 +438,13 @@ void CGameMain::Init()
 	{
 		if (i <= 0)
 		{
-			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 64.f, 0.f);
 			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
 			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
 		}
 		else
 		{
-			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 , 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 , 64.f, 0.f);
 			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
 			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
 		}
@@ -483,6 +483,7 @@ void CGameMain::Create()
 	//UIObjectのインスタンス生成.
 	m_pSpriteTimerFrame = std::make_shared<CUIObject>();
 	m_pSpriteTimer		= std::make_shared<CUIObject>();
+	m_pSpriteTimerArrow = std::make_shared<CUIObject>();
 	//HPの分だけ生成.
 	for (int i = 0; i < HP_MAX; i++)
 	{
@@ -502,6 +503,7 @@ void CGameMain::Create()
 	//UI系のインスタンス生成.
 	m_pSprite2DTimerFrame	= std::make_shared<CSprite2D>();
 	m_pSprite2DTimer		= std::make_shared<CSprite2D>();
+	m_pSprite2DTimerArrow	= std::make_shared<CSprite2D>();
 	m_pSprite2DKillNomber	= std::make_shared<CSprite2D>();
 	m_pSprite2DHitPoint		= std::make_shared<CSprite2D>();
 	//プレイヤーの分だけ生成.
@@ -617,14 +619,16 @@ HRESULT CGameMain::LoadData()
 		256, 256		//アニメーションをしないので、0でいい.
 	};
 	//制限時間の枠の読み込み.
-	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE);
-	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE);
-	m_pSprite2DKillNomber	->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE);
-	m_pSprite2DHitPoint		->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE);
+	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE, false);
+	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE, false);
+	m_pSprite2DTimerArrow	->Init(_T("Data\\Texture\\UI\\Timer\\TimerArrow.png"), TIMER_SIZE, true);
+	m_pSprite2DKillNomber	->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE, false);
+	m_pSprite2DHitPoint		->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE, true);
 
 	//画像をアタッチ.
 	m_pSpriteTimerFrame	->AttachSprite(m_pSprite2DTimerFrame);
 	m_pSpriteTimer		->AttachSprite(m_pSprite2DTimer);
+	m_pSpriteTimerArrow	->AttachSprite(m_pSprite2DTimerArrow);
 	//HPの分だけアタッチ.
 	for (int i = 0; i < HP_MAX; i++)
 	{
@@ -641,19 +645,19 @@ HRESULT CGameMain::LoadData()
 		switch (i)
 		{
 			case 0:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\OneP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\OneP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 			case 1:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TwoP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TwoP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 			case 2:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TreeP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TreeP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 			case 3:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\FourP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\FourP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 		default:

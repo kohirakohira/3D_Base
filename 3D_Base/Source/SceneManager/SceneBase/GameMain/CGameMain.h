@@ -90,6 +90,7 @@ public:		//クラス用.
 	std::shared_ptr<CDebugText>		m_pDbgText;
 
 	//ゲーム内で扱うUI系.
+	std::shared_ptr<CSprite2D>									m_pSprite2DTimerArrow;			//時計の針.
 	std::shared_ptr<CSprite2D>									m_pSprite2DTimerFrame;			//制限時間の枠.
 	std::shared_ptr<CSprite2D>									m_pSprite2DTimer;				//制限時間の時計枠.
 	std::shared_ptr<CSprite2D>									m_pSprite2DKillNomber;			//キル数の画像.
@@ -102,6 +103,7 @@ public:		//クラス用.
 	std::array<std::shared_ptr<CUIObject>, HP_MAX>			m_pSpriteHitPoint;				//HPアイコン.
 	std::shared_ptr<CUIObject>								m_pSpriteTimerFrame;			//制限時間の枠.
 	std::shared_ptr<CUIObject>								m_pSpriteTimer;					//制限時間の時計枠.
+	std::shared_ptr<CUIObject>								m_pSpriteTimerArrow;			//時計の針.
 
 	//ゲームで扱うスプライトデータ(使いまわす資源).
 	std::unique_ptr<CSprite3D>		m_pSpriteGround;
@@ -155,5 +157,8 @@ public:		//変数用.
 	int		m_StopTimeCount;
 	//Iconの回転用.
 	float	m_Rot;
+
+	//時計の針.
+	float	time;
 
 };

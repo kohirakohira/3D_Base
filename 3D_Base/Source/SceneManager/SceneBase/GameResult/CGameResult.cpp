@@ -182,7 +182,7 @@ HRESULT CGameResult::LoadData()
 	};
 
 	//選択肢スプライトの読み込み.
-	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Select\\Choice.png"), C_SIZE);
+	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Select\\Choice.png"), C_SIZE, false);
 
 	//スタティックメッシュの読み込み
 	m_pStaticMeshFighter->Init(_T("Data\\Mesh\\Static\\Fighter\\Fighter.x"));
@@ -194,16 +194,16 @@ HRESULT CGameResult::LoadData()
 	if (m_SceneType == CSceneType::ResultWin)
 	{
 		//独り勝ちスプライトの読み込み.
-		m_pSpriteResult->Init(_T("Data\\Texture\\Image\\Clear.png"), WH_SIZE);
+		m_pSpriteResult->Init(_T("Data\\Texture\\Image\\Clear.png"), WH_SIZE, false);
 	}
 	else if (m_SceneType == CSceneType::ResultDraw)
 	{
 		//引き分けスプライトの読み込み.
-		m_pSpriteResult->Init(_T("Data\\Texture\\Image\\Over.png"), WH_SIZE);
+		m_pSpriteResult->Init(_T("Data\\Texture\\Image\\Over.png"), WH_SIZE, false);
 	}
 
 	//選択画像のスプライトの読み込み.
-	m_pSpriteSelect->Init(_T("Data\\Texture\\UI\\Select\\TitleSelectImg.png"), SELECT_SIZE);
+	m_pSpriteSelect->Init(_T("Data\\Texture\\UI\\Select\\TitleSelectImg.png"), SELECT_SIZE, false);
 
 	//画像の設定.
 	m_pSpriteObj->AttachSprite(m_pSpriteResult);

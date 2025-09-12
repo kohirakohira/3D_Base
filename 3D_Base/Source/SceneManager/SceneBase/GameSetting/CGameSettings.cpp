@@ -236,18 +236,18 @@ HRESULT CGameSettings::LoadData()
 
 
 	//タイトルスプライトの読み込み.
-	m_pSpriteSetting->Init(_T("Data\\Texture\\Image\\Setting.png"), WH_SIZE);
+	m_pSpriteSetting->Init(_T("Data\\Texture\\Image\\Setting.png"), WH_SIZE, false);
 	m_pSpriteSetting->SetAlpha(ALPHA_TOP);
 	//タイトル模様スプライトの読み込み.
-	m_pSpriteSettingBackGround->Init(_T("Data\\Texture\\Image\\BackGroundImage.png"), WH_SIZE);
+	m_pSpriteSettingBackGround->Init(_T("Data\\Texture\\Image\\BackGroundImage.png"), WH_SIZE, false);
 	m_pSpriteSettingBackGround->SetAlpha(ALPHA_BACK);
 	//開始する？スプライトの読み込み.
-	m_pSpriteStart->Init(_T("Data\\Texture\\UI\\Select\\Message.png"), ST_SIZE);
+	m_pSpriteStart->Init(_T("Data\\Texture\\UI\\Select\\Message.png"), ST_SIZE, false);
 	//選択肢スプライトの読み込み.
-	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Select\\Choice.png"), C_SIZE);
+	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Select\\Choice.png"), C_SIZE, false);
 	//選択スプライトの読み込み.
-	m_SpriteYesSelect->Init(_T("Data\\Texture\\UI\\Select\\Yes.png"), S_SIZE);
-	m_SpriteNoSelect->Init(_T("Data\\Texture\\UI\\Select\\No.png"), S_SIZE);
+	m_SpriteYesSelect->Init(_T("Data\\Texture\\UI\\Select\\Yes.png"), S_SIZE, false);
+	m_SpriteNoSelect->Init(_T("Data\\Texture\\UI\\Select\\No.png"), S_SIZE, false);
 
 	//画像の設定(設定画像).
 	m_pSpriteSettingImg->AttachSprite(m_pSpriteSetting);

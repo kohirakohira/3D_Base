@@ -52,7 +52,7 @@ public:
 	~CSprite2D();	//デストラクタ.
 
 	//初期化.
-	HRESULT Init(LPCTSTR lpFileName, SPRITE_STATE& pSs );
+	HRESULT Init(LPCTSTR lpFileName, SPRITE_STATE& pSs, bool flg );
 
 	//解放.
 	void Release();
@@ -60,7 +60,7 @@ public:
 	//シェーダ作成.
 	HRESULT CreateShader();
 	//モデル作成.
-	HRESULT CreateModel();
+	HRESULT CreateModel(bool flg);
 	//テクスチャ作成.
 	HRESULT CreateTexture( LPCTSTR lpFileName );
 	//サンプラ作成.
@@ -111,6 +111,16 @@ public:
 
 	//描画ごとにビューポート設定
 	void SetViewPortSize(float w, float h);
+
+
+	//中心を設定する構造体.
+	struct CenterSetUp
+	{
+		float w;
+		float h;
+		VERTEX vertices[4];
+	}m_Center;
+
 
 private:
 	ID3D11Device*			m_pDevice11;
