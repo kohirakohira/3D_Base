@@ -182,7 +182,7 @@ HRESULT CGameResult::LoadData()
 	};
 
 	//選択肢スプライトの読み込み.
-	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Choice.png"), C_SIZE);
+	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Select\\Choice.png"), C_SIZE);
 
 	//スタティックメッシュの読み込み
 	m_pStaticMeshFighter->Init(_T("Data\\Mesh\\Static\\Fighter\\Fighter.x"));
@@ -203,7 +203,7 @@ HRESULT CGameResult::LoadData()
 	}
 
 	//選択画像のスプライトの読み込み.
-	m_pSpriteSelect->Init(_T("Data\\Texture\\UI\\TitleSelectImg.png"), SELECT_SIZE);
+	m_pSpriteSelect->Init(_T("Data\\Texture\\UI\\Select\\TitleSelectImg.png"), SELECT_SIZE);
 
 	//画像の設定.
 	m_pSpriteObj->AttachSprite(m_pSpriteResult);

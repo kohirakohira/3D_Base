@@ -35,7 +35,7 @@
 
 #include "Camera//CCamera.h" //カメラクラス
 
-//--------------------------------
+//-------------------------------
 // UI
 //-------------------------------
 #include "GameObject//UI//CUIObject//CUIObject.h" // UIオブジェクトクラス
@@ -73,11 +73,11 @@ public:
 	//シーンの種類.
 	CSceneType GetSceneType() const override;
 
-public:
+public:		//クラス用.
 	//定数宣言.
 	static constexpr int HP_MAX = 2;			//最大HP.
-
-
+	static constexpr int PLAYERNUM_MAX = 4;		//プレイヤー番号.
+	static constexpr int KILLNUM_MAX = 4;		//キル数.
 
 	//ウィンドウハンドル.
 	HWND		m_hWnd;
@@ -90,21 +90,18 @@ public:
 	std::shared_ptr<CDebugText>		m_pDbgText;
 
 	//ゲーム内で扱うUI系.
-	std::shared_ptr<CSprite2D>		m_pSprite2DTimerFrame;			//制限時間の枠.
-	std::shared_ptr<CSprite2D>		m_pSprite2DTimer;				//制限時間の時計枠.
-	std::shared_ptr<CSprite2D>		m_pSprite2DPlayerIcon;			//プレイヤー番号画像.
-	std::shared_ptr<CSprite2D>		m_pSprite2DKillNomber;			//キル数の画像.
-	std::shared_ptr<CSprite2D>		m_pSprite2DHitPoint;			//HPの画像.
+	std::shared_ptr<CSprite2D>									m_pSprite2DTimerFrame;			//制限時間の枠.
+	std::shared_ptr<CSprite2D>									m_pSprite2DTimer;				//制限時間の時計枠.
+	std::shared_ptr<CSprite2D>									m_pSprite2DKillNomber;			//キル数の画像.
+	std::shared_ptr<CSprite2D>									m_pSprite2DHitPoint;			//HPの画像.
+	std::array < std::shared_ptr<CSprite2D>, PLAYERNUM_MAX>		m_pSprite2DPlayerIcon;			//プレイヤー番号画像.
 
 	//スタティックメッシュオブジェクトクラス(UI).
-	std::shared_ptr<CUIObject>		m_pSpriteTimerFrame; //制限時間の枠.
-	std::shared_ptr<CUIObject>		m_pSpriteTimer;		 //制限時間の時計枠.
-	std::shared_ptr<CUIObject>		m_pSpritePlayerIcon; //プレイヤーアイコン.
-	std::shared_ptr<CUIObject>		m_pSpriteKillNomber; //キル数アイコン.
-	std::shared_ptr<CUIObject>		m_pSpriteHitPoint[HP_MAX];	 //HPアイコン.
-
-
-
+	std::array<std::shared_ptr<CUIObject>, PLAYERNUM_MAX>	m_pSpritePlayerIcon;			//プレイヤーアイコン.
+	std::array<std::shared_ptr<CUIObject>, KILLNUM_MAX>		m_pSpriteKillNomber;			//キル数アイコン.
+	std::array<std::shared_ptr<CUIObject>, HP_MAX>			m_pSpriteHitPoint;				//HPアイコン.
+	std::shared_ptr<CUIObject>								m_pSpriteTimerFrame;			//制限時間の枠.
+	std::shared_ptr<CUIObject>								m_pSpriteTimer;					//制限時間の時計枠.
 
 	//ゲームで扱うスプライトデータ(使いまわす資源).
 	std::unique_ptr<CSprite3D>		m_pSpriteGround;
@@ -153,7 +150,10 @@ public:
 	// シーン列挙変数.
 	CSceneType		m_SceneType;
 
+public:		//変数用.
 	// 簡易時間を止める変数.
-	int m_StopTimeCount;
+	int		m_StopTimeCount;
+	//Iconの回転用.
+	float	m_Rot;
 
 };

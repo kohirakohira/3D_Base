@@ -14,7 +14,7 @@ public:
 	void Update();	//アップデートを一旦三人称カメラとして使う
 	void Draw();
 	void Init();
-	////カメラ関数.
+	//カメラ関数.
 	void SetCamera();
 	//カメラの位置設定.
 	void SetCameraPos(float x, float y, float z);
