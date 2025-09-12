@@ -181,7 +181,6 @@ void CGameMain::Update()
 
 		m_SceneType = CSceneType::Result;
 	}
-
 	// Cキー押されたら操作プレイヤー切り替え
 	if (GetKey('C') & 0x8000)
 	{
