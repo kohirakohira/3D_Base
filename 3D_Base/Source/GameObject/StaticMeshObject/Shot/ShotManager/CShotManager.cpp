@@ -13,17 +13,16 @@ CShotManager::~CShotManager()
 void CShotManager::Initialize(int playerCount)
 {
 	m_pShots.clear();
+	m_pShots.resize(playerCount);
 
 	for (int i = 0; i < playerCount; ++i)
 	{
-		std::vector<std::unique_ptr<CShot>> playerShots;
 		for (int j = 0; j < ShotMax; ++j)
 		{
-			auto shot = std::make_unique<CShot>();
+			auto shot = std::make_shared<CShot>();
 			shot->Initialize(j);
-			playerShots.push_back(std::move(shot));
+			m_pShots[i].push_back(shot);
 		}
-		m_pShots.push_back(std::move(playerShots));
 	}
 }
 

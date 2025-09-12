@@ -1,5 +1,8 @@
 #pragma once
-#include "GameObject//StaticMeshObject//Character//CCharacter.h" /* 継承クラス || キャラクタークラス */
+//-----継承するクラス-----
+#include "GameObject//StaticMeshObject//Character//CCharacter.h" //キャラクタークラス 
+
+//-----ライブラリ-----
 #include <vector>
 #include <memory>
 
@@ -22,5 +25,5 @@ public:
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
 private:
-	std::vector<std::vector<std::unique_ptr<CShot>>> m_pShots;
+	std::vector<std::vector<std::shared_ptr<CShot>>> m_pShots;
 };

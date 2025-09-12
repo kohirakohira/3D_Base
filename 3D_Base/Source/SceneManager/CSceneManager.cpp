@@ -36,19 +36,8 @@ void CSceneManager::Update()
 		case CSceneType::Title:		//タイトル.
 			Change(std::make_shared<CGameTitle>(m_hWnd));
 			break;
-		case CSceneType::Setting:	//ゲーム設定.
-			Change(std::make_shared<CGameSettings>(m_hWnd));
-			break;
 		case CSceneType::Main:		//ゲームメイン.
 			Change(std::make_shared<CGameMain>(m_hWnd));
-			break;
-		case CSceneType::Result:
-		case CSceneType::ResultWin:	//リザルト(勝ち)
-		case CSceneType::ResultDraw://リザルト(引き分け)
-			Change(std::make_shared<CGameResult>(m_hWnd));
-			break;
-		case CSceneType::Debug:		//デバッグ用.
-			Change(std::make_shared<CGameDebug>(m_hWnd));
 			break;
 		case CSceneType::None:
 			//何もない.

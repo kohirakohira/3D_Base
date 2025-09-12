@@ -90,8 +90,6 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameMain\CGameMain.cpp" />
-    <ClCompile Include="Source\SceneManager\SceneBase\GameResult\CGameResult.cpp" />
-    <ClCompile Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameTitle\CGameTitle.cpp" />
     <ClCompile Include="Source\ImGui\CImguiManager.cpp" />
     <ClCompile Include="Source\InputDevice\Matuoka\CInputKeyManager.cpp" />
@@ -105,7 +103,6 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\ShotManager\CShotManager.cpp" />
     <ClCompile Include="Source\Tameshi\CTameshi.cpp" />
     <ClCompile Include="Source\InputDevice\Input\XInput\CXInput.cpp" />
-    <ClCompile Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.cpp" />
     <ClCompile Include="Source\GameObject\CGameObject.cpp" />
     <ClCompile Include="Source\InputDevice\Matuoka\CMultiInputKeyManager.cpp" />
     <ClCompile Include="Source\GameObject\UI\ChoiceImage\CChoiceImage.cpp" />
@@ -169,8 +166,6 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameMain\CGameMain.h" />
-    <ClInclude Include="Source\SceneManager\SceneBase\GameResult\CGameResult.h" />
-    <ClInclude Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameTitle\CGameTitle.h" />
     <ClInclude Include="Source\ImGui\CImguiManager.h" />
     <ClInclude Include="Source\InputDevice\Matuoka\CInputKeyManager.h" />
@@ -178,7 +173,6 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\ItemBox\CItemBox.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\CItemBoxManager.h" />
     <ClInclude Include="Source\InputDevice\Input\KeyInput\CKeyInput.h" />
-    <ClInclude Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\ItemBoxType\ItemType.h" />
     <ClInclude Include="Source\Tameshi\CTameshi.h" />
     <ClInclude Include="Source\InputDevice\Input\XInput\CXInput.h" />

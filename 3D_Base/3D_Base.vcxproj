@@ -172,8 +172,6 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.cpp" />
     <ClCompile Include="Source\Assets\Effect\CEffect.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameMain\CGameMain.cpp" />
-    <ClCompile Include="Source\SceneManager\SceneBase\GameResult\CGameResult.cpp" />
-    <ClCompile Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameTitle\CGameTitle.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\CGround.cpp" />
     <ClCompile Include="Source\ImGui\CImguiManager.cpp" />
@@ -195,7 +193,6 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\CStaticMeshObject.cpp" />
     <ClCompile Include="Source\Tameshi\CTameshi.cpp" />
     <ClCompile Include="Source\InputDevice\Input\XInput\CXInput.cpp" />
-    <ClCompile Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.cpp" />
     <ClCompile Include="Source\GameObject\CGameObject.cpp" />
     <ClCompile Include="Source\GameObject\SpriteObject\CSpriteObject.cpp" />
     <ClCompile Include="Source\GameObject\SpriteObject\Explosion\CExplosion.cpp" />
@@ -233,8 +230,6 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.h" />
     <ClInclude Include="Source\Assets\Effect\CEffect.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameMain\CGameMain.h" />
-    <ClInclude Include="Source\SceneManager\SceneBase\GameResult\CGameResult.h" />
-    <ClInclude Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameTitle\CGameTitle.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Ground\CGround.h" />
     <ClInclude Include="Source\ImGui\CImguiManager.h" />
@@ -257,7 +252,6 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\CStaticMeshObject.h" />
     <ClInclude Include="Source\Tameshi\CTameshi.h" />
     <ClInclude Include="Source\InputDevice\Input\XInput\CXInput.h" />
-    <ClInclude Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.h" />
     <ClInclude Include="Source\GameObject\CGameObject.h" />
     <ClInclude Include="Source\GameObject\SpriteObject\CSpriteObject.h" />
     <ClInclude Include="Source\GameObject\SpriteObject\Explosion\CExplosion.h" />

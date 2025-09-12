@@ -7,10 +7,7 @@
 #include "SceneManager//SceneBase//CSceneBase.h"				// シーン基底クラス
 #include "SceneManager//SceneBase//GameMain//CGameMain.h"		// ゲームメインクラス
 #include "SceneManager//SceneBase//GameTitle//CGameTitle.h"		// タイトルクラス
-#include "SceneManager//SceneBase//GameResult//CGameResult.h"	// リザルトクラス(勝ち・引き分け両立)
-#include "SceneManager//SceneBase//GameSetting//CGameSettings.h"// ゲーム設定クラス.
-							   
-#include "SceneManager//SceneBase//GameDebug//GameDebug.h"		// デバッグ用クラス.
+
 
 class CSceneManager
 {
