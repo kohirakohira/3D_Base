@@ -126,6 +126,8 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\CShot.cpp" />
     <ClCompile Include="Source\Collision\Collider\CCollider.cpp" />
     <ClCompile Include="Source\Collision\CollisionManager\CCollisionManager.cpp" />
+    <ClCompile Include="Source\Collision\Collider\BoxCollider\CBoxCollider.cpp" />
+    <ClCompile Include="Source\Collision\Collider\SphereCollider\CSphereCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Global.h">
@@ -206,6 +208,8 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Shot\CShot.h" />
     <ClInclude Include="Source\Collision\Collider\CCollider.h" />
     <ClInclude Include="Source\Collision\CollisionManager\CCollisionManager.h" />
+    <ClInclude Include="Source\Collision\Collider\BoxCollider\CBoxCollider.h" />
+    <ClInclude Include="Source\Collision\Collider\SphereCollider\CSphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">

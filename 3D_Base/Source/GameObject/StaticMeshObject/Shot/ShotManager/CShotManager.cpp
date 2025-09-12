@@ -3,6 +3,7 @@
 CShotManager::CShotManager()
 	: m_pShots()
 {
+	
 }
 
 CShotManager::~CShotManager()

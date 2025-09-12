@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject//StaticMeshObject//CStaticMeshObject.h" /* 継承クラス || スタティックメッシュオブジェクトクラス */
-
+//-----外部クラス-----
+#include <Collision/Collider/SphereCollider/CSphereCollider.h>
 /**************************************************
 *	弾クラス
 **/

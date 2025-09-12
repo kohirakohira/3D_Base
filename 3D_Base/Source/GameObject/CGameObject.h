@@ -1,9 +1,18 @@
 #pragma once
+//-----ライブラリ-----
+#include <vector>
+#include <memory>
 
-/**************************************************
-*	ゲームオブジェクトクラス.
-**/
+//-----外部クラス-----
+#include "Collision/Collider/CCollider.h" // コライダークラス
+#include "Collision//Collider//SphereCollider//CSphereCollider.h" // スフィアコライダークラス
+#include "Collision//Collider//BoxCollider//CBoxCollider.h" // ボックスコライダークラス
+
+//===================================
+//	ゲームオブジェクトクラス.
+//===================================
 class CGameObject
+	: public std::enable_shared_from_this<CGameObject>
 {
 public:
 	CGameObject();
@@ -14,6 +23,22 @@ public:
 	//子クラスに処理をお任せするので、ここでは名前だけ宣言して定義は書かない.
 	virtual void Update() = 0;
 	virtual void Draw( D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera ) = 0;
+
+	// --- Collider 管理 ---
+	// スフィアコライダー追加
+	std::shared_ptr<CSphereCollider> AddSphereCollider(float radius)
+	{
+		// shared_ptrに変換して管理
+		auto collider = std::make_shared<CSphereCollider>(shared_from_this(), radius);
+
+		// CCollider の vector に shared_ptr を格納する場合は型を合わせる
+		m_Colliders.push_back(collider);
+
+		return collider;
+	}
+
+	const std::vector<std::shared_ptr<CCollider>>& GetColliders() const { return m_Colliders; }
+
 
 	//座標設定関数.
 	void SetPosition( float x, float y, float z ){
@@ -57,9 +82,10 @@ public:
 		return m_vScale;
 	}
 
-
 protected://protectedは子クラスのみアクセス可能.
 	D3DXVECTOR3	m_vPosition;
 	D3DXVECTOR3	m_vRotation;
 	D3DXVECTOR3	m_vScale;
+
+	std::vector<std::shared_ptr<CCollider>> m_Colliders; // 複数コライダー保持
 };

@@ -6,6 +6,7 @@ CBody::CBody(int inputID)
 	, m_MoveState			( enMoveState::Stop )
 	, m_pInput				( nullptr )
 {
+
 	m_vPosition.y = -0.5f;
 
 	// 入力受付インスタンスの生成とセット

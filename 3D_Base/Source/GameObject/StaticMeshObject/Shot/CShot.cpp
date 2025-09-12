@@ -1,5 +1,6 @@
 #include "CShot.h"
 
+
 CShot::CShot()
 	: m_Shot()
 {
@@ -15,6 +16,8 @@ void CShot::Initialize(int id)
 	{
 		m_Shot[i].m_Display = false;
 	}
+
+	AddSphereCollider(0.2f); // 半径0.2fのスフィアコライダーを追加
 }
 
 void CShot::Update()
