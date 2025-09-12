@@ -343,9 +343,6 @@ void CGameMain::Draw()
 
 void CGameMain::Init()
 {
-	//定数宣言.
-	static constexpr int TIME = 90.0;
-
 	//カメラ位置設定.
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -364,107 +361,18 @@ void CGameMain::Init()
 	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
 	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
 
-//-----中心表示用座標-----.
-	//制限時間枠の画像設定.
-	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
-	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
-	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
-	//制限時間円の画像設定.
-	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
-	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
-	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
-	//時計の針の画像設定.
-	m_pSpriteTimerArrow->SetPosition(WND_W / 2.f - 42.f, WND_H / 2 , 0.f);
-	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, 0.f);
-	m_pSpriteTimerArrow->SetScale(0.25f, 0.25f, 0.f);
-
-//-----中間発表用-----.
-	//プレイヤー番号の画像の設定.
-	for (int i = 0; i < PLAYERNUM_MAX; i++)
-	{
-		switch (i)
-		{
-		case 0:			//プレイヤー1P.
-		case 2:			//プレイヤー3P.
-			m_pSpritePlayerIcon[i]->SetPosition(0.f, WND_H - 256.f, 0.f);
-			m_pSpritePlayerIcon[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpritePlayerIcon[i]->SetScale(1.f, 1.f, 0.f);
-			break;
-		case 1:			//プレイヤー2P.
-		case 3:			//プレイヤー4P.
-			m_pSpritePlayerIcon[i]->SetPosition(WND_W - 256.f, WND_H - 256.f, 0.f);
-			m_pSpritePlayerIcon[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpritePlayerIcon[i]->SetScale(1.f, 1.f, 0.f);
-			break;
-		default:
-			break;
-		}
-	}
-
-////-----中心表示用座標-----.
-//	//.
-//	m_pSpriteKillNomber->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
-//	m_pSpriteKillNomber->SetRotation(0.f, 0.f, 0.f);
-//	m_pSpriteKillNomber->SetScale(1.f, 1.f, 0.f);
-
-//-----中間発表用-----.
-	//プレイヤー番号の画像の設定.
-	for (int i = 0; i < KILLNUM_MAX; i++)
-	{
-		switch (i)
-		{
-		case 0:			//プレイヤー1P.
-		case 2:			//プレイヤー3P.
-			m_pSpriteKillNomber[i]->SetPosition(0.f, 0.f, 0.f);
-			m_pSpriteKillNomber[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteKillNomber[i]->SetScale(0.7f, 0.7f, 0.7f);
-			break;
-		case 1:			//プレイヤー2P.
-		case 3:			//プレイヤー4P.
-			m_pSpriteKillNomber[i]->SetPosition(WND_W - 320.f, 0.f, 0.f);//320:256サイズの画像に文字分64を足した数.
-			m_pSpriteKillNomber[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteKillNomber[i]->SetScale(0.7f, 0.7f, 0.7f);
-			break;
-		default:
-			break;
-		}
-	}
-
-
-
-//-----4画面用-----.
+	//制限時間画像の設定.
+	EachSettingTimer();
+	//プレイヤー番号画像の設定.
+	EachSettingPlayerNumber();
+	//倒した数画像の設定.
+	EachSettingKillNumber();
 	//HPの画像の設定.
-	for (int i = 0; i < HP_MAX; i++)
-	{
-		if (i <= 0)
-		{
-			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 64.f, 0.f);
-			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
-		}
-		else
-		{
-			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 , 64.f, 0.f);
-			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
-		}
-	}
-
+	EachSettingHitPoint();
 
 	//制限時間の文字サイズ.
 	m_pDbgText->SetFontSize(5.0f);
 
-//-----中心表示用座標-----.
-	//ゲームで遊べる(クリア画面に遷移する)時間※引数.
-	m_Timer->StartTimer(TIME);
-	m_Timer->SetDebugFont(m_pDbgText);
-	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
-
-////-----中間発表用-----.
-//	//ゲームで遊べる(クリア画面に遷移する)時間※引数.
-//	m_Timer->StartTimer(TIME);
-//	m_Timer->SetDebugFont(m_pDbgText);
-//	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);
 
 }
 
@@ -792,4 +700,120 @@ D3D11_VIEWPORT CGameMain::MakeGridViewport(int idx, int cols, int rows, float to
 CSceneType CGameMain::GetSceneType() const
 {
 	return m_SceneType;
+}
+
+
+//-----各設定を関数化-----.
+
+//制限時間画像の設定.
+void CGameMain::EachSettingTimer()
+{
+	//定数宣言.
+	static constexpr int TIME = 90.0;
+
+	//-----中心表示用座標-----.
+		//制限時間枠の画像設定.
+	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
+	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
+	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
+	//制限時間円の画像設定.
+	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
+	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
+	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
+	//時計の針の画像設定.
+	m_pSpriteTimerArrow->SetPosition(WND_W / 2.f - 42.f, WND_H / 2, 0.f);
+	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, 0.f);
+	m_pSpriteTimerArrow->SetScale(0.25f, 0.25f, 0.f);
+
+	//-----中心表示用座標-----.
+	//ゲームで遊べる(クリア画面に遷移する)時間※引数.
+	m_Timer->StartTimer(TIME);
+	m_Timer->SetDebugFont(m_pDbgText);
+	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
+
+	////-----中間発表用-----.
+	//	//ゲームで遊べる(クリア画面に遷移する)時間※引数.
+	//	m_Timer->StartTimer(TIME);
+	//	m_Timer->SetDebugFont(m_pDbgText);
+	//	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);
+
+}
+//プレイヤー番号画像の設定.
+void CGameMain::EachSettingPlayerNumber()
+{
+	//-----中間発表用-----.
+		//プレイヤー番号の画像の設定.
+	for (int i = 0; i < PLAYERNUM_MAX; i++)
+	{
+		switch (i)
+		{
+		case 0:			//プレイヤー1P.
+		case 2:			//プレイヤー3P.
+			m_pSpritePlayerIcon[i]->SetPosition(0.f, WND_H - 256.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetScale(1.f, 1.f, 0.f);
+			break;
+		case 1:			//プレイヤー2P.
+		case 3:			//プレイヤー4P.
+			m_pSpritePlayerIcon[i]->SetPosition(WND_W - 256.f, WND_H - 256.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetScale(1.f, 1.f, 0.f);
+			break;
+		default:
+			break;
+		}
+	}
+}
+//倒した数画像の設定.
+void CGameMain::EachSettingKillNumber()
+{
+	////-----中心表示用座標-----.
+	//	//.
+	//	m_pSpriteKillNomber->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
+	//	m_pSpriteKillNomber->SetRotation(0.f, 0.f, 0.f);
+	//	m_pSpriteKillNomber->SetScale(1.f, 1.f, 0.f);
+
+	//-----中間発表用-----.
+		//プレイヤー番号の画像の設定.
+	for (int i = 0; i < KILLNUM_MAX; i++)
+	{
+		switch (i)
+		{
+		case 0:			//プレイヤー1P.
+		case 2:			//プレイヤー3P.
+			m_pSpriteKillNomber[i]->SetPosition(0.f, 0.f, 0.f);
+			m_pSpriteKillNomber[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteKillNomber[i]->SetScale(0.7f, 0.7f, 0.7f);
+			break;
+		case 1:			//プレイヤー2P.
+		case 3:			//プレイヤー4P.
+			m_pSpriteKillNomber[i]->SetPosition(WND_W - 320.f, 0.f, 0.f);//320:256サイズの画像に文字分64を足した数.
+			m_pSpriteKillNomber[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteKillNomber[i]->SetScale(0.7f, 0.7f, 0.7f);
+			break;
+		default:
+			break;
+		}
+	}
+}
+//倒した数画像の設定.
+void CGameMain::EachSettingHitPoint()
+{
+	//-----4画面用-----.
+		//HPの画像の設定.
+	for (int i = 0; i < HP_MAX; i++)
+	{
+		if (i <= 0)
+		{
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 64.f, 0.f);
+			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
+		}
+		else
+		{
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2, 64.f, 0.f);
+			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
+		}
+	}
 }

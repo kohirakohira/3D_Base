@@ -73,6 +73,21 @@ public:
 	//シーンの種類.
 	CSceneType GetSceneType() const override;
 
+
+
+	//ラッピング関数.
+	//制限時間画像の設定.
+	void EachSettingTimer();
+	//プレイヤー番号画像の設定.
+	void EachSettingPlayerNumber();
+	//倒した数画像の設定.
+	void EachSettingKillNumber();
+	//倒した数画像の設定.
+	void EachSettingHitPoint();
+
+
+
+
 public:		//クラス用.
 	//定数宣言.
 	static constexpr int HP_MAX = 2;			//最大HP.
