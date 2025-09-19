@@ -82,15 +82,16 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);IMGUI_IMPL_OPENGL_LOADER_GL3W</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Effekseer\include;Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Effekseer\include;Source;Data</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>Source\Effekseer\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Source\Effekseer\lib;.\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -99,9 +100,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);IMGUI_IMPL_OPENGL_LOADER_GL3W</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source\Effekseer\include;Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Effekseer\include;Source;Data</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -109,24 +110,26 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>Source\Effekseer\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Source\Effekseer\lib;.\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);IMGUI_IMPL_OPENGL_LOADER_GL3W</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>Source\Effekseer\include;Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Effekseer\include;Source;Data</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>Source\Effekseer\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Source\Effekseer\lib;.\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,11 +138,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);IMGUI_IMPL_OPENGL_LOADER_GL3W</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>Source\Effekseer\include;Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\Effekseer\include;Source;Data</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -147,10 +150,18 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>Source\Effekseer\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Source\Effekseer\lib;.\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Data\ImGui\Library\imgui.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_demo.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_draw.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_impl_win32.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_tables.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_widgets.cpp" />
     <ClCompile Include="Source\Assets\DebugText\CDebugText.cpp" />
     <ClCompile Include="Source\Assets\DirectX\DirectX11\CDirectX11.cpp" />
     <ClCompile Include="Source\Assets\DirectX\DirectX9\CDirectX9.cpp" />
@@ -210,6 +221,14 @@
     <ClCompile Include="Source\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Data\ImGui\Library\imconfig.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_impl_dx11.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_impl_win32.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_internal.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_rectpack.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_textedit.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_truetype.h" />
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX11\CDirectX11.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX9\CDirectX9.h" />
@@ -354,6 +373,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Data\ImGui\Font\arial.ttf" />
+    <Font Include="Data\ImGui\Font\arialbd.ttf" />
+    <Font Include="Data\ImGui\Font\arialbi.ttf" />
+    <Font Include="Data\ImGui\Font\ariali.ttf" />
+    <Font Include="Data\ImGui\Font\ariblk.ttf" />
+    <Font Include="Data\ImGui\Font\NotoSansJP-SemiBold.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

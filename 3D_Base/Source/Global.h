@@ -31,8 +31,10 @@
 //	定数.
 //=================================================
 //#define WND_W 1280	//←定数宣言で#defineは使わない.
-const float WND_W = 1920;	//ウィンドウの幅.
-const float WND_H = 1080;	//ウィンドウの高さ.
+const int   WND_W	= 1920;		//ウィンドウの幅.
+const float WND_WF	= 1920.f;	//ウィンドウの幅.
+const int   WND_H	= 1080;		//ウィンドウの高さ.
+const float WND_HF	= 1080.f;	//ウィンドウの高さ.
 const int FPS = 60;			//フレームレート.
 
 //-----定数宣言(連続入力阻止カウントマックス)-----.

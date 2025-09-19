@@ -126,6 +126,13 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\CShot.cpp" />
     <ClCompile Include="Source\Quaternions\Quaternions.cpp" />
     <ClCompile Include="Source\Camera\CameraManager\CCameraManager.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_demo.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_draw.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_impl_win32.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_tables.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Global.h">
@@ -206,6 +213,14 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Shot\CShot.h" />
     <ClInclude Include="Source\Quaternions\Quaternions.h" />
     <ClInclude Include="Source\Camera\CameraManager\CCameraManager.h" />
+    <ClInclude Include="Data\ImGui\Library\imconfig.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_impl_dx11.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_impl_win32.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_internal.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_rectpack.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_textedit.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">
@@ -226,5 +241,13 @@
     <FxCompile Include="Data\Shader\Ray.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Data\ImGui\Font\arial.ttf" />
+    <Font Include="Data\ImGui\Font\arialbd.ttf" />
+    <Font Include="Data\ImGui\Font\arialbi.ttf" />
+    <Font Include="Data\ImGui\Font\ariali.ttf" />
+    <Font Include="Data\ImGui\Font\ariblk.ttf" />
+    <Font Include="Data\ImGui\Font\NotoSansJP-SemiBold.ttf" />
   </ItemGroup>
 </Project>
