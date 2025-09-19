@@ -4,14 +4,10 @@
 #include <vector>
 #include <memory>
 
-//-----前方宣言-----
-class CGameObject; // ゲームオブジェクトクラス
-
 //===================================
 //	基底コライダークラス
 //===================================
 class CCollider
-	: public std::enable_shared_from_this<CCollider> // shared_from_this()を使うために継承
 {
 public:
 	//-----列挙型-----
@@ -22,20 +18,24 @@ public:
 	};
 
 public:
-	CCollider(std::shared_ptr<CGameObject> owner, ColliderType type);
-	virtual ~CCollider() {}
+	CCollider();
+	virtual ~CCollider() {};
 
-	// タイプの取得
-	ColliderType GetType() const { return m_Type; }
+	//相手のColliderを受け取る.
+	virtual bool CheckCollision(const CCollider& other)const = 0;
 
-	// オーナーの取得
-	std::shared_ptr<CGameObject> GetOwner() const { return m_pOwner; }
+	virtual bool CheckCollisionSphere(const class CSphereCollider& sphere)const = 0;
+	virtual bool CheckCollisionBox(const class CBoxCollider& box)const = 0;
 
-	// 衝突判定インターフェース
-	virtual bool CheckCollision(std::shared_ptr<CCollider> other) const = 0;
+	//中心座標を取得.
+	virtual const D3DXVECTOR3& GetPosition()const = 0;
+	//中心座標を設定.
+	virtual void SetPosition(const D3DXVECTOR3& pos) = 0;
+
+	//自身の型が何の型かを返す.
+	virtual ColliderType GetColType() const = 0;
 
 protected:
-	std::shared_ptr<CGameObject> m_pOwner; // このコライダーを持つオブジェクト
-	ColliderType m_Type; // コライダーのタイプ
+	D3DXVECTOR3 m_CenterPos;	//中心座標.
 };
 
