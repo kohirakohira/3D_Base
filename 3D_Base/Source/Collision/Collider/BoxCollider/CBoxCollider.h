@@ -2,25 +2,52 @@
 //-----継承するクラス-----
 #include "Collision//Collider//CCollider.h" // コライダークラス
 
+//-----外部クラス-----
+#include "Collision//Collider//SphereCollider//CSphereCollider.h" // スフィアコライダークラス
+
 //===================================
 // ボックスコライダークラス (AABB<とりあえず>)
 //===================================
+class SohereCollider;
+
 class CBoxCollider
-	: public CCollider // コライダークラスを継承
+	: public CCollider
 {
 public:
-	CBoxCollider(
-		std::shared_ptr<CGameObject> owner,
-		const D3DXVECTOR3& size);
+	CBoxCollider();
+	virtual~CBoxCollider()override;
 
-	virtual ~CBoxCollider() override;
+	//自身の型がBoxなので相手の型のCheckCollisionBoxを通る.
+	bool CheckCollision(const CCollider& other)const override
+	{
+		return other.CheckCollisionBox(*this);
+	}
 
-	// サイズの取得
-	const D3DXVECTOR3& GetSize() const { return m_Size; }
+	bool CheckCollisionSphere(const class CSphereCollider& sphere)const override;
+	bool CheckCollisionBox(const class CBoxCollider& box)const override;
 
-	// 衝突判定インターフェースの実装
-	virtual bool CheckCollision(std::shared_ptr<CCollider> other) const override;
+	//中心座標を取得する.
+	const D3DXVECTOR3& GetPosition()const override { return m_CenterPos; }
+	//最小座標を取得する.
+	D3DXVECTOR3 GetMinPosition()const { return m_MinPos; }
+	//最大座標を取得する.
+	D3DXVECTOR3 GetMaxPosition()const { return m_MaxPos; }
+
+	//受け取った中心座標から、最小、最大座標を設定.
+	void SetPosition(const D3DXVECTOR3& pos) override;
+
+	//最小座標を設定する.
+	void SetMinPosition(const D3DXVECTOR3& MinPos) { m_Min = MinPos; }
+	//最大座標を設定する.
+	void SetMaxPosition(const D3DXVECTOR3& MaxPos) { m_Max = MaxPos; }
+
+	//自身の型が何の型かを返す.
+	ColliderType GetColType()const override { return ColliderType::Box; }
 
 private:
-	D3DXVECTOR3 m_Size; // ボックスのサイズ (幅、高さ、奥行き)
+	D3DXVECTOR3 m_Min;
+	D3DXVECTOR3 m_Max;
+
+	D3DXVECTOR3 m_MinPos;
+	D3DXVECTOR3 m_MaxPos;
 };

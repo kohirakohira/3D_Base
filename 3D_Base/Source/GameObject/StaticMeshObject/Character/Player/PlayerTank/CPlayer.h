@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject//StaticMeshObject//Character//CCharacter.h" // 継承 || キャラクタークラス
 
+//-----ライブラリ-----
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -43,6 +44,9 @@ public:
 	float GetCannonYaw() const;
 	D3DXVECTOR3 GetCannonPosition() const;
 
+protected:
+	std::shared_ptr<CBody> Body() const { return m_pBody; }
+	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
 
 protected:
 
@@ -51,7 +55,5 @@ protected:
 	int			m_Hp;
 	int			m_PlayerID;
 
-protected:
-	std::shared_ptr<CBody> Body() const { return m_pBody; }
-	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
+
 };
