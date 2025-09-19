@@ -1,5 +1,6 @@
 #include "CCannon.h"
 #include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
+#include <Collision/CollisionManager/CCollisionManager.h>
 
 CCannon::CCannon(int inputID)
 	: m_TurnSpeed				( 0.01f )	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
@@ -18,6 +19,21 @@ CCannon::CCannon(int inputID)
 
 CCannon::~CCannon()
 {
+}
+
+void CCannon::Initialize(int id)
+{
+	// 砲塔全体の矩形コライダーを追加
+	//auto collider = AddBoxCollider(D3DXVECTOR3(2.0f, 1.0f, 2.0f));
+	auto collider = AddSphereCollider(0.5f);
+
+	// コライダーマネージャーに登録
+	if (collider)
+		CCollisionManager::Instance().AddCollider(collider);
+
+	// オブジェクトタイプを設定
+	SetType(ObjectType::TankCannon);
+	
 }
 
 void CCannon::Update()

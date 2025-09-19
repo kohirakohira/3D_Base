@@ -1,4 +1,5 @@
 #include "CShot.h"
+#include <Collision/CollisionManager/CCollisionManager.h>
 
 
 CShot::CShot()
@@ -17,7 +18,15 @@ void CShot::Initialize(int id)
 		m_Shot[i].m_Display = false;
 	}
 
-	AddSphereCollider(0.2f); // 半径0.2fのスフィアコライダーを追加
+	// ショット全体の矩形コライダーを追加
+	auto collider = AddSphereCollider(0.5f);
+
+	// コライダーマネージャーに登録
+	if (collider)
+		CCollisionManager::Instance().AddCollider(collider);
+
+	// オブジェクトタイプを設定
+	SetType(ObjectType::TankCannon);
 }
 
 void CShot::Update()

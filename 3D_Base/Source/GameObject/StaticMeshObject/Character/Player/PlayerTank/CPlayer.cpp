@@ -19,6 +19,8 @@ void CPlayer::Initialize(int id)
 	//インスタンスを生成
 	m_pBody = std::make_shared<CBody>(id);
 	m_pCannon = std::make_shared<CCannon>(id);
+
+	m_pCannon->Initialize(id);
 }
 
 void CPlayer::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)

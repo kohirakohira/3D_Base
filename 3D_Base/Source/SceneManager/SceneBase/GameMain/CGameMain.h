@@ -33,6 +33,9 @@
 
 #include "Camera//CCamera.h" //カメラクラス
 
+//当たり判定
+#include "Collision//CollisionManager//CCollisionManager.h"
+
 //--------------------------------
 // UI
 //-------------------------------
@@ -135,6 +138,9 @@ public:
 
 	//タイマークラス.
 	std::shared_ptr<CTimer>						m_Timer;
+
+	// 当たり判定クラス
+	std::shared_ptr<CCollisionManager>			m_pCollision;
 
 	// シーン列挙変数.
 	CSceneType		m_SceneType;
