@@ -5,6 +5,7 @@ CStaticMeshObject::CStaticMeshObject()
 	, m_pBSphere(nullptr)
 {
 	m_pBSphere = std::make_shared<CBoundingSphere>();
+	m_pBBox = std::make_shared<CBoundingBox>();
 }
 
 CStaticMeshObject::~CStaticMeshObject()

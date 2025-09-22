@@ -4,7 +4,8 @@
 
 //-----外部クラス-----
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
-#include "Collision//Shape//Volume//BoundingSphere//CBoundingSphere.h"
+#include "Collision//Shape//Volume//BoundingSphere//CBoundingSphere.h" // バウンディングスフィア
+#include "Collision//Shape//Volume//BoudingBox//CBoundingBox.h"	// バウンディングボックス
 #include "Collision//Shape//Ray//CRay.h" // レイクラス
 
 /************************************************************
@@ -43,6 +44,20 @@ public:
 		m_pBSphere->SetPosition(m_vPosition);
 	}
 
+	// バウンディングボックス取得
+	std::shared_ptr<CBoundingBox> GetBBox() const {
+		return m_pBBox;
+	}
+	// バウンディング作成関数
+	void CreateBox(const D3DXVECTOR3& center, float width, float height, float depth) {
+		 m_pBBox->CreateBox(center, width, height, depth);
+	}
+
+	// バウンディングボックスの位置更新
+	void UpdateBBoxPos() {
+		m_pBBox->SetPosition(m_vPosition);
+	}
+
 	//レイとメッシュの当たり判定
 	bool IsHitForRay(
 		const RAY& pRay,			//レイ構造体
@@ -59,6 +74,7 @@ private:
 protected:
 	std::shared_ptr<CStaticMesh>		m_pMesh;
 	std::shared_ptr<CBoundingSphere>	m_pBSphere;
+	std::shared_ptr<CBoundingBox>		m_pBBox;
 
 };
 

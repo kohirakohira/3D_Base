@@ -30,6 +30,8 @@ public:
 	CBody(int inputID);
 	virtual ~CBody() override;
 
+	virtual void Initialize(int id);
+
 	virtual void Update() override;
 	virtual void Draw(
 		D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;

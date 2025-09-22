@@ -21,8 +21,11 @@ public:
     CBoundingBox();
     ~CBoundingBox();
 
-    // モデルに合わせたバウンディングボックスを作成
-    HRESULT CreateBoxForMesh(const CStaticMesh& pMesh);
+    // バウンディングボックスを作成
+    void CreateBox(const D3DXVECTOR3& center, float width, float height, float depth);
+
+    // ワイヤーメッシュ描画
+    void Draw(IDirect3DDevice9* device, D3DCOLOR color = D3DCOLOR_XRGB(255, 0, 0));
 
     // 他のOBBとの当たり判定
     bool IsHitOBB(OBB& obb1, OBB& obb2);
@@ -33,6 +36,12 @@ public:
     // 現在のOBBを取得
     const OBB& GetOBB() const { return m_OBB; }
 
+    //中心座標を取得する
+    const D3DXVECTOR3& GetPosition() const { return m_Position; }
+    //中心座標を設定する
+    void SetPosition(const D3DXVECTOR3& Pos) { m_Position = Pos; }
+
 private:
+    D3DXVECTOR3		m_Position;	//中心座標
     OBB m_OBB; // このオブジェクトのOBB
 };

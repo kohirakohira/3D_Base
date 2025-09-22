@@ -57,6 +57,8 @@ CGameMain::CGameMain(HWND hWnd)
 
 	, m_Timer						( nullptr )
 
+	, m_pCollision					()
+
 {
 	//最初のシーンをメインにする.
 	m_SceneType = CSceneType::Main;
@@ -75,6 +77,10 @@ void CGameMain::Update()
 
 	//プレイヤー全員更新
 	m_pPlayerManager->Update();
+
+	// 当たり判定更新
+	m_pCollision->CheckAllCollisions();
+	m_pCollision->UpdateBounding();
 
 	// 弾の発射
 	for (int i = 0; i < PLAYER_MAX; i++)
@@ -254,7 +260,7 @@ void CGameMain::Draw()
 	//タイマー描画.
 	m_Timer->Draw();
 
-
+	m_pCollision->Draw();
 }
 
 void CGameMain::Init()
@@ -303,6 +309,10 @@ void CGameMain::Destroy()
 
 void CGameMain::Create()
 {
+
+	// 当たり判定のインスタンス生成
+	m_pCollision = std::make_shared<CCollisionManager>();
+
 	//Effectクラス
 	CEffect::GetInstance().Create(
 		CDirectX11::GetInstance().GetDevice(),
@@ -384,7 +394,6 @@ void CGameMain::Create()
 
 	//制限時間のインスタンス生成.
 	m_Timer = std::make_shared<CTimer>();
-
 
 }
 
@@ -513,6 +522,8 @@ HRESULT CGameMain::LoadData()
 	m_pGround->AttachMesh(m_pStaticMeshGround);
 	////バウンディングスフィアの作成.
 	//m_pPlayer->CreateBSphareForMesh(*m_pStaticMeshBSphere);
+
+	m_pCollision->CreateBounding();
 
 	return S_OK;
 }

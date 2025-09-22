@@ -1,29 +1,31 @@
 #include "CCollisionManager.h"
-//-----ライブラリ-----
-#include <iostream>
+#include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX11クラス
+
+CCollisionManager::CCollisionManager()
+{
+	//m_pBody = std::make_shared<CBody>();
+}
+
+CCollisionManager::~CCollisionManager()
+{
+}
+
+void CCollisionManager::Draw()
+{
+	m_pBBox->Draw(CDirectX9::GetInstance().GetDevice(), D3DCOLOR_XRGB(0, 255, 0));
+}
 
 void CCollisionManager::CheckAllCollisions()
 {
-    for (size_t i = 0; i < m_Colliders.size(); ++i)
-    {
-        for (size_t j = i + 1; j < m_Colliders.size(); ++j)
-        {
-            auto ownerA = m_Colliders[i]->GetOwner();
-            auto ownerB = m_Colliders[j]->GetOwner();
+}
 
-            // 同じオブジェクト内部の判定はスキップ（戦車 Body/Cannon の内部など）
-            if (ownerA == ownerB &&
-                (ownerA->GetType() == CGameObject::ObjectType::TankBody ||
-                    ownerA->GetType() == CGameObject::ObjectType::TankCannon))
-            {
-                continue;
-            }
+void CCollisionManager::CreateBounding()
+{
+	//if (m_pBody)
+	//m_pBody->CreateBox(m_pBody->GetPosition(), 10.f, 5.f, 20.f);
+}
 
-            if (m_Colliders[i]->CheckCollision(m_Colliders[j]))
-            {
-                ownerA->OnCollision(m_Colliders[j]);
-                ownerB->OnCollision(m_Colliders[i]);
-            }
-        }
-    }
+void CCollisionManager::UpdateBounding()
+{
+	//m_pBody->UpdateBBoxPos();
 }

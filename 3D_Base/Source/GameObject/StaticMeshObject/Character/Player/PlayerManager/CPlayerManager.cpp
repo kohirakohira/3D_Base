@@ -43,7 +43,6 @@ void CPlayerManager::Initialize()
 		//m_pPlayers.push_back(std::make_shared<CPlayer>());
 		//m_pPlayers[i]->Initialize(i);
 	}
-
 }
 
 void CPlayerManager::AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)

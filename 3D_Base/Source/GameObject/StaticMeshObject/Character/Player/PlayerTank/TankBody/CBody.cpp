@@ -1,4 +1,5 @@
 #include "CBody.h"
+#include "Collision/CollisionManager/CCollisionManager.h"
 
 CBody::CBody(int inputID)
 	: m_TurnSpeed			( 0.01f )	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
@@ -18,6 +19,10 @@ CBody::CBody(int inputID)
 }
 
 CBody::~CBody()
+{
+}
+
+void CBody::Initialize(int id)
 {
 }
 

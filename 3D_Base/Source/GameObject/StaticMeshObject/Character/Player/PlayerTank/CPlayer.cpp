@@ -21,6 +21,7 @@ void CPlayer::Initialize(int id)
 	m_pCannon = std::make_shared<CCannon>(id);
 
 	m_pCannon->Initialize(id);
+	m_pBody->Initialize(id);
 }
 
 void CPlayer::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
