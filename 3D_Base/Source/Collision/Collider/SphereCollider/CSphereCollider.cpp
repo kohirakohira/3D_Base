@@ -1,7 +1,13 @@
 #include "CSphereCollider.h"
+//-----外部クラス-----
+#include "GameObject//CGameObject.h" // ゲームオブジェクトクラス
+#include "Collision//Collider//SphereCollider//CSphereCollider.h" // スフィアコライダークラス
 
-CSphereCollider::CSphereCollider()
-	: m_Radius()
+CSphereCollider::CSphereCollider(
+	std::shared_ptr<CGameObject> owner,
+	float radius)
+	: CCollider(owner, ColliderType::Sphere)
+	, m_Radius(radius)
 {
 }
 
@@ -9,37 +15,27 @@ CSphereCollider::~CSphereCollider()
 {
 }
 
-bool CSphereCollider::CheckCollisionSphere(const CSphereCollider& sphere) const
+bool CSphereCollider::CheckCollision(std::shared_ptr<CCollider> other) const
 {
-	//D3Dxで実装版.
-	//２つの球体の中心間の距離を求める
-	D3DXVECTOR3 vLength = m_CenterPos - sphere.GetPosition();
-	//上記のベクトルから長さに変換
-	float Length = D3DXVec3Length(&vLength);
-
-	//「２つの球体の距離」が「２つの球体のそれぞれの半径を足したもの」より、
-	//小さいということは、球体同士が重なっている（衝突している）ということ
-	if (Length <= m_Radius + sphere.GetRadius())
+	if (other->GetType() == ColliderType::Sphere)
 	{
-		return true;	//衝突している
+		const std::shared_ptr<CSphereCollider> Sphere = std::dynamic_pointer_cast<CSphereCollider>(other);
+
+		const D3DXVECTOR3& posA = m_pOwner->GetPosition();
+		const D3DXVECTOR3& posB = Sphere->GetOwner()->GetPosition();
+
+		D3DXVECTOR3 diff = posA - posB;
+		float distSq = D3DXVec3LengthSq(&diff);
+
+		float r = m_Radius + Sphere->GetRadius();
+		return distSq <= (r * r);
 	}
-	return false;	//衝突していない
-}
+	//else if (other->GetType() == ColliderType::Box)
+	//{
+	//	// BoxCollider との衝突判定は CBoxCollider 側で処理
+	//	return other->CheckCollision(shared_from_this());
+	//	// 必ずスマートポインタで生成すること※shared_from_this()
+	//}
 
-bool CSphereCollider::CheckCollisionBox(const CBoxCollider& box) const
-{
-	//円と一番近いボックスの位置が入る.
-	D3DXVECTOR3 ClosestPoint;
-
-	//それぞれの位置で円に一番近い地点を入れる.
-	ClosestPoint.x = std::max(box.GetMinPosition().x, std::min(box.GetMaxPosition().x, m_CenterPos.x));
-	ClosestPoint.y = std::max(box.GetMinPosition().y, std::min(box.GetMaxPosition().y, m_CenterPos.y));
-	ClosestPoint.z = std::max(box.GetMinPosition().z, std::min(box.GetMaxPosition().z, m_CenterPos.z));
-
-	D3DXVECTOR3 vLength = m_CenterPos - ClosestPoint;
-
-	float Length = D3DXVec3Length(&vLength);
-
-	//円と円と違い、やっていることが円と点なので半径は一つだけ.
-	return Length < m_Radius;
+	return false;
 }

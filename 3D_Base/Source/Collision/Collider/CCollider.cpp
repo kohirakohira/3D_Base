@@ -1,6 +1,9 @@
 #include "CCollider.h"
 
-CCollider::CCollider()
-	: m_CenterPos()
+CCollider::CCollider(
+	std::shared_ptr<CGameObject> owner,
+	ColliderType type)
+	: m_pOwner(owner)
+	, m_Type(type)
 {
 }
