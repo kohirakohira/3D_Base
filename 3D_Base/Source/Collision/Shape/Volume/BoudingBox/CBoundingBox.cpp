@@ -24,47 +24,44 @@ void CBoundingBox::CreateBox(const D3DXVECTOR3& center, float width, float heigh
     m_OBB.m_Length[2] = depth * 0.5f;
 }
 
-void CBoundingBox::Draw(IDirect3DDevice9* device, D3DCOLOR color)
-{
-    // 軸ベクトルを半長さ分だけ拡大
-    D3DXVECTOR3 axisX = m_OBB.m_Axis[0] * m_OBB.m_Length[0];
-    D3DXVECTOR3 axisY = m_OBB.m_Axis[1] * m_OBB.m_Length[1];
-    D3DXVECTOR3 axisZ = m_OBB.m_Axis[2] * m_OBB.m_Length[2];
-
-    // 8つの頂点を計算（±X, ±Y, ±Z の組み合わせ）
-    D3DXVECTOR3 corners[8] =
-    {
-        m_OBB.m_Pos - axisX - axisY - axisZ, // 0
-        m_OBB.m_Pos + axisX - axisY - axisZ, // 1
-        m_OBB.m_Pos + axisX + axisY - axisZ, // 2
-        m_OBB.m_Pos - axisX + axisY - axisZ, // 3
-        m_OBB.m_Pos - axisX - axisY + axisZ, // 4
-        m_OBB.m_Pos + axisX - axisY + axisZ, // 5
-        m_OBB.m_Pos + axisX + axisY + axisZ, // 6
-        m_OBB.m_Pos - axisX + axisY + axisZ, // 7
-    };
-
-    struct Vertex { D3DXVECTOR3 pos; D3DCOLOR col; };
-    Vertex v[24]; // 12本のエッジ * 2頂点
-
-    // ラムダで辺を追加
-    auto addEdge = [&](int a, int b, int& idx) {
-        v[idx++] = { corners[a], color };
-        v[idx++] = { corners[b], color };
-        };
-
-    int i = 0;
-    // 下の四角形
-    addEdge(0, 1, i); addEdge(1, 2, i); addEdge(2, 3, i); addEdge(3, 0, i);
-    // 上の四角形
-    addEdge(4, 5, i); addEdge(5, 6, i); addEdge(6, 7, i); addEdge(7, 4, i);
-    // 縦の辺
-    addEdge(0, 4, i); addEdge(1, 5, i); addEdge(2, 6, i); addEdge(3, 7, i);
-
-    // デバイスに送って描画
-    device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
-    device->DrawPrimitiveUP(D3DPT_LINELIST, 12, v, sizeof(Vertex));
-}
+//void CBoundingBox::Draw(IDirect3DDevice9* device, D3DCOLOR color)
+//{
+//    // 軸ベクトルを半長さ分だけ拡大
+//    D3DXVECTOR3 axisX = m_OBB.m_Axis[0] * m_OBB.m_Length[0];
+//    D3DXVECTOR3 axisY = m_OBB.m_Axis[1] * m_OBB.m_Length[1];
+//    D3DXVECTOR3 axisZ = m_OBB.m_Axis[2] * m_OBB.m_Length[2];
+//
+//    // 8つの頂点を計算（±X, ±Y, ±Z の組み合わせ）
+//    D3DXVECTOR3 corners[8] =
+//    {
+//        m_OBB.m_Pos - axisX - axisY - axisZ, // 0
+//        m_OBB.m_Pos + axisX - axisY - axisZ, // 1
+//        m_OBB.m_Pos + axisX + axisY - axisZ, // 2
+//        m_OBB.m_Pos - axisX + axisY - axisZ, // 3
+//        m_OBB.m_Pos - axisX - axisY + axisZ, // 4
+//        m_OBB.m_Pos + axisX - axisY + axisZ, // 5
+//        m_OBB.m_Pos + axisX + axisY + axisZ, // 6
+//        m_OBB.m_Pos - axisX + axisY + axisZ, // 7
+//    };
+//
+//    // ラムダで辺を追加
+//    auto addEdge = [&](int a, int b, int& idx) {
+//        v[idx++] = { corners[a], color };
+//        v[idx++] = { corners[b], color };
+//        };
+//
+//    int i = 0;
+//    // 下の四角形
+//    addEdge(0, 1, i); addEdge(1, 2, i); addEdge(2, 3, i); addEdge(3, 0, i);
+//    // 上の四角形
+//    addEdge(4, 5, i); addEdge(5, 6, i); addEdge(6, 7, i); addEdge(7, 4, i);
+//    // 縦の辺
+//    addEdge(0, 4, i); addEdge(1, 5, i); addEdge(2, 6, i); addEdge(3, 7, i);
+//
+//    // デバイスに送って描画
+//    device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
+//    device->DrawPrimitiveUP(D3DPT_LINELIST, 12, v, sizeof(Vertex));
+//}
 
 // 2つのOBBの衝突判定（Separating Axis Theoremに基づく）
 bool CBoundingBox::IsHitOBB(OBB& obb1, OBB& obb2)

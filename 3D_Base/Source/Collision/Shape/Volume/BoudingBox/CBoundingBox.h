@@ -17,6 +17,9 @@ public:
         float       m_Length[3]; // 各軸方向の半長さ（x, y, z）
     };
 
+    struct Vertex { D3DXVECTOR3 pos; D3DCOLOR col; };
+    Vertex v[24]; // 12本のエッジ * 2頂点
+
 public:
     CBoundingBox();
     ~CBoundingBox();
@@ -25,7 +28,7 @@ public:
     void CreateBox(const D3DXVECTOR3& center, float width, float height, float depth);
 
     // ワイヤーメッシュ描画
-    void Draw(IDirect3DDevice9* device, D3DCOLOR color = D3DCOLOR_XRGB(255, 0, 0));
+    //void Draw(IDirect3DDevice9* device, D3DCOLOR color = D3DCOLOR_XRGB(255, 0, 0));
 
     // 他のOBBとの当たり判定
     bool IsHitOBB(OBB& obb1, OBB& obb2);

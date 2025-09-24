@@ -523,7 +523,7 @@ HRESULT CGameMain::LoadData()
 	////バウンディングスフィアの作成.
 	//m_pPlayer->CreateBSphareForMesh(*m_pStaticMeshBSphere);
 
-	m_pCollision->CreateBounding();
+	//m_pCollision->CreateBounding();
 
 	return S_OK;
 }
