@@ -3,7 +3,12 @@
 CBoundingBox::CBoundingBox()
 	: m_MinPos()
 	, m_MaxPos()
+	, m_Center(0, 0, 0)
+	, m_HalfSize(0.5f, 0.5f, 0.5f)
 {
+	m_Axis[0] = D3DXVECTOR3(1, 0, 0);
+	m_Axis[1] = D3DXVECTOR3(0, 1, 0);
+	m_Axis[2] = D3DXVECTOR3(0, 0, 1);
 }
 
 CBoundingBox::~CBoundingBox()
@@ -61,6 +66,54 @@ HRESULT CBoundingBox::CreateBoxForMesh(const CStaticMesh& pMesh)
 
 	m_MinPos = vMin;
 	m_MaxPos = vMax;
+
+	return S_OK;
+}
+
+HRESULT CBoundingBox::CreateOBBForMesh(const CStaticMesh& pMesh)
+{
+	LPDIRECT3DVERTEXBUFFER9 pVB = nullptr;
+	void* pVertices = nullptr;
+
+	D3DXVECTOR3 vMin(FLT_MAX, FLT_MAX, FLT_MAX);
+	D3DXVECTOR3 vMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+	if (FAILED(pMesh.GetMesh()->GetVertexBuffer(&pVB)))
+		return E_FAIL;
+
+	if (FAILED(pVB->Lock(0, 0, &pVertices, 0)))
+	{
+		SAFE_RELEASE(pVB);
+		return E_FAIL;
+	}
+
+	DWORD VertexCount = pMesh.GetMesh()->GetNumVertices();
+	DWORD VertexSize = pMesh.GetMesh()->GetNumBytesPerVertex();
+
+	for (DWORD i = 0;i < VertexCount;i++)
+	{
+		D3DXVECTOR3* pPos = reinterpret_cast<D3DXVECTOR3*>((BYTE*)pVertices + i * VertexSize);
+
+		vMin.x = std::min(vMin.x, pPos->x);
+		vMin.y = std::min(vMin.y, pPos->y);
+		vMin.z = std::min(vMin.z, pPos->z);
+
+		vMax.x = std::max(vMax.x, pPos->x);
+		vMax.y = std::max(vMax.y, pPos->y);
+		vMax.z = std::max(vMax.z, pPos->z);
+	}
+
+	pVB->Unlock();
+	SAFE_RELEASE(pVB);
+
+	// 中心と半分サイズを設定
+	m_Center = (vMin + vMax) * 0.5f;
+	m_HalfSize = (vMax - vMin) * 0.5f;
+
+	// デフォルトはワールド軸
+	m_Axis[0] = D3DXVECTOR3(1, 0, 0);
+	m_Axis[1] = D3DXVECTOR3(0, 1, 0);
+	m_Axis[2] = D3DXVECTOR3(0, 0, 1);
 
 	return S_OK;
 }

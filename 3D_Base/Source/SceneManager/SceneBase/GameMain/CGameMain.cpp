@@ -620,39 +620,46 @@ void CGameMain::CreateBounding()
 
 void CGameMain::Collision()
 {
+	const float pushStrength = 0.1f; // 押し戻しの強さ（フレームごとに調整可能）
+
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-
-
 		// i 番のプレイヤーを取得
 		auto player = m_pPlayerManager->GetControlPlayer(i);
 		auto Coll = player->GetBody()->GetCollider();
-		//if (!player) continue; // 存在しないプレイヤーはスキップ
 
+		// 壁との衝突をチェックして法線ベクトルを合成
 		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
 
 		if (Coll && m_pWallTop->GetCollider() &&
 			Coll->CheckCollision(*m_pWallTop->GetCollider()))
 		{
-			push.z -= 0.1f;
+			push += D3DXVECTOR3(0.f, 0.f, -1.f);
 		}
 		if (Coll && m_pWallBottom->GetCollider() &&
 			Coll->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
-			push.z += 0.1f;
+			push += D3DXVECTOR3(0.f, 0.f, 1.f);
 		}
 		if (Coll && m_pWallLeft->GetCollider() &&
 			Coll->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
-			push.x += 0.1f;
+			push += D3DXVECTOR3(1.f, 0.f, 0.f);
 		}
 		if (Coll && m_pWallRight->GetCollider() &&
 			Coll->CheckCollision(*m_pWallRight->GetCollider()))
 		{
-			push.x -= 0.1f;
+			push += D3DXVECTOR3(-1.f, 0.f, 0.f);
 		}
+
+		// 複数壁に当たった場合は正規化して押し戻しベクトルを自然に
+		if (D3DXVec3Length(&push) > 0.f)
+		{
+			D3DXVec3Normalize(&push, &push);
+			push *= pushStrength;
+		}
+
 		player->GetBody()->PushBack(push);
-		//m_pPlayerManager->SetPushBackPosision(i, push);
 	}
 }
 
