@@ -28,6 +28,9 @@ public:
 	// 入力クラスを設定
 	void SetInputManager(const std::shared_ptr<CInputManager>& input);
 
+	//プレイヤーが壁に当たると戻す.
+	void PushBack(const D3DXVECTOR3& push);
+
 private:
 	// キー入力受付
 	void KeyInput();

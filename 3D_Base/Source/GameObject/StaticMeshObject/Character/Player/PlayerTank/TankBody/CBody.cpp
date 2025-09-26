@@ -85,6 +85,11 @@ void CBody::SetInputManager(const std::shared_ptr<CInputManager>& input)
 	m_pInput = input;
 }
 
+void CBody::PushBack(const D3DXVECTOR3& push)
+{
+	m_vPosition += push;
+}
+
 void CBody::KeyInput()
 {
 	// “ü—Í‚ª–³‚¯‚ê‚Îˆ—‚µ‚È‚¢

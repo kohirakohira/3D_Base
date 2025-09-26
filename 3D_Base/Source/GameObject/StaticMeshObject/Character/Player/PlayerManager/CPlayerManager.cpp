@@ -58,6 +58,14 @@ void CPlayerManager::SetPlayerPosition(int index, const D3DXVECTOR3& pos)
 	}
 }
 
+void CPlayerManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetTankPosition(push);
+	}
+}
+
 void CPlayerManager::SetPlayerRotation(int index, const D3DXVECTOR3& rad)
 {
 	if (index < m_pPlayers.size())

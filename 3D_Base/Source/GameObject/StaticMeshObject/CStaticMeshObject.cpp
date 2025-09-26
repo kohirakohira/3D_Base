@@ -15,6 +15,13 @@ CStaticMeshObject::~CStaticMeshObject()
 
 void CStaticMeshObject::Update()
 {
+	//m_pColliderに中身がある時だけ通る.
+	if (m_pCollider)
+	{
+		//Colliderに位置を渡す.
+		m_pCollider->SetPosition(m_vPosition);
+	}
+
 	if (m_pMesh == nullptr) {
 		return;
 	}
@@ -34,6 +41,29 @@ void CStaticMeshObject::Draw(
 
 	//レンダリング.
 	m_pMesh->Render(View, Proj, Light, Camera.vPosition);
+}
+
+//SphereColliderを作成する.
+void CStaticMeshObject::CreateSpehreCollider(float radius)
+{
+	//SphereColliderを生成.
+	auto sphere = std::make_shared<CSphereCollider>();
+	//生成したSphereColliderに半径を入れる.
+	sphere->SetRadius(radius);
+	//半径が入ったSphereColliderをCColliderのユニークポインタm_pColliderに入れる.
+	m_pCollider = std::move(sphere);
+}
+
+//BoxColliderを作成する.
+void CStaticMeshObject::CreateBoxCollider(D3DXVECTOR3 min, D3DXVECTOR3 max)
+{
+	//BoxColliderを生成.
+	auto box = std::make_shared<CBoxCollider>();
+	//生成したBoxColliderに最小、最大座標を入れる.
+	box->SetMinPosition(min);
+	box->SetMaxPosition(max);
+	//最小、最大座標が入ったBoxColliderをCColliderのユニークポインタm_pColliderに入れる.
+	m_pCollider = std::move(box);
 }
 
 //レイとメッシュの当たり判定

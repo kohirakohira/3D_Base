@@ -54,6 +54,11 @@ void CCannon::SetInputManager(const std::shared_ptr<CInputManager>& input)
 	m_pInput = input;
 }
 
+void CCannon::PushBack(const D3DXVECTOR3& push)
+{
+	m_vPosition += push;
+}
+
 // ƒL[“ü—Íó•t
 void CCannon::KeyInput()
 {

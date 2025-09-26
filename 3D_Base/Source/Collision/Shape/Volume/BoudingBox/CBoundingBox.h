@@ -1,50 +1,27 @@
 #pragma once
-#include <d3dx9.h>
 
-//-----メッシュ-----
-#include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
+#include "Collision//Shape//Volume//BoundingSphere//CBoundingSphere.h"
 
-/**************************************************
-*	バウンディングボックスクラス (OBB)
-**************************************************/
+#include "Assets//Mesh//StaticMesh//CStaticMesh.h"
+
+//=======================================
+//	バウンディングボックスクラス
+//=======================================
+
 class CBoundingBox
 {
 public:
-    struct OBB
-    {
-        D3DXVECTOR3 m_Pos;     // 中心座標
-        D3DXVECTOR3 m_Axis[3]; // ローカルX, Y, Z軸（単位ベクトル）
-        float       m_Length[3]; // 各軸方向の半長さ（x, y, z）
-    };
+	CBoundingBox();
+	~CBoundingBox();
 
-    struct Vertex { D3DXVECTOR3 pos; D3DCOLOR col; };
-    Vertex v[24]; // 12本のエッジ * 2頂点
+	//モデルに合わせたバウンディングボックスを作成.
+	HRESULT CreateBoxForMesh(const CStaticMesh& pMesh);
 
-public:
-    CBoundingBox();
-    ~CBoundingBox();
-
-    // バウンディングボックスを作成
-    void CreateBox(const D3DXVECTOR3& center, float width, float height, float depth);
-
-    // ワイヤーメッシュ描画
-    //void Draw(IDirect3DDevice9* device, D3DCOLOR color = D3DCOLOR_XRGB(255, 0, 0));
-
-    // 他のOBBとの当たり判定
-    bool IsHitOBB(OBB& obb1, OBB& obb2);
-
-    // OBBの回転を設定
-    void SetRotation(const D3DXMATRIX& matRot);
-
-    // 現在のOBBを取得
-    const OBB& GetOBB() const { return m_OBB; }
-
-    //中心座標を取得する
-    const D3DXVECTOR3& GetPosition() const { return m_Position; }
-    //中心座標を設定する
-    void SetPosition(const D3DXVECTOR3& Pos) { m_Position = Pos; }
+	//中心座標を取得する
+	const D3DXVECTOR3& GetMinPosition() const { return m_MinPos; }
+	const D3DXVECTOR3& GetMaxPosition() const { return m_MaxPos; }
 
 private:
-    D3DXVECTOR3		m_Position;	//中心座標
-    OBB m_OBB; // このオブジェクトのOBB
+	D3DXVECTOR3		m_MinPos;	//最小位置.
+	D3DXVECTOR3		m_MaxPos;	//最大位置.
 };

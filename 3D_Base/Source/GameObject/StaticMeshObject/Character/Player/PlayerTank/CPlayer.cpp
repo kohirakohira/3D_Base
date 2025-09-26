@@ -41,6 +41,12 @@ void CPlayer::SetTankRotation(const D3DXVECTOR3& pos)
 	m_pBody->SetRotation(pos);		// ŽÔ‘Ì‰ñ“]Žw’è
 	m_pCannon->SetRotation(pos);	// –C“ƒ‰ñ“]Žw’è
 }
+
+void CPlayer::SetPushBack(const D3DXVECTOR3& push)
+{
+	m_pBody->PushBack(push);
+	m_pCannon->PushBack(push);
+}
    
 void CPlayer::Update()
 {

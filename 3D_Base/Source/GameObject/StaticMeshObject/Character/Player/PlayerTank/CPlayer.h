@@ -24,6 +24,9 @@ public:
 	void SetTankPosition(const D3DXVECTOR3& pos);
 	void SetTankRotation(const D3DXVECTOR3& pos);
 
+	//プレイヤーが壁に当たる処理をまとめる.
+	void SetPushBack(const D3DXVECTOR3& push);
+
 	//Body優先でワールド座標と回転を返す
 	virtual D3DXVECTOR3 GetPosition() const;
 	virtual D3DXVECTOR3 GetRotation() const;

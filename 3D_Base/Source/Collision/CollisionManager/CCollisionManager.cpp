@@ -1,3 +1,5 @@
+#if 0
+
 #include "CCollisionManager.h"
 #include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX11ƒNƒ‰ƒX
 
@@ -43,4 +45,6 @@ void CCollisionManager::UpdateBounding()
 void CCollisionManager::CheckAllCollisions()
 {
 }
+
+#endif 
 

@@ -25,6 +25,7 @@ public:
 	void Initialize();
 	void AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> body, std::shared_ptr<CStaticMesh> cannon);
 	void SetPlayerPosition(int index, const D3DXVECTOR3& pos);
+	void SetPushBackPosision(int index, const D3DXVECTOR3& push);
 	//Å´èºâ™.
 	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);
 	void Update() override;

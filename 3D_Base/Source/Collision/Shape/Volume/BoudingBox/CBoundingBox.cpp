@@ -1,6 +1,8 @@
-#include "Collision//Shape//Volume//BoudingBox//CBoundingBox.h" // バウンディングボックスクラス
+#include "CBoundingBox.h"
 
 CBoundingBox::CBoundingBox()
+	: m_MinPos()
+	, m_MaxPos()
 {
 }
 
@@ -8,145 +10,57 @@ CBoundingBox::~CBoundingBox()
 {
 }
 
-void CBoundingBox::CreateBox(const D3DXVECTOR3& center, float width, float height, float depth)
+HRESULT CBoundingBox::CreateBoxForMesh(const CStaticMesh& pMesh)
 {
-    // 中心位置
-    m_OBB.m_Pos = center;
+	LPDIRECT3DVERTEXBUFFER9 pVB = nullptr;	//頂点バッファ.
+	void* pVertices = nullptr;	//頂点.
 
-    // 軸（初期状態はワールド座標系に一致）
-    m_OBB.m_Axis[0] = D3DXVECTOR3(1, 0, 0); // X軸
-    m_OBB.m_Axis[1] = D3DXVECTOR3(0, 1, 0); // Y軸
-    m_OBB.m_Axis[2] = D3DXVECTOR3(0, 0, 1); // Z軸
+	D3DXVECTOR3 vMin(FLT_MAX, FLT_MAX, FLT_MAX);	//Vectorの最小値、FLT_MAXはfloatの最大値.
+	D3DXVECTOR3 vMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);	//Vectorの最大値、
 
-    // 半径方向の長さ
-    m_OBB.m_Length[0] = width * 0.5f;
-    m_OBB.m_Length[1] = height * 0.5f;
-    m_OBB.m_Length[2] = depth * 0.5f;
-}
+	//頂点バッファを取得.
+	if (FAILED(pMesh.GetMesh()->GetVertexBuffer(&pVB)))
+	{
+		//MeshのModelの頂点バッファを取得できないとエラー通る(多分).
+		return E_FAIL;
+	}
 
-//void CBoundingBox::Draw(IDirect3DDevice9* device, D3DCOLOR color)
-//{
-//    // 軸ベクトルを半長さ分だけ拡大
-//    D3DXVECTOR3 axisX = m_OBB.m_Axis[0] * m_OBB.m_Length[0];
-//    D3DXVECTOR3 axisY = m_OBB.m_Axis[1] * m_OBB.m_Length[1];
-//    D3DXVECTOR3 axisZ = m_OBB.m_Axis[2] * m_OBB.m_Length[2];
-//
-//    // 8つの頂点を計算（±X, ±Y, ±Z の組み合わせ）
-//    D3DXVECTOR3 corners[8] =
-//    {
-//        m_OBB.m_Pos - axisX - axisY - axisZ, // 0
-//        m_OBB.m_Pos + axisX - axisY - axisZ, // 1
-//        m_OBB.m_Pos + axisX + axisY - axisZ, // 2
-//        m_OBB.m_Pos - axisX + axisY - axisZ, // 3
-//        m_OBB.m_Pos - axisX - axisY + axisZ, // 4
-//        m_OBB.m_Pos + axisX - axisY + axisZ, // 5
-//        m_OBB.m_Pos + axisX + axisY + axisZ, // 6
-//        m_OBB.m_Pos - axisX + axisY + axisZ, // 7
-//    };
-//
-//    // ラムダで辺を追加
-//    auto addEdge = [&](int a, int b, int& idx) {
-//        v[idx++] = { corners[a], color };
-//        v[idx++] = { corners[b], color };
-//        };
-//
-//    int i = 0;
-//    // 下の四角形
-//    addEdge(0, 1, i); addEdge(1, 2, i); addEdge(2, 3, i); addEdge(3, 0, i);
-//    // 上の四角形
-//    addEdge(4, 5, i); addEdge(5, 6, i); addEdge(6, 7, i); addEdge(7, 4, i);
-//    // 縦の辺
-//    addEdge(0, 4, i); addEdge(1, 5, i); addEdge(2, 6, i); addEdge(3, 7, i);
-//
-//    // デバイスに送って描画
-//    device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
-//    device->DrawPrimitiveUP(D3DPT_LINELIST, 12, v, sizeof(Vertex));
-//}
+	//メッシュの頂点バッファをロックする.
+	if (FAILED(pVB->Lock(0, 0, &pVertices, 0)))	//頂点バッファはGPU専用でpVerticesが一時的にCPUでも触れるようにしている.
+	{
+		//頂点バッファがロックできないとき通る.
+		SAFE_DELETE(pVB);
+		return E_FAIL;
+	}
 
-// 2つのOBBの衝突判定（Separating Axis Theoremに基づく）
-bool CBoundingBox::IsHitOBB(OBB& obb1, OBB& obb2)
-{
-    // obb1の各軸方向（正規化ベクトル）とその長さを使って軸ベクトルを計算
-    D3DXVECTOR3 NAe1 = obb1.m_Axis[0], Ae1 = NAe1 * obb1.m_Length[0];
-    D3DXVECTOR3 NAe2 = obb1.m_Axis[1], Ae2 = NAe2 * obb1.m_Length[1];
-    D3DXVECTOR3 NAe3 = obb1.m_Axis[2], Ae3 = NAe3 * obb1.m_Length[2];
+	//頂点の数を取得.
+	DWORD VertexCount = pMesh.GetMesh()->GetNumVertices();
+	//大きさを取得.
+	DWORD VertexSize = pMesh.GetMesh()->GetNumBytesPerVertex();
 
-    // obb2の各軸方向（正規化ベクトル）とその長さを使って軸ベクトルを計算
-    D3DXVECTOR3 NBe1 = obb2.m_Axis[0], Be1 = NBe1 * obb2.m_Length[0];
-    D3DXVECTOR3 NBe2 = obb2.m_Axis[1], Be2 = NBe2 * obb2.m_Length[1];
-    D3DXVECTOR3 NBe3 = obb2.m_Axis[2], Be3 = NBe3 * obb2.m_Length[2];
+	//各頂点の最小,最大を求めてる(矩形は二点で作成できるからそれぞれの最小,最大でいい).
+	for (DWORD i = 0;i < VertexCount;i++)
+	{
+		D3DXVECTOR3* pPos = reinterpret_cast<D3DXVECTOR3*>(
+			(BYTE*)pVertices + i * VertexSize);
 
-    // OBB同士の中心点間のベクトル（中心間距離）
-    D3DXVECTOR3 Interval = obb1.m_Pos - obb2.m_Pos;
+		vMin.x = std::min(vMin.x, pPos->x);
+		vMin.y = std::min(vMin.y, pPos->y);
+		vMin.z = std::min(vMin.z, pPos->z);
 
-    // 分離軸に投影されたときの「幅」を計算するラムダ式
-    auto LenSegOnSeparateAxis = [](const D3DXVECTOR3& Sep, const D3DXVECTOR3& e1, const D3DXVECTOR3& e2, const D3DXVECTOR3& e3)
-        {
-            // それぞれの軸ベクトルを分離軸に投影し、絶対値の合計を取る（スカラー幅）
-            float r1 = fabs(D3DXVec3Dot(&Sep, &e1));
-            float r2 = fabs(D3DXVec3Dot(&Sep, &e2));
-            float r3 = fabs(D3DXVec3Dot(&Sep, &e3));
-            return r1 + r2 + r3;  // 合計がそのオブジェクトの分離軸上の半幅になる
-        };
+		vMax.x = std::max(vMax.x, pPos->x);
+		vMax.y = std::max(vMax.y, pPos->y);
+		vMax.z = std::max(vMax.z, pPos->z);
+	}
 
-    float rA, rB, L;
+	//アンロックで触れないようにする.
+	pVB->Unlock();
 
-    // 任意の分離軸に対して衝突していないか確認するラムダ式
-    auto checkAxis = [&](const D3DXVECTOR3& axis) -> bool
-        {
-            // obb1を分離軸に投影したときの半幅
-            rA = LenSegOnSeparateAxis(axis, Ae1, Ae2, Ae3);
-            // obb2を分離軸に投影したときの半幅
-            rB = LenSegOnSeparateAxis(axis, Be1, Be2, Be3);
-            // 中心間距離を分離軸に投影したスカラー距離
-            L = fabs(D3DXVec3Dot(&Interval, &axis));
-            // L > rA + rB であれば分離軸が存在 → 衝突していない
-            return L > rA + rB;
-        };
+	//もう使用しないので
+	SAFE_RELEASE(pVB);
 
-    // 判定に使う15の軸（3+3+9）を格納する配列
-    D3DXVECTOR3 axes[] = {
-        NAe1, NAe2, NAe3,    // obb1のローカル軸（3）
-        NBe1, NBe2, NBe3,    // obb2のローカル軸（3）
-        D3DXVECTOR3(), D3DXVECTOR3(), D3DXVECTOR3(),  // クロス軸（以下、9）
-        D3DXVECTOR3(), D3DXVECTOR3(), D3DXVECTOR3(),
-        D3DXVECTOR3(), D3DXVECTOR3(), D3DXVECTOR3()
-    };
+	m_MinPos = vMin;
+	m_MaxPos = vMax;
 
-    // obb1とobb2の軸ベクトルの外積（クロス積）を計算
-    // 各軸の組み合わせに対して直交ベクトルを生成
-    D3DXVec3Cross(&axes[6], &NAe1, &NBe1);
-    D3DXVec3Cross(&axes[7], &NAe1, &NBe2);
-    D3DXVec3Cross(&axes[8], &NAe1, &NBe3);
-    D3DXVec3Cross(&axes[9], &NAe2, &NBe1);
-    D3DXVec3Cross(&axes[10], &NAe2, &NBe2);
-    D3DXVec3Cross(&axes[11], &NAe2, &NBe3);
-    D3DXVec3Cross(&axes[12], &NAe3, &NBe1);
-    D3DXVec3Cross(&axes[13], &NAe3, &NBe2);
-    D3DXVec3Cross(&axes[14], &NAe3, &NBe3);
-
-    // 15軸すべてについて分離軸が存在するかをチェック
-    for (int i = 0; i < 15; ++i)
-    {
-        // 無効な軸（長さがほぼゼロ）はスキップ（外積が0ベクトルの場合）
-        if (D3DXVec3LengthSq(&axes[i]) < 1e-6f) continue;
-
-        // 軸を正規化（単位ベクトル化）
-        D3DXVec3Normalize(&axes[i], &axes[i]);
-
-        // この軸で分離できれば衝突していないと判定
-        if (checkAxis(axes[i]))
-            return false;
-    }
-
-    // すべての軸で分離できなかった → 衝突している
-    return true;
-}
-
-void CBoundingBox::SetRotation(const D3DXMATRIX& matRot)
-{
-    for (int i = 0; i < 3; i++)
-    {
-        D3DXVec3TransformNormal(&m_OBB.m_Axis[i], &m_OBB.m_Axis[i], &matRot);
-    }
+	return S_OK;
 }

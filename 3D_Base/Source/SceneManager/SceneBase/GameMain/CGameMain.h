@@ -33,8 +33,8 @@
 
 #include "Camera//CCamera.h" //カメラクラス
 
-//当たり判定
-#include "Collision//CollisionManager//CCollisionManager.h"
+//-----壁-----
+#include "GameObject//StaticMeshObject//Wall//CWall.h"
 
 //--------------------------------
 // UI
@@ -66,6 +66,14 @@ public:
 	//データの読み込み.
 	HRESULT LoadData()override;
 
+	// ゲーム開始時の初期座標を設定
+	void SetPosition();
+
+	// 当たり判定のバウンディングと当たり判定の作成
+	void CreateBounding();
+
+	//当たり判定処理をここに入れる.
+	void Collision();
 
 	//画面をグリッドに分割したとき、idx番目のマスに対応する
 	//D3D11_VIEWPORTを作成して返す関数
@@ -94,9 +102,6 @@ public:
 	std::shared_ptr<CUIObject>		m_pSpriteTimer;
 	std::shared_ptr<CUIObject>		m_pSpritePlayerIcon[PLAYER_MAX]; //プレイヤーアイコン.
 
-
-
-
 	//ゲームで扱うスプライトデータ(使いまわす資源).
 	std::unique_ptr<CSprite3D>		m_pSpriteGround;
 	std::unique_ptr<CSprite3D>		m_pSpritePlayer;
@@ -105,8 +110,6 @@ public:
 	//スタティックメッシュ(使いまわす資源)
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshGround;		//地面
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshBSphere;		//バウンディングスフィア(当たり判定用).
-
-
 
 	// 戦車
 	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyRed;		// 車体赤
@@ -124,6 +127,10 @@ public:
 	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletBlue;		// 弾青
 	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletGreen;		// 弾緑
 
+	// 壁
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallW;		// 横に長い壁
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallH;		// 縦に長い壁
+	
 	// スタティックメッシュオブジェクトクラス
 	std::unique_ptr<CStaticMeshObject>			m_pStcMeshObj;
 
@@ -139,13 +146,15 @@ public:
 	//タイマークラス.
 	std::shared_ptr<CTimer>						m_Timer;
 
-	// 当たり判定クラス
-	std::shared_ptr<CCollisionManager>			m_pCollision;
+	// 壁クラス
+	std::shared_ptr<CWall>		m_pWallTop;		// 上壁
+	std::shared_ptr<CWall>		m_pWallBottom;	// 下壁
+	std::shared_ptr<CWall>		m_pWallLeft;	// 左壁
+	std::shared_ptr<CWall>		m_pWallRight;	// 右壁
 
 	// シーン列挙変数.
 	CSceneType		m_SceneType;
 
 	// 簡易時間を止める変数.
 	int m_StopTimeCount;
-
 };

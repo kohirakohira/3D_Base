@@ -43,6 +43,10 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pStaticMesh_BulletBlue		( nullptr )
 	, m_pStaticMesh_BulletGreen		( nullptr )
 
+	// 壁
+	, m_pStaticMeshWallW			( nullptr )
+	, m_pStaticMeshWallH			( nullptr )
+
 	, m_pStcMeshObj					( nullptr )
 
 	, m_pPlayerManager				()
@@ -57,8 +61,10 @@ CGameMain::CGameMain(HWND hWnd)
 
 	, m_Timer						( nullptr )
 
-	, m_pCollision					()
-
+	, m_pWallTop					( nullptr )
+	, m_pWallBottom					( nullptr )
+	, m_pWallLeft					( nullptr )
+	, m_pWallRight					( nullptr )
 {
 	//最初のシーンをメインにする.
 	m_SceneType = CSceneType::Main;
@@ -78,9 +84,6 @@ void CGameMain::Update()
 	//プレイヤー全員更新
 	m_pPlayerManager->Update();
 
-	// 当たり判定更新
-	m_pCollision->CheckAllCollisions();
-	m_pCollision->UpdateBounding();
 
 	// 弾の発射
 	for (int i = 0; i < PLAYER_MAX; i++)
@@ -165,6 +168,13 @@ void CGameMain::Update()
 	{
 		m_pPlayerManager->SwitchActivePlayer();
 	}
+
+	m_pWallTop->Update();
+	m_pWallBottom->Update();
+	m_pWallLeft->Update();
+	m_pWallRight->Update();
+
+	Collision();
 }
 
 
@@ -211,6 +221,10 @@ void CGameMain::Draw()
 			if (owner) m_pGround->SetPlayer(*owner);
 			m_pGround->Draw(view, proj, light, paramC);
 
+			m_pWallTop->Draw(view, proj, light, paramC);
+			m_pWallBottom->Draw(view, proj, light, paramC);
+			m_pWallLeft->Draw(view, proj, light, paramC);
+			m_pWallRight->Draw(view, proj, light, paramC);
 			//エフェクトもここでやる
 		};
 
@@ -259,8 +273,6 @@ void CGameMain::Draw()
 
 	//タイマー描画.
 	m_Timer->Draw();
-
-	m_pCollision->Draw();
 }
 
 void CGameMain::Init()
@@ -276,12 +288,10 @@ void CGameMain::Init()
 
 		m_pCameras[i]->SetCameraPos(pos.x, pos.y, pos.z);
 		m_pCameras[i]->SetLightPos(0.f, 2.f, 5.f);
-
 	}
 
 	m_pGround->SetScale(0.4f, 0.4f, 0.4f);
 
-	
 	//制限時間枠の画像の設定.
 	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
@@ -291,8 +301,6 @@ void CGameMain::Init()
 	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
 
-
-
 	//制限時間の文字サイズ.
 	m_pDbgText->SetFontSize(5.0f);
 
@@ -300,6 +308,8 @@ void CGameMain::Init()
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
+
+	SetPosition();
 }
 
 void CGameMain::Destroy()
@@ -309,10 +319,6 @@ void CGameMain::Destroy()
 
 void CGameMain::Create()
 {
-
-	// 当たり判定のインスタンス生成
-	m_pCollision = std::make_shared<CCollisionManager>();
-
 	//Effectクラス
 	CEffect::GetInstance().Create(
 		CDirectX11::GetInstance().GetDevice(),
@@ -355,6 +361,10 @@ void CGameMain::Create()
 	m_pStaticMesh_BulletBlue		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_BulletGreen		= std::make_shared<CStaticMesh>();
 
+	// 壁のメッシュ
+	m_pStaticMeshWallW				= std::make_shared<CStaticMesh>();
+	m_pStaticMeshWallH				= std::make_shared<CStaticMesh>();
+
 	//デバッグテキストのインスタンス作成
 	m_pDbgText = std::make_unique<CDebugText>();
 
@@ -395,6 +405,11 @@ void CGameMain::Create()
 	//制限時間のインスタンス生成.
 	m_Timer = std::make_shared<CTimer>();
 
+	// 壁クラスのインスタンス生成
+	m_pWallTop		= std::make_shared<CWall>();
+	m_pWallBottom	= std::make_shared<CWall>();
+	m_pWallLeft		= std::make_shared<CWall>();
+	m_pWallRight	= std::make_shared<CWall>();
 }
 
 HRESULT CGameMain::LoadData()
@@ -487,6 +502,10 @@ HRESULT CGameMain::LoadData()
 	// 弾(緑)
 	m_pStaticMesh_BulletGreen->Init(_T("Data\\Mesh\\Static\\Bullet\\Green\\Ball.x"));
 	
+	// 壁
+	m_pStaticMeshWallW->Init(_T("Data\\Mesh\\Static\\Wall\\Wall1.x"));
+	m_pStaticMeshWallH->Init(_T("Data\\Mesh\\Static\\Wall\\Wall2.x"));
+
 	//バウンディングスフィア(当たり判定用).
 	m_pStaticMeshBSphere->Init(_T("Data\\Collision\\Sphere.x"));
 
@@ -523,9 +542,110 @@ HRESULT CGameMain::LoadData()
 	////バウンディングスフィアの作成.
 	//m_pPlayer->CreateBSphareForMesh(*m_pStaticMeshBSphere);
 
-	//m_pCollision->CreateBounding();
+
+	m_pWallTop->AttachMesh(m_pStaticMeshWallW);
+	m_pWallBottom->AttachMesh(m_pStaticMeshWallW);
+	m_pWallLeft->AttachMesh(m_pStaticMeshWallH);
+	m_pWallRight->AttachMesh(m_pStaticMeshWallH);
+
+
+	CreateBounding();
 
 	return S_OK;
+}
+
+void CGameMain::SetPosition()
+{
+	// 上の壁の初期座標を設定
+	m_pWallTop->SetPosition(0, 0, 30);
+	m_pWallTop->SetRotation(0, 0, 0);
+
+	// 下の壁の初期座標を設定
+	m_pWallBottom->SetPosition(0, 0, -30);
+	m_pWallBottom->SetRotation(0, 0, 0);
+
+	// 左の壁の初期座標を設定
+	m_pWallLeft->SetPosition(-30, 0, 0);
+	m_pWallLeft->SetRotation(0, 0, 0);
+
+	// 右の壁の初期座標を設定
+	m_pWallRight->SetPosition(30, 0, 0);
+	m_pWallRight->SetRotation(0, 0, 0);
+}
+
+void CGameMain::CreateBounding()
+{
+	//for (int i = 0; i < PLAYER_MAX; ++i)
+	//{
+	//	//プレイヤーのバウンディングの作成.
+	//	m_pPlayerManager->CreateBBoxForMesh(*m_pStaticMesh_TankBodyRed);
+	//	m_pPlayerManager->CreateBBoxForMesh(*m_pStaticMesh_TankBodyYellow);
+	//	m_pPlayerManager->CreateBBoxForMesh(*m_pStaticMesh_TankBodyBlue);
+	//	m_pPlayerManager->CreateBBoxForMesh(*m_pStaticMesh_TankBodyGreen);
+
+	//	//プレイヤーの当たり判定を作成.
+	//	m_pPlayerManager->CreateBoxCollider(m_pPlayerManager->GetMinPos(), m_pPlayerManager->GetMaxPos());
+	//}
+	for (int players = 0; players < PLAYER_MAX; ++players)
+	{
+		if (auto p = m_pPlayerManager->GetControlPlayer(players))
+		{
+			p->CreateBBoxForMesh(*m_pStaticMesh_TankBodyRed);
+		}
+	}
+	//上の壁のバウンディングの作成.
+	m_pWallTop->CreateBBoxForMesh(*m_pStaticMeshWallW);
+	//上の壁の当たり判定を設定.
+	m_pWallTop->CreateBoxCollider(m_pWallTop->GetMinPos(), m_pWallTop->GetMaxPos());
+
+	//下の壁のバウンディングの作成.
+	m_pWallBottom->CreateBBoxForMesh(*m_pStaticMeshWallW);
+	//下の壁の当たり判定を設定.
+	m_pWallBottom->CreateBoxCollider(m_pWallBottom->GetMinPos(), m_pWallBottom->GetMaxPos());
+
+	//左の壁のバウンディングの作成.
+	m_pWallLeft->CreateBBoxForMesh(*m_pStaticMeshWallH);
+	//左の壁の当たり判定を設定.
+	m_pWallLeft->CreateBoxCollider(m_pWallLeft->GetMinPos(), m_pWallLeft->GetMaxPos());
+
+	//右の壁のバウンディングの作成.
+	m_pWallRight->CreateBBoxForMesh(*m_pStaticMeshWallH);
+	//右の壁の当たり判定を設定.
+	m_pWallRight->CreateBoxCollider(m_pWallRight->GetMinPos(), m_pWallRight->GetMaxPos());
+}
+
+void CGameMain::Collision()
+{
+	//for (int i = 0; i < PLAYER_MAX; i++)
+	//{
+	//	// i 番のプレイヤーを取得
+	//	auto player = m_pPlayerManager->GetControlPlayer(i);
+	//	//if (!player) continue; // 存在しないプレイヤーはスキップ
+
+	//	// プレイヤー固有のコライダを取得
+	//	auto pPlayerCollider = player->GetCollider();
+	//	//if (!pPlayerCollider) continue;
+
+
+	//	D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
+	//	if (player->GetCollider()->CheckCollision(*m_pWallTop->GetCollider()))
+	//	{
+	//		push.z -= 0.1f;
+	//	}
+	//	if (player->GetCollider()->CheckCollision(*m_pWallBottom->GetCollider()))
+	//	{
+	//		push.z += 0.1f;
+	//	}
+	//	if (player->GetCollider()->CheckCollision(*m_pWallLeft->GetCollider()))
+	//	{
+	//		push.x += 0.1f;
+	//	}
+	//	if (player->GetCollider()->CheckCollision(*m_pWallRight->GetCollider()))
+	//	{
+	//		push.x -= 0.1f;
+	//	}
+	//	m_pPlayerManager->SetPushBackPosision(i, push);
+	//}
 }
 
 //画面をグリッドに分割したとき、idx番目のマスに対応する

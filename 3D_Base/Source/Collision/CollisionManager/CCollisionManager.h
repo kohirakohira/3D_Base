@@ -1,3 +1,4 @@
+#if 0
 #pragma once
 //-----ƒ‰ƒCƒuƒ‰ƒŠ-----
 #include <vector>
@@ -47,3 +48,5 @@ private:
 	std::shared_ptr<CBody>					m_pBody;
 	std::shared_ptr<CCannon>				m_pCannon;
 };
+
+#endif

@@ -124,10 +124,12 @@
     <ClCompile Include="Source\GameObject\SpriteObject\CSpriteObject.cpp" />
     <ClCompile Include="Source\GameObject\SpriteObject\Explosion\CExplosion.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\CShot.cpp" />
-    <ClCompile Include="Source\Collision\Collider\BoxCollider\CBoxCollider.cpp" />
-    <ClCompile Include="Source\Collision\Collider\SphereCollider\CSphereCollider.cpp" />
+    <ClCompile Include="Source\Collision\CollisionManager\CCollisionManager.cpp" />
     <ClCompile Include="Source\Collision\Collider\CCollider.cpp" />
-    <ClCompile Include="Source\Collision\CColliderManager\CColliderManager.cpp" />
+    <ClCompile Include="Source\Collision\Collider\SphereCollider\CSphereCollider.cpp" />
+    <ClCompile Include="Source\Collision\Collider\BoxCollider\CBoxCollider.cpp" />
+    <ClCompile Include="Source\Vector3.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Wall\CWall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Global.h">
@@ -206,10 +208,12 @@
     <ClInclude Include="Source\GameObject\SpriteObject\CSpriteObject.h" />
     <ClInclude Include="Source\GameObject\SpriteObject\Explosion\CExplosion.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Shot\CShot.h" />
-    <ClInclude Include="Source\Collision\Collider\BoxCollider\CBoxCollider.h" />
-    <ClInclude Include="Source\Collision\Collider\SphereCollider\CSphereCollider.h" />
+    <ClInclude Include="Source\Collision\CollisionManager\CCollisionManager.h" />
     <ClInclude Include="Source\Collision\Collider\CCollider.h" />
-    <ClInclude Include="Source\Collision\CColliderManager\CColliderManager.h" />
+    <ClInclude Include="Source\Collision\Collider\SphereCollider\CSphereCollider.h" />
+    <ClInclude Include="Source\Collision\Collider\BoxCollider\CBoxCollider.h" />
+    <ClInclude Include="Source\Vector3.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Wall\CWall.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">
