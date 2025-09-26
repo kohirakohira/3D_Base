@@ -1,10 +1,11 @@
 #include "CStaticMeshObject.h"
 
 CStaticMeshObject::CStaticMeshObject()
-	: m_pMesh			( nullptr )
-	, m_pBSphere		( nullptr )
+	: m_pMesh(nullptr)
+	, m_pBSphere(nullptr)
 {
 	m_pBSphere = std::make_shared<CBoundingSphere>();
+	m_pBBox = std::make_shared<CBoundingBox>();
 }
 
 CStaticMeshObject::~CStaticMeshObject()
@@ -14,7 +15,14 @@ CStaticMeshObject::~CStaticMeshObject()
 
 void CStaticMeshObject::Update()
 {
-	if( m_pMesh == nullptr ){
+	//m_pColliderに中身がある時だけ通る.
+	if (m_pCollider)
+	{
+		//Colliderに位置を渡す.
+		m_pCollider->SetPosition(m_vPosition);
+	}
+
+	if (m_pMesh == nullptr) {
 		return;
 	}
 }
@@ -22,17 +30,40 @@ void CStaticMeshObject::Update()
 void CStaticMeshObject::Draw(
 	D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	if( m_pMesh == nullptr ){
+	if (m_pMesh == nullptr) {
 		return;
 	}
 
 	//描画直前で座標や回転情報などを更新.
-	m_pMesh->SetPosition( m_vPosition );
-	m_pMesh->SetRotation( m_vRotation );
-	m_pMesh->SetScale( m_vScale );
+	m_pMesh->SetPosition(m_vPosition);
+	m_pMesh->SetRotation(m_vRotation);
+	m_pMesh->SetScale(m_vScale);
 
 	//レンダリング.
-	m_pMesh->Render( View, Proj, Light, Camera.vPosition );
+	m_pMesh->Render(View, Proj, Light, Camera.vPosition);
+}
+
+//SphereColliderを作成する.
+void CStaticMeshObject::CreateSpehreCollider(float radius)
+{
+	//SphereColliderを生成.
+	auto sphere = std::make_shared<CSphereCollider>();
+	//生成したSphereColliderに半径を入れる.
+	sphere->SetRadius(radius);
+	//半径が入ったSphereColliderをCColliderのユニークポインタm_pColliderに入れる.
+	m_pCollider = std::move(sphere);
+}
+
+//BoxColliderを作成する.
+void CStaticMeshObject::CreateBoxCollider(D3DXVECTOR3 min, D3DXVECTOR3 max)
+{
+	//BoxColliderを生成.
+	auto box = std::make_shared<CBoxCollider>();
+	//生成したBoxColliderに最小、最大座標を入れる.
+	box->SetMinPosition(min);
+	box->SetMaxPosition(max);
+	//最小、最大座標が入ったBoxColliderをCColliderのユニークポインタm_pColliderに入れる.
+	m_pCollider = std::move(box);
 }
 
 //レイとメッシュの当たり判定
@@ -51,8 +82,8 @@ bool CStaticMeshObject::IsHitForRay(
 
 	//レイの始点と終点
 	D3DXVECTOR3 StartPoint, EndPoint;
-	StartPoint	= pRay.Position;	//レイの始点を設定
-	EndPoint	= pRay.Position + (vAxis * pRay.Length);	//レイの終点を設定
+	StartPoint = pRay.Position;	//レイの始点を設定
+	EndPoint = pRay.Position + (vAxis * pRay.Length);	//レイの終点を設定
 
 	//レイを当てたいメッシュが移動している場合でも、
 	//対象のWorld行列の逆行列を用いれば正しくレイが当たる
@@ -105,14 +136,14 @@ bool CStaticMeshObject::IsHitForRay(
 		&dwIndex,	//(out)bHitがTRUEの時、レイの始点に最も近い面のインデックス値へのポインタ.
 		&U, &V,						//(out)重心ヒット座標.
 		pDistance,					//(out)メッシュとの距離.
-		nullptr, nullptr );
+		nullptr, nullptr);
 
 	//無限に伸びるレイのどこかでメッシュが当たっていたら.
 	if (bHit == TRUE)
 	{
 		//命中したとき.
 		FindVerticesOnPoly(
-			m_pMesh->GetMeshForRay(), dwIndex, Vertex );
+			m_pMesh->GetMeshForRay(), dwIndex, Vertex);
 
 		//重心座標から交点を算出.
 		//ローカル交点は v0 + U*(v1 - v0) + V*(v2 - v0) で求まる.

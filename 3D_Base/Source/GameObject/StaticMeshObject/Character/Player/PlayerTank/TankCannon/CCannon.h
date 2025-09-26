@@ -15,6 +15,8 @@ public:
 	CCannon(int inputID);
 	virtual ~CCannon() override;
 
+	virtual void Initialize(int id);
+
 	virtual void Update() override;
 	virtual void Draw(
 		D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
@@ -26,6 +28,11 @@ public:
 	// 入力クラスを設定
 	void SetInputManager(const std::shared_ptr<CInputManager>& input);
 
+	//プレイヤーが壁に当たると戻す.
+	void PushBack(const D3DXVECTOR3& push);
+
+	// バウンディングボックスを作成
+	void CreateBounding(std::shared_ptr<CStaticMesh> pCannon);
 private:
 	// キー入力受付
 	void KeyInput();
@@ -38,5 +45,6 @@ protected:
 	CCamera*	m_pCamera;	
 
 private:
-	std::shared_ptr<CInputManager> m_pInput;
+	std::shared_ptr<CInputManager>		m_pInput;
+	std::shared_ptr<CCollider>			m_pCollider;
 };

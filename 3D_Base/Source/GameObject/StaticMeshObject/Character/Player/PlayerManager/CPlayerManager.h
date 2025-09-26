@@ -25,6 +25,14 @@ public:
 	void Initialize();
 	void AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> body, std::shared_ptr<CStaticMesh> cannon);
 	void SetPlayerPosition(int index, const D3DXVECTOR3& pos);
+	void SetPushBackPosision(int index, const D3DXVECTOR3& push);
+
+	// バウンディングオブジェクトの作成
+	void CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon);
+	
+	// コライダーの作成
+	void CreateCollider(int index);
+
 	//↓松岡.
 	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);
 	void Update() override;

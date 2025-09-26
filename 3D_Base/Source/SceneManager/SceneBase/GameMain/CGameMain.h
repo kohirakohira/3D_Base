@@ -1,45 +1,48 @@
 #pragma once
-//-----Œp³‚·‚éƒNƒ‰ƒX-----
-#include "SceneManager//SceneBase//CSceneBase.h" // ƒV[ƒ“Šî’êƒNƒ‰ƒX
+//-----ç¶™æ‰¿ã™ã‚‹ã‚¯ãƒ©ã‚¹-----
+#include "SceneManager//SceneBase//CSceneBase.h" // ã‚·ãƒ¼ãƒ³åŸºåº•ã‚¯ãƒ©ã‚¹
 
-//-----ƒ‰ƒCƒuƒ‰ƒŠ-----
+//-----ãƒ©ã‚¤ãƒ–ãƒ©ãƒª-----
 #include <algorithm>
 #include <vector>
 #include <array>	
 
-//-----ƒfƒoƒbƒNƒeƒLƒXƒg-----
-#include "Assets//DebugText//CDebugText.h"		// ƒfƒoƒbƒOƒeƒLƒXƒgƒNƒ‰ƒX
+//-----ãƒ‡ãƒãƒƒã‚¯ãƒ†ã‚­ã‚¹ãƒˆ-----
+#include "Assets//DebugText//CDebugText.h"		// ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆã‚¯ãƒ©ã‚¹
 
-//-----ƒXƒvƒ‰ƒCƒg-----
-#include "Assets//Sprite//Sprite3D//CSprite3D.h" // 3DƒXƒvƒ‰ƒCƒgƒNƒ‰ƒX.
-#include "Assets//Sprite//Sprite2D//CSprite2D.h" // 2DƒXƒvƒ‰ƒCƒgƒNƒ‰ƒX.
+//-----ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ-----
+#include "Assets//Sprite//Sprite3D//CSprite3D.h" // 3Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã‚¯ãƒ©ã‚¹.
+#include "Assets//Sprite//Sprite2D//CSprite2D.h" // 2Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã‚¯ãƒ©ã‚¹.
 
-//-----ƒXƒvƒ‰ƒCƒgƒIƒuƒWƒFƒNƒg-----
+//-----ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ-----
 #include "GameObject//SpriteObject//CSpriteObject.h"
 
-//-----ƒXƒvƒ‰ƒCƒg-----
-#include "GameObject//SpriteObject//Explosion//CExplosion.h" // ”š”­ƒXƒvƒ‰ƒCƒg
+//-----ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ-----
+#include "GameObject//SpriteObject//Explosion//CExplosion.h" // çˆ†ç™ºã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 
-//-----ƒƒbƒVƒ…-----
-#include "Assets//Mesh//StaticMesh//CStaticMesh.h" // ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…ƒNƒ‰ƒX
-#include "GameObject//StaticMeshObject//CStaticMeshObject.h" // ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…ƒIƒuƒWƒFƒNƒgƒNƒ‰ƒX
+//-----ãƒ¡ãƒƒã‚·ãƒ¥-----
+#include "Assets//Mesh//StaticMesh//CStaticMesh.h" // ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥ã‚¯ãƒ©ã‚¹
+#include "GameObject//StaticMeshObject//CStaticMeshObject.h" // ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚¯ãƒ©ã‚¹
 
-//-----ƒLƒƒƒ‰ƒNƒ^[-----
-#include "GameObject//StaticMeshObject//Character//CCharacter.h" // ƒLƒƒƒ‰ƒNƒ^[ƒNƒ‰ƒX
-#include "GameObject//StaticMeshObject//Character//Player//PlayerManager//CPlayerManager.h" // ƒvƒŒƒCƒ„[ƒ}ƒl[ƒWƒƒ[ƒNƒ‰ƒX
-#include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h" // ’eƒNƒ‰ƒXƒ}ƒl[ƒWƒƒ[
-#include "GameObject//StaticMeshObject//Ground//CGround.h" // ’n–ÊƒNƒ‰ƒX
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // íÔF–C“ƒƒNƒ‰ƒX
+//-----ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼-----
+#include "GameObject//StaticMeshObject//Character//CCharacter.h" // ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚¯ãƒ©ã‚¹
+#include "GameObject//StaticMeshObject//Character//Player//PlayerManager//CPlayerManager.h" // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚¯ãƒ©ã‚¹
+#include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h" // å¼¾ã‚¯ãƒ©ã‚¹ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼
+#include "GameObject//StaticMeshObject//Ground//CGround.h" // åœ°é¢ã‚¯ãƒ©ã‚¹
+#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // æˆ¦è»Šï¼šç ²å¡”ã‚¯ãƒ©ã‚¹
 
-#include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"//ƒAƒCƒeƒ€ƒ{ƒbƒNƒXƒ}ƒl[ƒWƒƒ[ƒNƒ‰ƒX.
+#include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"//ã‚¢ã‚¤ãƒ†ãƒ ãƒœãƒƒã‚¯ã‚¹ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚¯ãƒ©ã‚¹.
 
-#include "Camera//CCamera.h" //ƒJƒƒ‰ƒNƒ‰ƒX
+#include "Camera//CCamera.h" //ã‚«ãƒ¡ãƒ©ã‚¯ãƒ©ã‚¹
 
-//-------------------------------
+
+//-----å£-----
+#include "GameObject//StaticMeshObject//Wall//CWall.h"
+
 // UI
 //-------------------------------
-#include "GameObject//UI//CUIObject//CUIObject.h" // UIƒIƒuƒWƒFƒNƒgƒNƒ‰ƒX
-#include "GameObject//UI//Timer//CTimer.h"		  // ƒ^ƒCƒ}[ƒNƒ‰ƒX
+#include "GameObject//UI//CUIObject//CUIObject.h" // UIã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚¯ãƒ©ã‚¹
+#include "GameObject//UI//Timer//CTimer.h"		  // ã‚¿ã‚¤ãƒãƒ¼ã‚¯ãƒ©ã‚¹
 
 #include "Global.h"
 
@@ -52,108 +55,124 @@ public:
 	~CGameMain()override;
 
 
-	//“®ìŠÖ”.
+	//å‹•ä½œé–¢æ•°.
 	void Update()override;
-	//•`‰æŠÖ”.
+	//æç”»é–¢æ•°.
 	void Draw()override;
-	//‰Šú‰»ŠÖ”.
+	//åˆæœŸåŒ–é–¢æ•°.
 	void Init()override;
-	//‰ğ•úŠÖ”.
+	//è§£æ”¾é–¢æ•°.
 	void Destroy()override;
-	//ƒCƒ“ƒXƒ^ƒ“ƒXì¬.
+	//ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ.
 	void Create()override;
-	//ƒf[ƒ^‚Ì“Ç‚İ‚İ.
+	//ãƒ‡ãƒ¼ã‚¿ã®èª­ã¿è¾¼ã¿.
 	HRESULT LoadData()override;
 
+	// ã‚²ãƒ¼ãƒ é–‹å§‹æ™‚ã®åˆæœŸåº§æ¨™ã‚’è¨­å®š
+	void SetPosition();
 
-	//‰æ–Ê‚ğƒOƒŠƒbƒh‚É•ªŠ„‚µ‚½‚Æ‚«Aidx”Ô–Ú‚Ìƒ}ƒX‚É‘Î‰‚·‚é
-	//D3D11_VIEWPORT‚ğì¬‚µ‚Ä•Ô‚·ŠÖ”
+	// å½“ãŸã‚Šåˆ¤å®šã®ãƒã‚¦ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã¨å½“ãŸã‚Šåˆ¤å®šã®ä½œæˆ
+	void CreateBounding();
+
+	//å½“ãŸã‚Šåˆ¤å®šå‡¦ç†ã‚’ã“ã“ã«å…¥ã‚Œã‚‹.
+	void Collision();
+
+	//ç”»é¢ã‚’ã‚°ãƒªãƒƒãƒ‰ã«åˆ†å‰²ã—ãŸã¨ãã€idxç•ªç›®ã®ãƒã‚¹ã«å¯¾å¿œã™ã‚‹
+	//D3D11_VIEWPORTã‚’ä½œæˆã—ã¦è¿”ã™é–¢æ•°
 	static D3D11_VIEWPORT MakeGridViewport(int idx, int cols, int rows, float totalW, float totalH);
 
-	//ƒV[ƒ“‚Ìí—Ş.
+	//ã‚·ãƒ¼ãƒ³ã®ç¨®é¡.
 	CSceneType GetSceneType() const override;
 
 public:
-	//’è”éŒ¾.
-	static constexpr int HP_MAX = 2;			//Å‘åHP.
-	static constexpr int PLAYERNUM_MAX = 4;		//ƒvƒŒƒCƒ„[”Ô†.
-	static constexpr int KILLNUM_MAX = 4;		//ƒLƒ‹”.
+	//å®šæ•°å®£è¨€.
+	static constexpr int HP_MAX = 2;			//æœ€å¤§HP.
+	static constexpr int PLAYERNUM_MAX = 4;		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç•ªå·.
+	static constexpr int KILLNUM_MAX = 4;		//ã‚­ãƒ«æ•°.
 
-	//ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹.
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«.
 	HWND		m_hWnd;
 
-	//ƒJƒƒ‰.
+	//ã‚«ãƒ¡ãƒ©.
 	//std::vector<std::shared_ptr<CCamera>> m_pCameras;
 	std::array<std::shared_ptr<CCamera>, PLAYER_MAX> m_pCameras;
 
-	//ƒfƒoƒbƒOƒeƒLƒXƒg.
+	//ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆ.
 	std::shared_ptr<CDebugText>		m_pDbgText;
 
-	//ƒQ[ƒ€“à‚Åˆµ‚¤UIŒn.
-	std::shared_ptr<CSprite2D>									m_pSprite2DTimerFrame;			//§ŒÀŠÔ‚Ì˜g.
-	std::shared_ptr<CSprite2D>									m_pSprite2DTimer;				//§ŒÀŠÔ‚ÌŒv˜g.
-	std::shared_ptr<CSprite2D>									m_pSprite2DKillNomber;			//ƒLƒ‹”‚Ì‰æ‘œ.
-	std::shared_ptr<CSprite2D>									m_pSprite2DHitPoint;			//HP‚Ì‰æ‘œ.
-	std::array < std::shared_ptr<CSprite2D>, PLAYERNUM_MAX>		m_pSprite2DPlayerIcon;			//ƒvƒŒƒCƒ„[”Ô†‰æ‘œ.
+	//ã‚²ãƒ¼ãƒ å†…ã§æ‰±ã†UIç³».
+	std::shared_ptr<CSprite2D>									m_pSprite2DTimerFrame;			//åˆ¶é™æ™‚é–“ã®æ .
+	std::shared_ptr<CSprite2D>									m_pSprite2DTimer;				//åˆ¶é™æ™‚é–“ã®æ™‚è¨ˆæ .
+	std::shared_ptr<CSprite2D>									m_pSprite2DKillNomber;			//ã‚­ãƒ«æ•°ã®ç”»åƒ.
+	std::shared_ptr<CSprite2D>									m_pSprite2DHitPoint;			//HPã®ç”»åƒ.
+	std::array < std::shared_ptr<CSprite2D>, PLAYERNUM_MAX>		m_pSprite2DPlayerIcon;			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç•ªå·ç”»åƒ.
 
-	//ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…ƒIƒuƒWƒFƒNƒgƒNƒ‰ƒX(UI).
-	std::array<std::shared_ptr<CUIObject>, PLAYERNUM_MAX>	m_pSpritePlayerIcon;			//ƒvƒŒƒCƒ„[ƒAƒCƒRƒ“.
-	std::array<std::shared_ptr<CUIObject>, KILLNUM_MAX>		m_pSpriteKillNomber;			//ƒLƒ‹”ƒAƒCƒRƒ“.
-	std::array<std::shared_ptr<CUIObject>, HP_MAX>			m_pSpriteHitPoint;				//HPƒAƒCƒRƒ“.
-	std::shared_ptr<CUIObject>								m_pSpriteTimerFrame;			//§ŒÀŠÔ‚Ì˜g.
-	std::shared_ptr<CUIObject>								m_pSpriteTimer;					//§ŒÀŠÔ‚ÌŒv˜g.
+	//ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚¯ãƒ©ã‚¹(UI).
+	std::array<std::shared_ptr<CUIObject>, PLAYERNUM_MAX>	m_pSpritePlayerIcon;			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¢ã‚¤ã‚³ãƒ³.
+	std::array<std::shared_ptr<CUIObject>, KILLNUM_MAX>		m_pSpriteKillNomber;			//ã‚­ãƒ«æ•°ã‚¢ã‚¤ã‚³ãƒ³.
+	std::array<std::shared_ptr<CUIObject>, HP_MAX>			m_pSpriteHitPoint;				//HPã‚¢ã‚¤ã‚³ãƒ³.
+	std::shared_ptr<CUIObject>								m_pSpriteTimerFrame;			//åˆ¶é™æ™‚é–“ã®æ .
+	std::shared_ptr<CUIObject>								m_pSpriteTimer;					//åˆ¶é™æ™‚é–“ã®æ™‚è¨ˆæ .
 
-
-
-
-	//ƒQ[ƒ€‚Åˆµ‚¤ƒXƒvƒ‰ƒCƒgƒf[ƒ^(g‚¢‚Ü‚í‚·‘Œ¹).
+	//ã‚²ãƒ¼ãƒ ã§æ‰±ã†ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆãƒ‡ãƒ¼ã‚¿(ä½¿ã„ã¾ã‚ã™è³‡æº).
 	std::unique_ptr<CSprite3D>		m_pSpriteGround;
 	std::unique_ptr<CSprite3D>		m_pSpritePlayer;
 	std::shared_ptr<CSprite3D>		m_pSpriteExplosion;
 
-	//ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…(g‚¢‚Ü‚í‚·‘Œ¹)
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshGround;		//’n–Ê
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshBSphere;		//ƒoƒEƒ“ƒfƒBƒ“ƒOƒXƒtƒBƒA(“–‚½‚è”»’è—p).
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshItemBox;		//ƒAƒCƒeƒ€ƒ{ƒbƒNƒX.
+	//ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥(ä½¿ã„ã¾ã‚ã™è³‡æº)
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshGround;		//åœ°é¢
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshBSphere;		//ãƒã‚¦ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã‚¹ãƒ•ã‚£ã‚¢(å½“ãŸã‚Šåˆ¤å®šç”¨).
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshItemBox;		//ã‚¢ã‚¤ãƒ†ãƒ ãƒœãƒƒã‚¯ã‚¹.
 
-	// íÔ
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyRed;		// Ô‘ÌÔ
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonRed;	// –C“ƒÔ
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyYellow;	// Ô‘Ì‰©
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonYellow;	// –C“ƒ‰©
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyBlue;		// Ô‘ÌÂ
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonBlue;	// –C“ƒÂ
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyGreen;	// Ô‘Ì—Î
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonGreen;	// –C“ƒ—Î
+	// æˆ¦è»Š
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyRed;		// è»Šä½“èµ¤
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonRed;	// ç ²å¡”èµ¤
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyYellow;	// è»Šä½“é»„
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonYellow;	// ç ²å¡”é»„
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyBlue;		// è»Šä½“é’
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonBlue;	// ç ²å¡”é’
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyGreen;	// è»Šä½“ç·‘
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonGreen;	// ç ²å¡”ç·‘
 
-	// ’e
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletRed;		// ’eÔ
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletYellow;		// ’e‰©
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletBlue;		// ’eÂ
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletGreen;		// ’e—Î
+	// å¼¾
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletRed;		// å¼¾èµ¤
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletYellow;		// å¼¾é»„
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletBlue;		// å¼¾é’
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletGreen;		// å¼¾ç·‘
 
-	// ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…ƒIƒuƒWƒFƒNƒgƒNƒ‰ƒX
+	// å£
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallW;		// æ¨ªã«é•·ã„å£
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallH;		// ç¸¦ã«é•·ã„å£
+	
+	// ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚¯ãƒ©ã‚¹
 	std::unique_ptr<CStaticMeshObject>			m_pStcMeshObj;
 
-	// ƒvƒŒƒCƒ„[ƒ}ƒl[ƒWƒƒ[
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼
 	std::shared_ptr<CPlayerManager>				m_pPlayerManager;
 
-	// ’eƒNƒ‰ƒXƒ}ƒl[ƒWƒƒ[
+	// å¼¾ã‚¯ãƒ©ã‚¹ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼
 	std::shared_ptr<CShotManager>				m_pShotManager;
 
-	// ’n–ÊƒNƒ‰ƒX.
+	// åœ°é¢ã‚¯ãƒ©ã‚¹.
 	std::unique_ptr<CGround>					m_pGround;
 
-	//ƒ^ƒCƒ}[ƒNƒ‰ƒX.
+	//ã‚¿ã‚¤ãƒãƒ¼ã‚¯ãƒ©ã‚¹.
 	std::shared_ptr<CTimer>						m_Timer;
 
-	//ƒAƒCƒeƒ€ƒ{ƒbƒNƒXƒ}ƒl[ƒWƒƒ[ƒNƒ‰ƒX.
+	// å£ã‚¯ãƒ©ã‚¹
+	std::shared_ptr<CWall>		m_pWallTop;		// ä¸Šå£
+	std::shared_ptr<CWall>		m_pWallBottom;	// ä¸‹å£
+	std::shared_ptr<CWall>		m_pWallLeft;	// å·¦å£
+	std::shared_ptr<CWall>		m_pWallRight;	// å³å£
+	//ã‚¢ã‚¤ãƒ†ãƒ ãƒœãƒƒã‚¯ã‚¹ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚¯ãƒ©ã‚¹.
 	std::shared_ptr<CItemBoxManager>			m_pItemBoxManager;
 
-	// ƒV[ƒ“—ñ‹“•Ï”.
+	// ã‚·ãƒ¼ãƒ³åˆ—æŒ™å¤‰æ•°.
 	CSceneType		m_SceneType;
 
-	// ŠÈˆÕŠÔ‚ğ~‚ß‚é•Ï”.
+	// ç°¡æ˜“æ™‚é–“ã‚’æ­¢ã‚ã‚‹å¤‰æ•°.
 	int m_StopTimeCount;
 
+	// è©¦ã— æˆ¦è»Šã®æŠ¼ã—æˆ»ã—
+	D3DXVECTOR3 push;
 };

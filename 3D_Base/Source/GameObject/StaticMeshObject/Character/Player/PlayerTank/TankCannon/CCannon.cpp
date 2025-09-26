@@ -1,5 +1,6 @@
 #include "CCannon.h"
 #include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
+#include "Collision/CollisionManager/CCollisionManager.h"
 
 CCannon::CCannon(int inputID)
 	: m_TurnSpeed				( 0.01f )	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
@@ -14,10 +15,17 @@ CCannon::CCannon(int inputID)
 		// 親クラス(CCharacter)の m_Input にも共有
 		CCharacter::m_Input = m_Input;
 	}
+
+	m_pCollider = std::make_shared<CBoxCollider>();
 }
 
 CCannon::~CCannon()
 {
+}
+
+void CCannon::Initialize(int id)
+{
+	
 }
 
 void CCannon::Update()
@@ -26,6 +34,7 @@ void CCannon::Update()
 	{
 		m_Input->Update();
 	}
+	m_pCollider->SetPosition(m_vPosition);
 
 	KeyInput();
 
@@ -46,6 +55,16 @@ void CCannon::SetCannonPosition(const D3DXVECTOR3& Pos)
 void CCannon::SetInputManager(const std::shared_ptr<CInputManager>& input)
 {
 	m_pInput = input;
+}
+
+void CCannon::PushBack(const D3DXVECTOR3& push)
+{
+	m_vPosition += push;
+}
+
+void CCannon::CreateBounding(std::shared_ptr<CStaticMesh> pCannon)
+{
+	CreateBBoxForMesh(*pCannon);
 }
 
 // キー入力受付

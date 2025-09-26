@@ -1,4 +1,5 @@
 #include "CBody.h"
+#include "Collision/CollisionManager/CCollisionManager.h"
 
 CBody::CBody(int inputID)
 	: m_TurnSpeed			( 0.01f )	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
@@ -6,6 +7,7 @@ CBody::CBody(int inputID)
 	, m_MoveState			( enMoveState::Stop )
 	, m_pInput				( nullptr )
 {
+
 	m_vPosition.y = -0.5f;
 
 	// 入力受付インスタンスの生成とセット
@@ -14,9 +16,15 @@ CBody::CBody(int inputID)
 		// 親クラス(CCharacter)の m_Input にも共有
 		CCharacter::m_Input = m_Input;
 	}
+
+	m_pCollider = std::make_shared<CBoxCollider>();
 }
 
 CBody::~CBody()
+{
+}
+
+void CBody::Initialize(int id)
 {
 }
 
@@ -26,6 +34,8 @@ void CBody::Update()
 	{
 		m_Input->Update();
 	}
+
+	m_pCollider->SetPosition(m_vPosition);
 
 	KeyInput();		// 入力処理
 	RadioControl();	// 回転・移動処理
@@ -77,6 +87,16 @@ void CBody::RadioControl()
 void CBody::SetInputManager(const std::shared_ptr<CInputManager>& input)
 {
 	m_pInput = input;
+}
+
+void CBody::PushBack(const D3DXVECTOR3& push)
+{
+	m_vPosition += push;
+}
+
+void CBody::CreateBounding(std::shared_ptr<CStaticMesh> pBody)
+{
+	CreateBBoxForMesh(*pBody);
 }
 
 void CBody::KeyInput()

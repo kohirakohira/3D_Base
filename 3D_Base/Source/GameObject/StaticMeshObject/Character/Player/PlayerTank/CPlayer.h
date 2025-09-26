@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject//StaticMeshObject//Character//CCharacter.h" // 継承 || キャラクタークラス
 
+//-----ライブラリ-----
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -23,6 +24,9 @@ public:
 	void SetTankPosition(const D3DXVECTOR3& pos);
 	void SetTankRotation(const D3DXVECTOR3& pos);
 
+	//プレイヤーが壁に当たる処理をまとめる.
+	void SetPushBack(const D3DXVECTOR3& push);
+
 	//Body優先でワールド座標と回転を返す
 	virtual D3DXVECTOR3 GetPosition() const;
 	virtual D3DXVECTOR3 GetRotation() const;
@@ -30,6 +34,12 @@ public:
 	virtual void Update() override;
 	virtual void Draw(
 		D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+
+	// バウンディングオブジェクトを設定
+	void SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon);
+
+	// コライダーの作成
+	void CreateCollider();
 
    	//外部のクラスから情報取得.
 	void SetCBody(std::shared_ptr<CBody> pBody) { m_pBody = pBody; }
@@ -43,6 +53,9 @@ public:
 	float GetCannonYaw() const;
 	D3DXVECTOR3 GetCannonPosition() const;
 
+protected:
+	std::shared_ptr<CBody> Body() const { return m_pBody; }
+	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
 
 protected:
 
@@ -51,7 +64,5 @@ protected:
 	int			m_Hp;
 	int			m_PlayerID;
 
-protected:
-	std::shared_ptr<CBody> Body() const { return m_pBody; }
-	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
+
 };

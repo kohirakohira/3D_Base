@@ -159,14 +159,19 @@
     <ClCompile Include="Source\Assets\Sound\CSoundManager.cpp" />
     <ClCompile Include="Source\Assets\Sprite\Sprite2D\CSprite2D.cpp" />
     <ClCompile Include="Source\Assets\Sprite\Sprite3D\CSprite3D.cpp" />
+    <ClCompile Include="Source\Collision\Collider\BoxCollider\CBoxCollider.cpp" />
+    <ClCompile Include="Source\Collision\Collider\CCollider.cpp" />
+    <ClCompile Include="Source\Collision\Collider\SphereCollider\CSphereCollider.cpp" />
+    <ClCompile Include="Source\Collision\CollisionManager\CCollisionManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.cpp" />
-    <ClCompile Include="Source\Collision\BoudingBox\CBoundingBox.cpp" />
-    <ClCompile Include="Source\Collision\BoundingSphere\CBoundingSphere.cpp" />
+    <ClCompile Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.cpp" />
+    <ClCompile Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.cpp" />
     <ClCompile Include="Source\Camera\CCamera.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CCharacter.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.cpp" />
     <ClCompile Include="Source\Assets\Effect\CEffect.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Wall\CWall.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameMain\CGameMain.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameResult\CGameResult.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.cpp" />
@@ -180,7 +185,7 @@
     <ClCompile Include="Source\InputDevice\Input\KeyInput\CKeyInput.cpp" />
     <ClCompile Include="Source\InputDevice\Matuoka\CMultiInputKeyManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerManager\CPlayerManager.cpp" />
-    <ClCompile Include="Source\Collision\Ray\CRay.cpp" />
+    <ClCompile Include="Source\Collision\Shape\Ray\CRay.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\CSceneBase.cpp" />
     <ClCompile Include="Source\SceneManager\CSceneManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\CShot.cpp" />
@@ -205,6 +210,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Tameshi\test.cpp" />
+    <ClCompile Include="Source\Vector3.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -216,14 +222,19 @@
     <ClInclude Include="Source\Assets\Sound\CSoundManager.h" />
     <ClInclude Include="Source\Assets\Sprite\Sprite2D\CSprite2D.h" />
     <ClInclude Include="Source\Assets\Sprite\Sprite3D\CSprite3D.h" />
+    <ClInclude Include="Source\Collision\Collider\BoxCollider\CBoxCollider.h" />
+    <ClInclude Include="Source\Collision\Collider\CCollider.h" />
+    <ClInclude Include="Source\Collision\Collider\SphereCollider\CSphereCollider.h" />
+    <ClInclude Include="Source\Collision\CollisionManager\CCollisionManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.h" />
-    <ClInclude Include="Source\Collision\BoudingBox\CBoundingBox.h" />
-    <ClInclude Include="Source\Collision\BoundingSphere\CBoundingSphere.h" />
+    <ClInclude Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.h" />
+    <ClInclude Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.h" />
     <ClInclude Include="Source\Camera\CCamera.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CCharacter.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.h" />
     <ClInclude Include="Source\Assets\Effect\CEffect.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Wall\CWall.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameMain\CGameMain.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameResult\CGameResult.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.h" />
@@ -237,7 +248,7 @@
     <ClInclude Include="Source\InputDevice\Input\KeyInput\CKeyInput.h" />
     <ClInclude Include="Source\InputDevice\Matuoka\CMultiInputKeyManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerManager\CPlayerManager.h" />
-    <ClInclude Include="Source\Collision\Ray\CRay.h" />
+    <ClInclude Include="Source\Collision\Shape\Ray\CRay.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\CSceneBase.h" />
     <ClInclude Include="Source\SceneManager\CSceneManager.h" />
     <ClInclude Include="Source\SceneManager\SceneType\CSceneType.h" />
@@ -262,6 +273,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\ItemBoxType\ItemType.h" />
     <ClInclude Include="Source\MyMacro.h" />
     <ClInclude Include="Source\stdafx.h" />
+    <ClInclude Include="Source\Vector3.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\DebugText.hlsl">

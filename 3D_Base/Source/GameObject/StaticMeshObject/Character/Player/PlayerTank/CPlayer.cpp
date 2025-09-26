@@ -19,6 +19,9 @@ void CPlayer::Initialize(int id)
 	//インスタンスを生成
 	m_pBody = std::make_shared<CBody>(id);
 	m_pCannon = std::make_shared<CCannon>(id);
+
+	m_pCannon->Initialize(id);
+	m_pBody->Initialize(id);
 }
 
 void CPlayer::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
@@ -38,6 +41,12 @@ void CPlayer::SetTankRotation(const D3DXVECTOR3& pos)
 	m_pBody->SetRotation(pos);		// 車体回転指定
 	m_pCannon->SetRotation(pos);	// 砲塔回転指定
 }
+
+void CPlayer::SetPushBack(const D3DXVECTOR3& push)
+{
+	m_pBody->PushBack(push);
+	m_pCannon->PushBack(push);
+}
    
 void CPlayer::Update()
 {
@@ -56,6 +65,21 @@ void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Cam
 	m_pBody->Draw(View, Proj, Light, Camera);
 	m_pCannon->Draw(View, Proj, Light, Camera);
 }
+
+// バウンディングオブジェクトを設定
+void CPlayer::SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
+{
+	m_pBody->CreateBounding(pBody);
+	m_pCannon->CreateBounding(pCannon);
+}
+
+// コライダーの作成
+void CPlayer::CreateCollider()
+{
+	m_pBody->CreateBoxCollider(m_pBody->GetMinPos(), m_pBody->GetMaxPos());
+	m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
+}
+
 
 D3DXVECTOR3 CPlayer::GetCannonPosition() const
 {

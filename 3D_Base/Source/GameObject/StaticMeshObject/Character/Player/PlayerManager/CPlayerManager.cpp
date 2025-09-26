@@ -43,7 +43,6 @@ void CPlayerManager::Initialize()
 		//m_pPlayers.push_back(std::make_shared<CPlayer>());
 		//m_pPlayers[i]->Initialize(i);
 	}
-
 }
 
 void CPlayerManager::AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
@@ -56,6 +55,31 @@ void CPlayerManager::SetPlayerPosition(int index, const D3DXVECTOR3& pos)
 	if (index < m_pPlayers.size())
 	{
 		m_pPlayers[index]->SetTankPosition(pos);
+	}
+}
+
+void CPlayerManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetTankPosition(push);
+	}
+}
+
+// バウンディングオブジェクトの作成
+void CPlayerManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetBounding(body, cannon);
+	}
+}
+// コライダーの作成
+void CPlayerManager::CreateCollider(int index)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->CreateCollider();
 	}
 }
 
