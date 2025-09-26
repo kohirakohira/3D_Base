@@ -228,36 +228,38 @@ void CGameMain::Draw()
 			}
 		}
 
-//オブジェクトの描画.
-		//弾描画.
-		m_pShotManager->Draw(view, proj, light, paramC);
+	//オブジェクトの描画.
+	//弾描画.
+	m_pShotManager->Draw(view, proj, light, paramC);
 
-		//地面描画
-		if (owner) m_pGround->SetPlayer(*owner);
+	//地面描画
+	if (owner) m_pGround->SetPlayer(*owner);
+	{
 		m_pGround->Draw(view, proj, light, paramC);
 
-			m_pWallTop->Draw(view, proj, light, paramC);
-			m_pWallBottom->Draw(view, proj, light, paramC);
-			m_pWallLeft->Draw(view, proj, light, paramC);
-			m_pWallRight->Draw(view, proj, light, paramC);
-			//エフェクトもここでやる
-		};
-		//アイテムボックス描画.
-		m_pItemBoxManager->Draw(view, proj, light, paramC);
-
-//4画面の時の表示.
-		//前後関係無視.
-		CDirectX11::GetInstance().SetDepth(false);
-		//UI.
-		for (int i = 0; i < HP_MAX; i++)
-		{
-			m_pSpriteHitPoint[i]->Draw();
-		}
-		CDirectX11::GetInstance().SetDepth(true);
-
+		m_pWallTop->Draw(view, proj, light, paramC);
+		m_pWallBottom->Draw(view, proj, light, paramC);
+		m_pWallLeft->Draw(view, proj, light, paramC);
+		m_pWallRight->Draw(view, proj, light, paramC);
 		//エフェクトもここでやる
+	};
+	//アイテムボックス描画.
+	m_pItemBoxManager->Draw(view, proj, light, paramC);
+
+	//4画面の時の表示.
+	//前後関係無視.
+	CDirectX11::GetInstance().SetDepth(false);
+	//UI.
+	for (int i = 0; i < HP_MAX; i++)
+	{
+		m_pSpriteHitPoint[i]->Draw();
+	}
+	CDirectX11::GetInstance().SetDepth(true);
+
+	//エフェクトもここでやる
 
 	};
+
 
 	//分割ビューのループ
 	for (int i = 0; i < VIEWS; ++i)
@@ -308,7 +310,6 @@ void CGameMain::Draw()
 		CDirectX11::GetInstance().SetDepth(true);
 
 	}
-
 
 	//全画面ビューポートに戻す
 	D3D11_VIEWPORT fullvp = {};
