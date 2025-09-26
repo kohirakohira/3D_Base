@@ -1,10 +1,19 @@
 #include "CImguiManager.h"
 #include <utility>
 
-constexpr char FONT_FILE_PATH[]		= "ImGui//Font//NotoSansJP-SemiBold.ttf";
+constexpr char FONT_FILE_PATH[]		= "Data//ImGui//Font//NotoSansJP-SemiBold.ttf";
 constexpr float FONT_SIZE			= 18.0f;
 constexpr float SAMALINE_OFFSET		= 100.0f;//ImGui::SameLineのオフセット値.
 
+CImguiManager::CImguiManager()
+{
+}
+
+CImguiManager::~CImguiManager()
+{
+}
+
+//初期化.
 HRESULT CImguiManager::Init(HWND hWnd)
 {
 	//コンテキスト(ImGuiの世界)の作成.
@@ -189,6 +198,7 @@ template void CImguiManager::Slider<int>(const char*, int&, int, int, bool);
 template void CImguiManager::Slider<float>(const char*, float&, float, float, bool);
 
 //コンボボックス.
+//複数の選択肢から1つを選ぶUIを作る.
 std::string CImguiManager::Combo(const char* Label, std::string& NowItem, const std::vector<std::string>& List, bool isLabel, float space)
 {
 	//選択中のリストの要素番号.
@@ -234,28 +244,29 @@ std::string CImguiManager::Combo(const char* Label, std::string& NowItem, const 
 }
 
 //チェックボックスの表示.
+//On/Offの切り替えスイッチを作る.
 bool CImguiManager::CheckBox(const char* label, bool& flag, bool isLabel)
 {
+
 	// ラベル設定が有効ならテキストを表示.
 	if (isLabel == true)
 	{
 		ImGui::Text(label);
 		ImGui::SameLine(SAMALINE_OFFSET);
 	}
-
+	//flagの値を直接切り替える.
 	return ImGui::Checkbox(std::string("##" + std::string(label)).c_str(), &flag);
 }
 
 //グラフを表示.
+//折れ線グラフでデータの推移を可視化.
 void CImguiManager::Graph(const char* Label, std::vector<float>& Data, const ImVec2& Size)
 {
+	//std::string：Labelはconst char*なので、「+」で文字列結合できない.
+	//なので、std::string(Label)にしてから"##"として結合してる.
+	//ImGui::PlotLines：Dear ImGuiに用意されている「折れ線グラフ描画用関数」.
+	//					数値の配列を渡すと、それを横に並べ折れ線グラフとして描画.
+	//.c_str()：でC文字列(const char)*に変換後、ImGui::PlotLinesに渡している.
+	//まとめ：渡したDataの数値配列を折れ線グラフとして描画するってこと.
 	ImGui::PlotLines(std::string("##" + std::string(Label)).c_str(), Data.data(), static_cast<int>(Data.size()), 0, nullptr, FLT_MAX, FLT_MAX, Size);
-}
-
-CImguiManager::CImguiManager()
-{
-}
-
-CImguiManager::~CImguiManager()
-{
 }
