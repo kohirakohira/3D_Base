@@ -157,4 +157,7 @@ public:
 
 	// ŠÈˆÕŠÔ‚ğ~‚ß‚é•Ï”.
 	int m_StopTimeCount;
+
+	// ‚µ íÔ‚Ì‰Ÿ‚µ–ß‚µ
+	D3DXVECTOR3 push;
 };

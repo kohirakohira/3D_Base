@@ -66,6 +66,21 @@ void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Cam
 	m_pCannon->Draw(View, Proj, Light, Camera);
 }
 
+// バウンディングオブジェクトを設定
+void CPlayer::SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
+{
+	m_pBody->CreateBounding(pBody);
+	m_pCannon->CreateBounding(pCannon);
+}
+
+// コライダーの作成
+void CPlayer::CreateCollider()
+{
+	m_pBody->CreateBoxCollider(m_pBody->GetMinPos(), m_pBody->GetMaxPos());
+	m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
+}
+
+
 D3DXVECTOR3 CPlayer::GetCannonPosition() const
 {
 	if (m_pCannon)

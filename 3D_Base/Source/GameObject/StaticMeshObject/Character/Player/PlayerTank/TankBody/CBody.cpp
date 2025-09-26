@@ -16,6 +16,8 @@ CBody::CBody(int inputID)
 		// 親クラス(CCharacter)の m_Input にも共有
 		CCharacter::m_Input = m_Input;
 	}
+
+	m_pCollider = std::make_shared<CBoxCollider>();
 }
 
 CBody::~CBody()
@@ -32,6 +34,8 @@ void CBody::Update()
 	{
 		m_Input->Update();
 	}
+
+	m_pCollider->SetPosition(m_vPosition);
 
 	KeyInput();		// 入力処理
 	RadioControl();	// 回転・移動処理
@@ -88,6 +92,11 @@ void CBody::SetInputManager(const std::shared_ptr<CInputManager>& input)
 void CBody::PushBack(const D3DXVECTOR3& push)
 {
 	m_vPosition += push;
+}
+
+void CBody::CreateBounding(std::shared_ptr<CStaticMesh> pBody)
+{
+	CreateBBoxForMesh(*pBody);
 }
 
 void CBody::KeyInput()

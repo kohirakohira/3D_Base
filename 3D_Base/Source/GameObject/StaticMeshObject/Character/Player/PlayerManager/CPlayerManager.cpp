@@ -66,6 +66,23 @@ void CPlayerManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 	}
 }
 
+// バウンディングオブジェクトの作成
+void CPlayerManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetBounding(body, cannon);
+	}
+}
+// コライダーの作成
+void CPlayerManager::CreateCollider(int index)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->CreateCollider();
+	}
+}
+
 void CPlayerManager::SetPlayerRotation(int index, const D3DXVECTOR3& rad)
 {
 	if (index < m_pPlayers.size())

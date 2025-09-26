@@ -15,6 +15,8 @@ CCannon::CCannon(int inputID)
 		// 親クラス(CCharacter)の m_Input にも共有
 		CCharacter::m_Input = m_Input;
 	}
+
+	m_pCollider = std::make_shared<CBoxCollider>();
 }
 
 CCannon::~CCannon()
@@ -32,6 +34,7 @@ void CCannon::Update()
 	{
 		m_Input->Update();
 	}
+	m_pCollider->SetPosition(m_vPosition);
 
 	KeyInput();
 
@@ -57,6 +60,11 @@ void CCannon::SetInputManager(const std::shared_ptr<CInputManager>& input)
 void CCannon::PushBack(const D3DXVECTOR3& push)
 {
 	m_vPosition += push;
+}
+
+void CCannon::CreateBounding(std::shared_ptr<CStaticMesh> pCannon)
+{
+	CreateBBoxForMesh(*pCannon);
 }
 
 // キー入力受付

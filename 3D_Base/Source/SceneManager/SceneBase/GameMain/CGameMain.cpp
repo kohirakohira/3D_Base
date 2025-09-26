@@ -575,24 +575,28 @@ void CGameMain::SetPosition()
 
 void CGameMain::CreateBounding()
 {
-	//for (int i = 0; i < PLAYER_MAX; ++i)
-	//{
-	//	//プレイヤーのバウンディングの作成.
-	//	m_pPlayerManager->CreateBBoxForMesh(*m_pStaticMesh_TankBodyRed);
-	//	m_pPlayerManager->CreateBBoxForMesh(*m_pStaticMesh_TankBodyYellow);
-	//	m_pPlayerManager->CreateBBoxForMesh(*m_pStaticMesh_TankBodyBlue);
-	//	m_pPlayerManager->CreateBBoxForMesh(*m_pStaticMesh_TankBodyGreen);
-
-	//	//プレイヤーの当たり判定を作成.
-	//	m_pPlayerManager->CreateBoxCollider(m_pPlayerManager->GetMinPos(), m_pPlayerManager->GetMaxPos());
-	//}
-	for (int players = 0; players < PLAYER_MAX; ++players)
+	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		if (auto p = m_pPlayerManager->GetControlPlayer(players))
+		//プレイヤーのバウンディングの作成.
+		switch (i)
 		{
-			p->CreateBBoxForMesh(*m_pStaticMesh_TankBodyRed);
+		case 0:
+			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyRed, m_pStaticMesh_TankCannonRed);
+			break;
+		case 1:
+			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyYellow, m_pStaticMesh_TankCannonYellow);
+			break;
+		case 2:
+			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyBlue, m_pStaticMesh_TankCannonBlue);
+			break;
+		case 3:
+			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyGreen, m_pStaticMesh_TankCannonGreen);
+			break;
 		}
+		//プレイヤーの当たり判定を作成.
+		m_pPlayerManager->CreateCollider(i);
 	}
+	
 	//上の壁のバウンディングの作成.
 	m_pWallTop->CreateBBoxForMesh(*m_pStaticMeshWallW);
 	//上の壁の当たり判定を設定.
@@ -616,36 +620,40 @@ void CGameMain::CreateBounding()
 
 void CGameMain::Collision()
 {
-	//for (int i = 0; i < PLAYER_MAX; i++)
-	//{
-	//	// i 番のプレイヤーを取得
-	//	auto player = m_pPlayerManager->GetControlPlayer(i);
-	//	//if (!player) continue; // 存在しないプレイヤーはスキップ
-
-	//	// プレイヤー固有のコライダを取得
-	//	auto pPlayerCollider = player->GetCollider();
-	//	//if (!pPlayerCollider) continue;
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
 
 
-	//	D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
-	//	if (player->GetCollider()->CheckCollision(*m_pWallTop->GetCollider()))
-	//	{
-	//		push.z -= 0.1f;
-	//	}
-	//	if (player->GetCollider()->CheckCollision(*m_pWallBottom->GetCollider()))
-	//	{
-	//		push.z += 0.1f;
-	//	}
-	//	if (player->GetCollider()->CheckCollision(*m_pWallLeft->GetCollider()))
-	//	{
-	//		push.x += 0.1f;
-	//	}
-	//	if (player->GetCollider()->CheckCollision(*m_pWallRight->GetCollider()))
-	//	{
-	//		push.x -= 0.1f;
-	//	}
-	//	m_pPlayerManager->SetPushBackPosision(i, push);
-	//}
+		// i 番のプレイヤーを取得
+		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto Coll = player->GetBody()->GetCollider();
+		//if (!player) continue; // 存在しないプレイヤーはスキップ
+
+		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
+
+		if (Coll && m_pWallTop->GetCollider() &&
+			Coll->CheckCollision(*m_pWallTop->GetCollider()))
+		{
+			push.z -= 0.1f;
+		}
+		if (Coll && m_pWallBottom->GetCollider() &&
+			Coll->CheckCollision(*m_pWallBottom->GetCollider()))
+		{
+			push.z += 0.1f;
+		}
+		if (Coll && m_pWallLeft->GetCollider() &&
+			Coll->CheckCollision(*m_pWallLeft->GetCollider()))
+		{
+			push.x += 0.1f;
+		}
+		if (Coll && m_pWallRight->GetCollider() &&
+			Coll->CheckCollision(*m_pWallRight->GetCollider()))
+		{
+			push.x -= 0.1f;
+		}
+		player->GetBody()->PushBack(push);
+		//m_pPlayerManager->SetPushBackPosision(i, push);
+	}
 }
 
 //画面をグリッドに分割したとき、idx番目のマスに対応する

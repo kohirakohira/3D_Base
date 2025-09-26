@@ -45,6 +45,10 @@ public:
 	//プレイヤーが壁に当たると戻す.
 	void PushBack(const D3DXVECTOR3& push);
 
+	// バウンディングボックスを作成
+	void CreateBounding(std::shared_ptr<CStaticMesh> pBody);
+
+
 private:
 	// キー入力受付.
 	void KeyInput();
@@ -56,4 +60,6 @@ protected:
 
 private:
 	std::shared_ptr<CInputManager> m_pInput;
+
+	std::shared_ptr<CCollider>			m_pCollider;
 };
