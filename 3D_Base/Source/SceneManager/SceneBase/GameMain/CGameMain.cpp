@@ -1,24 +1,33 @@
 #define GetKey(KEY) (GetAsyncKeyState(KEY))
-#undef min	//ƒ}ƒNƒ’è‹`–³Œø‰»
+#undef min	//ãƒã‚¯ãƒ­å®šç¾©ç„¡åŠ¹åŒ–
 #undef max	
 
 #include "CGameMain.h"
-//-----ƒTƒEƒ“ƒh-----
-#include "Assets//Sound//CSoundManager.h" // ƒTƒEƒ“ƒhƒ}ƒl[ƒWƒƒ[ƒNƒ‰ƒX
-#include "Assets//Effect//CEffect.h"	//Effekseer‚ğg‚¤‚½‚ß‚ÌƒNƒ‰ƒX
+//-----ã‚µã‚¦ãƒ³ãƒ‰-----
+#include "Assets//Sound//CSoundManager.h" // ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚¯ãƒ©ã‚¹
+#include "Assets//Effect//CEffect.h"	//Effekseerã‚’ä½¿ã†ãŸã‚ã®ã‚¯ãƒ©ã‚¹
 
 //-----DirectX-----
-#include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX9ƒNƒ‰ƒX
-#include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11ƒNƒ‰ƒX
+#include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX9ã‚¯ãƒ©ã‚¹
+#include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11ã‚¯ãƒ©ã‚¹
 
 
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd					( hWnd )
 
+	//ç”»åƒ.
 	, m_pSprite2DTimerFrame			( nullptr )
 	, m_pSprite2DTimer				( nullptr )
-	, m_pSpriteTimerFrame			( nullptr )
-	, m_pSpriteTimer				( nullptr )
+	, m_pSprite2DKillNomber			( nullptr )
+	, m_pSprite2DHitPoint			( nullptr )
+	, m_pSprite2DPlayerIcon			()
+
+	//ç”»åƒã®è¨­å®š.
+	, m_pSpriteTimerFrame			()
+	, m_pSpriteTimer				()
+	, m_pSpritePlayerIcon			()
+	, m_pSpriteKillNomber			()
+	, m_pSpriteHitPoint				()
 
 	, m_pSpriteGround				( nullptr )
 	, m_pSpritePlayer				( nullptr )
@@ -26,8 +35,9 @@ CGameMain::CGameMain(HWND hWnd)
 
 	, m_pStaticMeshGround			( nullptr )
 	, m_pStaticMeshBSphere			( nullptr )
+	, m_pStaticMeshItemBox			( nullptr )
 
-	// íÔ
+	// æˆ¦è»Š
 	, m_pStaticMesh_TankBodyRed		( nullptr )
 	, m_pStaticMesh_TankCannonRed	( nullptr )
 	, m_pStaticMesh_TankBodyYellow	( nullptr )
@@ -37,13 +47,13 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pStaticMesh_TankBodyGreen	( nullptr )
 	, m_pStaticMesh_TankCannonGreen	( nullptr )
 
-	// ’e
+	// å¼¾
 	, m_pStaticMesh_BulletRed		( nullptr )
 	, m_pStaticMesh_BulletYellow	( nullptr )
 	, m_pStaticMesh_BulletBlue		( nullptr )
 	, m_pStaticMesh_BulletGreen		( nullptr )
 
-	// •Ç
+	// å£
 	, m_pStaticMeshWallW			( nullptr )
 	, m_pStaticMeshWallH			( nullptr )
 
@@ -65,27 +75,28 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pWallBottom					( nullptr )
 	, m_pWallLeft					( nullptr )
 	, m_pWallRight					( nullptr )
+	, m_pItemBoxManager				( nullptr )
 {
-	//Å‰‚ÌƒV[ƒ“‚ğƒƒCƒ“‚É‚·‚é.
+	//æœ€åˆã®ã‚·ãƒ¼ãƒ³ã‚’ãƒ¡ã‚¤ãƒ³ã«ã™ã‚‹.
 	m_SceneType = CSceneType::Main;
 }
 
 CGameMain::~CGameMain()
 {
-	//ŠO•”‚Åì¬‚µ‚Ä‚¢‚é‚Ì‚ÅA‚±‚±‚Å‚Í”jŠü‚µ‚È‚¢
+	//å¤–éƒ¨ã§ä½œæˆã—ã¦ã„ã‚‹ã®ã§ã€ã“ã“ã§ã¯ç ´æ£„ã—ãªã„
 	m_hWnd = nullptr;
 }
 
 void CGameMain::Update()
 {
-	//BGM‚Ìƒ‹[ƒvÄ¶.
-	CSoundManager::PlayLoop(CSoundManager::BGM_Bonus);
+	//BGMã®ãƒ«ãƒ¼ãƒ—å†ç”Ÿ.
+	CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
-	//ƒvƒŒƒCƒ„[‘SˆõXV
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å…¨å“¡æ›´æ–°
 	m_pPlayerManager->Update();
 
 
-	// ’e‚Ì”­Ë
+	// å¼¾ã®ç™ºå°„
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		if (auto player = m_pPlayerManager->GetControlPlayer(i))
@@ -100,13 +111,13 @@ void CGameMain::Update()
 		m_pShotManager->Update();
 	}
 
-	//ƒJƒƒ‰’Ç]•XV.–C“ƒŠî€
+	//ã‚«ãƒ¡ãƒ©è¿½å¾“ï¼†æ›´æ–°.ç ²å¡”åŸºæº–
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		if (auto player = m_pPlayerManager->GetControlPlayer(i))
 		{
-			const D3DXVECTOR3 camPos = player->GetCannonPosition();	//–C“ƒ‚ÌˆÊ’u
-			float yaw = player->GetCannonYaw();	//–C“ƒ‚ÌŒü‚«Y
+			const D3DXVECTOR3 camPos = player->GetCannonPosition();	//ç ²å¡”ã®ä½ç½®
+			float yaw = player->GetCannonYaw();	//ç ²å¡”ã®å‘ãY
 
 			m_pCameras[i]->SetTargetPos(camPos);
 			m_pCameras[i]->SetTargetRotY(yaw);
@@ -114,25 +125,28 @@ void CGameMain::Update()
 		m_pCameras[i]->Update();
 	}
 
+	//ã‚¢ã‚¤ãƒ†ãƒ ã®å‹•ä½œ.
+	m_pItemBoxManager->Update();
+
 #if 0
-	//Effect§Œä
+	//Effectåˆ¶å¾¡
 	{
-		//ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚²‚Æ‚É•K—v‚Èƒnƒ“ƒhƒ‹
-		//¦‚R‚Â•`‰æ‚µ‚Ä§Œä‚·‚é‚È‚ç‚R‚Â•K—v‚É‚È‚é
+		//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã”ã¨ã«å¿…è¦ãªãƒãƒ³ãƒ‰ãƒ«
+		//â€»ï¼“ã¤æç”»ã—ã¦åˆ¶å¾¡ã™ã‚‹ãªã‚‰ï¼“ã¤å¿…è¦ã«ãªã‚‹
 		static ::EsHandle hEffect = -1;
 		for (int i = 0; i < PLAYER_MAX; i++)
 		{
 			if (GetAsyncKeyState('Y') & 0x0001) {
 				hEffect = CEffect::GetInstance().Play(CEffect::Test0, D3DXVECTOR3(0.f, 1.f, 0.f));
 
-				//Šg‘åk¬
+				//æ‹¡å¤§ç¸®å°
 				CEffect::GetInstance().SetScale(hEffect, D3DXVECTOR3(0.8f, 0.8f, 0.8f));
 
-				//‰ñ“](Y²‰ñ“])
+				//å›è»¢(Yè»¸å›è»¢)
 
 				CEffect::GetInstance().SetRotation(hEffect, D3DXVECTOR3(m_pPlayerManager->GetRotation(i)));
 
-				//ˆÊ’u‚ğÄİ’è
+				//ä½ç½®ã‚’å†è¨­å®š
 				CEffect::GetInstance().SetLocation(hEffect, D3DXVECTOR3(m_pPlayerManager->GetPosition(i)));
 
 			}
@@ -144,27 +158,27 @@ void CGameMain::Update()
 	}
 #endif
 
-	//Ÿ”sğŒ(Šm”F—p).
-	//Ÿ‚¿.
+	//å‹æ•—æ¡ä»¶(ç¢ºèªç”¨).
+	//å‹ã¡.
 	if (GetKey('K') & 0x8000)
 	{
-		//BGM‚Ìƒ‹[ƒv’â~.
+		//BGMã®ãƒ«ãƒ¼ãƒ—åœæ­¢.
 		CSoundManager::Stop(CSoundManager::BGM_Bonus);
 
 		m_SceneType = CSceneType::Result;
 	}
-	//”s–k.
-	//‘Ì—Í‚ª‚È‚­‚È‚é‚©
+	//æ•—åŒ—.
+	//ä½“åŠ›ãŒãªããªã‚‹ã‹
 	if (GetKey('L') & 0x8000)
 	{
-		//BGM‚Ìƒ‹[ƒv’â~.
+		//BGMã®ãƒ«ãƒ¼ãƒ—åœæ­¢.
 		CSoundManager::Stop(CSoundManager::BGM_Bonus);
 
 		m_SceneType = CSceneType::Result;
 	}
 
-	// CƒL[‰Ÿ‚³‚ê‚½‚ç‘€ìƒvƒŒƒCƒ„[Ø‚è‘Ö‚¦
-	if (GetAsyncKeyState('C') & 0x0001)
+	// Cã‚­ãƒ¼æŠ¼ã•ã‚ŒãŸã‚‰æ“ä½œãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åˆ‡ã‚Šæ›¿ãˆ
+	if (GetKey('C') & 0x8000)
 	{
 		m_pPlayerManager->SwitchActivePlayer();
 	}
@@ -183,133 +197,296 @@ void CGameMain::Draw()
 {
 	auto* pContext = CDirectX11::GetInstance().GetContext();
 
-	//‰æ–ÊƒTƒCƒYfloat‚Åˆµ‚¤D3D11_VIEWPORT‚ÌŒ^‚É‡‚í‚¹‚é
+	//ç”»é¢ã‚µã‚¤ã‚ºfloatã§æ‰±ã†D3D11_VIEWPORTã®å‹ã«åˆã‚ã›ã‚‹
 	const float W = static_cast<float>(WND_W);
 	const float H = static_cast<float>(WND_H);
 
-	//2x2•ªŠ„‚Ì’è‹`
-	const int COLS = 2;
-	const int ROWS = 2;
-	const int MAX_VIEWS = COLS * ROWS;					//•ªŠ„‚µ‚Ä•\¦‚Å‚«‚éÅ‘åƒrƒ…[”
-	const int VIEWS = std::min(PLAYER_MAX, MAX_VIEWS);	//min‚Å¬‚³‚¢‚Ù‚¤‚É‡‚í‚¹‚é
+	//2x2åˆ†å‰²ã®å®šç¾©
+	const int COLS = 2;		//2ã‚’1ã«ã—ãŸã‚‰ä¸€ç”»é¢ã€2ãªã‚‰å››ç”»é¢.
+	const int ROWS = 2;		//2ã‚’1ã«ã—ãŸã‚‰ä¸€ç”»é¢ã€2ãªã‚‰å››ç”»é¢.
+	const int MAX_VIEWS = COLS * ROWS;					//åˆ†å‰²ã—ã¦è¡¨ç¤ºã§ãã‚‹æœ€å¤§ãƒ“ãƒ¥ãƒ¼æ•°
+	const int VIEWS = std::min(PLAYER_MAX, MAX_VIEWS);	//minã§å°ã•ã„ã»ã†ã«åˆã‚ã›ã‚‹
 
-	//1ƒrƒ…[ƒ|[ƒg•ª‚ğ•`‰æ‚·‚éˆ—‚ğƒ‰ƒ€ƒ_‚É‚Ü‚Æ‚ß‚é
+	//1ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆåˆ†ã‚’æç”»ã™ã‚‹å‡¦ç†ã‚’ãƒ©ãƒ ãƒ€ã«ã¾ã¨ã‚ã‚‹
 	auto DrawOneViewport = [&](std::shared_ptr<CCamera> camera, std::shared_ptr<CPlayer> owner)
+	{
+		//ã‚«ãƒ¡ãƒ©æ›´æ–°
+		camera->Update();
+
+		//ã‚¹ãƒŠãƒƒãƒ—ã‚·ãƒ§ãƒƒãƒˆã‚’constå‚ç…§ã§ã‚­ãƒ£ãƒ—ãƒãƒ£
+		D3DXMATRIX& view	= camera->m_mView;
+		D3DXMATRIX& proj	= camera->m_mProj;
+		LIGHT&		light	= camera->m_Light;
+		CAMERA&		paramC	= camera->m_Camera;
+
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æç”».ã“ã“ã§å…¨å“¡æã
+		for (int players = 0; players < PLAYER_MAX; ++players)
 		{
-			//ƒJƒƒ‰XV
-			camera->Update();
-
-			//ƒXƒiƒbƒvƒVƒ‡ƒbƒg‚ğconstQÆ‚ÅƒLƒƒƒvƒ`ƒƒ
-			D3DXMATRIX& view	= camera->m_mView;
-			D3DXMATRIX& proj	= camera->m_mProj;
-			LIGHT&		light	= camera->m_Light;
-			CAMERA&		paramC	= camera->m_Camera;
-
-			//ƒvƒŒƒCƒ„[‚ğ•`‰æ.‚±‚±‚Å‘Sˆõ•`‚­
-			for (int players = 0; players < PLAYER_MAX; ++players)
+			if (auto p = m_pPlayerManager->GetControlPlayer(players))
 			{
-				if (auto p = m_pPlayerManager->GetControlPlayer(players))
-				{
-					p->Draw(view, proj, light, paramC);
-				}
+				p->Draw(view, proj, light, paramC);
 			}
+		}
 
-			// ’e•`‰æ
-			m_pShotManager->Draw(m_pCameras[0]->m_mView, m_pCameras[0]->m_mProj, m_pCameras[0]->m_Light, m_pCameras[0]->m_Camera);
+//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æç”».
+		//å¼¾æç”».
+		m_pShotManager->Draw(view, proj, light, paramC);
 
-			//’n–Ê•`‰æ
-			if (owner) m_pGround->SetPlayer(*owner);
-			m_pGround->Draw(view, proj, light, paramC);
+		//åœ°é¢æç”»
+		if (owner) m_pGround->SetPlayer(*owner);
+		m_pGround->Draw(view, proj, light, paramC);
 
 			m_pWallTop->Draw(view, proj, light, paramC);
 			m_pWallBottom->Draw(view, proj, light, paramC);
 			m_pWallLeft->Draw(view, proj, light, paramC);
 			m_pWallRight->Draw(view, proj, light, paramC);
-			//ƒGƒtƒFƒNƒg‚à‚±‚±‚Å‚â‚é
+			//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚‚ã“ã“ã§ã‚„ã‚‹
 		};
+		//ã‚¢ã‚¤ãƒ†ãƒ ãƒœãƒƒã‚¯ã‚¹æç”».
+		m_pItemBoxManager->Draw(view, proj, light, paramC);
 
-	//•ªŠ„ƒrƒ…[‚Ìƒ‹[ƒv
+//4ç”»é¢ã®æ™‚ã®è¡¨ç¤º.
+		//å‰å¾Œé–¢ä¿‚ç„¡è¦–.
+		CDirectX11::GetInstance().SetDepth(false);
+		//UI.
+		for (int i = 0; i < HP_MAX; i++)
+		{
+			m_pSpriteHitPoint[i]->Draw();
+		}
+		CDirectX11::GetInstance().SetDepth(true);
+
+		//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚‚ã“ã“ã§ã‚„ã‚‹
+
+	};
+
+	//åˆ†å‰²ãƒ“ãƒ¥ãƒ¼ã®ãƒ«ãƒ¼ãƒ—
 	for (int i = 0; i < VIEWS; ++i)
 	{
-		//ƒrƒ…[ƒ|[ƒgİ’è
+		//ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆè¨­å®š
 		const D3D11_VIEWPORT vp = MakeGridViewport(i, COLS, ROWS, W, H);
 		pContext->RSSetViewports(1, &vp);
 
-		//ƒJƒƒ‰QÆ‚ğæ“¾.QÆŠO‚µ‚ÅÀ‘Ì‚ğ’¼Úˆµ‚¤
+		//ã‚«ãƒ¡ãƒ©å‚ç…§ã‚’å–å¾—.å‚ç…§å¤–ã—ã§å®Ÿä½“ã‚’ç›´æ¥æ‰±ã†
 		std::shared_ptr<CCamera> camera = m_pCameras[i];
 
 		std::shared_ptr<CPlayer> owner = m_pPlayerManager->GetControlPlayer(i);
-			////////ƒfƒoƒbƒOƒeƒLƒXƒg‚Ì•`‰æ
-			//////m_pDbgText->SetColor(0.9f, 0.6f, 0.f);	//F‚Ìİ’è
+			////////ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆã®æç”»
+			//////m_pDbgText->SetColor(0.9f, 0.6f, 0.f);	//è‰²ã®è¨­å®š
 			//////m_pDbgText->Render(_T("ABCD"), 10, 100);
 
-		//1ƒrƒ…[•ª‚ğ•`‰æ
+		//1ãƒ“ãƒ¥ãƒ¼åˆ†ã‚’æç”»
 		DrawOneViewport(camera, owner);
-			////////ƒfƒoƒbƒOƒeƒLƒXƒg(”’l“ü‚è)‚Ì•`‰æ
+			////////ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆ(æ•°å€¤å…¥ã‚Š)ã®æç”»
 			//////m_pDbgText->SetColor(1.f, 0.f, 0.f);
 			//////TCHAR dbgText[64];
 			//////_stprintf_s(dbgText, _T("Float:%f, %f"), 1.f, 2.2f);
 			//////m_pDbgText->Render(dbgText, 10, 110);
+
+//4ç”»é¢ã®æ™‚ã®è¡¨ç¤º.
+		//å‰å¾Œé–¢ä¿‚ç„¡è¦–.
+		CDirectX11::GetInstance().SetDepth(false);
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç•ªå·ã®æç”».
+		switch (i)
+		{
+		case 0:
+			m_pSpritePlayerIcon[i]->Draw();
+			break;
+		case 1:
+			m_pSpritePlayerIcon[i]->Draw();
+			break;
+		case 2:
+			m_pSpritePlayerIcon[i]->Draw();
+			break;
+		case 3:
+			m_pSpritePlayerIcon[i]->Draw();
+			break;
+		default:
+			break;
+		}
+		//ã‚­ãƒ«æ•°ã®æç”».
+		m_pSpriteKillNomber[i]->Draw();
+		CDirectX11::GetInstance().SetDepth(true);
+
 	}
 
 
-	//‘S‰æ–Êƒrƒ…[ƒ|[ƒg‚É–ß‚·
+	//å…¨ç”»é¢ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã«æˆ»ã™
 	D3D11_VIEWPORT fullvp = {};
-	fullvp.TopLeftX = 0;		//ƒrƒ…[ƒ|[ƒg¶ã‚ÌXÀ•W
-	fullvp.TopLeftY = 0;		//ƒrƒ…[ƒ|[ƒg¶ã‚ÌYÀ•W
-	fullvp.Width	= 1920;		//ƒrƒ…[ƒ|[ƒg‚Ì•.‚±‚±‚Å¡‰ñ‚Í‰æ–Ê‘S‰æ–Ê‚ğŠî€‚Æ‚·‚é
-	fullvp.Height	= 1080;		//ƒrƒ…[ƒ|[ƒg‚Ì‚‚³
-	fullvp.MinDepth = 0.0f;		//[“xƒoƒbƒtƒ@‚ÌÅ¬’l
-	fullvp.MaxDepth = 1.0f;		//[“xƒoƒbƒtƒ@‚ÌÅ‘å’l
+	fullvp.TopLeftX = 0;		//ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆå·¦ä¸Šã®Xåº§æ¨™
+	fullvp.TopLeftY = 0;		//ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆå·¦ä¸Šã®Yåº§æ¨™
+	fullvp.Width	= 1920;		//ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã®å¹….ã“ã“ã§ä»Šå›ã¯ç”»é¢å…¨ç”»é¢ã‚’åŸºæº–ã¨ã™ã‚‹
+	fullvp.Height	= 1080;		//ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã®é«˜ã•
+	fullvp.MinDepth = 0.0f;		//æ·±åº¦ãƒãƒƒãƒ•ã‚¡ã®æœ€å°å€¤
+	fullvp.MaxDepth = 1.0f;		//æ·±åº¦ãƒãƒƒãƒ•ã‚¡ã®æœ€å¤§å€¤
 	pContext->RSSetViewports(1, &fullvp);
 
 
-	//‘OŒãŠÖŒW–³‹.
+////1ç”»é¢ã®æ™‚ã®è¡¨ç¤º.
+	//å‰å¾Œé–¢ä¿‚ç„¡è¦–.
 	CDirectX11::GetInstance().SetDepth(false);
-	//ƒ^ƒCƒgƒ‹‚Ì•`‰æ.
+	//ã‚¿ã‚¤ãƒãƒ¼ã®æ ã®æç”».
 	m_pSpriteTimerFrame->Draw();
+	//ã‚¿ã‚¤ãƒãƒ¼ã®æç”».
 	m_pSpriteTimer->Draw();
+	////ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç•ªå·ã®æç”».
+	//m_pSpritePlayerIcon[0]->Draw();
+	////ã‚­ãƒ«æ•°ã®æç”».
+	//m_pSpriteKillNomber[0]->Draw();
+	////HPã®æç”».
+	//for (int i = 0; i < HP_MAX; i++)
+	//{
+	//	m_pSpriteHitPoint[i]->Draw();
+	//}
 	CDirectX11::GetInstance().SetDepth(true);
 
-	//ƒ^ƒCƒ}[•`‰æ.
+	//ã‚¿ã‚¤ãƒãƒ¼æç”».
 	m_Timer->Draw();
 }
 
 void CGameMain::Init()
 {
-	//’è”éŒ¾.
+	//å®šæ•°å®£è¨€.
 	static constexpr float TIME = 90.f;
 
-	//ƒJƒƒ‰ˆÊ’uİ’è.
+	//ã‚«ãƒ¡ãƒ©ä½ç½®è¨­å®š.
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		//ƒvƒŒƒCƒ„[ƒ}ƒl[ƒWƒƒ[‚©‚çŠeƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğæ“¾
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‹ã‚‰å„ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’å–å¾—
 		D3DXVECTOR3 pos = m_pPlayerManager->GetPosition(i);
 
 		m_pCameras[i]->SetCameraPos(pos.x, pos.y, pos.z);
 		m_pCameras[i]->SetLightPos(0.f, 2.f, 5.f);
 	}
-
+	//åœ°é¢ã®å¤§ãã•è¨­å®š.
 	m_pGround->SetScale(0.4f, 0.4f, 0.4f);
 
-	//§ŒÀŠÔ˜g‚Ì‰æ‘œ‚Ìİ’è.
+	//ã‚¢ã‚¤ãƒ†ãƒ ãƒœãƒƒã‚¯ã‚¹ã®è¨­å®š.
+	m_pItemBoxManager->SetPosition(-10.f, 20.f, 0.f);
+	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
+	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
+
+//-----ä¸­å¿ƒè¡¨ç¤ºç”¨åº§æ¨™-----.
+	//åˆ¶é™æ™‚é–“æ ã®ç”»åƒã®è¨­å®š.
 	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
-	//§ŒÀŠÔ˜g‚Ì‰æ‘œ‚Ìİ’è.
+	//åˆ¶é™æ™‚é–“å††ã®ç”»åƒã®è¨­å®š.
 	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
 	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
 
-	//§ŒÀŠÔ‚Ì•¶šƒTƒCƒY.
+
+////-----ä¸­é–“ç™ºè¡¨ç”¨-----.
+//	//åˆ¶é™æ™‚é–“æ ã®ç”»åƒã®è¨­å®š.
+//	m_pSpriteTimerFrame->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
+//	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
+//	//åˆ¶é™æ™‚é–“å††ã®ç”»åƒã®è¨­å®š.
+//	m_pSpriteTimer->SetPosition(WND_W - 160.f, WND_H - 96.f, 0.f);
+//	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
+
+
+////-----ä¸­å¿ƒè¡¨ç¤ºç”¨åº§æ¨™-----.
+//	//.
+//	m_pSpritePlayerIcon->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
+//	m_pSpritePlayerIcon->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpritePlayerIcon->SetScale(1.f, 1.f, 0.f);
+
+//-----ä¸­é–“ç™ºè¡¨ç”¨-----.
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç•ªå·ã®ç”»åƒã®è¨­å®š.
+	for (int i = 0; i < PLAYERNUM_MAX; i++)
+	{
+		switch (i)
+		{
+		case 0:			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼1P.
+		case 2:			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼3P.
+			m_pSpritePlayerIcon[i]->SetPosition(0.f, WND_H - 256.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetScale(1.f, 1.f, 0.f);
+			break;
+		case 1:			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼2P.
+		case 3:			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼4P.
+			m_pSpritePlayerIcon[i]->SetPosition(WND_W - 256.f, WND_H - 256.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetScale(1.f, 1.f, 0.f);
+			break;
+		default:
+			break;
+		}
+	}
+
+////-----ä¸­å¿ƒè¡¨ç¤ºç”¨åº§æ¨™-----.
+//	//.
+//	m_pSpriteKillNomber->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
+//	m_pSpriteKillNomber->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpriteKillNomber->SetScale(1.f, 1.f, 0.f);
+
+//-----ä¸­é–“ç™ºè¡¨ç”¨-----.
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç•ªå·ã®ç”»åƒã®è¨­å®š.
+	for (int i = 0; i < KILLNUM_MAX; i++)
+	{
+		switch (i)
+		{
+		case 0:			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼1P.
+		case 2:			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼3P.
+			m_pSpriteKillNomber[i]->SetPosition(0.f, 0.f, 0.f);
+			m_pSpriteKillNomber[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteKillNomber[i]->SetScale(0.7f, 0.7f, 0.7f);
+			break;
+		case 1:			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼2P.
+		case 3:			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼4P.
+			m_pSpriteKillNomber[i]->SetPosition(WND_W - 320.f, 0.f, 0.f);//320:256ã‚µã‚¤ã‚ºã®ç”»åƒã«æ–‡å­—åˆ†64ã‚’è¶³ã—ãŸæ•°.
+			m_pSpriteKillNomber[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteKillNomber[i]->SetScale(0.7f, 0.7f, 0.7f);
+			break;
+		default:
+			break;
+		}
+	}
+
+
+////-----ä¸­å¿ƒè¡¨ç¤ºç”¨åº§æ¨™-----.
+//	//.
+//	m_pSpriteHitPoint->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
+//	m_pSpriteHitPoint->SetRotation(0.f, 0.f, 0.f);
+//	m_pSpriteHitPoint->SetScale(1.f, 1.f, 0.f);
+
+//-----ä¸­é–“ç™ºè¡¨ç”¨-----.
+	//HPã®ç”»åƒã®è¨­å®š.
+	for (int i = 0; i < HP_MAX; i++)
+	{
+		if (i <= 0)
+		{
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
+		}
+		else
+		{
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 , 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
+		}
+	}
+
+	//åˆ¶é™æ™‚é–“ã®æ–‡å­—ã‚µã‚¤ã‚º.
 	m_pDbgText->SetFontSize(5.0f);
 
-	//ƒQ[ƒ€‚Å—V‚×‚é(ƒNƒŠƒA‰æ–Ê‚É‘JˆÚ‚·‚é)ŠÔ¦ˆø”.
+//-----ä¸­å¿ƒè¡¨ç¤ºç”¨åº§æ¨™-----.
+	//ã‚²ãƒ¼ãƒ ã§éŠã¹ã‚‹(ã‚¯ãƒªã‚¢ç”»é¢ã«é·ç§»ã™ã‚‹)æ™‚é–“â€»å¼•æ•°.
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
 
 	SetPosition();
+
+////-----ä¸­é–“ç™ºè¡¨ç”¨-----.
+//	//ã‚²ãƒ¼ãƒ ã§éŠã¹ã‚‹(ã‚¯ãƒªã‚¢ç”»é¢ã«é·ç§»ã™ã‚‹)æ™‚é–“â€»å¼•æ•°.
+//	m_Timer->StartTimer(TIME);
+//	m_Timer->SetDebugFont(m_pDbgText);
+//	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);
+
 }
 
 void CGameMain::Destroy()
@@ -319,33 +496,55 @@ void CGameMain::Destroy()
 
 void CGameMain::Create()
 {
-	//EffectƒNƒ‰ƒX
+	//Effectã‚¯ãƒ©ã‚¹
 	CEffect::GetInstance().Create(
 		CDirectX11::GetInstance().GetDevice(),
 		CDirectX11::GetInstance().GetContext());
 
-	//UIObject‚ÌƒCƒ“ƒXƒ^ƒ“ƒX¶¬.
+	//UIObjectã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ.
 	m_pSpriteTimerFrame = std::make_shared<CUIObject>();
 	m_pSpriteTimer		= std::make_shared<CUIObject>();
+	//HPã®åˆ†ã ã‘ç”Ÿæˆ.
+	for (int i = 0; i < HP_MAX; i++)
+	{
+		m_pSpriteHitPoint[i] = std::make_shared<CUIObject>();
+	}
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆ†ã ã‘ç”Ÿæˆ.
+	for (int i = 0; i < PLAYERNUM_MAX; i++)
+	{
+		m_pSpritePlayerIcon[i] = std::make_shared<CUIObject>();
+	}
+	//ã‚­ãƒ«æ•°ã®åˆ†ã ã‘ç”Ÿæˆ.
+	for (int i = 0; i < KILLNUM_MAX; i++)
+	{
+		m_pSpriteKillNomber[i] = std::make_shared<CUIObject>();
+	}
 
-	//UIŒn‚ÌƒCƒ“ƒXƒ^ƒ“ƒX¶¬.
-	m_pSprite2DTimerFrame = std::make_shared<CSprite2D>();
-	m_pSprite2DTimer	  = std::make_shared<CSprite2D>();
+	//UIç³»ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ.
+	m_pSprite2DTimerFrame	= std::make_shared<CSprite2D>();
+	m_pSprite2DTimer		= std::make_shared<CSprite2D>();
+	m_pSprite2DKillNomber	= std::make_shared<CSprite2D>();
+	m_pSprite2DHitPoint		= std::make_shared<CSprite2D>();
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆ†ã ã‘ç”Ÿæˆ.
+	for (int i = 0; i < PLAYERNUM_MAX; i++)
+	{
+		m_pSprite2DPlayerIcon[i] = std::make_shared<CSprite2D>();
+	}
 
-	//ƒXƒvƒ‰ƒCƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒXì¬.
+	//ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ.
 	m_pSpriteGround = std::make_unique<CSprite3D>();
 	m_pSpritePlayer = std::make_unique<CSprite3D>();
 	m_pSpriteExplosion = std::make_shared<CSprite3D>();
 
-	//ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…ƒIƒuƒWƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒXì¬
+	//ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ
 	m_pStcMeshObj = std::make_unique<CStaticMeshObject>();
 
-	//ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…‚ÌƒCƒ“ƒXƒ^ƒ“ƒXì¬
+	//ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ
 	m_pStaticMeshGround			= std::make_shared<CStaticMesh>();
 	m_pStaticMeshBSphere		= std::make_shared<CStaticMesh>();
+	m_pStaticMeshItemBox		= std::make_shared<CStaticMesh>();
 
-
-	// íÔ‚ÌƒƒbƒVƒ….
+	// æˆ¦è»Šã®ãƒ¡ãƒƒã‚·ãƒ¥.
 	m_pStaticMesh_TankBodyRed		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_TankCannonRed		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_TankBodyYellow	= std::make_shared<CStaticMesh>();
@@ -355,43 +554,43 @@ void CGameMain::Create()
 	m_pStaticMesh_TankBodyGreen		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_TankCannonGreen	= std::make_shared<CStaticMesh>();
 
-	// ’e‚ÌƒƒbƒVƒ….
+	// å¼¾ã®ãƒ¡ãƒƒã‚·ãƒ¥.
 	m_pStaticMesh_BulletRed			= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_BulletYellow		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_BulletBlue		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_BulletGreen		= std::make_shared<CStaticMesh>();
 
-	// •Ç‚ÌƒƒbƒVƒ…
+	// å£ã®ãƒ¡ãƒƒã‚·ãƒ¥
 	m_pStaticMeshWallW				= std::make_shared<CStaticMesh>();
 	m_pStaticMeshWallH				= std::make_shared<CStaticMesh>();
 
-	//ƒfƒoƒbƒOƒeƒLƒXƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒXì¬
+	//ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ
 	m_pDbgText = std::make_unique<CDebugText>();
 
-	//ƒvƒŒƒCƒ„[‚Æ–C“ƒ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ç ²å¡”ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
 	m_pPlayerManager = std::make_shared<CPlayerManager>();
 	
-	//ƒ}ƒl[ƒWƒƒ[‚Íˆê‰ñ‚¾‚¯Initialize
+	//ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã¯ä¸€å›ã ã‘Initialize
 	m_pPlayerManager->Initialize();
 
-	//’eƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒXì¬
+	//å¼¾ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ
 	m_pShotManager = std::make_shared<CShotManager>();
 	m_pShotManager->Initialize(PLAYER_MAX);
 
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		//ƒvƒŒƒCƒ„[i‚ÌˆÊ’u‚ğ­‚µ‚¸‚Â‚¸‚ç‚·
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼iã®ä½ç½®ã‚’å°‘ã—ãšã¤ãšã‚‰ã™
 		float offsetX = (i % 2) * 12.0f;
 		float offsetZ = (i / 2) * 12.0f;
 		m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(offsetX, 0.0f, offsetZ));
-		//‰ñ“]‚ğİ’è.
+		//å›è»¢ã‚’è¨­å®š.
 		m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, 0.f, 0.f));
 
-		////–C“ƒ‚Ì¶¬‚à‚·‚é
+		////ç ²å¡”ã®ç”Ÿæˆã‚‚ã™ã‚‹
 		//auto cannon = std::make_unique<CCannon>();
 
-		//ƒJƒƒ‰¶¬EƒZƒbƒgƒAƒbƒv
+		//ã‚«ãƒ¡ãƒ©ç”Ÿæˆãƒ»ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
 		auto camera = std::make_unique<CCamera>();
 		camera->SetTargetPos(m_pPlayerManager->GetPosition(i));
 		camera->SetTargetRotY(m_pPlayerManager->GetRotation(i).y);
@@ -399,53 +598,101 @@ void CGameMain::Create()
 
 	}
 
-	//’n–ÊƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒXì¬.
+	//åœ°é¢ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ.
 	m_pGround = std::make_unique<CGround>();
 
-	//§ŒÀŠÔ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX¶¬.
+	//åˆ¶é™æ™‚é–“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ.
 	m_Timer = std::make_shared<CTimer>();
 
-	// •ÇƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+	// å£ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
 	m_pWallTop		= std::make_shared<CWall>();
 	m_pWallBottom	= std::make_shared<CWall>();
 	m_pWallLeft		= std::make_shared<CWall>();
 	m_pWallRight	= std::make_shared<CWall>();
+	//ã‚¢ã‚¤ãƒ†ãƒ ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ.
+	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
+	m_pItemBoxManager->Create();
+
 }
 
 HRESULT CGameMain::LoadData()
 {
-	//ƒfƒoƒbƒOƒeƒLƒXƒg‚Ì“Ç‚İ‚İ.
+	//ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆã®èª­ã¿è¾¼ã¿.
 	if (FAILED(m_pDbgText->Init(CDirectX11::GetInstance())))
 	{
 		return E_FAIL;
 	}
 
-	//EffectƒNƒ‰ƒX
+	//Effectã‚¯ãƒ©ã‚¹
 	if (FAILED(CEffect::GetInstance().LoadData())) {
 		return E_FAIL;
 	}
 
-	//ƒ^ƒCƒ}[‰æ‘œ‚ÌƒXƒvƒ‰ƒCƒgİ’è.
+	//ã‚¿ã‚¤ãƒãƒ¼ç”»åƒã®ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆè¨­å®š.
 	CSprite2D::SPRITE_STATE WH_SIZE = {
-		1920, 1080,		//•`‰æ•,‚‚³.
-		1920, 1080,		//Œ³‰æ‘œ‚Ì•,‚‚³.
-		1920, 1080		//ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‚µ‚È‚¢‚Ì‚ÅA0‚Å‚¢‚¢.
+		1920, 1080,		//æç”»å¹…,é«˜ã•.
+		1920, 1080,		//å…ƒç”»åƒã®å¹…,é«˜ã•.
+		1920, 1080		//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ã—ãªã„ã®ã§ã€0ã§ã„ã„.
 	};
-	//ƒ^ƒCƒ}[˜g‰æ‘œ‚ÌƒXƒvƒ‰ƒCƒgİ’è.
+	//ã‚¿ã‚¤ãƒãƒ¼æ ç”»åƒã®ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆè¨­å®š.
 	CSprite2D::SPRITE_STATE TIMER_SIZE = {
-		256, 256,		//•`‰æ•,‚‚³.
-		256, 256,		//Œ³‰æ‘œ‚Ì•,‚‚³.
-		256, 256		//ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‚µ‚È‚¢‚Ì‚ÅA0‚Å‚¢‚¢.
+		256, 256,		//æç”»å¹…,é«˜ã•.
+		256, 256,		//å…ƒç”»åƒã®å¹…,é«˜ã•.
+		256, 256		//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ã—ãªã„ã®ã§ã€0ã§ã„ã„.
 	};
-	//§ŒÀŠÔ‚Ì˜g‚Ì“Ç‚İ‚İ.
-	m_pSprite2DTimerFrame->Init(_T("Data\\Texture\\Image\\TimerFrame.png"), WH_SIZE);
-	m_pSprite2DTimer->Init(_T("Data\\Texture\\Image\\Timer.png"), TIMER_SIZE);
+	//ã‚¿ã‚¤ãƒãƒ¼æ ç”»åƒã®ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆè¨­å®š.
+	CSprite2D::SPRITE_STATE ICON_SIZE = {
+		256, 256,		//æç”»å¹…,é«˜ã•.
+		256, 256,		//å…ƒç”»åƒã®å¹…,é«˜ã•.
+		256, 256		//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ã—ãªã„ã®ã§ã€0ã§ã„ã„.
+	};
+	//åˆ¶é™æ™‚é–“ã®æ ã®èª­ã¿è¾¼ã¿.
+	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\TimerFrame.png"), WH_SIZE);
+	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer.png"), TIMER_SIZE);
+	m_pSprite2DKillNomber	->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE);
+	m_pSprite2DHitPoint		->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE);
 
-	//‰æ‘œ‚ğƒAƒ^ƒbƒ`.
-	m_pSpriteTimerFrame->AttachSprite(m_pSprite2DTimerFrame);
-	m_pSpriteTimer->AttachSprite(m_pSprite2DTimer);
+	//ç”»åƒã‚’ã‚¢ã‚¿ãƒƒãƒ.
+	m_pSpriteTimerFrame	->AttachSprite(m_pSprite2DTimerFrame);
+	m_pSpriteTimer		->AttachSprite(m_pSprite2DTimer);
+	//HPã®åˆ†ã ã‘ã‚¢ã‚¿ãƒƒãƒ.
+	for (int i = 0; i < HP_MAX; i++)
+	{
+		m_pSpriteHitPoint[i]->AttachSprite(m_pSprite2DHitPoint);
+	}
+	//ã‚­ãƒ«æ•°ã®åˆ†ã ã‘ã‚¢ã‚¿ãƒƒãƒ.
+	for (int i = 0; i < KILLNUM_MAX; i++)
+	{
+		m_pSpriteKillNomber[i]->AttachSprite(m_pSprite2DKillNomber);
+	}
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆ†ã ã‘ã‚¢ã‚¿ãƒƒãƒ.
+	for (int i = 0; i < PLAYERNUM_MAX; i++)
+	{
+		switch (i)
+		{
+			case 0:
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\OneP.png"), ICON_SIZE);
+			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
+			break;
+			case 1:
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\TwoP.png"), ICON_SIZE);
+			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
+			break;
+			case 2:
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\TreeP.png"), ICON_SIZE);
+			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
+			break;
+			case 3:
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\FourP.png"), ICON_SIZE);
+			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
+			break;
+		default:
+			break;
+		}
+	}
 
-	//’n–ÊƒXƒvƒ‰ƒCƒg‚Ì\‘¢‘Ì
+
+	//åœ°é¢ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®æ§‹é€ ä½“
 	CSprite3D::SPRITE_STATE SSGround;
 	SSGround.Disp.w = 1.f;
 	SSGround.Disp.h = 1.f;
@@ -453,64 +700,65 @@ HRESULT CGameMain::LoadData()
 	SSGround.Base.h = 256.f;
 	SSGround.Stride.w = 256.f;
 	SSGround.Stride.h = 256.f;
-	//’n–ÊƒXƒvƒ‰ƒCƒg‚Ì“Ç‚İ‚İ.
+	//åœ°é¢ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®èª­ã¿è¾¼ã¿.
 	m_pSpriteGround->Init(CDirectX11::GetInstance(),
 		_T("Data\\Texture\\Ground.png"), SSGround);
 
-	//ƒvƒŒƒCƒ„[ƒXƒvƒ‰ƒCƒg‚Ì\‘¢‘Ì
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®æ§‹é€ ä½“
 	CSprite3D::SPRITE_STATE SSPlayer =
 	{ 1.f, 1.f, 64.f, 64.f, 64.f, 64.f };
-	//ƒvƒŒƒCƒ„[ƒXƒvƒ‰ƒCƒg‚Ì“Ç‚İ‚İ.
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®èª­ã¿è¾¼ã¿.
 	m_pSpritePlayer->Init(CDirectX11::GetInstance(),
 		_T("Data\\Texture\\Player.png"), SSPlayer);
 
-	//”š”­ƒXƒvƒ‰ƒCƒg‚Ì\‘¢‘Ì
+	//çˆ†ç™ºã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®æ§‹é€ ä½“
 	CSprite3D::SPRITE_STATE SSExplosion =
 	{ 1.f, 1.f, 256.f, 256.f, 32.f, 32.f };
-	//”š”­ƒXƒvƒ‰ƒCƒg‚Ì“Ç‚İ‚İ.
+	//çˆ†ç™ºã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®èª­ã¿è¾¼ã¿.
 	m_pSpriteExplosion->Init(CDirectX11::GetInstance(),
 		_T("Data\\Texture\\explosion.png"), SSExplosion);
 
 	//--------------------------------------------------------------------------
-	// 	   ‰æ‘œ‚Ì“Ç‚İ‚İ.
+	// 	   ç”»åƒã®èª­ã¿è¾¼ã¿.
 	//--------------------------------------------------------------------------
-	//ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…‚Ì“Ç‚İ‚İ
+	//ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥ã®èª­ã¿è¾¼ã¿
 	m_pStaticMeshGround->Init(_T("Data\\Mesh\\Static\\Stage\\stage.x"));
+	m_pStaticMeshItemBox->Init(_T("Data\\Mesh\\Static\\ItemBox\\ItemBox.x"));
 
-	// íÔ(Ô)
+	// æˆ¦è»Š(èµ¤)
 	m_pStaticMesh_TankBodyRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Cannon\\Cannon.x"));
 
-	// íÔ(‰©)
+	// æˆ¦è»Š(é»„)
 	m_pStaticMesh_TankBodyYellow->Init(_T("Data\\Mesh\\Static\\Tank\\Yellow\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonYellow->Init(_T("Data\\Mesh\\Static\\Tank\\Yellow\\Cannon\\Cannon.x"));
 
-	// íÔ(Â)
+	// æˆ¦è»Š(é’)
 	m_pStaticMesh_TankBodyBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Cannon\\Cannon.x"));
 
-	// íÔ(—Î)
+	// æˆ¦è»Š(ç·‘)
 	m_pStaticMesh_TankBodyGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Cannon\\Cannon.x"));
 	
-	// ’e(Ô)
+	// å¼¾(èµ¤)
 	m_pStaticMesh_BulletRed->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));
-	// ’e(‰©)
+	// å¼¾(é»„)
 	m_pStaticMesh_BulletYellow->Init(_T("Data\\Mesh\\Static\\Bullet\\Yellow\\Ball.x"));
-	// ’e(Â)
+	// å¼¾(é’)
 	m_pStaticMesh_BulletBlue->Init(_T("Data\\Mesh\\Static\\Bullet\\Blue\\Ball.x"));
-	// ’e(—Î)
+	// å¼¾(ç·‘)
 	m_pStaticMesh_BulletGreen->Init(_T("Data\\Mesh\\Static\\Bullet\\Green\\Ball.x"));
 	
-	// •Ç
+	// å£
 	m_pStaticMeshWallW->Init(_T("Data\\Mesh\\Static\\Wall\\Wall1.x"));
 	m_pStaticMeshWallH->Init(_T("Data\\Mesh\\Static\\Wall\\Wall2.x"));
 
-	//ƒoƒEƒ“ƒfƒBƒ“ƒOƒXƒtƒBƒA(“–‚½‚è”»’è—p).
+	//ãƒã‚¦ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã‚¹ãƒ•ã‚£ã‚¢(å½“ãŸã‚Šåˆ¤å®šç”¨).
 	m_pStaticMeshBSphere->Init(_T("Data\\Collision\\Sphere.x"));
 
 
-	// ‚»‚ê‚¼‚ê‚ÌƒvƒŒƒCƒ„[‚ÉF‚É‚ ‚Á‚½íÔ‚ğƒAƒ^ƒbƒ`
+	// ãã‚Œãã‚Œã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«è‰²ã«ã‚ã£ãŸæˆ¦è»Šã‚’ã‚¢ã‚¿ãƒƒãƒ
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		switch (i)
@@ -524,12 +772,12 @@ HRESULT CGameMain::LoadData()
 			m_pShotManager->AttachMeshToPlayerShot(i, m_pStaticMesh_BulletYellow);
 			break;
 		case 2:
-			m_pPlayerManager->AttachMeshesToPlayer(i, m_pStaticMesh_TankBodyBlue, m_pStaticMesh_TankCannonBlue);
-			m_pShotManager->AttachMeshToPlayerShot(i, m_pStaticMesh_BulletBlue);
-			break;
-		case 3:
 			m_pPlayerManager->AttachMeshesToPlayer(i, m_pStaticMesh_TankBodyGreen, m_pStaticMesh_TankCannonGreen);
 			m_pShotManager->AttachMeshToPlayerShot(i, m_pStaticMesh_BulletGreen);
+			break;
+		case 3:
+			m_pPlayerManager->AttachMeshesToPlayer(i, m_pStaticMesh_TankBodyBlue, m_pStaticMesh_TankCannonBlue);
+			m_pShotManager->AttachMeshToPlayerShot(i, m_pStaticMesh_BulletBlue);
 			break;
 		default:
 			break;
@@ -537,9 +785,15 @@ HRESULT CGameMain::LoadData()
 	}
 
 
-	//ƒXƒ^ƒeƒBƒbƒNƒƒbƒVƒ…‚ğİ’è
+	//ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒƒã‚·ãƒ¥ã‚’è¨­å®š
 	m_pGround->AttachMesh(m_pStaticMeshGround);
-	////ƒoƒEƒ“ƒfƒBƒ“ƒOƒXƒtƒBƒA‚Ìì¬.
+
+	//ã‚¢ã‚¤ãƒ†ãƒ ãƒœãƒƒã‚¯ã‚¹ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã«ãƒ¡ãƒƒã‚·ãƒ¥ã‚’è¨­å®š.
+	m_pItemBoxManager->AttachMesh(m_pStaticMeshItemBox);
+
+
+
+	////ãƒã‚¦ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã‚¹ãƒ•ã‚£ã‚¢ã®ä½œæˆ.
 	//m_pPlayer->CreateBSphareForMesh(*m_pStaticMeshBSphere);
 
 
@@ -556,19 +810,19 @@ HRESULT CGameMain::LoadData()
 
 void CGameMain::SetPosition()
 {
-	// ã‚Ì•Ç‚Ì‰ŠúÀ•W‚ğİ’è
+	// ä¸Šã®å£ã®åˆæœŸåº§æ¨™ã‚’è¨­å®š
 	m_pWallTop->SetPosition(0, 0, 30);
 	m_pWallTop->SetRotation(0, 0, 0);
 
-	// ‰º‚Ì•Ç‚Ì‰ŠúÀ•W‚ğİ’è
+	// ä¸‹ã®å£ã®åˆæœŸåº§æ¨™ã‚’è¨­å®š
 	m_pWallBottom->SetPosition(0, 0, -30);
 	m_pWallBottom->SetRotation(0, 0, 0);
 
-	// ¶‚Ì•Ç‚Ì‰ŠúÀ•W‚ğİ’è
+	// å·¦ã®å£ã®åˆæœŸåº§æ¨™ã‚’è¨­å®š
 	m_pWallLeft->SetPosition(-30, 0, 0);
 	m_pWallLeft->SetRotation(0, 0, 0);
 
-	// ‰E‚Ì•Ç‚Ì‰ŠúÀ•W‚ğİ’è
+	// å³ã®å£ã®åˆæœŸåº§æ¨™ã‚’è¨­å®š
 	m_pWallRight->SetPosition(30, 0, 0);
 	m_pWallRight->SetRotation(0, 0, 0);
 }
@@ -577,7 +831,7 @@ void CGameMain::CreateBounding()
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		//ƒvƒŒƒCƒ„[‚ÌƒoƒEƒ“ƒfƒBƒ“ƒO‚Ìì¬.
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒã‚¦ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã®ä½œæˆ.
 		switch (i)
 		{
 		case 0:
@@ -593,42 +847,42 @@ void CGameMain::CreateBounding()
 			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyGreen, m_pStaticMesh_TankCannonGreen);
 			break;
 		}
-		//ƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è‚ğì¬.
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å½“ãŸã‚Šåˆ¤å®šã‚’ä½œæˆ.
 		m_pPlayerManager->CreateCollider(i);
 	}
 	
-	//ã‚Ì•Ç‚ÌƒoƒEƒ“ƒfƒBƒ“ƒO‚Ìì¬.
+	//ä¸Šã®å£ã®ãƒã‚¦ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã®ä½œæˆ.
 	m_pWallTop->CreateBBoxForMesh(*m_pStaticMeshWallW);
-	//ã‚Ì•Ç‚Ì“–‚½‚è”»’è‚ğİ’è.
+	//ä¸Šã®å£ã®å½“ãŸã‚Šåˆ¤å®šã‚’è¨­å®š.
 	m_pWallTop->CreateBoxCollider(m_pWallTop->GetMinPos(), m_pWallTop->GetMaxPos());
 
-	//‰º‚Ì•Ç‚ÌƒoƒEƒ“ƒfƒBƒ“ƒO‚Ìì¬.
+	//ä¸‹ã®å£ã®ãƒã‚¦ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã®ä½œæˆ.
 	m_pWallBottom->CreateBBoxForMesh(*m_pStaticMeshWallW);
-	//‰º‚Ì•Ç‚Ì“–‚½‚è”»’è‚ğİ’è.
+	//ä¸‹ã®å£ã®å½“ãŸã‚Šåˆ¤å®šã‚’è¨­å®š.
 	m_pWallBottom->CreateBoxCollider(m_pWallBottom->GetMinPos(), m_pWallBottom->GetMaxPos());
 
-	//¶‚Ì•Ç‚ÌƒoƒEƒ“ƒfƒBƒ“ƒO‚Ìì¬.
+	//å·¦ã®å£ã®ãƒã‚¦ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã®ä½œæˆ.
 	m_pWallLeft->CreateBBoxForMesh(*m_pStaticMeshWallH);
-	//¶‚Ì•Ç‚Ì“–‚½‚è”»’è‚ğİ’è.
+	//å·¦ã®å£ã®å½“ãŸã‚Šåˆ¤å®šã‚’è¨­å®š.
 	m_pWallLeft->CreateBoxCollider(m_pWallLeft->GetMinPos(), m_pWallLeft->GetMaxPos());
 
-	//‰E‚Ì•Ç‚ÌƒoƒEƒ“ƒfƒBƒ“ƒO‚Ìì¬.
+	//å³ã®å£ã®ãƒã‚¦ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã®ä½œæˆ.
 	m_pWallRight->CreateBBoxForMesh(*m_pStaticMeshWallH);
-	//‰E‚Ì•Ç‚Ì“–‚½‚è”»’è‚ğİ’è.
+	//å³ã®å£ã®å½“ãŸã‚Šåˆ¤å®šã‚’è¨­å®š.
 	m_pWallRight->CreateBoxCollider(m_pWallRight->GetMinPos(), m_pWallRight->GetMaxPos());
 }
 
 void CGameMain::Collision()
 {
-	const float pushStrength = 0.1f; // ‰Ÿ‚µ–ß‚µ‚Ì‹­‚³iƒtƒŒ[ƒ€‚²‚Æ‚É’²®‰Â”\j
+	const float pushStrength = 0.1f; // æŠ¼ã—æˆ»ã—ã®å¼·ã•ï¼ˆãƒ•ãƒ¬ãƒ¼ãƒ ã”ã¨ã«èª¿æ•´å¯èƒ½ï¼‰
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		// i ”Ô‚ÌƒvƒŒƒCƒ„[‚ğæ“¾
+		// i ç•ªã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’å–å¾—
 		auto player = m_pPlayerManager->GetControlPlayer(i);
 		auto Coll = player->GetBody()->GetCollider();
 
-		// •Ç‚Æ‚ÌÕ“Ë‚ğƒ`ƒFƒbƒN‚µ‚Ä–@üƒxƒNƒgƒ‹‚ğ‡¬
+		// å£ã¨ã®è¡çªã‚’ãƒã‚§ãƒƒã‚¯ã—ã¦æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã‚’åˆæˆ
 		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
 
 		if (Coll && m_pWallTop->GetCollider() &&
@@ -652,7 +906,7 @@ void CGameMain::Collision()
 			push += D3DXVECTOR3(-1.f, 0.f, 0.f);
 		}
 
-		// •¡”•Ç‚É“–‚½‚Á‚½ê‡‚Í³‹K‰»‚µ‚Ä‰Ÿ‚µ–ß‚µƒxƒNƒgƒ‹‚ğ©‘R‚É
+		// è¤‡æ•°å£ã«å½“ãŸã£ãŸå ´åˆã¯æ­£è¦åŒ–ã—ã¦æŠ¼ã—æˆ»ã—ãƒ™ã‚¯ãƒˆãƒ«ã‚’è‡ªç„¶ã«
 		if (D3DXVec3Length(&push) > 0.f)
 		{
 			D3DXVec3Normalize(&push, &push);
@@ -663,22 +917,22 @@ void CGameMain::Collision()
 	}
 }
 
-//‰æ–Ê‚ğƒOƒŠƒbƒh‚É•ªŠ„‚µ‚½‚Æ‚«Aidx”Ô–Ú‚Ìƒ}ƒX‚É‘Î‰‚·‚é
-//D3D11_VIEWPORT‚ğì¬‚µ‚Ä•Ô‚·ŠÖ”
+//ç”»é¢ã‚’ã‚°ãƒªãƒƒãƒ‰ã«åˆ†å‰²ã—ãŸã¨ãã€idxç•ªç›®ã®ãƒã‚¹ã«å¯¾å¿œã™ã‚‹
+//D3D11_VIEWPORTã‚’ä½œæˆã—ã¦è¿”ã™é–¢æ•°
 D3D11_VIEWPORT CGameMain::MakeGridViewport(int idx, int cols, int rows, float totalW, float totalH)
 {
-	//‚Ç‚Ìƒ}ƒX‚©A—ñEs‚ğZo
-	const int col = idx % cols;	//—ñ”Ô†
-	const int row = idx / cols;	//s”Ô†
+	//ã©ã®ãƒã‚¹ã‹ã€åˆ—ãƒ»è¡Œã‚’ç®—å‡º
+	const int col = idx % cols;	//åˆ—ç•ªå·
+	const int row = idx / cols;	//è¡Œç•ªå·
 
-	//ƒrƒ…[ƒ|[ƒg‚ğì¬
-	D3D11_VIEWPORT vp{};					//ƒ[ƒ‰Šú‰»
-	vp.TopLeftX = (totalW / cols) * col;	//¶ã(0,0)‚©‚ç‚ÌƒIƒtƒZƒbƒg
+	//ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã‚’ä½œæˆ
+	D3D11_VIEWPORT vp{};					//ã‚¼ãƒ­åˆæœŸåŒ–
+	vp.TopLeftX = (totalW / cols) * col;	//å·¦ä¸Š(0,0)ã‹ã‚‰ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆ
 	vp.TopLeftY = (totalH / rows) * row;
 	vp.Width = totalW / cols;
 	vp.Height = totalH / rows;
-	vp.MinDepth = 0.0f;						//[“xƒoƒbƒtƒ@‚ÌÅ¬’lİ’è
-	vp.MaxDepth = 1.0f;						//[“xƒoƒbƒtƒ@‚ÌÅ‘å’lİ’è
+	vp.MinDepth = 0.0f;						//æ·±åº¦ãƒãƒƒãƒ•ã‚¡ã®æœ€å°å€¤è¨­å®š
+	vp.MaxDepth = 1.0f;						//æ·±åº¦ãƒãƒƒãƒ•ã‚¡ã®æœ€å¤§å€¤è¨­å®š
 	return vp;
 }
 

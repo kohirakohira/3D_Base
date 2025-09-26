@@ -20,17 +20,17 @@ void CShot::Initialize(int id)
 void CShot::Update()
 {
 	if (m_Shot.m_Display == true) {
-		// ˆÚ“®•ûŒü‚ÉˆÚ“®‘¬“x‚ð‚©‚¯‡‚í‚¹‚½‚à‚Ì‚ðÀ•W‚É”½‰f
+		// ç§»å‹•æ–¹å‘ã«ç§»å‹•é€Ÿåº¦ã‚’ã‹ã‘åˆã‚ã›ãŸã‚‚ã®ã‚’åº§æ¨™ã«åæ˜ 
 		m_vPosition += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed;
 
-		// ‰Á‘¬“x‚Éd—Í‚ª—^‚¦‚ç‚ê‚Ä‚¢‚­
+		// åŠ é€Ÿåº¦ã«é‡åŠ›ãŒä¸Žãˆã‚‰ã‚Œã¦ã„ã
 		m_Shot.m_Velocity -= m_Shot.m_Gravity;
-		// ‰Á‘¬“x‚ÉY‚ð—^‚¦‚é
+		// åŠ é€Ÿåº¦ã«Yã‚’ä¸Žãˆã‚‹
 		m_vPosition.y += m_Shot.m_Velocity / 2 * m_Shot.m_Gravity;
 
 		m_Shot.m_DisplayTime--;
 		if (m_Shot.m_DisplayTime < 0) {
-			//Œ©‚¦‚È‚¢Š‚É’u‚¢‚Ä‚¨‚­
+			//è¦‹ãˆãªã„æ‰€ã«ç½®ã„ã¦ãŠã
 			m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
 			m_Shot.m_Display = false;
 		}
@@ -47,30 +47,33 @@ void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camer
 
 void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 {
-	if (m_Shot.m_Display == true) return;
+	for (int i = 0; i < ShotMax; i++)
+	{
+		if (m_Shot[i].m_Display == true) return;
 
-	m_vPosition = Pos;
-	m_vRotation.y = RotY;		// ’e‚ÌŒü‚«(Œ©‚½–Ú)‚à•Ï‚¦‚é
-	m_Shot.m_Display = true;
-	m_Shot.m_Velocity = 0.f;
-	m_Shot.m_DisplayTime = FPS * 12;
+		m_vPosition = Pos;
+		m_vRotation.y = RotY;		// å¼¾ã®å‘ã(è¦‹ãŸç›®)ã‚‚å¤‰ãˆã‚‹
+		m_Shot[i].m_Display = true;
+		m_Shot[i].m_Velocity = 0.f;
+		m_Shot[i].m_DisplayTime = FPS * 3;
 
 
-	// ZŽ²ƒxƒNƒgƒ‹
-	m_Shot.m_MoveDirection = D3DXVECTOR3(0.f, 0.f, 1.f);
+		// Zè»¸ãƒ™ã‚¯ãƒˆãƒ«
+		m_Shot[i].m_MoveDirection = D3DXVECTOR3(0.f, 0.f, 1.f);
 
-	// YŽ²‰ñ“]s—ñ
-	D3DXMATRIX mRotationY;
-	// YŽ²‰ñ“]s—ñ‚ðì¬
-	D3DXMatrixRotationY(
-		&mRotationY,	// (out)s—ñ
-		m_vRotation.y);	// ƒvƒŒƒCƒ„[‚ÌY•ûŒü‚Ì‰ñ“]’l
+		// Yè»¸å›žè»¢è¡Œåˆ—
+		D3DXMATRIX mRotationY;
+		// Yè»¸å›žè»¢è¡Œåˆ—ã‚’ä½œæˆ
+		D3DXMatrixRotationY(
+			&mRotationY,	// (out)è¡Œåˆ—
+			m_vRotation.y);	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®Yæ–¹å‘ã®å›žè»¢å€¤
 
-	// YŽ²‰ñ“]s—ñ‚ðŽg‚Á‚ÄZŽ²ƒxƒNƒgƒ‹‚ðÀ•W•ÏŠ·‚·‚é
-	D3DXVec3TransformCoord(
-		&m_Shot.m_MoveDirection,	// (out)ZŽ²ƒxƒNƒgƒ‹
-		&m_Shot.m_MoveDirection,	// (in) ZŽ²ƒxƒNƒgƒ‹
-		&mRotationY);		// YŽ²‰ñ“]s—ñ
+		// Yè»¸å›žè»¢è¡Œåˆ—ã‚’ä½¿ã£ã¦Zè»¸ãƒ™ã‚¯ãƒˆãƒ«ã‚’åº§æ¨™å¤‰æ›ã™ã‚‹
+		D3DXVec3TransformCoord(
+			&m_Shot[i].m_MoveDirection,	// (out)Zè»¸ãƒ™ã‚¯ãƒˆãƒ«
+			&m_Shot[i].m_MoveDirection,	// (in) Zè»¸ãƒ™ã‚¯ãƒˆãƒ«
+			&mRotationY);		// Yè»¸å›žè»¢è¡Œåˆ—
+	}
 }
 
 bool CShot::IsActive() const

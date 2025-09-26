@@ -63,7 +63,6 @@ private:
 	std::shared_ptr<CCannon>				m_pCannon;
 
     std::vector<std::shared_ptr<CPlayer>>	m_pPlayers;
-    std::vector<std::unique_ptr<CShot>>		m_pShots;
 	int m_ActivePlayerIndex;	// 現在操作中のプレイヤー(デバッグ用)
 
 	int m_LockTargetIndex = -1;	//ロック無効(デバック用)

@@ -271,17 +271,5 @@ HRESULT CGameDebug::LoadData()
 	////プレイヤーマナージャーにアタッチ.
 	//m_pPlayerManager->AttachMeshesToPlayer(0, m_pStaticMesh_TankBodyRed,  m_pStaticMesh_TankCannonRed);
 	//m_pPlayerManager->AttachMeshesToPlayer(1, m_pStaticMesh_TankBodyBlue, m_pStaticMesh_TankCannonBlue);
-
-
-
-
-
-
-
-
-
-
-
-
 	return S_OK;
 }

@@ -67,9 +67,9 @@ void CItemBox::GravityMath()
 	//速度変化(初期速度 += 重力加速度 / 2 * 1フレーム)※/ 2 は落下速度の調整用.
 	InitialSpeed += GravitySpeed / 2 * Framerate;
 
-	if (m_vPosition.y < 0)
+	if (m_vPosition.y < 0.5f)
 	{
-		m_vPosition.y = 20.f;
+		m_vPosition.y = 0.2f;
 		InitialSpeed = 0.f;
 	}
 }
