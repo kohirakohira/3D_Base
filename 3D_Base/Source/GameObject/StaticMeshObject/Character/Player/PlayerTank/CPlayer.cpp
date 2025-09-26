@@ -80,7 +80,6 @@ void CPlayer::CreateCollider()
 	m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
 }
 
-
 D3DXVECTOR3 CPlayer::GetCannonPosition() const
 {
 	if (m_pCannon)

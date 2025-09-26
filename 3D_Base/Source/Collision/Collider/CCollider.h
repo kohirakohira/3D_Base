@@ -5,7 +5,7 @@
 enum class ColliderTipe
 {
 	Sphere,
-	Box
+	Box,
 };
 
 //基底クラス.
@@ -20,6 +20,7 @@ public:
 
 	virtual bool CheckCollisionSphere(const class CSphereCollider& sphere)const = 0;
 	virtual bool CheckCollisionBox(const class CBoxCollider& box)const = 0;
+	
 
 	//中心座標を取得.
 	virtual const D3DXVECTOR3& GetPosition()const = 0;

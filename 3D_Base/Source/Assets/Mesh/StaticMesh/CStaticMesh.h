@@ -143,6 +143,9 @@ public:
 	//レイとの当たり判定用のメッシュを取得.
 	LPD3DXMESH GetMeshForRay() const { return m_ModelForRay.pMesh; }
 	
+	// ワールド行列を設定・取得
+	void SetWorldMatrix(const D3DXMATRIX& mat) { m_World = mat; }
+	const D3DXMATRIX& GetWorldMatrix() const { return m_World; }
 
 private:
 	//メッシュ読み込み.
@@ -198,4 +201,7 @@ private:
 	D3DXVECTOR3		m_Rotation;	//回転値(x,y,z).
 								//※x=Pitch, y=Yaw, z=Roll.
 	D3DXVECTOR3		m_Scale;	//拡大縮小値(x,y,z等倍).
+
+	// ワールド行列.
+	D3DXMATRIX m_World;
  };

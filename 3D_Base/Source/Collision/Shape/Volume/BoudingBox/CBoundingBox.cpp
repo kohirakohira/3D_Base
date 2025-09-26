@@ -110,10 +110,17 @@ HRESULT CBoundingBox::CreateOBBForMesh(const CStaticMesh& pMesh)
 	m_Center = (vMin + vMax) * 0.5f;
 	m_HalfSize = (vMax - vMin) * 0.5f;
 
-	// デフォルトはワールド軸
-	m_Axis[0] = D3DXVECTOR3(1, 0, 0);
-	m_Axis[1] = D3DXVECTOR3(0, 1, 0);
-	m_Axis[2] = D3DXVECTOR3(0, 0, 1);
+	// モデルのワールド行列を取得
+	D3DXMATRIX world = pMesh.GetWorldMatrix();
+
+	// ワールド行列の回転・スケール成分から軸を作る
+	m_Axis[0] = D3DXVECTOR3(world._11, world._12, world._13); // X軸
+	m_Axis[1] = D3DXVECTOR3(world._21, world._22, world._23); // Y軸
+	m_Axis[2] = D3DXVECTOR3(world._31, world._32, world._33); // Z軸
+
+	// 正規化（スケール成分を含んでいる場合があるので）
+	for (int i = 0; i < 3; i++)
+		D3DXVec3Normalize(&m_Axis[i], &m_Axis[i]);
 
 	return S_OK;
 }
