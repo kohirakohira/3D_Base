@@ -14,6 +14,10 @@ enum class CSceneType
 	MovieScene7,	//ムービーシーン7
 	MovieScene8,	//ムービーシーン8
 	MovieScene9,	//ムービーシーン9
+	Debug,
+	ResultDraw,
+	ResultWin,
+	Result,
 
 	None = -1		//来ないはず.
 };

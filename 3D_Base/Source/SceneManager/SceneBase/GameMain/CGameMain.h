@@ -46,6 +46,9 @@ class CGameMain
 {
 public:
 
+
+public:
+
 	CGameMain(HWND hWnd);
 	~CGameMain()override;
 

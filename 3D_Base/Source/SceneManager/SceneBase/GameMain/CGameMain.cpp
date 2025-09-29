@@ -159,6 +159,11 @@ void CGameMain::Update()
 	{
 		m_pPlayerManager->SwitchActivePlayer();
 	}
+
+	if (GetAsyncKeyState('Z') & 0x0001)
+	{
+		m_SceneType = CSceneType::Main;
+	}
 }
 
 
@@ -199,7 +204,7 @@ void CGameMain::Draw()
 			}
 
 			// ’e•`‰æ
-			m_pShotManager->Draw(m_pCameras[0]->m_mView, m_pCameras[0]->m_mProj, m_pCameras[0]->m_Light, m_pCameras[0]->m_Camera);
+			m_pShotManager->Draw(view, proj, light, paramC);
 
 			//’n–Ê•`‰æ
 			if (owner) m_pGround->SetPlayer(*owner);
