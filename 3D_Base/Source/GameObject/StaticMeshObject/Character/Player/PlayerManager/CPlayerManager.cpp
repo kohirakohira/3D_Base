@@ -12,6 +12,14 @@ static inline bool IsCom(const std::shared_ptr<CPlayer>& player)
 	return std::dynamic_pointer_cast< const CComPlayer>(player) != nullptr;
 }
 
+//プレイヤーの操作かどうかの判定
+static inline bool IsHumanControlled(const std::shared_ptr<CPlayer>& player)
+{
+	if (auto com = std::dynamic_pointer_cast<CComPlayer>(player)) {
+		return player->HasControl();   //COMでも無効ならプレイヤー操作
+	}
+}
+
 CPlayerManager::~CPlayerManager()
 {
 }
@@ -19,29 +27,23 @@ CPlayerManager::~CPlayerManager()
 //インスタンス生成.
 void CPlayerManager::Initialize()
 {
-	//一旦COMの仮実装
 	m_pPlayers.clear();
 	m_pPlayers.reserve(PLAYER_MAX);
 
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
+	for (int i = 0; i < PLAYER_MAX; ++i) {
+		auto com = std::make_shared<CComPlayer>();
+		com->Initialize(i);
 
-		if (i == 0)
-		{
-			auto player = std::make_shared<CPlayer>();
-			player->Initialize(i);
-			m_pPlayers.push_back(std::move(player));
-		}
-		else
-		{
-			auto com = std::make_shared<CComPlayer>();
-			com->Initialize(i);
-			m_pPlayers.push_back(std::move(com));
-		}
+		//既定はCOM
+		com->SetComEnabled(true);
+		com->SetHasControl(false);
 
-		//// ↓松岡コード
-		//m_pPlayers.push_back(std::make_shared<CPlayer>());
-		//m_pPlayers[i]->Initialize(i);
+		// 最初の1体だけ人間操作にする
+		if (i == 0) {
+			com->SetComEnabled(false); //COM停止,人間化
+			com->SetHasControl(true);  //入力を読むのはこの個体だけ
+		}
+		m_pPlayers.push_back(std::move(com));
 	}
 }
 
@@ -96,22 +98,19 @@ void CPlayerManager::Update()
 	const int count = static_cast<int>(m_pPlayers.size());
 	if (count <= 0)return;
 
-	//操作プレイヤーを更新
-	if (m_ActivePlayerIndex >= 0 && m_ActivePlayerIndex < count) {
-		m_pPlayers[m_ActivePlayerIndex]->Update();
-	}
+	////操作プレイヤーを更新
+	//if (m_ActivePlayerIndex >= 0 && m_ActivePlayerIndex < count) {
+	//	m_pPlayers[m_ActivePlayerIndex]->Update();
+	//}
 
 	//基本ターゲットを決める
 	//ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
 	auto pickHumanTargetIndex = [&]()->int {
 		auto isValidHuman = [&](int idx) {
-			return(idx >= 0 && idx < count) && !IsCom(m_pPlayers[idx]);
+			return(idx == m_ActivePlayerIndex) && IsHumanControlled(m_pPlayers[idx]);
 			};
 		if (isValidHuman(m_LockTargetIndex)) return m_LockTargetIndex;
 		if (isValidHuman(m_ActivePlayerIndex)) return m_ActivePlayerIndex;
-		for (int i = 0; i < count; ++i) {
-			if (isValidHuman(i)) return i;
-		}
 		return -1;	//プレイヤーがいない
 		};
 
@@ -122,20 +121,33 @@ void CPlayerManager::Update()
 
 	for (int i = 0; i < count; ++i)
 	{
-		std::shared_ptr<CPlayer> self = m_pPlayers[i];
+		auto self = m_pPlayers[i];
 
 		if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
 		{
-			if (target && !IsCom(target) && target != self) 
+			if (com->IsComEnabled())
 			{
-				com->SetTarget(target);
+				//COM稼働中だけターゲットをあげる
+				if (target && IsHumanControlled(target) && target != self)
+				{
+					com->SetTarget(target);
+				}
+				else
+				{
+					com->ClearTarget();
+				}
+				com->Update();
 			}
 			else
 			{
-				com->ClearTarget();
+				self->Update();
 			}
-			com->Update();
 		}
+		else
+		{
+			self->Update();
+		}
+			
 	}
 
 }
@@ -174,7 +186,30 @@ std::shared_ptr<CPlayer> CPlayerManager::GetControlPlayer(int index)
 
 void CPlayerManager::SwitchActivePlayer()
 {
-	m_ActivePlayerIndex = (m_ActivePlayerIndex + 1) % m_pPlayers.size();
+
+	if (m_pPlayers.empty()) return;	//0人ならなにもしない
+
+	const int prev = m_ActivePlayerIndex;	//直前に操作してたやつ
+	const int next = (m_ActivePlayerIndex + 1) % (int)m_pPlayers.size();	//次の対象にする
+
+	//全員の操作権を落とす
+	for (auto& p : m_pPlayers) p->SetHasControl(false);
+
+	//前のアクティブがCOMなら戻す
+	if (prev >= 0)
+	{
+		if (auto prevCom = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[prev]))
+		{
+			prevCom->SetComEnabled(true);	//COM操作
+		}
+	}
+	//次のアクティブがCOMならプレイヤー操作に切り替える
+	if (auto nextCom = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[next])) {
+		nextCom->SetComEnabled(false);	//プレイヤー操作
+	}
+	//次のやつに操作権を渡す
+	m_pPlayers[next]->SetHasControl(true);
+	m_ActivePlayerIndex = next;
 }
 
 D3DXVECTOR3 CPlayerManager::GetPosition(int index) const

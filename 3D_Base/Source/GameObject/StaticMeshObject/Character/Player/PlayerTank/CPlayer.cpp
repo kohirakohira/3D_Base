@@ -50,6 +50,60 @@ void CPlayer::SetPushBack(const D3DXVECTOR3& push)
    
 void CPlayer::Update()
 {
+	//操作権がない時は入力を読まない
+	if (!m_HasControl)
+	{
+		if (m_pBody)   m_pBody->CCharacter::Update();
+		if (m_pCannon) m_pCannon->CCharacter::Update();
+		return;
+	}
+	//移動とか適用
+	UpdateHumanInputAndMove();
+}
+
+void CPlayer::UpdateHumanInputAndMove()
+{
+	if (!m_pBody || !m_pCannon) return;	//ボディとキャノンのポインタがなければなにもしない
+
+	//キーが押されたかチェック
+	auto isPressed = [](int vk) { return (GetAsyncKeyState(vk) & 0x8000) != 0; };
+
+	//移動・旋回・砲塔旋回の入力
+	const float moveStep = 0.010f;  //移動速度
+	const float turnStep = 0.006f;  //車体旋回速度
+	const float aimStep = 0.010f;   // 砲塔旋回速度
+
+	float move = (isPressed('W') ? +1.f : 0.f) + (isPressed('S') ? -1.f : 0.f);
+	float turn = (isPressed('D') ? +1.f : 0.f) + (isPressed('A') ? -1.f : 0.f);
+	float aim = (GetAsyncKeyState(VK_RIGHT) & 0x8000 ? +1.f : 0.f)
+		+ (GetAsyncKeyState(VK_LEFT) & 0x8000 ? -1.f : 0.f);
+
+	//現在値
+	D3DXVECTOR3 pos = m_pBody->GetPosition();
+	D3DXVECTOR3 brot = m_pBody->GetRotation();
+	D3DXVECTOR3 crot = m_pCannon->GetRotation();
+
+	//車体の旋回
+	brot.y += turn * turnStep;
+
+	//前進/後退
+	D3DXVECTOR3 fwd(std::sinf(brot.y), 0.f, std::cosf(brot.y));
+	pos += fwd * (move * moveStep);
+
+	//砲塔
+	crot.y += aim * aimStep;
+
+	// 反映
+	m_pBody->SetRotation(brot);
+	m_pBody->SetPosition(pos);
+	m_pBody->Update();  
+
+	//砲塔の位置を車体上に合わせる
+	D3DXVECTOR3 cpos = pos; cpos.y += 0.3f;
+	m_pCannon->SetPosition(cpos);
+	m_pCannon->SetRotation(crot);
+	m_pCannon->Update();
+#if 0
 	m_pBody->Update();
 
 	// 砲塔の位置を更新
@@ -58,6 +112,7 @@ void CPlayer::Update()
 	m_pCannon->SetPosition(pos); // 砲塔座標更新
 
 	m_pCannon->Update();
+#endif
 }
 
 void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
@@ -112,7 +167,7 @@ D3DXVECTOR3 CPlayer::GetPosition() const
 
 D3DXVECTOR3 CPlayer::GetRotation() const
 {
-	if (m_pBody)return m_pBody->GetPosition();
+	if (m_pBody)return m_pBody->GetRotation();
 	return CCharacter::GetRotation();
 }
 

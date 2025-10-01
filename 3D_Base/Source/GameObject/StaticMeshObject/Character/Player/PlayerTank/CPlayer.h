@@ -53,16 +53,21 @@ public:
 	float GetCannonYaw() const;
 	D3DXVECTOR3 GetCannonPosition() const;
 
+	void SetHasControl(bool control) { m_HasControl = control; }
+	bool HasControl() const { return m_HasControl; }
+
+
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }
 	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
-
+	void UpdateHumanInputAndMove();	//ƒvƒŒƒCƒ„[ˆ—‚ğ‚¢‚ê‚Ä‚¨‚­
 protected:
 
 	std::shared_ptr<CBody>		m_pBody;
 	std::shared_ptr<CCannon>	m_pCannon;
 	int			m_Hp;
 	int			m_PlayerID;
+	bool m_HasControl = false;	//‘€ìŒ ‚ª‚ ‚é‚©
 
 
 };

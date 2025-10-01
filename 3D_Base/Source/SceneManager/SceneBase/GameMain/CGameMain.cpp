@@ -2,6 +2,8 @@
 #undef min	//マクロ定義無効化
 #undef max	
 
+static bool prevC = false;
+
 #include "CGameMain.h"
 //-----サウンド-----
 #include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
@@ -177,8 +179,16 @@ void CGameMain::Update()
 		m_SceneType = CSceneType::Result;
 	}
 
+	const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
+
+	if (nowC && !prevC)
+	{
+		m_pPlayerManager->SwitchActivePlayer();
+	}
+	prevC = nowC;
+
 	// Cキー押されたら操作プレイヤー切り替え
-	if (GetKey('C') & 0x8000)
+	if (GetAsyncKeyState('C') & 0x0001)
 	{
 		m_pPlayerManager->SwitchActivePlayer();
 	}

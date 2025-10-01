@@ -19,6 +19,7 @@ std::vector<CComPlayer*>& CComPlayer::Instances() {
     return registry;
 }
 
+
 CComPlayer::CComPlayer()
     : MoveSpeed(0.10f)     // 見やすい初期値
     , TurnStep(0.08f)
@@ -267,26 +268,36 @@ void CComPlayer::Update()
 {
     SanitizeParams();
 
-    // ターゲット不在でも見た目は更新
-    std::shared_ptr<CBody> body = Body();
-    if (!body) { if (auto c = Cannon()) c->CCharacter::Update(); return; }
+    //COM無効ならプレイヤー操作
+    if (m_ComEnabled)
+    {
+        // ターゲット不在でも見た目は更新
+        std::shared_ptr<CBody> body = Body();
+        if (!body) { if (auto c = Cannon()) c->CCharacter::Update(); return; }
 
-    // 追尾対象がなければ回頭も移動もせず、そのまま更新
-    if (!m_Target) {
-        body->CCharacter::Update();
-        if (auto c = Cannon()) c->CCharacter::Update();
+        // 追尾対象がなければ回頭も移動もせず、そのまま更新
+        if (!m_Target) {
+            body->CCharacter::Update();
+            if (auto c = Cannon()) c->CCharacter::Update();
+            return;
+        }
+
+        // 自己ターゲットは無視
+        if (m_Target.get() == this) {
+            body->CCharacter::Update();
+            if (auto c = Cannon()) c->CCharacter::Update();
+            return;
+        }
+
+        const D3DXVECTOR3 tp = m_Target->GetPosition();
+        TickChaseTo(tp);
+        TickAimTo(tp);
         return;
     }
-
-    // 自己ターゲットは無視
-    if (m_Target.get() == this) {
-        body->CCharacter::Update();
-        if (auto c = Cannon()) c->CCharacter::Update();
-        return;
+    else
+    {
+        CPlayer::Update();
     }
 
-
-    const D3DXVECTOR3 tp = m_Target->GetPosition();
-    TickChaseTo(tp);
-    TickAimTo(tp);
+   
 }

@@ -30,6 +30,9 @@ public:
 	D3DXVECTOR3 GetPosition() const override;
 	D3DXVECTOR3 GetRotation() const override;
 
+	void SetComEnabled(bool enabled) { m_ComEnabled = enabled; }
+	bool IsComEnabled() const { return m_ComEnabled; }
+
 private:
 	std::shared_ptr<CPlayer> m_Target;	//追尾対象
 	bool m_Registered;	//インスタンス登録管理
@@ -50,5 +53,7 @@ private:
 
 	//COMインスタンスの静的レジストリ
 	static std::vector<CComPlayer*>& Instances();
+
+	bool m_ComEnabled = true;	//最初はCOM有効
 
 };
