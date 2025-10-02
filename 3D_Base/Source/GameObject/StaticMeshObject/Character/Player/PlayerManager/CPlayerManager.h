@@ -80,6 +80,10 @@ private:
 	void SyncByPadConnection();   //接続状況で割当/COM切替
 	int  FindFirstComPlayer() const;
 
+	//パラメータ設定用
+	void SetPlayerTuningAll(const TankTuning& t);
+	void SetPlayerTuning(int idx, const TankTuning& t);
+
 };
 
 

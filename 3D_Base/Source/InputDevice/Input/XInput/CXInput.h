@@ -47,6 +47,22 @@ public:
 		LAST	= Y,
 	};
 
+#if 0
+	// --- テストモード API ---
+	void EnableTestMode(bool on) { m_testMode = on; }
+	void TestSetConnected(bool on) { m_testConnected = on; }
+	void TestSetSticks(SHORT lx, SHORT ly, SHORT rx, SHORT ry)
+	{
+		m_testLX = lx; m_testLY = ly; m_testRX = rx; m_testRY = ry;
+	}
+	void TestSetTriggers(BYTE lt, BYTE rt)
+	{
+		m_testLT = lt; m_testRT = rt;
+	}
+	void TestSetButtons(WORD buttons) { m_testButtons = buttons; }
+
+#endif
+
 public:
 	//コンストラクタ.
 	CXInput( DWORD padId );
@@ -105,4 +121,13 @@ private:
 	XINPUT_STATE		m_stateOld;		//キー入力情報(キーストローク判定用).
 	XINPUT_VIBRATION    m_vibration;	//振動.
 	bool				m_connect;		//接続判定.
+
+#if 0
+	// --- テストモード状態 ---
+	bool  m_testMode = false;
+	bool  m_testConnected = false;
+	SHORT m_testLX = 0, m_testLY = 0, m_testRX = 0, m_testRY = 0;
+	BYTE  m_testLT = 0, m_testRT = 0;
+	WORD  m_testButtons = 0;
+#endif
 };

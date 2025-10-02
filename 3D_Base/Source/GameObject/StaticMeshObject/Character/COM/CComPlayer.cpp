@@ -153,6 +153,12 @@ void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
 // 本体を常にターゲットへ回頭＋前進
 void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
 {
+#if 0
+    auto& tuning = GetTuning();
+
+    t.bodyTurning;
+#endif
+
     std::shared_ptr<CBody> body = Body();
     if (!body) return;
 

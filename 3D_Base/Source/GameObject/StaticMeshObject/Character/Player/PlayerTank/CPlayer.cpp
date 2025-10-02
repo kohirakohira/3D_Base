@@ -1,11 +1,61 @@
 #include "CPlayer.h"
+#include "InputDevice/Input/XInput/CXInput.h"
+
+//指定した区間から外れていたら、近い端点に合わせる
+template <class T>	//比較演算子が使える型に対応させる
+static inline T clamp(T v, T lo, T hi)
+{
+	if (v < lo)	//下限に丸める
+	{
+		return lo;
+	}
+	if (v > hi)	//上限に丸める
+	{
+		return hi;
+	}
+	return v;
+}
+
+//XInputのSHORTを-1,1に正規化
+static inline float ToStick01(short raw)
+{
+	float denom;	//分母
+	if (raw >= 0)
+	{
+		denom = 32767.0f;
+	}
+	else
+	{
+		denom = 32768.0f;	//32767で割ると少しはみ出す
+	}
+
+	float v = static_cast<float>(raw) / denom;
+	//-1, +1にクランプ
+	if (v < -1.0f)
+	{
+		v = -1.0f;
+	}
+	else if (v > 1.0f)
+	{
+		v = 1.0f;
+	}
+	return v;
+}
+
+//デッドゾーン
+static inline float Deadzone(float v, float z)
+{
+	return (std::fabs(v) ? 0.0f : v);
+}
+
 
 CPlayer::CPlayer()
-	: m_pBody	( nullptr )
-	, m_pCannon	( nullptr )
-	, m_Hp		( 2 )
-	, m_PlayerID()
-	, m_pPad()
+	: m_pBody		( nullptr )
+	, m_pCannon		( nullptr )
+	, m_Hp			( 2 )
+	, m_PlayerID	()
+	, m_pPad		( nullptr )
+	, m_HasControl	( false )
 {
 }
 
@@ -64,6 +114,7 @@ void CPlayer::Update()
 
 void CPlayer::UpdateHumanInputAndMove()
 {
+#if 0
 	if (!m_pBody || !m_pCannon) return;	//ボディとキャノンのポインタがなければなにもしない
 
 	//キーが押されたかチェック
@@ -79,7 +130,6 @@ void CPlayer::UpdateHumanInputAndMove()
 	float aim = (GetAsyncKeyState(VK_RIGHT) & 0x8000 ? +1.f : 0.f)
 		+ (GetAsyncKeyState(VK_LEFT) & 0x8000 ? -1.f : 0.f);
 
-#if 1
 	//現在値
 	D3DXVECTOR3 pos = m_pBody->GetPosition();
 	D3DXVECTOR3 brot = m_pBody->GetRotation();
@@ -107,35 +157,48 @@ void CPlayer::UpdateHumanInputAndMove()
 	m_pCannon->Update();
 #endif
 
-
-#if 0
-	m_pBody->Update();
-
-	// 砲塔の位置を更新
-	D3DXVECTOR3 pos = m_pBody->GetPosition();
-	pos.y += 0.3f; // 砲塔の座標を合わせる
-	m_pCannon->SetPosition(pos); // 砲塔座標更新
-
-	m_pCannon->Update();
-#endif
-
-
-
-#if 0
-	//コントローラーの入力
 	if (!m_pBody || !m_pCannon) return;
-	float padmove = 0.f;
-	float padturn = 0.f;
-	float padaim = 0.f;
+
+	float move = 0.f, turn = 0.f, aim = 0.f;
 
 	if (m_pPad && m_pPad->IsConnect())
 	{
-		m_pPad->GetLThumbX();
-		m_pPad->GetLThumbY();
-		m_pPad->GetRThumbX();
+		const float lx = ToStick01(m_pPad->GetLThumbX());
+		const float ly = ToStick01(m_pPad->GetLThumbY());
+		const float rx = ToStick01(m_pPad->GetRThumbX());
 
+		move = Deadzone(ly, 0.15f);
+		turn = Deadzone(lx, 0.15f);
+		aim = Deadzone(rx, 0.15f);
 	}
-#endif
+	else
+	{
+		//パッド未接続はなにもしない
+	}
+
+	const float dt = 1.0f;	
+	const auto& tuning = GetTuning();
+
+	D3DXVECTOR3 pos = m_pBody->GetPosition();
+	D3DXVECTOR3 bodyrot = m_pBody->GetRotation();
+	D3DXVECTOR3 cannonrot = m_pCannon->GetRotation();
+
+	bodyrot.y += turn * (tuning.bodyTurnSpeed * dt);
+	D3DXVECTOR3 fwd(std::sinf(bodyrot.y), 0.f, std::cosf(bodyrot.y));
+	pos += fwd * (move * tuning.moveSpeed * dt);
+	cannonrot.y += aim * (tuning.turretTurnSpeed * dt);
+
+	m_pBody->SetRotation(bodyrot);
+	m_pBody->SetPosition(pos);
+	m_pBody->Update();
+
+	D3DXVECTOR3 cannonpos = pos;
+	cannonpos.y += tuning.cannonHeight;
+
+	m_pCannon->SetPosition(cannonpos);
+	m_pCannon->SetRotation(cannonrot);
+	m_pCannon->Update();
+
 
 }
 

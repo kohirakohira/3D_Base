@@ -5,12 +5,21 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <cmath>
 
 //-----外部クラス-----
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankBody//CBody.h"		// 戦車：車体クラス
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h"	// 戦車：砲塔クラス
 
 class CXInput;	//前方宣言
+
+struct TankTuning
+{
+	float moveSpeed = 0.10f;		//前進、後退
+	float bodyTurnSpeed = 0.08f;	//車体ヨー
+	float turretTurnSpeed = 0.12f;	//砲塔ヨー
+	float cannonHeight = 0.3f;		//砲塔の取り付けの高さ
+};
 
 class CPlayer
 	: public CCharacter
@@ -54,13 +63,18 @@ public:
 	float GetCannonYaw() const;
 	D3DXVECTOR3 GetCannonPosition() const;
 
+	//操作権関連の外部関数
 	void SetHasControl(bool control) { m_HasControl = control; }
 	bool HasControl() const { return m_HasControl; }
 
 	//パッド用の外部関数
 	void SetPadRef(CXInput* pad) { m_pPad = pad; }
+	CXInput* GetPadRef() const { return m_pPad; }
 
-public:
+	//パラメータの外部関数
+	void SetTuning(const TankTuning& tuning) { m_Tune = tuning; }
+	const TankTuning& GetTuning() const { return m_Tune; }
+
 
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }
@@ -72,7 +86,11 @@ protected:
 	std::shared_ptr<CCannon>	m_pCannon;
 	int			m_Hp;
 	int			m_PlayerID;
-	bool m_HasControl = false;	//操作権があるか
+	bool m_HasControl;			//操作権があるか
 	CXInput* m_pPad;			//コントローラー
+
+private:
+	TankTuning m_Tune{};	
+
 
 };

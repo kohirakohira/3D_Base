@@ -52,6 +52,27 @@ CXInput::~CXInput()
 //-------------------------------------------------.
 bool CXInput::Update()
 {
+#if 0
+	m_stateOld = m_state;
+
+	if (m_testMode) {
+		// 仮想入力をそのまま流す
+		ZeroMemory(&m_state, sizeof(m_state));
+		m_connect = m_testConnected;
+		if (m_connect) {
+			m_state.Gamepad.wButtons = m_testButtons;
+			m_state.Gamepad.sThumbLX = m_testLX;
+			m_state.Gamepad.sThumbLY = m_testLY;
+			m_state.Gamepad.sThumbRX = m_testRX;
+			m_state.Gamepad.sThumbRY = m_testRY;
+			m_state.Gamepad.bLeftTrigger = m_testLT;
+			m_state.Gamepad.bRightTrigger = m_testRT;
+		}
+		return m_connect;
+	}
+#endif
+
+
 	//キー情報を更新する前に退避.
 	m_stateOld = m_state;
 	if( UpdateStatus() == false ){
