@@ -10,6 +10,7 @@
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankBody//CBody.h"		// 戦車：車体クラス
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h"	// 戦車：砲塔クラス
 
+class CXInput;	//前方宣言
 
 class CPlayer
 	: public CCharacter
@@ -53,16 +54,25 @@ public:
 	float GetCannonYaw() const;
 	D3DXVECTOR3 GetCannonPosition() const;
 
+	void SetHasControl(bool control) { m_HasControl = control; }
+	bool HasControl() const { return m_HasControl; }
+
+	//パッド用の外部関数
+	void SetPadRef(CXInput* pad) { m_pPad = pad; }
+
+public:
+
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }
 	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
-
+	void UpdateHumanInputAndMove();	//プレイヤー処理をいれておく
 protected:
 
 	std::shared_ptr<CBody>		m_pBody;
 	std::shared_ptr<CCannon>	m_pCannon;
 	int			m_Hp;
 	int			m_PlayerID;
-
+	bool m_HasControl = false;	//操作権があるか
+	CXInput* m_pPad;			//コントローラー
 
 };

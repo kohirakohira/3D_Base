@@ -22,12 +22,12 @@ public:
 protected:
 	struct Shot
 	{
-		bool		m_Display			= false;				// 表示切替
+		bool		m_Display = false;				// 表示切替
 		D3DXVECTOR3 m_MoveDirection;							// 移動方向
-		float		m_MoveSpeed			= 0.002f;				// 移動速度　※とりあえず0.2fを設定;		// 移動速度
+		float		m_MoveSpeed = 0.002f;				// 移動速度　※とりあえず0.2fを設定;		// 移動速度
 		int			m_DisplayTime;								// 約3秒くらい表示する
-		float		m_Gravity			= 0.001f;			// 弾の重力
-		float		m_Velocity			= 0.001f;			// 加速度
+		float		m_Gravity = 0.001f;			// 弾の重力
+		float		m_Velocity = 0.001f;			// 加速度
 	};
 
 private:

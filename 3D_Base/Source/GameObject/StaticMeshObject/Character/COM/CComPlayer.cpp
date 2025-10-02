@@ -19,11 +19,12 @@ std::vector<CComPlayer*>& CComPlayer::Instances() {
     return registry;
 }
 
+
 CComPlayer::CComPlayer()
-    : MoveSpeed(0.10f)     // 見やすい初期値
+    : MoveSpeed(0.10f)     //見やすい初期値
     , TurnStep(0.08f)
     , AimTurnStep(0.12f)
-    , KeepDistance(9.0f)   // 0ならベタ詰め
+    , KeepDistance(9.0f)   //0ならベタ詰め
     , CannonHeight(0.3f)
     , m_Target(nullptr)
     , m_AvoidRadius ( 3.0f )
@@ -80,12 +81,12 @@ D3DXVECTOR3 CComPlayer::GetRotation() const
 void CComPlayer::SanitizeParams()
 {
     if (MoveSpeed <= 0.0f)      MoveSpeed       = 0.06f;
-    if (TurnStep <= 0.0f)       TurnStep        = 0.08f;
-    if (AimTurnStep <= 0.0f)    AimTurnStep     = 0.12f;
-    if (CannonHeight == 0.0f)   CannonHeight    = 0.3f;
-    if (KeepDistance < 0.0f)    KeepDistance    = 0.0f;
-    if (m_AvoidRadius < 0.0f)   m_AvoidRadius   = 0.0f;
-    if (m_AvoidWeight < 0.0f)   m_AvoidWeight   = 0.0f;
+    if (TurnStep <= 0.0f)       TurnStep                = 0.08f;
+    if (AimTurnStep <= 0.0f)    AimTurnStep      = 0.12f;
+    if (CannonHeight == 0.0f)   CannonHeight            = 0.3f;
+    if (KeepDistance < 0.0f)    KeepDistance            = 0.0f;
+    if (m_AvoidRadius < 0.0f)   m_AvoidRadius           = 0.0f;
+    if (m_AvoidWeight < 0.0f)   m_AvoidWeight           = 0.0f;
 }
 
 // [-π,π]に正規化
@@ -256,7 +257,7 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
     const float desiredYaw = std::atan2f(to.x, to.z);
 
     float cyaw = cannon->GetRotation().y;
-    cyaw = Approach(cyaw, cyaw + Wrap(desiredYaw - cyaw), AimTurnStep);
+    cyaw = Approach(cyaw, cyaw + Wrap(desiredYaw - cyaw),AimTurnStep);
 
     cannon->SetPosition(base);
     cannon->SetRotation(D3DXVECTOR3(0.0f, cyaw, 0.0f));
@@ -267,26 +268,36 @@ void CComPlayer::Update()
 {
     SanitizeParams();
 
-    // ターゲット不在でも見た目は更新
-    std::shared_ptr<CBody> body = Body();
-    if (!body) { if (auto c = Cannon()) c->CCharacter::Update(); return; }
+    //COM無効ならプレイヤー操作
+    if (m_ComEnabled)
+    {
+        // ターゲット不在でも見た目は更新
+        std::shared_ptr<CBody> body = Body();
+        if (!body) { if (auto c = Cannon()) c->CCharacter::Update(); return; }
 
-    // 追尾対象がなければ回頭も移動もせず、そのまま更新
-    if (!m_Target) {
-        body->CCharacter::Update();
-        if (auto c = Cannon()) c->CCharacter::Update();
+        // 追尾対象がなければ回頭も移動もせず、そのまま更新
+        if (!m_Target) {
+            body->CCharacter::Update();
+            if (auto c = Cannon()) c->CCharacter::Update();
+            return;
+        }
+
+        // 自己ターゲットは無視
+        if (m_Target.get() == this) {
+            body->CCharacter::Update();
+            if (auto c = Cannon()) c->CCharacter::Update();
+            return;
+        }
+
+        const D3DXVECTOR3 tp = m_Target->GetPosition();
+        TickChaseTo(tp);
+        TickAimTo(tp);
         return;
     }
-
-    // 自己ターゲットは無視
-    if (m_Target.get() == this) {
-        body->CCharacter::Update();
-        if (auto c = Cannon()) c->CCharacter::Update();
-        return;
+    else
+    {
+        CPlayer::Update();
     }
 
-
-    const D3DXVECTOR3 tp = m_Target->GetPosition();
-    TickChaseTo(tp);
-    TickAimTo(tp);
+   
 }

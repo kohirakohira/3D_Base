@@ -39,7 +39,7 @@ void CShot::Update()
 
 void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	if (m_Shot.m_Display == true) 
+	if (m_Shot.m_Display == true)
 	{
 		CStaticMeshObject::Draw(View, Proj, Light, Camera);
 	}

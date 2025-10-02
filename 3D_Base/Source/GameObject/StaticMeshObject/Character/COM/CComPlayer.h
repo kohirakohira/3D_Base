@@ -19,16 +19,20 @@ public:
 	void ClearTarget();
 
 	//チューニング値,m_を付け忘れたのであとで修正する
-	float MoveSpeed;		// 1フレームの前進量
-	float TurnStep;			// 1フレームの回頭量
-	float AimTurnStep;		// 砲塔回頭の1フレーム量
-	float KeepDistance;		// この距離を保つ
-	float CannonHeight;		// 砲塔の高さオフセッ
+	float MoveSpeed;			// 1フレームの前進量
+	float TurnStep;				// 1フレームの回頭量
+	float AimTurnStep;			// 砲塔回頭の1フレーム量
+	float KeepDistance;			// この距離を保つ
+	float CannonHeight;			// 砲塔の高さオフセッ
 	float m_AvoidRadius;		// ほかCOMから離れる半径
 	float m_AvoidWeight;		// 分離ベクトルの重み(0で無効.1強め)
 
 	D3DXVECTOR3 GetPosition() const override;
 	D3DXVECTOR3 GetRotation() const override;
+
+	//COMの有効無効を決める
+	void SetComEnabled(bool enabled) { m_ComEnabled = enabled; }
+	bool IsComEnabled() const { return m_ComEnabled; }
 
 private:
 	std::shared_ptr<CPlayer> m_Target;	//追尾対象
@@ -50,5 +54,7 @@ private:
 
 	//COMインスタンスの静的レジストリ
 	static std::vector<CComPlayer*>& Instances();
+
+	bool m_ComEnabled = true;	//最初はCOM有効
 
 };
