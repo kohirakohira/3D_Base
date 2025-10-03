@@ -613,7 +613,6 @@ void CGameMain::Create()
 	//アイテムマネージャークラスのインスタンス生成.
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
 	m_pItemBoxManager->Create();
-
 }
 
 HRESULT CGameMain::LoadData()
@@ -691,7 +690,6 @@ HRESULT CGameMain::LoadData()
 			break;
 		}
 	}
-
 
 	//地面スプライトの構造体
 	CSprite3D::SPRITE_STATE SSGround;
@@ -785,24 +783,19 @@ HRESULT CGameMain::LoadData()
 		}
 	}
 
-
 	//スタティックメッシュを設定
 	m_pGround->AttachMesh(m_pStaticMeshGround);
 
 	//アイテムボックスマネージャーにメッシュを設定.
 	m_pItemBoxManager->AttachMesh(m_pStaticMeshItemBox);
 
-
-
 	////バウンディングスフィアの作成.
 	//m_pPlayer->CreateBSphareForMesh(*m_pStaticMeshBSphere);
-
 
 	m_pWallTop->AttachMesh(m_pStaticMeshWallW);
 	m_pWallBottom->AttachMesh(m_pStaticMeshWallW);
 	m_pWallLeft->AttachMesh(m_pStaticMeshWallH);
 	m_pWallRight->AttachMesh(m_pStaticMeshWallH);
-
 
 	CreateBounding();
 
@@ -871,9 +864,26 @@ void CGameMain::CreateBounding()
 	m_pWallRight->CreateBBoxForMesh(*m_pStaticMeshWallH);
 	//右の壁の当たり判定を設定.
 	m_pWallRight->CreateBoxCollider(m_pWallRight->GetMinPos(), m_pWallRight->GetMaxPos());
+
+
+	//アイテムボックスのバウンディングの作成.
+	m_pItemBoxManager->CreateBounding(m_pStaticMeshItemBox);
+	//アイテムボックスの当たり判定を設定.
+	m_pItemBoxManager->CreateCollider();
+	
 }
 
 void CGameMain::Collision()
+{
+	// 壁とプレイヤーの当たり判定.
+	WalltoPlayer();
+
+	// アイテムボックスとプレイヤーの当たり判定.
+	ItemBoxtoPlayer();
+
+}
+
+void CGameMain::WalltoPlayer()
 {
 	const float pushStrength = 0.1f; // 押し戻しの強さ（フレームごとに調整可能）
 
@@ -915,6 +925,31 @@ void CGameMain::Collision()
 		}
 
 		player->GetBody()->PushBack(push);
+	}
+}
+
+//アイテムボックスとプレイヤーの当たり判定.
+void CGameMain::ItemBoxtoPlayer()
+{
+	//アイテムボックスとプレイヤーの当たり判定.
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto playerColl = player->GetBody()->GetCollider();
+
+		//アイテムボックスマネージャーからアイテムボックスを取得.
+		auto itemBoxes = m_pItemBoxManager->GetItem();
+
+		//アイテムボックス全てに対して当たり判定をチェック.
+		for (auto& itemBox : itemBoxes)
+		{
+			if (playerColl && itemBox->GetCollider() &&
+				playerColl->CheckCollision(*itemBox->GetCollider()))
+			{
+				//衝突した場合の処理.
+				itemBox->HitPlayer();
+			}
+		}
 	}
 }
 

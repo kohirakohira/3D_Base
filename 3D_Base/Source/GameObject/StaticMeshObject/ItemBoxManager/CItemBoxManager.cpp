@@ -48,6 +48,24 @@ void CItemBoxManager::AttachMesh(std::shared_ptr<CStaticMesh> pMesh)
 	}
 }
 
+void CItemBoxManager::CreateBounding(std::shared_ptr<CStaticMesh>& pItem)
+{
+	// バウンディング設定.
+	for (auto& item : m_Item)
+	{
+		item->CreateBounding(pItem);
+	}
+}
+
+void CItemBoxManager::CreateCollider()
+{
+	// コライダー設定.
+	for (auto& item : m_Item)
+	{
+		item->CreateBoxCollider(item->GetMinPos(), item->GetMaxPos());
+	}
+}
+
 void CItemBoxManager::SetPosition(float x, float y, float z)
 {
 	for (auto& item : m_Item)

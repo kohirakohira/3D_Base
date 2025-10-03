@@ -77,6 +77,12 @@ public:
 	//当たり判定処理をここに入れる.
 	void Collision();
 
+	// 壁とプレイヤーの当たり判定
+	void WalltoPlayer();
+
+	// アイテムボックスとプレイヤーの当たり判定
+	void ItemBoxtoPlayer();
+
 	//画面をグリッドに分割したとき、idx番目のマスに対応する
 	//D3D11_VIEWPORTを作成して返す関数
 	static D3D11_VIEWPORT MakeGridViewport(int idx, int cols, int rows, float totalW, float totalH);
