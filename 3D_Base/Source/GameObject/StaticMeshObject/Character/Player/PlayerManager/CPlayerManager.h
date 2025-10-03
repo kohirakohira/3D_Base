@@ -16,6 +16,8 @@
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankBody//CBody.h" // 戦車ボディクラス
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // 戦車キャノンクラス
 
+#include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	//ショットマネージャー
+
 class CXInput;	//前方宣言
 
 class CPlayerManager
@@ -54,7 +56,8 @@ public:
 	//ロック対象のインデックス指定
 	void SetLockTargetIndex(int index) { m_LockTargetIndex = index; }
 
-
+	//ショット用
+	void SetShotManager(std::shared_ptr<CShotManager>& mgr);
 
 	//↓松岡
 	//子オブジェクトに各BodyとCannonを設定してあげる関数.
@@ -65,6 +68,7 @@ private:
 	std::shared_ptr<CBody>					m_pBody;
 	std::shared_ptr<CCannon>				m_pCannon;
     std::vector<std::shared_ptr<CPlayer>>	m_pPlayers;
+	std::shared_ptr<CShotManager> m_ShotManager; //弾マネージャー
 
 	std::array<std::unique_ptr<CXInput>, 4>	m_Pads;	//Pad0から3
 	std::array<bool, 4> m_PadConnected{};			//前フレーム接続状態

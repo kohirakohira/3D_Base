@@ -108,6 +108,22 @@ void CGameMain::Update()
 				m_pShotManager->SetReload(i,
 					player->GetCannon()->GetPosition(),
 					player->GetCannon()->GetRotation().y);
+
+				static ::EsHandle hEffect = -1;
+				for (int i = 0; i < PLAYER_MAX; i++)
+				{
+					hEffect = CEffect::GetInstance().Play(CEffect::Explosion, D3DXVECTOR3(0.f, 1.f, 0.f));
+
+					//拡大縮小
+					CEffect::GetInstance().SetScale(hEffect, D3DXVECTOR3(0.8f, 0.8f, 0.8f));
+
+					//回転(Y軸回転)
+
+					CEffect::GetInstance().SetRotation(hEffect, D3DXVECTOR3(m_pShotManager->GetRotation()));
+
+					//位置を再設定
+					CEffect::GetInstance().SetLocation(hEffect, D3DXVECTOR3(m_pShotManager->GetPosition()));
+				}
 			}
 		}
 	}

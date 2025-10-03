@@ -1,6 +1,8 @@
 //-----継承するクラス-----
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//CPlayer.h" // プレイヤークラス
 
+#include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	//ショットマネージャー
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 
@@ -33,15 +35,31 @@ public:
 	//COMの有効無効を決める
 	void SetComEnabled(bool enabled) { m_ComEnabled = enabled; }
 	bool IsComEnabled() const { return m_ComEnabled; }
+	
+	//プレイヤーマネージャーで使うよう
+	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
+
 
 private:
 	std::shared_ptr<CPlayer> m_Target;	//追尾対象
 	bool m_Registered;	//インスタンス登録管理
 
+	//自動発射用のパラメータ
+	std::weak_ptr<CShotManager> m_pShotManager; //弾マネージャー
+	int m_ShotCD;				//クールダウン
+	int	ShotCooldownFrames;		//クールダウン時間(フレーム)
+	float FireAngleEpsDeg;		//この角度以内なら発射
+	float MuzzleOffsetZ;		//砲口のオフセット
+
+
 	//内部処理
 	void SanitizeParams();
 	void TickChaseTo(const D3DXVECTOR3& targetPos);
 	void TickAimTo(const D3DXVECTOR3& targetPos);
+
+	static inline float ToRad(float d) { return d * (D3DX_PI / 180.0f); }
+	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
+
 
 	// ヘルパ
 	static float Wrap(float rad);                         // [-π,π]に正規化

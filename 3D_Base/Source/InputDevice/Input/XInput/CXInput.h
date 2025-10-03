@@ -47,8 +47,24 @@ public:
 		LAST	= Y,
 	};
 
+	//コントローラーがない時のテスト用
+	void TestMode(bool on) { m_TestMode = on; }
+	void TestSetConnected(bool on) { m_TestConnected = on; }
+	void TestSetStick(SHORT lx, SHORT ly, SHORT rx, SHORT ry)
+	{
+		m_TestLX = lx;
+		m_TestLY = ly;
+		m_TestRX = rx;
+		m_TestRY = ry;
+	}
+	void TestSetTrigger(BYTE lt, BYTE rt)
+	{
+		m_TestLT = lt; 
+		m_TestRT = rt;	
+	}
+	void TestSetButton(WORD button) { m_TestButton = button; }
+
 #if 0
-	// --- テストモード API ---
 	void EnableTestMode(bool on) { m_testMode = on; }
 	void TestSetConnected(bool on) { m_testConnected = on; }
 	void TestSetSticks(SHORT lx, SHORT ly, SHORT rx, SHORT ry)
@@ -122,12 +138,14 @@ private:
 	XINPUT_VIBRATION    m_vibration;	//振動.
 	bool				m_connect;		//接続判定.
 
-#if 0
-	// --- テストモード状態 ---
-	bool  m_testMode = false;
-	bool  m_testConnected = false;
-	SHORT m_testLX = 0, m_testLY = 0, m_testRX = 0, m_testRY = 0;
-	BYTE  m_testLT = 0, m_testRT = 0;
-	WORD  m_testButtons = 0;
-#endif
+	//テスト用
+	bool	m_TestMode;
+	bool	m_TestConnected;
+	SHORT	m_TestLX;
+	SHORT	m_TestLY;
+	SHORT	m_TestRX;
+	SHORT	m_TestRY;
+	BYTE	m_TestLT;
+	BYTE	m_TestRT;
+	WORD	m_TestButton;
 };

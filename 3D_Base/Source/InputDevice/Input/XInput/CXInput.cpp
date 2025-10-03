@@ -31,11 +31,20 @@ const WORD KEY_TABLE[CXInput::MAX] =
 //	コンストラクタ.
 //-------------------------------------------------.
 CXInput::CXInput( DWORD padId )
-	: m_padId		( padId )
-	, m_state		()
-	, m_stateOld	()
-	, m_vibration	()
-	, m_connect		( false )
+	: m_padId			( padId )
+	, m_state			()
+	, m_stateOld		()
+	, m_vibration		()
+	, m_connect			( false )
+	, m_TestButton		( 0 )
+	, m_TestConnected	( false )
+	, m_TestLT			( 0 )
+	, m_TestLX			( 0 )
+	, m_TestLY			( 0 )
+	, m_TestMode		( false )
+	, m_TestRT			( 0 )
+	, m_TestRX			( 0 )
+	, m_TestRY			( 0 )
 {
 }
 
@@ -52,6 +61,28 @@ CXInput::~CXInput()
 //-------------------------------------------------.
 bool CXInput::Update()
 {
+	//キー入力情報
+	m_stateOld = m_state;
+
+	if (m_TestMode)
+	{
+		ZeroMemory(&m_state, sizeof(m_state));
+
+		m_connect = m_TestConnected;
+
+		if (m_connect)
+		{
+			m_state.Gamepad.wButtons		= m_TestButton;
+			m_state.Gamepad.sThumbRY		= m_TestRY;
+			m_state.Gamepad.sThumbRX		= m_TestRX;
+			m_state.Gamepad.sThumbLX		= m_TestLX;
+			m_state.Gamepad.sThumbLY		= m_TestLX;
+			m_state.Gamepad.bLeftTrigger	= m_TestLT;
+			m_state.Gamepad.bRightTrigger	= m_TestRT;
+		}
+		return m_connect;
+	}
+
 #if 0
 	m_stateOld = m_state;
 
