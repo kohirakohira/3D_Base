@@ -188,6 +188,7 @@ void CGameMain::Update()
 	}
 	prevC = nowC;
 
+
 	// Cキー押されたら操作プレイヤー切り替え
 	if (GetAsyncKeyState('C') & 0x0001)
 	{
