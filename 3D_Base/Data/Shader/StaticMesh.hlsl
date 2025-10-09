@@ -83,7 +83,7 @@ float4 PS_Main( VS_OUTPUT input ) : SV_Target
 {
 	//テクスチャカラー.
 	float4 texColor = g_Texture.Sample( g_SamLinear, input.UV );
-
+	
 	//環境光　※１.
 	float4 ambient = texColor * g_Ambient;
 
