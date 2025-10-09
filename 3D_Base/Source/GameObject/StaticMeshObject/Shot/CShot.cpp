@@ -49,20 +49,20 @@ void CShot::Update()
 #if 0
 	for (int i = 0; i < ShotMax; i++)
 	{
-		if (m_Shot[i].m_Display == true) {
+		if (m_Display == true) {
 			// 移動方向に移動速度をかけ合わせたものを座標に反映
-			m_vPosition += m_Shot[i].m_MoveDirection * m_Shot[i].m_MoveSpeed;
+			m_vPosition += m_MoveDirection * m_MoveSpeed;
 
 			// 加速度に重力が与えられていく
-			m_Shot[i].m_Velocity -= m_Shot[i].m_Gravity;
+			m_VelocityY -= m_Gravity;
 			// 加速度にYを与える
-			m_vPosition.y += m_Shot[i].m_Velocity / 2 * m_Shot[i].m_Gravity;
+			m_vPosition.y += m_VelocityY / 2 * m_Gravity;
 
-			m_Shot[i].m_DisplayTime--;
-			if (m_Shot[i].m_DisplayTime < 0) {
+			m_LifeFramesInit--;
+			if (m_LifeFramesInit < 0) {
 				//見えない所に置いておく
 				m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
-				m_Shot[i].m_Display = false;
+				m_Display = false;
 			}
 		}
 	}

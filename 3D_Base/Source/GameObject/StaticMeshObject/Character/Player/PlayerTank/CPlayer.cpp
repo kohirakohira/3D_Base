@@ -70,9 +70,33 @@ void CPlayer::Initialize(int id)
 	//インスタンスを生成
 	m_pBody = std::make_shared<CBody>(id);
 	m_pCannon = std::make_shared<CCannon>(id);
-
 	m_pCannon->Initialize(id);
 	m_pBody->Initialize(id);
+
+	auto im = std::make_shared<CInputManager>();	
+	SetInputManagerShared(im);
+}
+
+//共有
+void CPlayer::SetInputManagerShared(const std::shared_ptr<CInputManager>& im)
+{
+	m_Input = im;
+	if (m_pBody)
+	{
+		m_pBody->SetInputManager(m_Input);
+	}
+	if (m_pCannon)
+	{
+		m_pCannon->SetInputManager(m_Input);
+	}
+}
+
+void CPlayer::SetKeyboardEnabled(bool on)
+{
+	if (m_Input)
+	{
+		m_Input->SetUseKeyboard(on);
+	}
 }
 
 void CPlayer::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
@@ -114,49 +138,7 @@ void CPlayer::Update()
 
 void CPlayer::UpdateHumanInputAndMove()
 {
-#if 0
-	if (!m_pBody || !m_pCannon) return;	//ボディとキャノンのポインタがなければなにもしない
-
-	//キーが押されたかチェック
-	auto isPressed = [](int vk) { return (GetAsyncKeyState(vk) & 0x8000) != 0; };
-
-	//移動・旋回・砲塔旋回の入力
-	const float moveSpeed = 0.001f;		//移動速度
-	const float turnSpeed = 0.001f;		//車体旋回速度
-	const float aimSpeed = 0.001f;		//砲塔旋回速度
-
-	float playermove = (isPressed('W') ? +1.f : 0.f) + (isPressed('S') ? -1.f : 0.f);
-	float playerturn = (isPressed('D') ? +1.f : 0.f) + (isPressed('A') ? -1.f : 0.f);
-	float playeraim = (GetAsyncKeyState(VK_RIGHT) & 0x8000 ? +1.f : 0.f)
-		+ (GetAsyncKeyState(VK_LEFT) & 0x8000 ? -1.f : 0.f);
-
-	//現在値
-	D3DXVECTOR3 playerpos = m_pBody->GetPosition();
-	D3DXVECTOR3 brot = m_pBody->GetRotation();
-	D3DXVECTOR3 crot = m_pCannon->GetRotation();
-
-	//車体の旋回
-	brot.y += playerturn * turnSpeed;
-
-	//前進/後退
-	D3DXVECTOR3 fwd(std::sinf(brot.y), 0.f, std::cosf(brot.y));
-	playerpos += fwd * (playermove * moveSpeed);
-
-	//砲塔
-	crot.y += playeraim * aimSpeed;	
-
-	// 反映
-	m_pBody->SetRotation(brot);
-	m_pBody->SetPosition(playerpos);
-	m_pBody->Update();
-
-	//砲塔の位置を車体上に合わせる
-	D3DXVECTOR3 cpos = playerpos; cpos.y += 0.3f;
-	m_pCannon->SetPosition(cpos);
-	m_pCannon->SetRotation(crot);
-	m_pCannon->Update();
-#endif
-
+	//pad入力
 	if (!m_pBody || !m_pCannon) return;
 
 	float move = 0.f, turn = 0.f, aim = 0.f;
@@ -173,49 +155,6 @@ void CPlayer::UpdateHumanInputAndMove()
 	}
 	else
 	{
-#if 0
-		//パッド未接続はデバックでキーボード入力を受け付ける
-		if (!m_pBody || !m_pCannon) return;
-
-		//キーが押されたかチェック
-		auto isPressed = [](int vk) { return (GetAsyncKeyState(vk) & 0x8000) != 0; };
-
-		//移動・旋回・砲塔旋回の入力
-		const float moveSpeed = m_Tune.moveSpeed;		//移動速度
-		const float turnSpeed = m_Tune.bodyTurnSpeed;	//車体旋回速度
-		const float aimSpeed = m_Tune.cannonHeight;		//砲塔旋回速度
-
-		float move = (isPressed('W') ? +1.f : 0.f) + (isPressed('S') ? -1.f : 0.f);
-		float turn = (isPressed('D') ? +1.f : 0.f) + (isPressed('A') ? -1.f : 0.f);
-		float aim = (GetAsyncKeyState(VK_RIGHT) & 0x8000 ? +1.f : 0.f)
-			+ (GetAsyncKeyState(VK_LEFT) & 0x8000 ? -1.f : 0.f);
-
-		//現在値
-		D3DXVECTOR3 pos = m_pBody->GetPosition();
-		D3DXVECTOR3 brot = m_pBody->GetRotation();
-		D3DXVECTOR3 crot = m_pCannon->GetRotation();
-
-		//車体の旋回
-		brot.y += turn * turnSpeed;
-
-		//前進/後退
-		D3DXVECTOR3 fwd(std::sinf(brot.y), 0.f, std::cosf(brot.y));
-		pos += fwd * (move * moveSpeed);
-
-		//砲塔
-		crot.y += aim * aimSpeed;
-
-		// 反映
-		m_pBody->SetRotation(brot);
-		m_pBody->SetPosition(pos);
-		m_pBody->Update();
-
-		//砲塔の位置を車体上に合わせる
-		D3DXVECTOR3 cpos = pos; cpos.y += 0.3f;
-		m_pCannon->SetPosition(cpos);
-		m_pCannon->SetRotation(crot);
-		m_pCannon->Update();
-#endif
 	}
 
 	const float dt = 1.0f;	
@@ -240,7 +179,6 @@ void CPlayer::UpdateHumanInputAndMove()
 	m_pCannon->SetPosition(cannonpos);
 	m_pCannon->SetRotation(cannonrot);
 	m_pCannon->Update();
-
 
 }
 

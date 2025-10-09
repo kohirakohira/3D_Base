@@ -1,5 +1,7 @@
 #include "CPlayerManager.h"
 
+#undef max;
+#undef min;
 
 CPlayerManager::CPlayerManager()
 	: m_pPlayers()
@@ -35,7 +37,6 @@ void CPlayerManager::InitPads()
 void CPlayerManager::Initialize()
 {
 
-#if 1
 	m_pPlayers.clear();
 	m_pPlayers.reserve(PLAYER_MAX);
 
@@ -52,10 +53,16 @@ void CPlayerManager::Initialize()
 		if (i == 0) {
 			com->SetComEnabled(false); //COM停止,人間化
 			com->SetHasControl(true);  //入力を読むのはこの個体だけ
+			com->SetKeyBoadEnble(true);
+			com->SetPadRef(nullptr);
+		}
+		else
+		{
+			com->SetKeyBoadEnble(false);
+			com->SetPadRef(nullptr);
 		}
 		m_pPlayers.push_back(std::move(com));
 	}
-#endif
 
 	m_PadConnected.fill(false);		//最初の接続状態は無効
 	m_PadIndex.fill(-1);			//最初は無効値で埋める
@@ -66,15 +73,8 @@ void CPlayerManager::Initialize()
 	{
 		m_Pads[id] = std::make_unique<CXInput>(id);
 	}
-	SyncByPadConnection();
 
-#if 1
-	//仮想コントローラー化
-	//m_Pads[0]->TestMode(true);
-	//m_Pads[0]->TestSetConnected(false); //起動時は未接続
-	m_Pads[1]->TestMode(true);
-	m_Pads[1]->TestSetConnected(false); //起動時は未接続
-#endif
+	SyncByPadConnection();
 }
 
 void CPlayerManager::AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
@@ -128,64 +128,19 @@ void CPlayerManager::Update()
 	const int count = static_cast<int>(m_pPlayers.size());
 	if (count <= 0)return;
 
-	SyncByPadConnection();
-#if 1
-	static bool prevF2 = false;
-	bool nowF2 = (GetAsyncKeyState(VK_F2) & 0x8000) != 0;
-	if (nowF2 && !prevF2)
-	{
-		bool on = !m_PadConnected[1];
-		m_Pads[1]->TestSetConnected(on);
-	}
-	prevF2 = nowF2;
-
-	//仮想PADをwasdで動かす
-	auto held = [](int vk) {return (GetAsyncKeyState(vk) & 0x8000) != 0; };
-	SHORT lx = 0;
-	SHORT ly = 0;
-	SHORT rx = 0;
-
-	//左スティックWASD
-	if (held('A')) lx -= 16000; if (held('D')) lx += 16000;
-	if (held('W')) ly += 16000; if (held('S')) ly -= 16000;
-
-	//右スティック
-	if (held('A')) lx -= 16000; if (held('D')) lx += 16000;
-	if (held('W')) ly += 16000; if (held('S')) ly -= 16000;
-
-	if (held(VK_LEFT)) rx -= 16000;
-	if (held(VK_RIGHT)) rx += 16000;
-	m_Pads[1]->TestSetStick(lx, ly, rx, 0);
-
-#endif
 #if 0
-	static bool prevF3 = false;
-	bool nowF3 = (GetAsyncKeyState(VK_F3) & 0x8000) != 0;
-	if (nowF3 && !prevF3)
+	//プレイヤーコントローラー接続を無視する
+	static bool prevF1 = false;
+	bool nowF1 = (GetAsyncKeyState(VK_F1) & 0x8000) != 0;
+	if (nowF1 && !prevF1)
 	{
-		bool oncom = !m_PadConnected[1];
-		m_Pads[1]->TestSetConnected(oncom);
+		m_OnePPadEnabled = !m_OnePPadEnabled;
 	}
-	prevF2 = nowF2;
-
-	//仮想PADをwasdで動かす
-	auto held2 = [](int vk) {return (GetAsyncKeyState(vk) & 0x8000) != 0; };
-	SHORT lx2 = 0;
-	SHORT ly2 = 0;
-	SHORT rx2 = 0;
-
-	//左スティックWASD
-	if (held2('A')) lx2 -= 16000; if (held2('D')) lx2 += 16000;
-	if (held2('W')) ly2 += 16000; if (held2('S')) ly2 -= 16000;
-
-	//右スティック
-	if (held2('A')) lx2 -= 16000; if (held2('D')) lx2 += 16000;
-	if (held2('W')) ly2 += 16000; if (held2('S')) ly2 -= 16000;
-
-	if (held2(VK_LEFT)) rx2 -= 16000;
-	if (held2(VK_RIGHT)) rx2 += 16000;
-	m_Pads[1]->TestSetStick(lx2, ly2, rx2, 0);
+	prevF1 = nowF1;
 #endif
+
+	//コントローラー判定
+	SyncByPadConnection();
 
 	//基本ターゲットを決める
 	//ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
@@ -248,7 +203,6 @@ D3DXVECTOR3 CPlayerManager::GetPosition()
 	return m_pPlayers[m_ActivePlayerIndex]->GetPosition();
 }
 
-//↓松岡.
 std::shared_ptr<CPlayer> CPlayerManager::GetControlPlayer(int index)
 {
 	if (index >= 0 && index < (int)m_pPlayers.size()) {
@@ -256,15 +210,6 @@ std::shared_ptr<CPlayer> CPlayerManager::GetControlPlayer(int index)
 	}
 	return nullptr;
 }
-
-//↓濵口コード.
-//std::vector<std::shared_ptr<CPlayer>> CPlayerManager::GetControlPlayer(int index)
-//{
-//	if (index >= 0 && index < (int)m_pPlayers.size()) {
-//		return m_pPlayers[index].get();
-//	}
-//	return nullptr;
-//}
 
 void CPlayerManager::SwitchActivePlayer()
 {
@@ -338,87 +283,128 @@ void CPlayerManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::shared_p
 	}
 }
 
-//COMとプレイヤーのコントローラー処理
 void CPlayerManager::SyncByPadConnection()
 {
-#if 1
-		//パッド接続状態の更新と、切断処理
-		for (int pid = 0; pid < (int)m_Pads.size(); ++pid)
+	//接続されているかどうかを取得する
+	for (int padIndex = 0; padIndex < (int)m_Pads.size(); ++padIndex) {
+		CXInput* pad = m_Pads[padIndex].get();	
+		pad->Update();
+
+		//今のフレームと前のフレームの状態
+		const bool now = pad->IsConnect();			
+		const bool prev = m_PadConnected[padIndex];
+
+		if (now != prev)
 		{
-			CXInput* pad = m_Pads[pid].get();	//生のポインタに変換して入れる
-			pad->Update();
-
-			const bool now = pad->IsConnect();
-			const bool prev = m_PadConnected[pid];
-
-			//未接続処理
-			if (now && !prev)
+			if (now)
 			{
-				//未割当なら誰かに必ず渡す
-				if (m_PadIndex[pid] < 0)
+				//接続
+				int targetIndex;
+				if (padIndex < static_cast<int>(m_pPlayers.size()))
 				{
-					int idx = FindFirstComPlayer(); //COM稼働中のプレイヤー
-					if (idx < 0) {
-						//COMが居ない＝今はプレイヤー0人or誰かがプレイヤー
-						//今のプレイヤー（HasControl==true）に渡す
-						idx = -1;
-						for (int i = 0; i < (int)m_pPlayers.size(); ++i)
-						{
-							if (m_pPlayers[i]->HasControl())
-							{ 
-								idx = i;
-								break;
-							}
-							if (idx < 0 && !m_pPlayers.empty())
-							{
-								idx = 0;
-							}
-						}
-					}
+					targetIndex = padIndex;
+				}
+				else
+				{
+					targetIndex = -1;	//割り当てなし
+				}
 
-					if (idx >= 0) {
-						//そのプレイヤーに別padが付いてたら解除
-						if (m_PlayerPad[idx] >= 0) {
-							int old = m_PlayerPad[idx];
-							m_PadIndex[old] = -1;
-						}
-						m_PadIndex[pid] = idx;   //pad -> player
-						m_PlayerPad[idx] = pid;  //player -> pad
+				if (targetIndex >= 0)
+				{
+					//paleyrにすでにpadがついていたら解除
+					if (m_PlayerPad[targetIndex] >= 0)
+					{
+						int oldpadIndex = m_PlayerPad[targetIndex];
+						m_PadIndex[oldpadIndex] = -1;	//古いやつは割り当てなし
 					}
+					//新しい双方向対応を設定
+					m_PadIndex[padIndex] = targetIndex;		//pad->player
+					m_PlayerPad[targetIndex] = padIndex;	//plaeyr->pad
+
 				}
 			}
-			//切断処理
-			else if (!now && prev)
+			else
 			{
-				const int owner = m_PadIndex[pid];
+				//切断
+				const int owner = m_PadIndex[padIndex];
 				if (owner >= 0)
 				{
-					//パッド参照解除
-					m_pPlayers[owner]->SetPadRef(nullptr);
 					m_PlayerPad[owner] = -1;
-					m_PadIndex[pid] = -1;
-
-					m_PlayerPad[owner] = FindFirstComPlayer();	//PAD参照切ったあとCOM入れる
+					m_PadIndex[padIndex] = -1;
 				}
 			}
-			m_PadConnected[pid] = now;
-		}
-
-		//全プレイヤーの状態をpad割当と接続に基づいて再同期
-		for (int idx = 0; idx < (int)m_pPlayers.size(); ++idx)
-		{
-			const int pid = (idx < (int)m_PlayerPad.size() ? m_PlayerPad[idx] : -1);
-			const bool human = (pid >= 0) && m_PadConnected[pid];
-
-			m_pPlayers[idx]->SetHasControl(human);
-			m_pPlayers[idx]->SetPadRef(human ? m_Pads[pid].get() : nullptr);
-
-			if (auto com = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[idx])) {
-				com->SetComEnabled(!human); //プレイヤーならCOM停止/未接続ならCOM稼働
+			//今のフレームのものを前回のものとして記録する
+			m_PadConnected[padIndex] = now;
 		}
 	}
-#endif
+
+	for (int index = 0; index < static_cast<int>(m_pPlayers.size()); index++)
+	{
+		//player->padの逆引き.範囲外なら-1
+		int padIndex;
+		if (index < static_cast<int>(m_PlayerPad.size()))
+		{
+			padIndex = m_PlayerPad[index];
+		}
+		else
+		{
+			padIndex = -1;
+		}
+
+		//padが有効か判定
+		bool padOn = false;
+		if (padIndex >= 0)
+		{
+			if (m_PadConnected[padIndex])
+			{
+				padOn = true;
+			}
+		}
+
+		const bool isP1 = (index == m_keyboardPlayer);
+
+		bool player = false;
+
+		//1Pとそれ以外
+		if (isP1)
+		{
+			//1Pは常にキーボードがonでpadも併用できる
+			player = true;
+			m_pPlayers[index]->SetKeyBoadEnble(true);
+
+			//padOnが真のときだけpadsを参照
+			CXInput* padRef = nullptr;
+			if (padOn)
+			{
+				padRef = m_Pads[padIndex].get();
+			}
+			m_pPlayers[index]->SetPadRef(padRef);
+		}
+		else
+		{
+			//2Pから4Pはpadがあればplayer
+			player = padOn;
+			m_pPlayers[index]->SetKeyBoadEnble(false);
+
+			CXInput* padRef = nullptr;
+			if (padOn)
+			{
+				padRef = m_Pads[padIndex].get();
+			}
+			m_pPlayers[index]->SetPadRef(padRef);
+		}
+
+		//操作権の反映
+		m_pPlayers[index]->SetHasControl(player);
+
+		//comの有無,playerならcomはoff
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[index]))
+		{
+			com->SetComEnabled(!player);
+		}
+	}
 }
+
 
 int CPlayerManager::FindFirstComPlayer() const
 {
@@ -436,13 +422,22 @@ int CPlayerManager::FindFirstComPlayer() const
 	}
 }
 
-#if 1
+int CPlayerManager::FindFirstPadReceiver(int StartIndex) const
+{
+	for (int i = std::max(0, StartIndex); i < (int)m_pPlayers.size(); ++i)
+	{
+		if (i < (int)m_PlayerPad.size() && m_PlayerPad[i] < 0) return i;
+	}
+	return -1;
+}
+
+
 void CPlayerManager::SetPlayerTuningAll(const TankTuning& t) {
 	for (auto& p : m_pPlayers) p->SetTuning(t);
 }
 void CPlayerManager::SetPlayerTuning(int idx, const TankTuning& t) {
 	if (idx >= 0 && idx < (int)m_pPlayers.size()) m_pPlayers[idx]->SetTuning(t);
 }
-#endif
+
 
 

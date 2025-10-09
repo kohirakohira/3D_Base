@@ -173,6 +173,7 @@ HRESULT CEffect::LoadData()
 		{ enList::Test1,	u"Data\\Effekseer\\Laser01.efk"	},
 		{ enList::Test2,	u"Data\\Effekseer\\Laser01.efk"	},
 		{ enList::Explosion,u"Data\\Effekseer\\bomu.efk"	},
+		{ enList::Bakuhatu ,u"Data\\Effekseer\\bakuhatu.efk"	},
 	};
 	//配列の最大要素数を算出（配列全体のサイズ／配列１つ分のサイズ）
 	int list_max = sizeof(EList) / sizeof(EList[0]);

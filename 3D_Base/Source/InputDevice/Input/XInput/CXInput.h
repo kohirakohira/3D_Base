@@ -64,21 +64,6 @@ public:
 	}
 	void TestSetButton(WORD button) { m_TestButton = button; }
 
-#if 0
-	void EnableTestMode(bool on) { m_testMode = on; }
-	void TestSetConnected(bool on) { m_testConnected = on; }
-	void TestSetSticks(SHORT lx, SHORT ly, SHORT rx, SHORT ry)
-	{
-		m_testLX = lx; m_testLY = ly; m_testRX = rx; m_testRY = ry;
-	}
-	void TestSetTriggers(BYTE lt, BYTE rt)
-	{
-		m_testLT = lt; m_testRT = rt;
-	}
-	void TestSetButtons(WORD buttons) { m_testButtons = buttons; }
-
-#endif
-
 public:
 	//コンストラクタ.
 	CXInput( DWORD padId );

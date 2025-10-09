@@ -11,10 +11,13 @@ CCannon::CCannon(int inputID)
 {
 	// 入力受付インスタンスの生成とセット
 	m_Input = std::make_shared<CInputManager>(inputID);
+
+#if 0
 	if (m_Input) {
 		// 親クラス(CCharacter)の m_Input にも共有
 		CCharacter::m_Input = m_Input;
 	}
+#endif
 
 	m_pCollider = std::make_shared<CBoxCollider>();
 }
@@ -55,6 +58,7 @@ void CCannon::SetCannonPosition(const D3DXVECTOR3& Pos)
 void CCannon::SetInputManager(const std::shared_ptr<CInputManager>& input)
 {
 	m_pInput = input;
+	CCharacter::m_Input = m_Input;	//共有
 }
 
 void CCannon::PushBack(const D3DXVECTOR3& push)

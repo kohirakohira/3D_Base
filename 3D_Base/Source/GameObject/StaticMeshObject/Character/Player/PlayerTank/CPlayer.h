@@ -65,11 +65,18 @@ public:
 
 	//操作権関連の外部関数
 	void SetHasControl(bool control) { m_HasControl = control; }
+	void SetKeyBoadEnble(bool control) { m_HasControl = control; }
 	bool HasControl() const { return m_HasControl; }
 
 	//パッド用の外部関数
 	void SetPadRef(CXInput* pad) { m_pPad = pad; }
 	CXInput* GetPadRef() const { return m_pPad; }
+
+	//マネージャーセット
+	void SetInputManagerShared(const std::shared_ptr<CInputManager>& im);
+	void SetKeyboardEnabled(bool on);
+	std::shared_ptr<CInputManager>& GetInputManager() { return m_Input; }
+
 
 	//パラメータの外部関数
 	void SetTuning(const TankTuning& tuning) { m_Tune = tuning; }
@@ -90,7 +97,7 @@ protected:
 	CXInput* m_pPad;			//コントローラー
 
 private:
-	TankTuning m_Tune{};	
-
+	TankTuning m_Tune{};
+	std::shared_ptr<CInputManager> m_pInput;
 
 };

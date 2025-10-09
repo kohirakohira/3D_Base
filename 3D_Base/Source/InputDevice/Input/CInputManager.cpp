@@ -1,10 +1,21 @@
 #include "CInputManager.h"
 #include <cmath>
 
+CInputManager::CInputManager()
+    : m_XInput      ( nullptr )
+    , m_KeyInput    ( nullptr )
+    , m_UseKeyInput ( false )
+    , m_UseGamePad  ( false )
+    , m_OwnXInput   ( false )
+{
+}
+
 CInputManager::CInputManager(DWORD ID)
-    : m_XInput      (nullptr)
-    , m_KeyInput    (nullptr)
-    , m_UseKeyInput (false)
+    : m_XInput      ( nullptr )
+    , m_KeyInput    ( nullptr )
+    , m_UseKeyInput ( false )
+    , m_UseGamePad  ( false )
+    , m_OwnXInput   ( false )
 {
     m_XInput = new CXInput(ID);
 
@@ -17,15 +28,30 @@ CInputManager::CInputManager(DWORD ID)
 
 CInputManager::~CInputManager()
 {
-    SAFE_DELETE(m_XInput);
+    if (m_OwnXInput)
+    {
+        SAFE_DELETE(m_XInput);
+    }
+
+    //SAFE_DELETE(m_XInput);
+}
+
+void CInputManager::SetPadRef(CXInput* pad) {
+    if (m_OwnXInput) 
+    {
+        SAFE_DELETE(m_XInput);
+        m_OwnXInput = false;
+    }
+    m_XInput = pad;
+}
+
+void CInputManager::ClearPadRef()
+{
+    m_XInput = nullptr;
 }
 
 void CInputManager::Update()
 {
-    // スティックの入力と方向を取得し内部に保持
-    m_LeftStickDir = GetLeftStickDirection(m_LeftStickVec);     // 左スティック
-    m_RightStickDir = GetRightStickDirection(m_RightStickVec);  // 右スティック
-    
     if (m_XInput != nullptr)
     {
         m_XInput->Update();
@@ -35,6 +61,11 @@ void CInputManager::Update()
     {
         m_KeyInput->Update();
     }
+
+    // スティックの入力と方向を取得し内部に保持
+    m_LeftStickDir = GetLeftStickDirection(m_LeftStickVec);     // 左スティック
+    m_RightStickDir = GetRightStickDirection(m_RightStickVec);  // 右スティック
+    
 }
 
 // 左スティックの入力検知
@@ -270,4 +301,15 @@ bool CInputManager::IsControllerUp(CXInput::KEY key)
     if (!m_XInput)
         return false;
     return m_XInput->IsDown(key);
+}
+
+
+void CInputManager::SetUseKeyboard(bool on)
+{
+    m_UseKeyInput = on;
+    
+    if (on && !m_UseKeyInput)
+    {
+        std::make_unique<CInputManager>();
+    }
 }

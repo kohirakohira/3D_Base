@@ -63,6 +63,8 @@ public:
 	//子オブジェクトに各BodyとCannonを設定してあげる関数.
 	void SetBodyAndCannon(std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon);
 
+	
+
 private:
 	//↓松岡.
 	std::shared_ptr<CBody>					m_pBody;
@@ -79,10 +81,13 @@ private:
 
 	int m_LockTargetIndex = -1;	//ロック無効(デバック用)
 
+	bool m_OnePPadEnabled = true; // 1PパッドON/OFF
+	int m_keyboardPlayer = 0;
 private:
 	void InitPads();
 	void SyncByPadConnection();   //接続状況で割当/COM切替
 	int  FindFirstComPlayer() const;
+	int FindFirstPadReceiver(int StartIndex = 1)const;
 
 	//パラメータ設定用
 	void SetPlayerTuningAll(const TankTuning& t);

@@ -63,7 +63,6 @@ bool CXInput::Update()
 {
 	//キー入力情報
 	m_stateOld = m_state;
-
 	if (m_TestMode)
 	{
 		ZeroMemory(&m_state, sizeof(m_state));
@@ -73,36 +72,15 @@ bool CXInput::Update()
 		if (m_connect)
 		{
 			m_state.Gamepad.wButtons		= m_TestButton;
-			m_state.Gamepad.sThumbRY		= m_TestRY;
-			m_state.Gamepad.sThumbRX		= m_TestRX;
+			m_state.Gamepad.sThumbLY		= m_TestLY;
 			m_state.Gamepad.sThumbLX		= m_TestLX;
-			m_state.Gamepad.sThumbLY		= m_TestLX;
+			m_state.Gamepad.sThumbRX		= m_TestRX;
+			m_state.Gamepad.sThumbRY		= m_TestRX;
 			m_state.Gamepad.bLeftTrigger	= m_TestLT;
 			m_state.Gamepad.bRightTrigger	= m_TestRT;
 		}
 		return m_connect;
 	}
-
-#if 0
-	m_stateOld = m_state;
-
-	if (m_testMode) {
-		// 仮想入力をそのまま流す
-		ZeroMemory(&m_state, sizeof(m_state));
-		m_connect = m_testConnected;
-		if (m_connect) {
-			m_state.Gamepad.wButtons = m_testButtons;
-			m_state.Gamepad.sThumbLX = m_testLX;
-			m_state.Gamepad.sThumbLY = m_testLY;
-			m_state.Gamepad.sThumbRX = m_testRX;
-			m_state.Gamepad.sThumbRY = m_testRY;
-			m_state.Gamepad.bLeftTrigger = m_testLT;
-			m_state.Gamepad.bRightTrigger = m_testRT;
-		}
-		return m_connect;
-	}
-#endif
-
 
 	//キー情報を更新する前に退避.
 	m_stateOld = m_state;
@@ -187,11 +165,15 @@ bool CXInput::SetVibration( WORD LMotorSpd, WORD RMotorSpd )
 	return false;
 }
 
+
+
+
 //-------------------------------------------------.
 //	キー入力の更新.
 //-------------------------------------------------.
 bool CXInput::UpdateStatus()
 {
+#if 0
 	m_connect = false;
 	if( ERROR_SUCCESS == XInputGetState(
 		m_padId,
@@ -201,7 +183,18 @@ bool CXInput::UpdateStatus()
 		return true;
 	}
 	return false;
+#endif
+	//未接続の時にクリア
+	m_connect = (XInputGetState(m_padId, &m_state) == ERROR_SUCCESS);
+
+	if (!m_connect)
+	{
+		ZeroMemory(&m_state, sizeof(m_state));
+	}
+	return m_connect;
 }
+
+
 
 //-------------------------------------------------.
 //	IsKeyDown,Up,Repeat内で使用する関数.
