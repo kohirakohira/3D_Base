@@ -29,9 +29,6 @@ public:
 
 	// バウンディングオブジェクトの作成
 	void CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon);
-	
-	// コライダーの作成
-	void CreateCollider(int index);
 
 	//↓松岡.
 	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);

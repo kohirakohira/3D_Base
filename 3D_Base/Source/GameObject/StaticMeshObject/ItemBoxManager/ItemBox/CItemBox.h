@@ -76,5 +76,4 @@ protected:
 	}m_Item;
 
 private:
-	std::shared_ptr<CCollider>			m_pCollider;
 };

@@ -1,40 +1,40 @@
 #pragma once
 
 #include "Collision//Shape//Volume//BoundingSphere//CBoundingSphere.h"
-
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h"
+#include <d3dx9.h>
 
 //=======================================
-//	バウンディングボックスクラス
+//	バウンディングボックス (OBB対応)
 //=======================================
-
 class CBoundingBox
 {
 public:
 	CBoundingBox();
 	~CBoundingBox();
 
-	//モデルに合わせたバウンディングボックスを作成.
-	HRESULT CreateBoxForMesh(const CStaticMesh& pMesh);
+	// モデルに合わせたOBBを作成
+	HRESULT CreateBoxForMesh(const CStaticMesh& mesh);
 
-	// モデルに合わせてOBB作成
-	HRESULT CreateOBBForMesh(const CStaticMesh& pMesh);
+	// ほかの矩形との当たり判定
+	bool IsHitBox(const CBoundingBox pBBox);
 
-	//中心座標を取得する
+	// 情報取得
+	//中心座標を設定する
+	void SetPosition(const D3DXVECTOR3& Pos) { m_Position = Pos; }
+	const D3DXVECTOR3& GetHalfSize() const { return m_HalfSize; }
+	const D3DXVECTOR3* GetAxis() const { return m_Axis; }
+
+	// AABB互換的にMin/Maxも保持（ワールド行列無変換時の値）
 	const D3DXVECTOR3& GetMinPosition() const { return m_MinPos; }
 	const D3DXVECTOR3& GetMaxPosition() const { return m_MaxPos; }
 
-	// OBBの中心と半分サイズ、ローカル軸を取得
-	const D3DXVECTOR3& GetCenter() const { return m_Center; }
-	const D3DXVECTOR3& GetHalfSize() const { return m_HalfSize; }
-	const D3DXVECTOR3* GetAxis() const { return m_Axis; }  // X,Y,Zの3軸
 
 private:
-	D3DXVECTOR3		m_MinPos;	//最小位置.
-	D3DXVECTOR3		m_MaxPos;	//最大位置.
+	D3DXVECTOR3		m_MinPos;		// 最小位置（ローカル空間）
+	D3DXVECTOR3		m_MaxPos;		// 最大位置（ローカル空間）
 
-	// OBB用
-	D3DXVECTOR3		m_Center;     // 中心
-	D3DXVECTOR3		m_HalfSize;   // 各軸の半分サイズ
-	D3DXVECTOR3		m_Axis[3];    // ローカル軸（デフォルトはワールド軸）
+	D3DXVECTOR3		m_Position;		//中心座標
+	D3DXVECTOR3		m_HalfSize;		// 半分サイズ（ローカル空間）
+	D3DXVECTOR3		m_Axis[3];		// ローカル軸（X,Y,Zワールド空間）
 };

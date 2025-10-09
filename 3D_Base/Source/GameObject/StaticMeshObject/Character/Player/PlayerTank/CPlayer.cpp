@@ -73,13 +73,6 @@ void CPlayer::SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CS
 	m_pCannon->CreateBounding(pCannon);
 }
 
-// コライダーの作成
-void CPlayer::CreateCollider()
-{
-	m_pBody->CreateBoxCollider(m_pBody->GetMinPos(), m_pBody->GetMaxPos());
-	m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
-}
-
 D3DXVECTOR3 CPlayer::GetCannonPosition() const
 {
 	if (m_pCannon)

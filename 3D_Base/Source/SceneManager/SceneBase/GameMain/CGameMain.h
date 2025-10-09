@@ -44,6 +44,9 @@
 #include "GameObject//UI//CUIObject//CUIObject.h" // UIオブジェクトクラス
 #include "GameObject//UI//Timer//CTimer.h"		  // タイマークラス
 
+//-----当たり判定
+#include "Collision//CollisionManager//CCollisionManager.h"
+
 #include "Global.h"
 
 class CGameMain
@@ -70,18 +73,6 @@ public:
 
 	// ゲーム開始時の初期座標を設定
 	void SetPosition();
-
-	// 当たり判定のバウンディングと当たり判定の作成
-	void CreateBounding();
-
-	//当たり判定処理をここに入れる.
-	void Collision();
-
-	// 壁とプレイヤーの当たり判定
-	void WalltoPlayer();
-
-	// アイテムボックスとプレイヤーの当たり判定
-	void ItemBoxtoPlayer();
 
 	//画面をグリッドに分割したとき、idx番目のマスに対応する
 	//D3D11_VIEWPORTを作成して返す関数
@@ -172,6 +163,9 @@ public:
 	std::shared_ptr<CWall>		m_pWallRight;	// 右壁
 	//アイテムボックスマネージャークラス.
 	std::shared_ptr<CItemBoxManager>			m_pItemBoxManager;
+
+	// 当たり判定
+	std::shared_ptr<CCollisionManager>			m_pCollisionManager;
 
 	// シーン列挙変数.
 	CSceneType		m_SceneType;

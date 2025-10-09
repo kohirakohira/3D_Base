@@ -38,9 +38,6 @@ public:
 	// バウンディングオブジェクトを設定
 	void SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon);
 
-	// コライダーの作成
-	void CreateCollider();
-
    	//外部のクラスから情報取得.
 	void SetCBody(std::shared_ptr<CBody> pBody) { m_pBody = pBody; }
 	void SetCCannon(std::shared_ptr<CCannon> pCannon) { m_pCannon = pCannon; }

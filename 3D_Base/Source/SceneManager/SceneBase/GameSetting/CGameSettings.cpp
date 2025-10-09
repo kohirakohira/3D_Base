@@ -37,6 +37,7 @@ CGameSettings::CGameSettings(HWND hWnd)
 	, DrawFlag						( false )
 
 	, m_InputKey					( nullptr )
+	, m_pInputManager				( nullptr )
 
 {
 	m_SceneType = CSceneType::Setting;
@@ -67,6 +68,9 @@ void CGameSettings::Update()
 
 	//キー入力受付.
 	m_InputKey->Update();
+
+	// コントローラーの接続確認
+	m_pInputManager->UpdateConnectStatus();
 
 	//背景の動かす速度.
 	MoveBackGround();
@@ -115,15 +119,14 @@ void CGameSettings::Draw()
 	m_pSpriteSettingBackGroundImg->Draw();
 	m_pSpriteStartImg->Draw();
 
-
-
 	//画像インスタンスの複製.
 	for (int i = 0; i < IMAGE; i++)
 	{
-		m_SpriteConnectionImg[i]->Draw();
+		if (m_pInputManager->IsPadConnect(i))
+		{
+			m_SpriteConnectionImg[i]->Draw();
+		}
 	}
-
-
 
 	m_pSpriteYesSelectImg->Draw();
 	m_pSpriteNoSelectImg->Draw();
@@ -171,8 +174,6 @@ void CGameSettings::Init()
 	m_pSpriteNoSelectImg->SetScale(1.f, 1.f, 0.f);
 
 
-
-
 	//画像インスタンスの複製.
 	for (int i = 0; i < IMAGE; i++)
 	{
@@ -184,9 +185,6 @@ void CGameSettings::Init()
 		posx += 500.0f;
 
 	}
-
-
-
 
 
 	//キー入力.
@@ -233,7 +231,8 @@ void CGameSettings::Create()
 	//キー入力.
 	m_InputKey = std::make_shared<CMultiInputKeyManager>();
 
-
+	// コントローラーの生成
+	m_pInputManager = std::make_shared<CInputManager>(IMAGE);
 
 
 	//接続画像のインスタンス生成.

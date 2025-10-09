@@ -86,7 +86,6 @@
     </ClCompile>
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.cpp" />
     <ClCompile Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.cpp" />
-    <ClCompile Include="Source\Collision\BoudingBox\CBoundingBox.cpp" />
     <ClCompile Include="Source\Camera\CCamera.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.cpp" />
@@ -126,11 +125,9 @@
     <ClCompile Include="Source\GameObject\SpriteObject\Explosion\CExplosion.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\CShot.cpp" />
     <ClCompile Include="Source\Collision\CollisionManager\CCollisionManager.cpp" />
-    <ClCompile Include="Source\Collision\Collider\CCollider.cpp" />
-    <ClCompile Include="Source\Collision\Collider\SphereCollider\CSphereCollider.cpp" />
-    <ClCompile Include="Source\Collision\Collider\BoxCollider\CBoxCollider.cpp" />
     <ClCompile Include="Source\Vector3.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Wall\CWall.cpp" />
+    <ClCompile Include="Source\AssetsFile\SpriteAssets\SpriteAssets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Global.h">
@@ -210,11 +207,9 @@
     <ClInclude Include="Source\GameObject\SpriteObject\Explosion\CExplosion.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Shot\CShot.h" />
     <ClInclude Include="Source\Collision\CollisionManager\CCollisionManager.h" />
-    <ClInclude Include="Source\Collision\Collider\CCollider.h" />
-    <ClInclude Include="Source\Collision\Collider\SphereCollider\CSphereCollider.h" />
-    <ClInclude Include="Source\Collision\Collider\BoxCollider\CBoxCollider.h" />
     <ClInclude Include="Source\Vector3.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Wall\CWall.h" />
+    <ClInclude Include="Source\AssetsFile\SpriteAssets\SpriteAssets.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">

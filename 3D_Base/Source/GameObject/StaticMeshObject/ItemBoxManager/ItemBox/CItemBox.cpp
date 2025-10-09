@@ -9,7 +9,6 @@ CItemBox::CItemBox()
 	//‘å‘Ì0.016•Ó‚è‚É‚È‚é.
 	Framerate = 1.f / 60.f;
 
-	m_pCollider = std::make_shared<CBoxCollider>();
 }
 
 CItemBox::~CItemBox()
@@ -18,8 +17,6 @@ CItemBox::~CItemBox()
 
 void CItemBox::Update()
 {
-	m_pCollider->SetPosition(m_vPosition);
-
 	//ƒAƒCƒeƒ€‚ğ—‰º‚³‚¹‚é‚½‚ß‚ÌŠÖ”.
 	GravityMath();
 

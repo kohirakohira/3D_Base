@@ -187,8 +187,6 @@ void CGameMain::Update()
 	m_pWallBottom->Update();
 	m_pWallLeft->Update();
 	m_pWallRight->Update();
-
-	Collision();
 }
 
 
@@ -342,6 +340,9 @@ void CGameMain::Draw()
 
 	//タイマー描画.
 	m_Timer->Draw();
+
+	// 当たり判定描画
+	m_pCollisionManager->Draw();
 }
 
 void CGameMain::Init()
@@ -613,6 +614,10 @@ void CGameMain::Create()
 	//アイテムマネージャークラスのインスタンス生成.
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
 	m_pItemBoxManager->Create();
+
+	m_pCollisionManager = std::make_shared<CCollisionManager>();
+	m_pCollisionManager->Create();
+	m_pCollisionManager->CreateTank(PLAYER_MAX);
 }
 
 HRESULT CGameMain::LoadData()
@@ -781,6 +786,8 @@ HRESULT CGameMain::LoadData()
 		default:
 			break;
 		}
+
+
 	}
 
 	//スタティックメッシュを設定
@@ -797,7 +804,7 @@ HRESULT CGameMain::LoadData()
 	m_pWallLeft->AttachMesh(m_pStaticMeshWallH);
 	m_pWallRight->AttachMesh(m_pStaticMeshWallH);
 
-	CreateBounding();
+	m_pCollisionManager->LoadData();
 
 	return S_OK;
 }
@@ -819,138 +826,6 @@ void CGameMain::SetPosition()
 	// 右の壁の初期座標を設定
 	m_pWallRight->SetPosition(30, 0, 0);
 	m_pWallRight->SetRotation(0, 0, 0);
-}
-
-void CGameMain::CreateBounding()
-{
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		//プレイヤーのバウンディングの作成.
-		switch (i)
-		{
-		case 0:
-			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyRed, m_pStaticMesh_TankCannonRed);
-			break;
-		case 1:
-			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyYellow, m_pStaticMesh_TankCannonYellow);
-			break;
-		case 2:
-			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyBlue, m_pStaticMesh_TankCannonBlue);
-			break;
-		case 3:
-			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyGreen, m_pStaticMesh_TankCannonGreen);
-			break;
-		}
-		//プレイヤーの当たり判定を作成.
-		m_pPlayerManager->CreateCollider(i);
-	}
-	
-	//上の壁のバウンディングの作成.
-	m_pWallTop->CreateBBoxForMesh(*m_pStaticMeshWallW);
-	//上の壁の当たり判定を設定.
-	m_pWallTop->CreateBoxCollider(m_pWallTop->GetMinPos(), m_pWallTop->GetMaxPos());
-
-	//下の壁のバウンディングの作成.
-	m_pWallBottom->CreateBBoxForMesh(*m_pStaticMeshWallW);
-	//下の壁の当たり判定を設定.
-	m_pWallBottom->CreateBoxCollider(m_pWallBottom->GetMinPos(), m_pWallBottom->GetMaxPos());
-
-	//左の壁のバウンディングの作成.
-	m_pWallLeft->CreateBBoxForMesh(*m_pStaticMeshWallH);
-	//左の壁の当たり判定を設定.
-	m_pWallLeft->CreateBoxCollider(m_pWallLeft->GetMinPos(), m_pWallLeft->GetMaxPos());
-
-	//右の壁のバウンディングの作成.
-	m_pWallRight->CreateBBoxForMesh(*m_pStaticMeshWallH);
-	//右の壁の当たり判定を設定.
-	m_pWallRight->CreateBoxCollider(m_pWallRight->GetMinPos(), m_pWallRight->GetMaxPos());
-
-
-	//アイテムボックスのバウンディングの作成.
-	m_pItemBoxManager->CreateBounding(m_pStaticMeshItemBox);
-	//アイテムボックスの当たり判定を設定.
-	m_pItemBoxManager->CreateCollider();
-	
-}
-
-void CGameMain::Collision()
-{
-	// 壁とプレイヤーの当たり判定.
-	WalltoPlayer();
-
-	// アイテムボックスとプレイヤーの当たり判定.
-	ItemBoxtoPlayer();
-
-}
-
-void CGameMain::WalltoPlayer()
-{
-	const float pushStrength = 0.1f; // 押し戻しの強さ（フレームごとに調整可能）
-
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
-		auto Coll = player->GetBody()->GetCollider();
-
-		// 壁との衝突をチェックして法線ベクトルを合成
-		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
-
-		if (Coll && m_pWallTop->GetCollider() &&
-			Coll->CheckCollision(*m_pWallTop->GetCollider()))
-		{
-			push += D3DXVECTOR3(0.f, 0.f, -1.f);
-		}
-		if (Coll && m_pWallBottom->GetCollider() &&
-			Coll->CheckCollision(*m_pWallBottom->GetCollider()))
-		{
-			push += D3DXVECTOR3(0.f, 0.f, 1.f);
-		}
-		if (Coll && m_pWallLeft->GetCollider() &&
-			Coll->CheckCollision(*m_pWallLeft->GetCollider()))
-		{
-			push += D3DXVECTOR3(1.f, 0.f, 0.f);
-		}
-		if (Coll && m_pWallRight->GetCollider() &&
-			Coll->CheckCollision(*m_pWallRight->GetCollider()))
-		{
-			push += D3DXVECTOR3(-1.f, 0.f, 0.f);
-		}
-
-		// 複数壁に当たった場合は正規化して押し戻しベクトルを自然に
-		if (D3DXVec3Length(&push) > 0.f)
-		{
-			D3DXVec3Normalize(&push, &push);
-			push *= pushStrength;
-		}
-
-		player->GetBody()->PushBack(push);
-	}
-}
-
-//アイテムボックスとプレイヤーの当たり判定.
-void CGameMain::ItemBoxtoPlayer()
-{
-	//アイテムボックスとプレイヤーの当たり判定.
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		auto player = m_pPlayerManager->GetControlPlayer(i);
-		auto playerColl = player->GetBody()->GetCollider();
-
-		//アイテムボックスマネージャーからアイテムボックスを取得.
-		auto itemBoxes = m_pItemBoxManager->GetItem();
-
-		//アイテムボックス全てに対して当たり判定をチェック.
-		for (auto& itemBox : itemBoxes)
-		{
-			if (playerColl && itemBox->GetCollider() &&
-				playerColl->CheckCollision(*itemBox->GetCollider()))
-			{
-				//衝突した場合の処理.
-				itemBox->HitPlayer();
-			}
-		}
-	}
 }
 
 //画面をグリッドに分割したとき、idx番目のマスに対応する

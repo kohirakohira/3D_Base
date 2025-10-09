@@ -26,7 +26,8 @@
 
 //キー入力用.
 #include "InputDevice//Matuoka//CMultiInputKeyManager.h" // キー入力用
-
+//コントローラー入力
+#include "InputDevice//Input//CInputManager.h" // 入力マネージャー
 
 //前方宣言.
 class CSprite2D;
@@ -102,6 +103,9 @@ public:
 
 	//キー入力.
 	std::shared_ptr<CMultiInputKeyManager>		m_InputKey;
+
+	// コントローラー入力
+	std::shared_ptr<CInputManager>				m_pInputManager;
 
 	//描画フラグ.
 	bool DrawFlag;
