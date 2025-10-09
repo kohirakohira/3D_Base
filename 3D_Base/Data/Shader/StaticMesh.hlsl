@@ -26,7 +26,9 @@ cbuffer per_frame	: register( b2 )
 {
 	float4	g_CameraPos;	//カメラ位置(視点位置).
 	float4	g_vLightDir;	//ライトの方向ベクトル.
+	
 };
+
 
 //頂点シェーダの出力パラメータ.
 struct VS_OUTPUT
@@ -98,7 +100,6 @@ float4 PS_Main( VS_OUTPUT input ) : SV_Target
 	float4 Color = ambient + diffuse + specular;
 	return Color;
 }
-
 //========= テクスチャ無し用 ========================================
 //-------------------------------------------------
 //	頂点(バーテックス)シェーダ.
@@ -130,6 +131,7 @@ VS_OUTPUT VS_NoTex(
 
 	return output;
 }
+
 
 //-------------------------------------------------
 //	ピクセルシェーダ.
