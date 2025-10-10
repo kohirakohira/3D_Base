@@ -94,6 +94,7 @@ void CCannon::KeyInput()
 		{
 			m_Shot = true;		// 弾を発射
 			m_ShotCoolTime = 0; // クールダウン再スタート
+
 		}
 	}
 }

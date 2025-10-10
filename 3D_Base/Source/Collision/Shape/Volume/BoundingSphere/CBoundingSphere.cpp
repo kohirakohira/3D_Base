@@ -1,4 +1,4 @@
-#include "Collision//Shape//Volume//BoundingSphere//CBoundingSphere.h"
+#include "CBoundingSphere.h"
 
 CBoundingSphere::CBoundingSphere()
 	: m_Position	()

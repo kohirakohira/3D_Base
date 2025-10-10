@@ -13,68 +13,68 @@
 
 
 CGameMain::CGameMain(HWND hWnd)
-	: m_hWnd					( hWnd )
+	: m_hWnd									( hWnd )
 
 	//画像.
 	, m_pSprite2DTimerFrame			( nullptr )
-	, m_pSprite2DTimer				( nullptr )
+	, m_pSprite2DTimer						( nullptr )
 	, m_pSprite2DKillNomber			( nullptr )
-	, m_pSprite2DHitPoint			( nullptr )
-	, m_pSprite2DPlayerIcon			()
+	, m_pSprite2DHitPoint					( nullptr )
+	, m_pSprite2DPlayerIcon				()
 
 	//画像の設定.
-	, m_pSpriteTimerFrame			()
-	, m_pSpriteTimer				()
-	, m_pSpritePlayerIcon			()
-	, m_pSpriteKillNomber			()
-	, m_pSpriteHitPoint				()
+	, m_pSpriteTimerFrame				()
+	, m_pSpriteTimer							()
+	, m_pSpritePlayerIcon					()
+	, m_pSpriteKillNomber				()
+	, m_pSpriteHitPoint						()
 
-	, m_pSpriteGround				( nullptr )
-	, m_pSpritePlayer				( nullptr )
-	, m_pSpriteExplosion			( nullptr )
+	, m_pSpriteGround						( nullptr )
+	, m_pSpritePlayer							( nullptr )
+	, m_pSpriteExplosion					( nullptr )
 
-	, m_pStaticMeshGround			( nullptr )
-	, m_pStaticMeshBSphere			( nullptr )
-	, m_pStaticMeshItemBox			( nullptr )
+	, m_pStaticMeshGround				( nullptr )
+	, m_pStaticMeshBSphere				( nullptr )
+	, m_pStaticMeshItemBox				( nullptr )
 
 	// 戦車
-	, m_pStaticMesh_TankBodyRed		( nullptr )
-	, m_pStaticMesh_TankCannonRed	( nullptr )
-	, m_pStaticMesh_TankBodyYellow	( nullptr )
-	, m_pStaticMesh_TankCannonYellow( nullptr )
-	, m_pStaticMesh_TankBodyBlue	( nullptr )
-	, m_pStaticMesh_TankCannonBlue	( nullptr )
-	, m_pStaticMesh_TankBodyGreen	( nullptr )
+	, m_pStaticMesh_TankBodyRed			( nullptr )
+	, m_pStaticMesh_TankCannonRed		( nullptr )
+	, m_pStaticMesh_TankBodyYellow		( nullptr )
+	, m_pStaticMesh_TankCannonYellow	( nullptr )
+	, m_pStaticMesh_TankBodyBlue			( nullptr )
+	, m_pStaticMesh_TankCannonBlue		( nullptr )
+	, m_pStaticMesh_TankBodyGreen		( nullptr )
 	, m_pStaticMesh_TankCannonGreen	( nullptr )
 
 	// 弾
-	, m_pStaticMesh_BulletRed		( nullptr )
-	, m_pStaticMesh_BulletYellow	( nullptr )
-	, m_pStaticMesh_BulletBlue		( nullptr )
+	, m_pStaticMesh_BulletRed			( nullptr )
+	, m_pStaticMesh_BulletYellow		( nullptr )
+	, m_pStaticMesh_BulletBlue			( nullptr )
 	, m_pStaticMesh_BulletGreen		( nullptr )
 
 	// 壁
-	, m_pStaticMeshWallW			( nullptr )
-	, m_pStaticMeshWallH			( nullptr )
+	, m_pStaticMeshWallW				( nullptr )
+	, m_pStaticMeshWallH					( nullptr )
 
-	, m_pStcMeshObj					( nullptr )
+	, m_pStcMeshObj							( nullptr )
 
-	, m_pPlayerManager				()
-	, m_pShotManager				()
+	, m_pPlayerManager					()
+	, m_pShotManager						()
 
-	, m_pGround						( nullptr )
+	, m_pGround								( nullptr )
 
-	, m_pDbgText					( nullptr )
+	, m_pDbgText								( nullptr )
 
-	, m_StopTimeCount				( 0 )
-	, m_pCameras					()
+	, m_StopTimeCount						( 0 )
+	, m_pCameras								()
 
-	, m_Timer						( nullptr )
+	, m_Timer										( nullptr )
 
-	, m_pWallTop					( nullptr )
-	, m_pWallBottom					( nullptr )
-	, m_pWallLeft					( nullptr )
-	, m_pWallRight					( nullptr )
+	, m_pWallTop								( nullptr )
+	, m_pWallBottom							( nullptr )
+	, m_pWallLeft								( nullptr )
+	, m_pWallRight							( nullptr )
 	, m_pItemBoxManager				( nullptr )
 {
 	//最初のシーンをメインにする.
@@ -128,6 +128,7 @@ void CGameMain::Update()
 	//アイテムの動作.
 	m_pItemBoxManager->Update();
 
+	m_pCollisionManager->UpdateBounding();
 #if 0
 	//Effect制御
 	{
@@ -189,8 +190,6 @@ void CGameMain::Update()
 	m_pWallRight->Update();
 }
 
-
-
 void CGameMain::Draw()
 {
 	auto* pContext = CDirectX11::GetInstance().GetContext();
@@ -230,6 +229,9 @@ void CGameMain::Draw()
 	//弾描画.
 	m_pShotManager->Draw(view, proj, light, paramC);
 
+	// 当たり判定の描画
+	m_pCollisionManager->Draw(view, proj, light, paramC);
+
 	//地面描画
 	if (owner) m_pGround->SetPlayer(*owner);
 	{
@@ -257,7 +259,6 @@ void CGameMain::Draw()
 	//エフェクトもここでやる
 
 	};
-
 
 	//分割ビューのループ
 	for (int i = 0; i < VIEWS; ++i)
@@ -340,9 +341,6 @@ void CGameMain::Draw()
 
 	//タイマー描画.
 	m_Timer->Draw();
-
-	// 当たり判定描画
-	m_pCollisionManager->Draw();
 }
 
 void CGameMain::Init()
@@ -611,13 +609,15 @@ void CGameMain::Create()
 	m_pWallBottom	= std::make_shared<CWall>();
 	m_pWallLeft		= std::make_shared<CWall>();
 	m_pWallRight	= std::make_shared<CWall>();
+
 	//アイテムマネージャークラスのインスタンス生成.
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
 	m_pItemBoxManager->Create();
 
+	// コリジョンクラスのインスタンス生成
 	m_pCollisionManager = std::make_shared<CCollisionManager>();
+	m_pCollisionManager->SetPlayerManager(m_pPlayerManager);
 	m_pCollisionManager->Create();
-	m_pCollisionManager->CreateTank(PLAYER_MAX);
 }
 
 HRESULT CGameMain::LoadData()
@@ -653,7 +653,7 @@ HRESULT CGameMain::LoadData()
 	};
 	//制限時間の枠の読み込み.
 	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\TimerFrame.png"), WH_SIZE);
-	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer.png"), TIMER_SIZE);
+	m_pSprite2DTimer			->Init(_T("Data\\Texture\\UI\\Timer.png"), TIMER_SIZE);
 	m_pSprite2DKillNomber	->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE);
 	m_pSprite2DHitPoint		->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE);
 
@@ -786,8 +786,6 @@ HRESULT CGameMain::LoadData()
 		default:
 			break;
 		}
-
-
 	}
 
 	//スタティックメッシュを設定
@@ -796,9 +794,7 @@ HRESULT CGameMain::LoadData()
 	//アイテムボックスマネージャーにメッシュを設定.
 	m_pItemBoxManager->AttachMesh(m_pStaticMeshItemBox);
 
-	////バウンディングスフィアの作成.
-	//m_pPlayer->CreateBSphareForMesh(*m_pStaticMeshBSphere);
-
+	// 壁にメッシュ設定
 	m_pWallTop->AttachMesh(m_pStaticMeshWallW);
 	m_pWallBottom->AttachMesh(m_pStaticMeshWallW);
 	m_pWallLeft->AttachMesh(m_pStaticMeshWallH);
