@@ -18,14 +18,14 @@ cbuffer per_mesh	: register( b0 )
 cbuffer per_material: register( b1 )
 {
 	float4	g_Diffuse;		//ディフューズ色(拡散反射色).
-	float4	g_Ambient;		//アンビエント色(環境色).
+    float4 g_Ambient = float4(0.2,0.2,0.2,0.2); //アンビエント色(環境色).
 	float4	g_Specular;		//スペキュラ色(鏡面反射色).
 };
 //フレーム単位.
 cbuffer per_frame	: register( b2 )
 {
 	float4	g_CameraPos;	//カメラ位置(視点位置).
-	float4	g_vLightDir;	//ライトの方向ベクトル.
+    float4 g_vLightDir = normalize(float4(0.1,0.1,0.1,0.1)); //ライトの方向ベクトル.
 	
 };
 
