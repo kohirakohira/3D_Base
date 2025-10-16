@@ -98,12 +98,17 @@ public:
     const Direction GetRightStickDirection() const { return m_RightStickDir; }
 
     //外部にパッド情報を渡す
-    void SetPadRef(CXInput* pad);
+    void SetPadRef(std::shared_ptr<CXInput> pad);
     void ClearPadRef();
 
     //有効化するかどうかのフラグ
     void SetUseGamePad(bool on) { m_UseGamePad = on; }
     void SetUseKeyboard(bool on);
+
+
+    void UpdateConnectStatus();
+    bool IsPadConnect(int padId) const;
+
 private:
     // XY座標から方向判定する共通関数
     Direction GetDirectionFromXY(float x, float y, float threshold);

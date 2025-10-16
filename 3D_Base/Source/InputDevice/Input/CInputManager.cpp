@@ -24,7 +24,6 @@ CInputManager::CInputManager(DWORD ID)
         m_UseKeyInput = true;
         m_KeyInput = std::make_unique<CKeyInput>();
     }
-
     // ０番がコントローラーが接続されているか調べる
 	if (m_padId == 0 && m_XInput)
 	{
@@ -38,21 +37,25 @@ CInputManager::CInputManager(DWORD ID)
 
 CInputManager::~CInputManager()
 {
+#if 1
     if (m_OwnXInput)
     {
-        SAFE_DELETE(m_XInput);
+        m_XInput.reset();
     }
 
     //SAFE_DELETE(m_XInput);
+#endif
 }
 
-void CInputManager::SetPadRef(CXInput* pad) {
+void CInputManager::SetPadRef(std::shared_ptr<CXInput> pad) {
+#if 1
     if (m_OwnXInput) 
     {
-        SAFE_DELETE(m_XInput);
+        m_XInput.reset();
         m_OwnXInput = false;
     }
     m_XInput = pad;
+#endif
 }
 
 void CInputManager::ClearPadRef()
@@ -197,6 +200,7 @@ CInputManager::Direction CInputManager::GetArrowKeyDirection()
 
     return GetDirectionFromXY(x, y, THRESHOLD);
 }
+
 
 // コントローラーの接続状態を更新
 void CInputManager::UpdateConnectStatus()
