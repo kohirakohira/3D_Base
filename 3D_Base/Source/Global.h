@@ -3,7 +3,15 @@
 //警告についてのｺｰﾄﾞ分析を無効にする.4005:再定義.
 #pragma warning(disable:4005)
 #include <Windows.h>
+#undef min			//std::minと競合するのでwindows.hのminを無効化.
+#undef max			//std::maxと競合するのでwindows.hのmaxを無効化.
+					//NOMINMAXだと競合する
 #include <crtdbg.h>
+
+//-----授業コード後に追加
+#include <cmath>
+#include <iostream>
+#include <algorithm>	//std::min,std::maxを使用するので追加.
 
 //DirectX9
 #include <d3dx9.h>
@@ -31,8 +39,10 @@
 //	定数.
 //=================================================
 //#define WND_W 1280	//←定数宣言で#defineは使わない.
-const float WND_W = 1920;	//ウィンドウの幅.
-const float WND_H = 1080;	//ウィンドウの高さ.
+const int   WND_W	= 1920;		//ウィンドウの幅.
+const float WND_WF	= 1920.f;	//ウィンドウの幅.
+const int   WND_H	= 1080;		//ウィンドウの高さ.
+const float WND_HF	= 1080.f;	//ウィンドウの高さ.
 const int FPS = 60;			//フレームレート.
 
 //-----定数宣言(連続入力阻止カウントマックス)-----.
@@ -43,10 +53,11 @@ const int INPUT_COUNT_MAX = 60;	//連続入力阻止のカウントマックス.
 static constexpr int PLAYER_MAX = 4;
 static const int ShotMax = 100;	// 弾の最大数
 
-
-
 //アイテムの数.
 static constexpr int ITEM_MAX = 6;
+
+//テスト.
+const int IMAGE = 4;
 
 
 

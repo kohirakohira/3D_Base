@@ -10,9 +10,6 @@
     <Filter Include="Source">
       <UniqueIdentifier>{4bb2e0f8-e892-497a-b3d0-a752e79c20fa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\DirectX">
-      <UniqueIdentifier>{081c13db-b90f-4b43-b874-c0bfeb26c614}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Game">
       <UniqueIdentifier>{fcb3b083-99fb-44f6-91af-df2cd2d5a15f}</UniqueIdentifier>
     </Filter>
@@ -22,29 +19,11 @@
     <Filter Include="Source\Main">
       <UniqueIdentifier>{e8b421b4-b595-4d12-a5bb-c9d77af68932}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Sprite3D">
-      <UniqueIdentifier>{12745241-d010-4d17-becc-c603257bfadb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Sprite2D">
-      <UniqueIdentifier>{0b436677-f236-4418-8f8a-6d2d08aceb65}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\GameObject\UIObject">
-      <UniqueIdentifier>{110137ba-2a60-4ce0-b7fd-8edf61fe7ac6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\DebugText">
-      <UniqueIdentifier>{e4284e5a-1c13-4bbc-916a-1ab5190917d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\StaticMesh">
-      <UniqueIdentifier>{04a8d26e-26e7-4270-a99d-489d6083f939}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\GameObject\StaticMeshObject">
       <UniqueIdentifier>{c115b3d2-026a-40be-b5a2-02f83decb695}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\GameObject\SpriteObject">
       <UniqueIdentifier>{cca73fca-1a9b-4392-8b37-bffb05ad32a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\GameObject\SpriteObject\Explosion">
-      <UniqueIdentifier>{cbec0bf5-4a7d-4751-8519-c9a6ffc6721d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\GameObject\StaticMeshObject\Character">
       <UniqueIdentifier>{dcd0ea19-724e-4625-8448-3d91af7dbd22}</UniqueIdentifier>
@@ -58,12 +37,6 @@
     <Filter Include="Source\BoundingSphere">
       <UniqueIdentifier>{fed4633c-ed5b-4e9f-ba05-83315a3f326f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\GameObject\StaticMeshObject\Shot">
-      <UniqueIdentifier>{e2fb0f87-92e3-486c-b646-f236537f419a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Sound">
-      <UniqueIdentifier>{270f52a2-ef4a-4c46-ad63-45ddea695be2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Effect">
       <UniqueIdentifier>{e40c6298-c0aa-4516-93c4-44ff036cc619}</UniqueIdentifier>
     </Filter>
@@ -75,81 +48,51 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\CDirectX11.cpp">
-      <Filter>Source\DirectX</Filter>
-    </ClCompile>
     <ClCompile Include="Source\stdafx.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\WinMain.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CGame.cpp">
+    <ClCompile Include="Source\Game\CGame.cpp">
       <Filter>Source\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CSpriteObject.cpp">
-      <Filter>Source\GameObject\SpriteObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CGameObject.cpp">
-      <Filter>Source\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CMain.cpp">
+    <ClCompile Include="Source\Main\CMain.cpp">
       <Filter>Source\Main</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CSprite3D.cpp">
-      <Filter>Source\Sprite3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CPlayer.cpp">
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\CPlayer.cpp">
       <Filter>Source\GameObject\StaticMeshObject\Character\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CExplosion.cpp">
-      <Filter>Source\GameObject\SpriteObject\Explosion</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CSprite2D.cpp">
-      <Filter>Source\Sprite2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CUIObject.cpp">
-      <Filter>Source\GameObject\UIObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CDebugText.cpp">
-      <Filter>Source\DebugText</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CDirectX9.cpp">
-      <Filter>Source\DirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CStaticMesh.cpp">
-      <Filter>Source\StaticMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CStaticMeshObject.cpp">
+    <ClCompile Include="Source\GameObject\StaticMeshObject\CStaticMeshObject.cpp">
       <Filter>Source\GameObject\StaticMeshObject</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CCharacter.cpp">
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CCharacter.cpp">
       <Filter>Source\GameObject\StaticMeshObject\Character</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CGround.cpp">
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\CGround.cpp">
       <Filter>Source\GameObject\StaticMeshObject\Ground</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Source\CBoundingSphere.cpp">
+=======
+    <ClCompile Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.cpp">
+>>>>>>> 58fd20b82b292614960a1cb33954055e6113b55d
       <Filter>Source\BoundingSphere</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CShot.cpp">
-      <Filter>Source\GameObject\StaticMeshObject\Shot</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CSound.cpp">
-      <Filter>Source\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CSoundManager.cpp">
-      <Filter>Source\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CEffect.cpp">
+    <ClCompile Include="Source\Assets\Effect\CEffect.cpp">
       <Filter>Source\Effect</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Source\CRay.cpp">
+=======
+    <ClCompile Include="Source\Collision\Shape\Ray\CRay.cpp">
+>>>>>>> 58fd20b82b292614960a1cb33954055e6113b55d
       <Filter>Source\Ray</Filter>
     </ClCompile>
-    <ClCompile Include="Source\test.cpp">
+    <ClCompile Include="Source\Tameshi\test.cpp">
       <Filter>Source\test</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Source\CBody.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -231,11 +174,60 @@
     <ClCompile Include="Source\GameDebug.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+=======
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.cpp" />
+    <ClCompile Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.cpp" />
+    <ClCompile Include="Source\Collision\BoudingBox\CBoundingBox.cpp" />
+    <ClCompile Include="Source\Camera\CCamera.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.cpp" />
+    <ClCompile Include="Source\SceneManager\SceneBase\GameMain\CGameMain.cpp" />
+    <ClCompile Include="Source\SceneManager\SceneBase\GameResult\CGameResult.cpp" />
+    <ClCompile Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.cpp" />
+    <ClCompile Include="Source\SceneManager\SceneBase\GameTitle\CGameTitle.cpp" />
+    <ClCompile Include="Source\ImGui\CImguiManager.cpp" />
+    <ClCompile Include="Source\InputDevice\Matuoka\CInputKeyManager.cpp" />
+    <ClCompile Include="Source\InputDevice\Input\CInputManager.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\ItemBoxManager\ItemBox\CItemBox.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\ItemBoxManager\CItemBoxManager.cpp" />
+    <ClCompile Include="Source\InputDevice\Input\KeyInput\CKeyInput.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerManager\CPlayerManager.cpp" />
+    <ClCompile Include="Source\SceneManager\SceneBase\CSceneBase.cpp" />
+    <ClCompile Include="Source\SceneManager\CSceneManager.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\ShotManager\CShotManager.cpp" />
+    <ClCompile Include="Source\Tameshi\CTameshi.cpp" />
+    <ClCompile Include="Source\InputDevice\Input\XInput\CXInput.cpp" />
+    <ClCompile Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.cpp" />
+    <ClCompile Include="Source\GameObject\CGameObject.cpp" />
+    <ClCompile Include="Source\InputDevice\Matuoka\CMultiInputKeyManager.cpp" />
+    <ClCompile Include="Source\GameObject\UI\ChoiceImage\CChoiceImage.cpp" />
+    <ClCompile Include="Source\GameObject\UI\CUIObject\CUIObject.cpp" />
+    <ClCompile Include="Source\GameObject\UI\ImageObject\CImageObject.cpp" />
+    <ClCompile Include="Source\GameObject\UI\SelectIcon\CSelectIcon.cpp" />
+    <ClCompile Include="Source\GameObject\UI\Timer\CTimer.cpp" />
+    <ClCompile Include="Source\Assets\DirectX\DirectX9\CDirectX9.cpp" />
+    <ClCompile Include="Source\Assets\DirectX\DirectX11\CDirectX11.cpp" />
+    <ClCompile Include="Source\Assets\DebugText\CDebugText.cpp" />
+    <ClCompile Include="Source\Assets\Sound\CSound.cpp" />
+    <ClCompile Include="Source\Assets\Sound\CSoundManager.cpp" />
+    <ClCompile Include="Source\Assets\Mesh\StaticMesh\CStaticMesh.cpp" />
+    <ClCompile Include="Source\Assets\Sprite\Sprite2D\CSprite2D.cpp" />
+    <ClCompile Include="Source\Assets\Sprite\Sprite3D\CSprite3D.cpp" />
+    <ClCompile Include="Source\GameObject\SpriteObject\CSpriteObject.cpp" />
+    <ClCompile Include="Source\GameObject\SpriteObject\Explosion\CExplosion.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\CShot.cpp" />
+    <ClCompile Include="Source\Quaternions\Quaternions.cpp" />
+    <ClCompile Include="Source\Camera\CameraManager\CCameraManager.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_demo.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_draw.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_impl_win32.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_tables.cpp" />
+    <ClCompile Include="Data\ImGui\Library\imgui_widgets.cpp" />
+>>>>>>> 58fd20b82b292614960a1cb33954055e6113b55d
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\CDirectX11.h">
-      <Filter>Source\DirectX</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Global.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -245,51 +237,25 @@
     <ClInclude Include="Source\stdafx.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CGame.h">
+    <ClInclude Include="Source\Game\CGame.h">
       <Filter>Source\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CSpriteObject.h">
-      <Filter>Source\GameObject\SpriteObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CGameObject.h">
-      <Filter>Source\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CMain.h">
+    <ClInclude Include="Source\Main\CMain.h">
       <Filter>Source\Main</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CSprite3D.h">
-      <Filter>Source\Sprite3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CPlayer.h">
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\CPlayer.h">
       <Filter>Source\GameObject\StaticMeshObject\Character\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CExplosion.h">
-      <Filter>Source\GameObject\SpriteObject\Explosion</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CSprite2D.h">
-      <Filter>Source\Sprite2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CUIObject.h">
-      <Filter>Source\GameObject\UIObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CDebugText.h">
-      <Filter>Source\DebugText</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CDirectX9.h">
-      <Filter>Source\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CStaticMesh.h">
-      <Filter>Source\StaticMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CStaticMeshObject.h">
+    <ClInclude Include="Source\GameObject\StaticMeshObject\CStaticMeshObject.h">
       <Filter>Source\GameObject\StaticMeshObject</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CCharacter.h">
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CCharacter.h">
       <Filter>Source\GameObject\StaticMeshObject\Character</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CGround.h">
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Ground\CGround.h">
       <Filter>Source\GameObject\StaticMeshObject\Ground</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="Source\CBoundingSphere.h">
       <Filter>Source\BoundingSphere</Filter>
     </ClInclude>
@@ -395,6 +361,57 @@
     <ClInclude Include="Source\ItemType.h">
       <Filter>Source</Filter>
     </ClInclude>
+=======
+    <ClInclude Include="Source\Assets\Effect\CEffect.h">
+      <Filter>Source\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Collision\Shape\Ray\CRay.h">
+      <Filter>Source\Ray</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.h" />
+    <ClInclude Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.h" />
+    <ClInclude Include="Source\Camera\CCamera.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.h" />
+    <ClInclude Include="Source\SceneManager\SceneBase\GameMain\CGameMain.h" />
+    <ClInclude Include="Source\SceneManager\SceneBase\GameResult\CGameResult.h" />
+    <ClInclude Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.h" />
+    <ClInclude Include="Source\SceneManager\SceneBase\GameTitle\CGameTitle.h" />
+    <ClInclude Include="Source\ImGui\CImguiManager.h" />
+    <ClInclude Include="Source\InputDevice\Matuoka\CInputKeyManager.h" />
+    <ClInclude Include="Source\InputDevice\Input\CInputManager.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\ItemBox\CItemBox.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\CItemBoxManager.h" />
+    <ClInclude Include="Source\InputDevice\Input\KeyInput\CKeyInput.h" />
+    <ClInclude Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\ItemBoxType\ItemType.h" />
+    <ClInclude Include="Source\Tameshi\CTameshi.h" />
+    <ClInclude Include="Source\InputDevice\Input\XInput\CXInput.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Shot\ShotManager\CShotManager.h" />
+    <ClInclude Include="Source\SceneManager\SceneBase\CSceneBase.h" />
+    <ClInclude Include="Source\SceneManager\CSceneManager.h" />
+    <ClInclude Include="Source\SceneManager\SceneType\CSceneType.h" />
+    <ClInclude Include="Source\InputDevice\Matuoka\CMultiInputKeyManager.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerManager\CPlayerManager.h" />
+    <ClInclude Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.h" />
+    <ClInclude Include="Source\GameObject\CGameObject.h" />
+    <ClInclude Include="Source\GameObject\UI\ChoiceImage\CChoiceImage.h" />
+    <ClInclude Include="Source\GameObject\UI\CUIObject\CUIObject.h" />
+    <ClInclude Include="Source\GameObject\UI\ImageObject\CImageObject.h" />
+    <ClInclude Include="Source\GameObject\UI\SelectIcon\CSelectIcon.h" />
+    <ClInclude Include="Source\GameObject\UI\Timer\CTimer.h" />
+    <ClInclude Include="Source\Assets\DirectX\DirectX9\CDirectX9.h" />
+    <ClInclude Include="Source\Assets\DirectX\DirectX11\CDirectX11.h" />
+    <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
+    <ClInclude Include="Source\Assets\Sound\CSound.h" />
+    <ClInclude Include="Source\Assets\Sound\CSoundManager.h" />
+    <ClInclude Include="Source\Assets\Mesh\StaticMesh\CStaticMesh.h" />
+    <ClInclude Include="Source\Assets\Sprite\Sprite2D\CSprite2D.h" />
+    <ClInclude Include="Source\Assets\Sprite\Sprite3D\CSprite3D.h" />
+    <ClInclude Include="Source\GameObject\SpriteObject\CSpriteObject.h" />
+    <ClInclude Include="Source\GameObject\SpriteObject\Explosion\CExplosion.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Shot\CShot.h" />
+>>>>>>> 58fd20b82b292614960a1cb33954055e6113b55d
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">
@@ -415,5 +432,13 @@
     <FxCompile Include="Data\Shader\Ray.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Data\ImGui\Font\arial.ttf" />
+    <Font Include="Data\ImGui\Font\arialbd.ttf" />
+    <Font Include="Data\ImGui\Font\arialbi.ttf" />
+    <Font Include="Data\ImGui\Font\ariali.ttf" />
+    <Font Include="Data\ImGui\Font\ariblk.ttf" />
+    <Font Include="Data\ImGui\Font\NotoSansJP-SemiBold.ttf" />
   </ItemGroup>
 </Project>

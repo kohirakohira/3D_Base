@@ -1,6 +1,6 @@
-#include "CMain.h"
+#include "Main//CMain.h" // 基盤メインクラス
 #include "Global.h"
-#include "CDirectX11.h"
+#include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス
 #include <crtdbg.h>	//_ASSERT_EXPR()で必要.
 #include "MyMacro.h"
 
