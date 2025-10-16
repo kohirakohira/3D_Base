@@ -98,7 +98,7 @@ public:
     const Direction GetRightStickDirection() const { return m_RightStickDir; }
 
     //外部にパッド情報を渡す
-    void SetPadRef(std::shared_ptr<CXInput> pad);
+    void SetPadRef(CXInput* pad);
     void ClearPadRef();
 
     //有効化するかどうかのフラグ
@@ -116,8 +116,9 @@ private:
 private:
     DWORD                       m_padId;		// パッド番号(0~3).
 	bool                        m_padConnected[4] = { false, false, false, false }; // コントローラーの接続状態
-
-    std::shared_ptr<CXInput>    m_XInput;       // コントローラー入力クラス
+    
+    CXInput*                    m_XInput;
+    std::unique_ptr<CXInput>    m_OwnPad;
     std::unique_ptr<CKeyInput>  m_KeyInput;     // キー入力クラス
 
     bool                        m_UseKeyInput;  // キーボード操作するか

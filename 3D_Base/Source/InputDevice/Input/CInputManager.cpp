@@ -17,9 +17,10 @@ CInputManager::CInputManager(DWORD ID)
     , m_UseGamePad  ( false )
     , m_OwnXInput   ( false )
 {
-    m_XInput = std::make_shared<CXInput>(m_padId);
-
-    if (m_padId == 0) // 0番だけキーボード操作をできるようにする
+    m_OwnPad = std::make_unique<CXInput>(ID);
+    m_XInput = m_OwnPad.get();
+    m_UseGamePad = true;
+    if (ID == 0) // 0番だけキーボード操作をできるようにする
     {
         m_UseKeyInput = true;
         m_KeyInput = std::make_unique<CKeyInput>();
@@ -37,25 +38,12 @@ CInputManager::CInputManager(DWORD ID)
 
 CInputManager::~CInputManager()
 {
-#if 1
-    if (m_OwnXInput)
-    {
-        m_XInput.reset();
-    }
-
-    //SAFE_DELETE(m_XInput);
-#endif
 }
 
-void CInputManager::SetPadRef(std::shared_ptr<CXInput> pad) {
-#if 1
-    if (m_OwnXInput) 
-    {
-        m_XInput.reset();
-        m_OwnXInput = false;
-    }
-    m_XInput = pad;
-#endif
+void CInputManager::SetPadRef(CXInput* pad)
+{
+    m_OwnPad.reset();   //外部参照に切り替えるので自前所有は解除する
+    m_XInput =pad;
 }
 
 void CInputManager::ClearPadRef()
