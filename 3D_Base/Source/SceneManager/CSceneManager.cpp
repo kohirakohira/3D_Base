@@ -59,6 +59,8 @@ void CSceneManager::Update()
 	if (m_pScene != nullptr)
 	{
 		m_pScene->Update();
+		////毎フレーム設定してあげる.
+		//m_ImguiManager.SetFrame();
 	}
 
 }
@@ -70,6 +72,8 @@ void CSceneManager::Draw()
 	if (m_pScene != nullptr)
 	{
 		m_pScene->Draw();
+		////ImGuiの描画.
+		//m_ImguiManager.Render();
 	}
 }
 
@@ -112,4 +116,6 @@ void CSceneManager::Change(std::shared_ptr<CSceneBase> InScene)
 
 	//シーンの情報を読み込む.
 	m_pScene->Init();
+	////Imguiの初期化.
+	//m_ImguiManager.Init(m_hWnd);
 }

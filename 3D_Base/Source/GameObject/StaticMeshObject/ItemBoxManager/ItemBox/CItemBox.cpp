@@ -3,19 +3,23 @@
 CItemBox::CItemBox()
 	: InitialSpeed			( 0.f )
 	, GravitySpeed			( -9.8f )
+	, m_Active				( true )
 	, m_ItemType			()
 {
 	//大体0.016辺りになる.
 	Framerate = 1.f / 60.f;
+
+	m_pCollider = std::make_shared<CBoxCollider>();
 }
 
 CItemBox::~CItemBox()
 {
-
 }
 
 void CItemBox::Update()
 {
+	m_pCollider->SetPosition(m_vPosition);
+
 	//アイテムを落下させるための関数.
 	GravityMath();
 
@@ -52,7 +56,10 @@ void CItemBox::Update()
 
 void CItemBox::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	CStaticMeshObject::Draw(View, Proj, Light, Camera);
+	if (m_Active == true)
+	{
+		CStaticMeshObject::Draw(View, Proj, Light, Camera);
+	}
 }
 
 //重力の計算用(下に落下).
@@ -124,4 +131,16 @@ void CItemBox::ReloadEffect()
 
 	//リロード短縮.
 	m_Item.m_Reload = RELOAD_INTERVAL;
+}
+
+void CItemBox::HitPlayer()
+{
+	// 消える
+	m_Active = false;
+}
+
+// バウンディングボックスを作成
+void CItemBox::CreateBounding(std::shared_ptr<CStaticMesh> pItemBox)
+{
+	CreateBBoxForMesh(*pItemBox);
 }

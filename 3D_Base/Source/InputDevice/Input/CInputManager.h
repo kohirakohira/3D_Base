@@ -109,7 +109,10 @@ private:
     Direction GetDirectionFromXY(float x, float y, float threshold);
 
 private:
-    CXInput*                    m_XInput;       // コントローラー入力クラス
+    DWORD                       m_padId;		// パッド番号(0~3).
+	bool                        m_padConnected[4] = { false, false, false, false }; // コントローラーの接続状態
+
+    std::shared_ptr<CXInput>    m_XInput;       // コントローラー入力クラス
     std::unique_ptr<CKeyInput>  m_KeyInput;     // キー入力クラス
 
     bool                        m_UseKeyInput;  // キーボード操作するか

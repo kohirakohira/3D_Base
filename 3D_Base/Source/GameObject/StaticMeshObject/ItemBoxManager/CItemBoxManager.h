@@ -23,6 +23,11 @@ public:
 	//メッシュの設定.
 	void AttachMesh(std::shared_ptr<CStaticMesh> pMesh);
 
+	// バウンディングオブジェクトの作成
+	void CreateBounding(std::shared_ptr<CStaticMesh>& pItem);
+
+	// コライダーの作成
+	void CreateCollider();
 
 	//位置設定.
 	void SetPosition(float x, float y, float z);
@@ -37,6 +42,15 @@ public:
 
 	//アイテムの中身をランダム化.
 	CItemType ItemRandom();
+
+
+	//外部のクラスから情報取得.
+	void SetCItemBox(std::vector<std::shared_ptr<CItemBox>> pItem) { m_Item = pItem; }
+
+	// 外部のクラスに情報を渡す
+	std::vector<std::shared_ptr<CItemBox>>	GetItem()	const { return m_Item; }
+
+
 
 public:
 	//アイテムボックス.

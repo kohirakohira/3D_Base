@@ -17,13 +17,23 @@ CInputManager::CInputManager(DWORD ID)
     , m_UseGamePad  ( false )
     , m_OwnXInput   ( false )
 {
-    m_XInput = new CXInput(ID);
+    m_XInput = std::make_shared<CXInput>(m_padId);
 
-    if (ID == 0) // 0番だけキーボード操作をできるようにする
+    if (m_padId == 0) // 0番だけキーボード操作をできるようにする
     {
         m_UseKeyInput = true;
         m_KeyInput = std::make_unique<CKeyInput>();
     }
+
+    // ０番がコントローラーが接続されているか調べる
+	if (m_padId == 0 && m_XInput)
+	{
+		if (m_XInput->IsConnect())
+		{
+			// 接続されている
+			m_UseKeyInput = false; // コントローラー操作に切り替え
+		}
+	}
 }
 
 CInputManager::~CInputManager()
@@ -187,6 +197,24 @@ CInputManager::Direction CInputManager::GetArrowKeyDirection()
 
     return GetDirectionFromXY(x, y, THRESHOLD);
 }
+
+// コントローラーの接続状態を更新
+void CInputManager::UpdateConnectStatus()
+{
+    for (int i = 0; i < 4; ++i)
+    {
+        auto xinput = std::make_shared<CXInput>(i);
+        m_padConnected[i] = xinput->IsConnect();
+    }
+}
+
+bool CInputManager::IsPadConnect(int padId) const
+{
+    if (padId < 0 || padId >= 4)
+        return false;
+    return m_padConnected[padId];
+}
+
 
 // XY座標から方向列挙型に変換する共通関数
 CInputManager::Direction CInputManager::GetDirectionFromXY(float x, float y, float threshold)

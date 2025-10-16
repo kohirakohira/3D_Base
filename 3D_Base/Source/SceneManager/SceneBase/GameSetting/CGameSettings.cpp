@@ -21,6 +21,10 @@ CGameSettings::CGameSettings(HWND hWnd)
 	, m_SpriteYesSelect				( nullptr )
 	, m_SpriteNoSelect				( nullptr )
 
+
+	, m_SpriteConnection			()
+
+
 	, m_pSpriteSettingImg			( nullptr )
 	, m_pSpriteSettingBackGroundImg ( nullptr )
 
@@ -110,6 +114,17 @@ void CGameSettings::Draw()
 	m_pSpriteSettingImg->Draw();
 	m_pSpriteSettingBackGroundImg->Draw();
 	m_pSpriteStartImg->Draw();
+
+
+
+	//画像インスタンスの複製.
+	for (int i = 0; i < IMAGE; i++)
+	{
+		m_SpriteConnectionImg[i]->Draw();
+	}
+
+
+
 	m_pSpriteYesSelectImg->Draw();
 	m_pSpriteNoSelectImg->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
@@ -154,6 +169,25 @@ void CGameSettings::Init()
 	m_pSpriteNoSelectImg->SetPosition(windowNW, POS_Y, 0.f);
 	m_pSpriteNoSelectImg->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteNoSelectImg->SetScale(1.f, 1.f, 0.f);
+
+
+
+
+	//画像インスタンスの複製.
+	for (int i = 0; i < IMAGE; i++)
+	{
+
+		m_SpriteConnectionImg[i]->SetPosition(posx, posy, 0.0f);
+		m_SpriteConnectionImg[i]->SetRotation(0.0f, 0.0f, 0.0f);
+		m_SpriteConnectionImg[i]->SetScale(1.0f, 1.0f, 0.f);
+
+		posx += 500.0f;
+
+	}
+
+
+
+
 
 	//キー入力.
 	m_InputKey->Init();
@@ -200,6 +234,21 @@ void CGameSettings::Create()
 	m_InputKey = std::make_shared<CMultiInputKeyManager>();
 
 
+
+
+	//接続画像のインスタンス生成.
+	m_SpriteConnection = std::make_shared<CSprite2D>();
+
+
+	//画像インスタンスの複製.
+	for (int i = 0; i < IMAGE; i++)
+	{
+		m_SpriteConnectionImg.push_back(std::make_shared<CImageObject>());
+	}
+
+
+
+
 }
 
 //データの読み込み.
@@ -235,19 +284,25 @@ HRESULT CGameSettings::LoadData()
 	constexpr float ALPHA_BACK = 0.3f;
 
 
+	//接続確認画像の読み込み.
+	m_SpriteConnection->Init(_T("Data\\Texture\\UI\\Select\\Yes.png"), S_SIZE, false);
+
+
+
+
 	//タイトルスプライトの読み込み.
-	m_pSpriteSetting->Init(_T("Data\\Texture\\Image\\Setting.png"), WH_SIZE);
+	m_pSpriteSetting->Init(_T("Data\\Texture\\Image\\Setting.png"), WH_SIZE, false);
 	m_pSpriteSetting->SetAlpha(ALPHA_TOP);
 	//タイトル模様スプライトの読み込み.
-	m_pSpriteSettingBackGround->Init(_T("Data\\Texture\\Image\\BackGroundImage.png"), WH_SIZE);
+	m_pSpriteSettingBackGround->Init(_T("Data\\Texture\\Image\\BackGroundImage.png"), WH_SIZE, false);
 	m_pSpriteSettingBackGround->SetAlpha(ALPHA_BACK);
 	//開始する？スプライトの読み込み.
-	m_pSpriteStart->Init(_T("Data\\Texture\\UI\\Message.png"), ST_SIZE);
+	m_pSpriteStart->Init(_T("Data\\Texture\\UI\\Select\\Message.png"), ST_SIZE, false);
 	//選択肢スプライトの読み込み.
-	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Choice.png"), C_SIZE);
+	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Select\\Choice.png"), C_SIZE, false);
 	//選択スプライトの読み込み.
-	m_SpriteYesSelect->Init(_T("Data\\Texture\\UI\\Yes.png"), S_SIZE);
-	m_SpriteNoSelect->Init(_T("Data\\Texture\\UI\\No.png"), S_SIZE);
+	m_SpriteYesSelect->Init(_T("Data\\Texture\\UI\\Select\\Yes.png"), S_SIZE, false);
+	m_SpriteNoSelect->Init(_T("Data\\Texture\\UI\\Select\\No.png"), S_SIZE, false);
 
 	//画像の設定(設定画像).
 	m_pSpriteSettingImg->AttachSprite(m_pSpriteSetting);
@@ -261,6 +316,14 @@ HRESULT CGameSettings::LoadData()
 	m_pSpriteYesSelectImg->AttachSprite(m_SpriteYesSelect);
 	m_pSpriteNoSelectImg->AttachSprite(m_SpriteNoSelect);
 
+
+
+
+	//画像設定.
+	for (int i = 0; i < IMAGE; i++)
+	{
+		m_SpriteConnectionImg[i]->AttachSprite(m_SpriteConnection);
+	}
 
 
 	return S_OK;
