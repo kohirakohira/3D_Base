@@ -365,3 +365,30 @@ void CComPlayer::Update()
     }
 
 }
+
+#if 0
+// CComPlayer.cpp 抜粋（Updateの冒頭だけ差し替え）
+void CComPlayer::Update()
+{
+    // COM無効なら人操作
+    if (!m_ComEnabled) { CPlayer::Update(); return; }
+
+    // 観測（ターゲット・距離・最近接COMなど）
+    std::shared_ptr<CBody> body = Body();
+    if (!body) { if (auto c = Cannon()) c->CCharacter::Update(); return; }
+
+    const bool hasTarget = HasTarget();
+    if (!hasTarget) { ChangeState(State::Idle); }
+
+    // ステート実行
+    switch (m_state) {
+    case State::Idle:   StepIdle();   break;
+    case State::Seek:   StepSeek();   break;
+    case State::Chase:  StepChase();  break;
+    case State::Attack: StepAttack(); break;
+    case State::Evade:  StepEvade();  break;
+    }
+    ++m_stateFrames;
+}
+
+#endif

@@ -75,4 +75,31 @@ private:
 
 	bool m_ComEnabled = true;	//最初はCOM有効
 
+#if 0
+private:
+	enum class State { Idle, Seek, Chase, Attack, Evade };
+	State m_state = State::Idle;
+	int   m_stateFrames = 0;       // 状態に入ってからの経過フレーム
+	int   m_shotCD = 0;            // 射撃クールダウン（既存流用）
+
+	// 状態遷移ヘルパ
+	void ChangeState(State s) { m_state = s; m_stateFrames = 0; }
+
+	// 1フレーム分のステート処理
+	void StepIdle();
+	void StepSeek();
+	void StepChase();
+	void StepAttack();
+	void StepEvade();
+
+	// 判定ヘルパ
+	float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b) const;
+	bool  HasTarget() const { return (bool)m_Target; }
+	bool  InSight(const D3DXVECTOR3& self, const D3DXVECTOR3& tgt) const; // 必要なら
+	bool  InAttackCone(float yaw, const D3DXVECTOR3& self, const D3DXVECTOR3& tgt, float epsRad) const;
+	bool  ShouldEvade(float nearest) const; // 近接COMとの距離で判定
+};
+#endif
+
+
 };
