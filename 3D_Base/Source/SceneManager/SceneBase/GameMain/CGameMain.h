@@ -167,8 +167,9 @@ public:		//クラス用.
 	// シーン列挙変数.
 	CSceneType		m_SceneType;
 
-public:		//変数用.
-	// 簡易時間を止める変数.
+public:		
+	//変数用.
+	//簡易時間を止める変数.
 	int		m_StopTimeCount;
 	//Iconの回転用.
 	float	m_Rot;
