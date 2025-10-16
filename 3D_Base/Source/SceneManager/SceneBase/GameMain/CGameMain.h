@@ -121,7 +121,7 @@ public:
 	std::array<std::shared_ptr<CCamera>, PLAYER_MAX> m_pCameras;
 
 	//デバッグテキスト..
-	std::shared_ptr<CDebugText>		m_pDbgText;
+	std::shared_ptr<CDebugText>									m_pDbgText;
 
 	//ゲーム内で扱うUI系..
 	std::shared_ptr<CSprite2D>									m_pSprite2DTimerArrow;			//時計の針..

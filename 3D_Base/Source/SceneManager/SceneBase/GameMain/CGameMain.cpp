@@ -320,6 +320,15 @@ void CGameMain::Draw()
 		CDirectX11::GetInstance().SetDepth(true);
 
 	}
+	//全画面ビューポートに戻す.
+	D3D11_VIEWPORT fullvp = {};
+	fullvp.TopLeftX = 0;		//ビューポート左上のX座標.
+	fullvp.TopLeftY = 0;		//ビューポート左上のY座標.
+	fullvp.Width = 1920;		//ビューポートの幅.ここで今回は画面全画面を基準とする.
+	fullvp.Height = 1080;		//ビューポートの高さ.
+	fullvp.MinDepth = 0.0f;		//深度バッファの最小値.
+	fullvp.MaxDepth = 1.0f;		//深度バッファの最大値.
+	pContext->RSSetViewports(1, &fullvp);
 
 	////1画面の時の表示..
 	//前後関係無視..
@@ -334,17 +343,8 @@ void CGameMain::Draw()
 	m_Timer->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
 
-	//全画面ビューポートに戻す.
-	D3D11_VIEWPORT fullvp = {};
-	fullvp.TopLeftX = 0;		//ビューポート左上のX座標.
-	fullvp.TopLeftY = 0;		//ビューポート左上のY座標.
-	fullvp.Width = 1920;		//ビューポートの幅.ここで今回は画面全画面を基準とする.
-	fullvp.Height = 1080;		//ビューポートの高さ.
-	fullvp.MinDepth = 0.0f;		//深度バッファの最小値.
-	fullvp.MaxDepth = 1.0f;		//深度バッファの最大値.
-	pContext->RSSetViewports(1, &fullvp);
 
-		//エフェクトもここでやる.
+	//エフェクトもここでやる.
 
 }
 

@@ -285,7 +285,7 @@ HRESULT CGameSettings::LoadData()
 
 
 	//Ú‘±Šm”F‰æ‘œ‚Ì“Ç‚Ýž‚Ý.
-	m_SpriteConnection->Init(_T("Data\\Texture\\UI\\Yes.png"), S_SIZE, false);
+	m_SpriteConnection->Init(_T("Data\\Texture\\UI\\Select\\Yes.png"), S_SIZE, false);
 
 
 

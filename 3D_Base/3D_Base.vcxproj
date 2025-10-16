@@ -162,6 +162,7 @@
     <ClCompile Include="Data\ImGui\Library\imgui_impl_win32.cpp" />
     <ClCompile Include="Data\ImGui\Library\imgui_tables.cpp" />
     <ClCompile Include="Data\ImGui\Library\imgui_widgets.cpp" />
+    <ClCompile Include="Source\AssetsFile\SpriteAssets\SpriteAssets.cpp" />
     <ClCompile Include="Source\Assets\DebugText\CDebugText.cpp" />
     <ClCompile Include="Source\Assets\DirectX\DirectX11\CDirectX11.cpp" />
     <ClCompile Include="Source\Assets\DirectX\DirectX9\CDirectX9.cpp" />
@@ -170,6 +171,11 @@
     <ClCompile Include="Source\Assets\Sound\CSoundManager.cpp" />
     <ClCompile Include="Source\Assets\Sprite\Sprite2D\CSprite2D.cpp" />
     <ClCompile Include="Source\Assets\Sprite\Sprite3D\CSprite3D.cpp" />
+    <ClCompile Include="Source\Collision\Collider\BoxCollider\CBoxCollider.cpp" />
+    <ClCompile Include="Source\Collision\Collider\CCollider.cpp" />
+    <ClCompile Include="Source\Collision\Collider\SphereCollider\CSphereCollider.cpp" />
+    <ClCompile Include="Source\Collision\CollisionManager\CCollisionManager.cpp" />
+    <ClCompile Include="Source\Collision\Ray\CRay.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.cpp" />
     <ClCompile Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.cpp" />
     <ClCompile Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.cpp" />
@@ -178,6 +184,7 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CCharacter.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.cpp" />
     <ClCompile Include="Source\Assets\Effect\CEffect.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Wall\CWall.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameMain\CGameMain.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameResult\CGameResult.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.cpp" />
@@ -220,6 +227,7 @@
     <ClCompile Include="Source\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\AssetsFile\SpriteAssets\SpriteAssets.h" />
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX11\CDirectX11.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX9\CDirectX9.h" />
@@ -228,6 +236,11 @@
     <ClInclude Include="Source\Assets\Sound\CSoundManager.h" />
     <ClInclude Include="Source\Assets\Sprite\Sprite2D\CSprite2D.h" />
     <ClInclude Include="Source\Assets\Sprite\Sprite3D\CSprite3D.h" />
+    <ClInclude Include="Source\Collision\Collider\BoxCollider\CBoxCollider.h" />
+    <ClInclude Include="Source\Collision\Collider\CCollider.h" />
+    <ClInclude Include="Source\Collision\Collider\SphereCollider\CSphereCollider.h" />
+    <ClInclude Include="Source\Collision\CollisionManager\CCollisionManager.h" />
+    <ClInclude Include="Source\Collision\Ray\CRay.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.h" />
     <ClInclude Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.h" />
     <ClInclude Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.h" />
@@ -236,6 +249,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CCharacter.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.h" />
     <ClInclude Include="Source\Assets\Effect\CEffect.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Wall\CWall.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameMain\CGameMain.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameResult\CGameResult.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.h" />
