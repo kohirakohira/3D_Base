@@ -370,12 +370,12 @@ void CGameMain::Init()
 	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
 	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
 
-//-----���S�\���p���W-----.
-	//�������Ԙg�̉摜�̐ݒ�.
+//-----UI系統の初期化-----.
+	//時計の枠.
 	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
-	//�������ԉ~�̉摜�̐ݒ�.
+	//時計本体.
 	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
 	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
@@ -391,18 +391,10 @@ void CGameMain::Init()
 	//制限時間の文字サイズ..
 	m_pDbgText->SetFontSize(5.0f);
 
-//-----���S�\���p���W-----.
-	//�Q�[���ŗV�ׂ�(�N���A��ʂɑJ�ڂ���)���ԁ�����.
+	//タイマーの初期化.
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
-
-////-----���Ԕ��\�p-----.
-//	//�Q�[���ŗV�ׂ�(�N���A��ʂɑJ�ڂ���)���ԁ�����.
-//	m_Timer->StartTimer(TIME);
-//	m_Timer->SetDebugFont(m_pDbgText);
-//	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);
-
 }
 
 void CGameMain::Destroy()
@@ -478,12 +470,11 @@ void CGameMain::Create()
 	m_pStaticMesh_BulletBlue		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_BulletGreen		= std::make_shared<CStaticMesh>();
 
-	//デバッグテキストのインスタンス作成.
-	// �ǂ̃��b�V��
+	//壁のメッシュ.
 	m_pStaticMeshWallW				= std::make_shared<CStaticMesh>();
 	m_pStaticMeshWallH				= std::make_shared<CStaticMesh>();
 
-	//�f�o�b�O�e�L�X�g�̃C���X�^���X�쐬
+	//デバッグテキストのインスタンス作成.
 	m_pDbgText = std::make_unique<CDebugText>();
 
 	//プレイヤーと砲塔のインスタンス生成.
@@ -523,12 +514,11 @@ void CGameMain::Create()
 	//制限時間のインスタンス生成..
 	m_Timer = std::make_shared<CTimer>();
 
-	// �ǃN���X�̃C���X�^���X����
+	//壁.
 	m_pWallTop		= std::make_shared<CWall>();
 	m_pWallBottom	= std::make_shared<CWall>();
 	m_pWallLeft		= std::make_shared<CWall>();
 	m_pWallRight	= std::make_shared<CWall>();
-	//�A�C�e���}�l�[�W���[�N���X�̃C���X�^���X����.
 	//アイテムマネージャークラスのインスタンス生成..
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
 	m_pItemBoxManager->Create();
@@ -671,11 +661,10 @@ HRESULT CGameMain::LoadData()
 	// 弾(緑).
 	m_pStaticMesh_BulletGreen->Init(_T("Data\\Mesh\\Static\\Bullet\\Green\\Ball.x"));
 	
-	// ��
+	//壁.
 	m_pStaticMeshWallW->Init(_T("Data\\Mesh\\Static\\Wall\\Wall1.x"));
 	m_pStaticMeshWallH->Init(_T("Data\\Mesh\\Static\\Wall\\Wall2.x"));
 
-	//�o�E���f�B���O�X�t�B�A(�����蔻��p).
 	//バウンディングスフィア(当たり判定用)..
 	m_pStaticMeshBSphere->Init(_T("Data\\Collision\\Sphere.x"));
 
@@ -713,9 +702,7 @@ HRESULT CGameMain::LoadData()
 	//アイテムボックスマネージャーにメッシュを設定..
 	m_pItemBoxManager->AttachMesh(m_pStaticMeshItemBox);
 
-	////�o�E���f�B���O�X�t�B�A�̍쐬.
-	//m_pPlayer->CreateBSphareForMesh(*m_pStaticMeshBSphere);
-
+	//壁にメッシュを設定.
 	m_pWallTop->AttachMesh(m_pStaticMeshWallW);
 	m_pWallBottom->AttachMesh(m_pStaticMeshWallW);
 	m_pWallLeft->AttachMesh(m_pStaticMeshWallH);
@@ -730,19 +717,19 @@ HRESULT CGameMain::LoadData()
 
 void CGameMain::SetPosition()
 {
-	// ��̕ǂ̏������W��ݒ�
+	//上の位置設定.
 	m_pWallTop->SetPosition(0, 0, 30);
 	m_pWallTop->SetRotation(0, 0, 0);
 
-	// ���̕ǂ̏������W��ݒ�
+	//下の位置設定.
 	m_pWallBottom->SetPosition(0, 0, -30);
 	m_pWallBottom->SetRotation(0, 0, 0);
 
-	// ���̕ǂ̏������W��ݒ�
+	//左の位置設定.
 	m_pWallLeft->SetPosition(-30, 0, 0);
 	m_pWallLeft->SetRotation(0, 0, 0);
 
-	// �E�̕ǂ̏������W��ݒ�
+	//右の位置設定.
 	m_pWallRight->SetPosition(30, 0, 0);
 	m_pWallRight->SetRotation(0, 0, 0);
 }
@@ -751,7 +738,7 @@ void CGameMain::CreateBounding()
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		//�v���C���[�̃o�E���f�B���O�̍쐬.
+		//各プレイヤーの当たり判定作成.
 		switch (i)
 		{
 		case 0:
@@ -767,51 +754,61 @@ void CGameMain::CreateBounding()
 			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyGreen, m_pStaticMesh_TankCannonGreen);
 			break;
 		}
-		//�v���C���[�̓����蔻���쐬.
+		//各プレイヤーの当たり判定作成.
 		m_pPlayerManager->CreateCollider(i);
 	}
 	
-	//��̕ǂ̃o�E���f�B���O�̍쐬.
+	//壁の当たり判定生成.
 	m_pWallTop->CreateBBoxForMesh(*m_pStaticMeshWallW);
-	//��̕ǂ̓����蔻���ݒ�.
+	//当たり判定設定.
 	m_pWallTop->CreateBoxCollider(m_pWallTop->GetMinPos(), m_pWallTop->GetMaxPos());
 
-	//���̕ǂ̃o�E���f�B���O�̍쐬.
+	//壁の当たり判定生成.
 	m_pWallBottom->CreateBBoxForMesh(*m_pStaticMeshWallW);
-	//���̕ǂ̓����蔻���ݒ�.
+	//当たり判定設定.
 	m_pWallBottom->CreateBoxCollider(m_pWallBottom->GetMinPos(), m_pWallBottom->GetMaxPos());
 
-	//���̕ǂ̃o�E���f�B���O�̍쐬.
+	//壁の当たり判定生成.
 	m_pWallLeft->CreateBBoxForMesh(*m_pStaticMeshWallH);
-	//���̕ǂ̓����蔻���ݒ�.
+	//当たり判定設定.
 	m_pWallLeft->CreateBoxCollider(m_pWallLeft->GetMinPos(), m_pWallLeft->GetMaxPos());
 
-	//�E�̕ǂ̃o�E���f�B���O�̍쐬.
+	//壁の当たり判定生成.
 	m_pWallRight->CreateBBoxForMesh(*m_pStaticMeshWallH);
-	//�E�̕ǂ̓����蔻���ݒ�.
+	//当たり判定設定.
 	m_pWallRight->CreateBoxCollider(m_pWallRight->GetMinPos(), m_pWallRight->GetMaxPos());
 
 
-	//�A�C�e���{�b�N�X�̃o�E���f�B���O�̍쐬.
+	//アイテムボックスの当たり判定生成.
 	m_pItemBoxManager->CreateBounding(m_pStaticMeshItemBox);
-	//�A�C�e���{�b�N�X�̓����蔻���ݒ�.
+	//当たり判定設定.
 	m_pItemBoxManager->CreateCollider();
 	
 }
 
 void CGameMain::Collision()
 {
-	// �ǂƃv���C���[�̓����蔻��.
+	//壁とプレイヤーの当たり判定.
 	WalltoPlayer();
 
-	// �A�C�e���{�b�N�X�ƃv���C���[�̓����蔻��.
+	//アイテムボックスとプレイヤーの当たり判定.
 	ItemBoxtoPlayer();
 
 }
 
+//壁とプレイヤーの当たり判定.
+//============================================================
+// 
+// この関数内のコメントを修正してください。
+// 文字化けのせいで何もわからないです。
+// 濵口君、よろしくお願いします。
+// 
+//			by 松岡.
+// 
+//============================================================
 void CGameMain::WalltoPlayer()
 {
-	const float pushStrength = 0.1f; // �����߂��̋����i�t���[�����Ƃɒ����\�j
+	const float pushStrength = 0.1f; //これは何？
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -854,7 +851,16 @@ void CGameMain::WalltoPlayer()
 	}
 }
 
-//�A�C�e���{�b�N�X�ƃv���C���[�̓����蔻��.
+//アイテムボックスとプレイヤーの当たり判定.
+//============================================================
+// 
+// この関数内のコメントを修正してください。
+// 文字化けのせいで何もわからないです。
+// 濵口君、よろしくお願いします。
+// 
+//			by 松岡.
+// 
+//============================================================
 void CGameMain::ItemBoxtoPlayer()
 {
 	//�A�C�e���{�b�N�X�ƃv���C���[�̓����蔻��.
@@ -879,8 +885,6 @@ void CGameMain::ItemBoxtoPlayer()
 	}
 }
 
-//��ʂ�O���b�h�ɕ��������Ƃ��Aidx�Ԗڂ̃}�X�ɑΉ�����
-//D3D11_VIEWPORT��쐬���ĕԂ��֐�
 //画面をグリッドに分割したとき、idx番目のマスに対応する.
 //D3D11_VIEWPORTを作成して返す関数.
 D3D11_VIEWPORT CGameMain::MakeGridViewport(int idx, int cols, int rows, float totalW, float totalH)

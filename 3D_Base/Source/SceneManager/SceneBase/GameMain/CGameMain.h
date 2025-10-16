@@ -36,13 +36,9 @@
 #include "Camera//CCamera.h" //カメラクラス.
 
 
-//-----��-----
+//-----壁-----
 #include "GameObject//StaticMeshObject//Wall//CWall.h"
 
-// UI
-//-------------------------------
-#include "GameObject//UI//CUIObject//CUIObject.h" // UI�I�u�W�F�N�g�N���X
-#include "GameObject//UI//Timer//CTimer.h"		  // �^�C�}�[�N���X
 //-------------------------------.
 // UI.
 //-------------------------------.
@@ -73,23 +69,21 @@ public:
 	//データの読み込み..
 	HRESULT LoadData()override;
 
-	// �Q�[���J�n���̏������W��ݒ�
+	//壁の位置設定.
 	void SetPosition();
 
-	// �����蔻��̃o�E���f�B���O�Ɠ����蔻��̍쐬
+	//当たり判定の生成.
 	void CreateBounding();
 
-	//�����蔻�菈��������ɓ����.
+	//当たり判定.
 	void Collision();
 
-	// �ǂƃv���C���[�̓����蔻��
+	//壁とプレイヤー.
 	void WalltoPlayer();
 
-	// �A�C�e���{�b�N�X�ƃv���C���[�̓����蔻��
+	//アイテムボックスとプレイヤー.
 	void ItemBoxtoPlayer();
 
-	//��ʂ�O���b�h�ɕ��������Ƃ��Aidx�Ԗڂ̃}�X�ɑΉ�����
-	//D3D11_VIEWPORT��쐬���ĕԂ��֐�
 	//画面をグリッドに分割したとき、idx番目のマスに対応する.
 	//D3D11_VIEWPORTを作成して返す関数.
 	static D3D11_VIEWPORT MakeGridViewport(int idx, int cols, int rows, float totalW, float totalH);
@@ -150,20 +144,6 @@ public:
 	std::unique_ptr<CSprite3D>		m_pSpritePlayer;
 	std::shared_ptr<CSprite3D>		m_pSpriteExplosion;
 
-	//�X�^�e�B�b�N���b�V��(�g���܂킷����)
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshGround;		//�n��
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshBSphere;		//�o�E���f�B���O�X�t�B�A(�����蔻��p).
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshItemBox;		//�A�C�e���{�b�N�X.
-
-	// ���
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyRed;		// �ԑ̐�
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonRed;	// �C����
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyYellow;	// �ԑ̉�
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonYellow;	// �C����
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyBlue;		// �ԑ̐�
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonBlue;	// �C����
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyGreen;	// �ԑ̗�
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonGreen;	// �C����
 	//スタティックメッシュ(使いまわす資源).
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshGround;		//地面.
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshBSphere;		//バウンディングスフィア(当たり判定用)..
@@ -185,12 +165,11 @@ public:
 	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletBlue;		// 弾青.
 	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletGreen;		// 弾緑.
 
-	// スタティックメッシュオブジェクトクラス.
-	// ��
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallW;		// ���ɒ�����
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallH;		// �c�ɒ�����
+	//壁メッシュ.
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallW;
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallH;
 	
-	// �X�^�e�B�b�N���b�V���I�u�W�F�N�g�N���X
+	// スタティックメッシュオブジェクトクラス.
 	std::unique_ptr<CStaticMeshObject>			m_pStcMeshObj;
 
 	// プレイヤーマネージャー.
@@ -205,12 +184,11 @@ public:
 	//タイマークラス..
 	std::shared_ptr<CTimer>						m_Timer;
 
-	// �ǃN���X
-	std::shared_ptr<CWall>		m_pWallTop;		// ���
-	std::shared_ptr<CWall>		m_pWallBottom;	// ����
-	std::shared_ptr<CWall>		m_pWallLeft;	// ����
-	std::shared_ptr<CWall>		m_pWallRight;	// �E��
-	//�A�C�e���{�b�N�X�}�l�[�W���[�N���X.
+	//壁.
+	std::shared_ptr<CWall>		m_pWallTop;		
+	std::shared_ptr<CWall>		m_pWallBottom;	
+	std::shared_ptr<CWall>		m_pWallLeft;	
+	std::shared_ptr<CWall>		m_pWallRight;	
 	//アイテムボックスマネージャークラス..
 	std::shared_ptr<CItemBoxManager>			m_pItemBoxManager;
 
@@ -227,6 +205,6 @@ public:
 	//時計の針.
 	float	time;
 
-	// ���� ��Ԃ̉����߂�
+	//これは何用？
 	D3DXVECTOR3 push;
 };
