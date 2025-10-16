@@ -81,6 +81,7 @@ void CPlayerManager::UpdateBounding(int index)
 	if (index < m_pPlayers.size())
 	{
 		m_pPlayers[index]->UpdateBoundingPos();
+		m_pPlayers[index]->UpdateBoundingRot();
 	}
 }
 

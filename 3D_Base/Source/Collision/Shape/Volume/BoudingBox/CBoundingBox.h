@@ -22,6 +22,8 @@ public:
 	// 情報取得
 	//中心座標を設定する
 	void SetPosition(const D3DXVECTOR3& Pos) { m_Position = Pos; }
+	//回転情報を設定する
+	void SetRotation(const D3DXVECTOR3& Rot);
 	const D3DXVECTOR3& GetHalfSize() const { return m_HalfSize; }
 	const D3DXVECTOR3* GetAxis() const { return m_Axis; }
 
@@ -34,7 +36,8 @@ private:
 	D3DXVECTOR3		m_MinPos;		// 最小位置（ローカル空間）
 	D3DXVECTOR3		m_MaxPos;		// 最大位置（ローカル空間）
 
-	D3DXVECTOR3		m_Position;		//中心座標
+	D3DXVECTOR3		m_Position;		// 中心座標
+	D3DXVECTOR3		m_Rotation;		// 回転情報
 	D3DXVECTOR3		m_HalfSize;		// 半分サイズ（ローカル空間）
 	D3DXVECTOR3		m_Axis[3];		// ローカル軸（X,Y,Zワールド空間）
 };

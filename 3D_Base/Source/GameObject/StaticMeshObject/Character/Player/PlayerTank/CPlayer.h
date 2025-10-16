@@ -32,6 +32,8 @@ public:
 
 	// プレイヤーのバウンディング座標を更新
 	void UpdateBoundingPos();
+	// プレイヤーのバウンディング回転を更新
+	void UpdateBoundingRot();
 
 	//Body優先でワールド座標と回転を返す
 	virtual D3DXVECTOR3 GetPosition() const;

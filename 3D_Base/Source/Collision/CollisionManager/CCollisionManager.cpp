@@ -1,8 +1,11 @@
 #include "CCollisionManager.h"
 
 CCollisionManager::CCollisionManager()
-	:	m_KeyInput		( nullptr )
-	,	m_Draw			( false )
+	:	m_KeyInput			( nullptr )
+	,	m_Draw				( false )
+	,	m_pCannonBBox		( nullptr )
+	,	m_pBodyBBox			( nullptr )
+	,	m_pPlayerManager	( nullptr )
 {
 
 }
@@ -26,30 +29,39 @@ void CCollisionManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, C
 	//		m_Draw = true;
 	//	}
 	//}
+	
 	m_pStaticMeshBSphere->SetRotation(D3DXVECTOR3(0.f, 0.f, 0.f)); // ← 追加
 
 	m_Draw = true;
-	// フラグがtureの時だけ描画
-	if (m_Draw == true)
-	{
-		//// 戦車の車体描画
-		//for (int i = 0; i < PLAYER_MAX; ++i)
-		//{
-		//	if (auto player = m_pPlayerManager->GetControlPlayer(i))
-		//	{
-		//		m_pStaticMeshBSphere->SetPosition(player->GetBodyPosition());
-		//	}
-		//	m_pStaticMeshBSphere->Render(View, Proj, Light, Camera.vPosition);
-		//}
 
-		// 戦車の砲塔の描画
-		for (int i = 0; i < PLAYER_MAX; ++i)
+
+	// 戦車の砲塔の描画
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		if (auto player = m_pPlayerManager->GetControlPlayer(index))
 		{
-			if (auto player = m_pPlayerManager->GetControlPlayer(i))
-			{
-				m_pStaticMeshBSphere->SetPosition(player->GetCannonPosition());
-			}
-			m_pStaticMeshBSphere->Render(View, Proj, Light, Camera.vPosition);
+			m_pCannonBBox->SetPosition(player->GetCannon()->GetPosition());
+			m_pCannonBBox->SetRotation(player->GetCannon()->GetRotation());
+		}
+		// フラグがtureの時だけ描画
+		if (m_Draw == true)
+		{
+			m_pCannonBBox->Render(View, Proj, Light, Camera.vPosition);
+		}
+	}
+
+	// 戦車の車体の描画
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		if (auto player = m_pPlayerManager->GetControlPlayer(index))
+		{
+			m_pBodyBBox->SetPosition(player->GetCannonPosition());
+			m_pBodyBBox->SetRotation(player->GetBody()->GetRotation());
+		}
+		// フラグがtureの時だけ描画
+		if (m_Draw == true)
+		{
+			m_pBodyBBox->Render(View, Proj, Light, Camera.vPosition);
 		}
 	}
 }
@@ -57,7 +69,10 @@ void CCollisionManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, C
 void CCollisionManager::Create()
 {
 	m_pStaticMeshBSphere = std::make_shared<CStaticMesh>();
-	//m_pStaticMeshBBox = std::make_shared<CStaticMesh>();
+
+	// バウンディングボックスのインスタンス生成
+	m_pCannonBBox = std::make_shared<CStaticMesh>();
+	m_pBodyBBox	  = std::make_shared<CStaticMesh>();
 
 	// キー入力.
 	m_KeyInput = std::make_shared<CMultiInputKeyManager>();
@@ -73,34 +88,38 @@ HRESULT CCollisionManager::LoadData()
 	m_pStaticMeshBSphere->Init(_T("Data\\Collision\\Body.x"));
 
 	// バウンディングボックス(当たり判定用)
-	//m_pStaticMeshBBox->Init(_T("Data\\Collision\\OtamesiBox.x"));
+	m_pCannonBBox->Init(_T("Data\\Collision\\Body.x"));
+	m_pBodyBBox  ->Init(_T("Data\\Collision\\Body.x"));
 
-	//バウンディングスフィアの作成.
-	//m_pBody->CreateBBoxForMesh(*m_pStaticMeshBBox);
-	//m_pBody->CreateBSphereForMesh(*m_pStaticMeshBSphere);
-
-		// プレイヤーごとにバウンディング作成
+	// プレイヤーごとにバウンディング作成
 	for (int index = 0; index < PLAYER_MAX; ++index)
 	{
-		m_pPlayerManager->CreateBounding(index, m_pStaticMeshBSphere, m_pStaticMeshBSphere);
+		m_pPlayerManager->CreateBounding(index, m_pBodyBBox, m_pCannonBBox);
 	}
 
 	//m_pStaticMeshBSphere->SetRotation();
-
-	//m_pBody->CreateBounding(m_pStaticMeshBBox);
 
 	return S_OK;
 }
 
 void CCollisionManager::UpdateBounding()
 {
-	//キー入力受付.
+	// キー入力受付
 	m_KeyInput->Update();
 
 	// プレイヤーごとにバウンディング座標を更新
 	for (int index = 0; index < PLAYER_MAX; ++index)
 	{
 		m_pPlayerManager->UpdateBounding(index);
+	}
+
+	// 当たり判定の向き更新
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		if (auto player = m_pPlayerManager->GetControlPlayer(index))
+		{
+			auto pbody = player->GetBody();
+		}
 	}
 }
 

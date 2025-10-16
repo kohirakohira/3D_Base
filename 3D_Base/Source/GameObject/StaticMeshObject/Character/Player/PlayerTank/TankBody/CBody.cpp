@@ -33,6 +33,10 @@ void CBody::Update()
 		m_Input->Update();
 	}
 
+	// Y²ˆÈŠO‚Ì‰ñ“]²‚Ì’â~
+	m_vRotation.x = 0.f;
+	m_vRotation.z = 0.f;
+
 	KeyInput();		// “ü—Íˆ—
 	RadioControl();	// ‰ñ“]EˆÚ“®ˆ—
 	CCharacter::Update();
