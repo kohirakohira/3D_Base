@@ -1,30 +1,32 @@
 #define GetKey(KEY) (GetAsyncKeyState(KEY))
-#undef min	//マクロ定義無効化
+#undef min	//�}�N����`������
 #undef max	
 
 #include "CGameMain.h"
-//-----サウンド-----
-#include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
-#include "Assets//Effect//CEffect.h"	//Effekseerを使うためのクラス
+//-----�T�E���h-----
+#include "Assets//Sound//CSoundManager.h" // �T�E���h�}�l�[�W���[�N���X
+#include "Assets//Effect//CEffect.h"	//Effekseer��g�����߂̃N���X
 
 //-----DirectX-----
-#include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX9クラス
-#include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス
+#include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX9�N���X
+#include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11�N���X
 
 
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd					( hWnd )
 
-	//画像.
+	//�摜.
+	, m_pSprite2DTimerArrow			( nullptr )
 	, m_pSprite2DTimerFrame			( nullptr )
 	, m_pSprite2DTimer				( nullptr )
 	, m_pSprite2DKillNomber			( nullptr )
 	, m_pSprite2DHitPoint			( nullptr )
 	, m_pSprite2DPlayerIcon			()
 
-	//画像の設定.
+	//�摜�̐ݒ�.
 	, m_pSpriteTimerFrame			()
 	, m_pSpriteTimer				()
+	, m_pSpriteTimerArrow			()
 	, m_pSpritePlayerIcon			()
 	, m_pSpriteKillNomber			()
 	, m_pSpriteHitPoint				()
@@ -37,7 +39,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pStaticMeshBSphere			( nullptr )
 	, m_pStaticMeshItemBox			( nullptr )
 
-	// 戦車
+	// ���
 	, m_pStaticMesh_TankBodyRed		( nullptr )
 	, m_pStaticMesh_TankCannonRed	( nullptr )
 	, m_pStaticMesh_TankBodyYellow	( nullptr )
@@ -47,13 +49,13 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pStaticMesh_TankBodyGreen	( nullptr )
 	, m_pStaticMesh_TankCannonGreen	( nullptr )
 
-	// 弾
+	// �e
 	, m_pStaticMesh_BulletRed		( nullptr )
 	, m_pStaticMesh_BulletYellow	( nullptr )
 	, m_pStaticMesh_BulletBlue		( nullptr )
 	, m_pStaticMesh_BulletGreen		( nullptr )
 
-	// 壁
+	// ��
 	, m_pStaticMeshWallW			( nullptr )
 	, m_pStaticMeshWallH			( nullptr )
 
@@ -76,27 +78,43 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pWallLeft					( nullptr )
 	, m_pWallRight					( nullptr )
 	, m_pItemBoxManager				( nullptr )
+
+	, m_Rot							( 0.0f )
+
+	, time							( 0.0f )
+
 {
-	//最初のシーンをメインにする.
+	//�ŏ��̃V�[������C���ɂ���.
 	m_SceneType = CSceneType::Main;
 }
 
 CGameMain::~CGameMain()
 {
-	//外部で作成しているので、ここでは破棄しない
+	//�O���ō쐬���Ă���̂ŁA�����ł͔j�����Ȃ�
 	m_hWnd = nullptr;
 }
 
 void CGameMain::Update()
 {
-	//BGMのループ再生.
+	//BGM�̃��[�v�Đ�.
 	CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
-	//プレイヤー全員更新
+//-----���C�����o�p-----.
+	
+	//Icon���]������.
+	m_Rot += 0.02f;
+	
+	
+	
+	
+	
+//-----���C�����o�p-----.
+
+	//�v���C���[�S���X�V
 	m_pPlayerManager->Update();
 
 
-	// 弾の発射
+	// �e�̔���
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		if (auto player = m_pPlayerManager->GetControlPlayer(i))
@@ -111,13 +129,13 @@ void CGameMain::Update()
 		m_pShotManager->Update();
 	}
 
-	//カメラ追従＆更新.砲塔基準
+	//�J�����Ǐ]���X�V.�C���
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		if (auto player = m_pPlayerManager->GetControlPlayer(i))
 		{
-			const D3DXVECTOR3 camPos = player->GetCannonPosition();	//砲塔の位置
-			float yaw = player->GetCannonYaw();	//砲塔の向きY
+			const D3DXVECTOR3 camPos = player->GetCannonPosition();	//�C���̈ʒu
+			float yaw = player->GetCannonYaw();	//�C���̌���Y
 
 			m_pCameras[i]->SetTargetPos(camPos);
 			m_pCameras[i]->SetTargetRotY(yaw);
@@ -125,28 +143,37 @@ void CGameMain::Update()
 		m_pCameras[i]->Update();
 	}
 
-	//アイテムの動作.
+	//�A�C�e���̓���.
 	m_pItemBoxManager->Update();
+	
+	//�萔�錾.
+	const float PI = 3.14159265358979f;
+	//���v�̐j�̉�].
+	float remaining = m_Timer->GetRemainingTime();
+	float totle = 90.f;
+	time = (remaining / totle) * 360;
+	float angle = time * (PI / 180);
+	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, angle);
 
 #if 0
-	//Effect制御
+	//Effect����
 	{
-		//エフェクトのインスタンスごとに必要なハンドル
-		//※３つ描画して制御するなら３つ必要になる
+		//�G�t�F�N�g�̃C���X�^���X���ƂɕK�v�ȃn���h��
+		//���R�`�悵�Đ��䂷��Ȃ�R�K�v�ɂȂ�
 		static ::EsHandle hEffect = -1;
 		for (int i = 0; i < PLAYER_MAX; i++)
 		{
 			if (GetAsyncKeyState('Y') & 0x0001) {
 				hEffect = CEffect::GetInstance().Play(CEffect::Test0, D3DXVECTOR3(0.f, 1.f, 0.f));
 
-				//拡大縮小
+				//�g��k��
 				CEffect::GetInstance().SetScale(hEffect, D3DXVECTOR3(0.8f, 0.8f, 0.8f));
 
-				//回転(Y軸回転)
+				//��](Y����])
 
 				CEffect::GetInstance().SetRotation(hEffect, D3DXVECTOR3(m_pPlayerManager->GetRotation(i)));
 
-				//位置を再設定
+				//�ʒu��Đݒ�
 				CEffect::GetInstance().SetLocation(hEffect, D3DXVECTOR3(m_pPlayerManager->GetPosition(i)));
 
 			}
@@ -158,26 +185,25 @@ void CGameMain::Update()
 	}
 #endif
 
-	//勝敗条件(確認用).
-	//勝ち.
+	//���s���(�m�F�p).
+	//����.
 	if (GetKey('K') & 0x8000)
 	{
-		//BGMのループ停止.
+		//BGM�̃��[�v��~.
 		CSoundManager::Stop(CSoundManager::BGM_Bonus);
 
 		m_SceneType = CSceneType::Result;
 	}
-	//敗北.
-	//体力がなくなるか
+	//�s�k.
+	//�̗͂��Ȃ��Ȃ邩
 	if (GetKey('L') & 0x8000)
 	{
-		//BGMのループ停止.
+		//BGM�̃��[�v��~.
 		CSoundManager::Stop(CSoundManager::BGM_Bonus);
 
 		m_SceneType = CSceneType::Result;
 	}
-
-	// Cキー押されたら操作プレイヤー切り替え
+	// C�L�[�����ꂽ�瑀��v���C���[�؂�ւ�
 	if (GetKey('C') & 0x8000)
 	{
 		m_pPlayerManager->SwitchActivePlayer();
@@ -197,29 +223,29 @@ void CGameMain::Draw()
 {
 	auto* pContext = CDirectX11::GetInstance().GetContext();
 
-	//画面サイズfloatで扱うD3D11_VIEWPORTの型に合わせる
+	//��ʃT�C�Yfloat�ň���D3D11_VIEWPORT�̌^�ɍ��킹��
 	const float W = static_cast<float>(WND_W);
 	const float H = static_cast<float>(WND_H);
 
-	//2x2分割の定義
-	const int COLS = 2;		//2を1にしたら一画面、2なら四画面.
-	const int ROWS = 2;		//2を1にしたら一画面、2なら四画面.
-	const int MAX_VIEWS = COLS * ROWS;					//分割して表示できる最大ビュー数
-	const int VIEWS = std::min(PLAYER_MAX, MAX_VIEWS);	//minで小さいほうに合わせる
+	//2x2�����̒�`
+	const int COLS = 2;		//2��1�ɂ�������ʁA2�Ȃ�l���.
+	const int ROWS = 2;		//2��1�ɂ�������ʁA2�Ȃ�l���.
+	const int MAX_VIEWS = COLS * ROWS;					//�������ĕ\���ł���ő�r���[��
+	const int VIEWS = std::min(PLAYER_MAX, MAX_VIEWS);	//min�ŏ������ق��ɍ��킹��
 
-	//1ビューポート分を描画する処理をラムダにまとめる
+	//1�r���[�|�[�g����`�悷�鏈��������_�ɂ܂Ƃ߂�
 	auto DrawOneViewport = [&](std::shared_ptr<CCamera> camera, std::shared_ptr<CPlayer> owner)
 	{
-		//カメラ更新
+		//�J�����X�V
 		camera->Update();
 
-		//スナップショットをconst参照でキャプチャ
+		//�X�i�b�v�V���b�g��const�Q�ƂŃL���v�`��
 		D3DXMATRIX& view	= camera->m_mView;
 		D3DXMATRIX& proj	= camera->m_mProj;
 		LIGHT&		light	= camera->m_Light;
 		CAMERA&		paramC	= camera->m_Camera;
 
-		//プレイヤーを描画.ここで全員描く
+		//�v���C���[��`��.�����őS���`��
 		for (int players = 0; players < PLAYER_MAX; ++players)
 		{
 			if (auto p = m_pPlayerManager->GetControlPlayer(players))
@@ -228,11 +254,11 @@ void CGameMain::Draw()
 			}
 		}
 
-	//オブジェクトの描画.
-	//弾描画.
+	//�I�u�W�F�N�g�̕`��.
+	//�e�`��.
 	m_pShotManager->Draw(view, proj, light, paramC);
 
-	//地面描画
+	//�n�ʕ`��
 	if (owner) m_pGround->SetPlayer(*owner);
 	{
 		m_pGround->Draw(view, proj, light, paramC);
@@ -241,53 +267,53 @@ void CGameMain::Draw()
 		m_pWallBottom->Draw(view, proj, light, paramC);
 		m_pWallLeft->Draw(view, proj, light, paramC);
 		m_pWallRight->Draw(view, proj, light, paramC);
-		//エフェクトもここでやる
+		//�G�t�F�N�g������ł��
 	};
-	//アイテムボックス描画.
+	//�A�C�e���{�b�N�X�`��.
 	m_pItemBoxManager->Draw(view, proj, light, paramC);
 
-	//4画面の時の表示.
-	//前後関係無視.
-	CDirectX11::GetInstance().SetDepth(false);
-	//UI.
-	for (int i = 0; i < HP_MAX; i++)
-	{
-		m_pSpriteHitPoint[i]->Draw();
-	}
-	CDirectX11::GetInstance().SetDepth(true);
+//4��ʂ̎��̕\��.
+		//�O��֌W����.
+		CDirectX11::GetInstance().SetDepth(false);
+		//UI.
+		for (int i = 0; i < HP_MAX; i++)
+		{
+			m_pSpriteHitPoint[i]->Draw();
+		}
+		CDirectX11::GetInstance().SetDepth(true);
 
-	//エフェクトもここでやる
+	//�G�t�F�N�g������ł��
 
 	};
 
 
-	//分割ビューのループ
+	//�����r���[�̃��[�v
 	for (int i = 0; i < VIEWS; ++i)
 	{
-		//ビューポート設定
+		//�r���[�|�[�g�ݒ�
 		const D3D11_VIEWPORT vp = MakeGridViewport(i, COLS, ROWS, W, H);
 		pContext->RSSetViewports(1, &vp);
 
-		//カメラ参照を取得.参照外しで実体を直接扱う
+		//�J�����Q�Ƃ�擾.�Q�ƊO���Ŏ��̂𒼐ڈ���
 		std::shared_ptr<CCamera> camera = m_pCameras[i];
 
 		std::shared_ptr<CPlayer> owner = m_pPlayerManager->GetControlPlayer(i);
-			////////デバッグテキストの描画
-			//////m_pDbgText->SetColor(0.9f, 0.6f, 0.f);	//色の設定
+			////////�f�o�b�O�e�L�X�g�̕`��
+			//////m_pDbgText->SetColor(0.9f, 0.6f, 0.f);	//�F�̐ݒ�
 			//////m_pDbgText->Render(_T("ABCD"), 10, 100);
 
-		//1ビュー分を描画
+		//1�r���[����`��
 		DrawOneViewport(camera, owner);
-			////////デバッグテキスト(数値入り)の描画
+			////////�f�o�b�O�e�L�X�g(���l����)�̕`��
 			//////m_pDbgText->SetColor(1.f, 0.f, 0.f);
 			//////TCHAR dbgText[64];
 			//////_stprintf_s(dbgText, _T("Float:%f, %f"), 1.f, 2.2f);
 			//////m_pDbgText->Render(dbgText, 10, 110);
 
-//4画面の時の表示.
-		//前後関係無視.
+//4��ʂ̎��̕\��.
+		//�O��֌W����.
 		CDirectX11::GetInstance().SetDepth(false);
-		//プレイヤー番号の描画.
+		//�v���C���[�ԍ��̕`��.
 		switch (i)
 		{
 		case 0:
@@ -305,109 +331,100 @@ void CGameMain::Draw()
 		default:
 			break;
 		}
-		//キル数の描画.
+		//�L�����̕`��.
 		m_pSpriteKillNomber[i]->Draw();
 		CDirectX11::GetInstance().SetDepth(true);
 
 	}
 
-	//全画面ビューポートに戻す
+	//�S��ʃr���[�|�[�g�ɖ߂�
 	D3D11_VIEWPORT fullvp = {};
-	fullvp.TopLeftX = 0;		//ビューポート左上のX座標
-	fullvp.TopLeftY = 0;		//ビューポート左上のY座標
-	fullvp.Width	= 1920;		//ビューポートの幅.ここで今回は画面全画面を基準とする
-	fullvp.Height	= 1080;		//ビューポートの高さ
-	fullvp.MinDepth = 0.0f;		//深度バッファの最小値
-	fullvp.MaxDepth = 1.0f;		//深度バッファの最大値
+	fullvp.TopLeftX = 0;		//�r���[�|�[�g�����X���W
+	fullvp.TopLeftY = 0;		//�r���[�|�[�g�����Y���W
+	fullvp.Width	= 1920;		//�r���[�|�[�g�̕�.�����ō���͉�ʑS��ʂ��Ƃ���
+	fullvp.Height	= 1080;		//�r���[�|�[�g�̍���
+	fullvp.MinDepth = 0.0f;		//�[�x�o�b�t�@�̍ŏ��l
+	fullvp.MaxDepth = 1.0f;		//�[�x�o�b�t�@�̍ő�l
 	pContext->RSSetViewports(1, &fullvp);
 
 
-////1画面の時の表示.
-	//前後関係無視.
+////1��ʂ̎��̕\��.
+	//�O��֌W����.
 	CDirectX11::GetInstance().SetDepth(false);
-	//タイマーの枠の描画.
+	//�^�C�}�[�̘g�̕`��.
 	m_pSpriteTimerFrame->Draw();
-	//タイマーの描画.
+	//�^�C�}�[�̕`��.
 	m_pSpriteTimer->Draw();
-	////プレイヤー番号の描画.
-	//m_pSpritePlayerIcon[0]->Draw();
-	////キル数の描画.
-	//m_pSpriteKillNomber[0]->Draw();
-	////HPの描画.
-	//for (int i = 0; i < HP_MAX; i++)
-	//{
-	//	m_pSpriteHitPoint[i]->Draw();
-	//}
+	//�^�C�}�[�̕`��.
+	m_pSpriteTimerArrow->Draw();
+	//�^�C�}�[�`��.
+	m_Timer->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
 
-	//タイマー描画.
-	m_Timer->Draw();
 }
 
 void CGameMain::Init()
 {
-	//定数宣言.
-	static constexpr float TIME = 90.f;
-
-	//カメラ位置設定.
+	//�J�����ʒu�ݒ�.
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		//プレイヤーマネージャーから各プレイヤーの位置を取得
+		//�v���C���[�}�l�[�W���[����e�v���C���[�̈ʒu��擾
 		D3DXVECTOR3 pos = m_pPlayerManager->GetPosition(i);
 
 		m_pCameras[i]->SetCameraPos(pos.x, pos.y, pos.z);
 		m_pCameras[i]->SetLightPos(0.f, 2.f, 5.f);
 	}
-	//地面の大きさ設定.
+	//�n�ʂ̑傫���ݒ�.
 	m_pGround->SetScale(0.4f, 0.4f, 0.4f);
 
-	//アイテムボックスの設定.
+	//�A�C�e���{�b�N�X�̐ݒ�.
 	m_pItemBoxManager->SetPosition(-10.f, 20.f, 0.f);
 	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
 	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
 
-//-----中心表示用座標-----.
-	//制限時間枠の画像の設定.
+//-----���S�\���p���W-----.
+	//�������Ԙg�̉摜�̐ݒ�.
 	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
-	//制限時間円の画像の設定.
+	//�������ԉ~�̉摜�̐ݒ�.
 	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
 	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
 
 
-////-----中間発表用-----.
-//	//制限時間枠の画像の設定.
+
+////-----���Ԕ��\�p-----.
+//	//�������Ԙg�̉摜�̐ݒ�.
 //	m_pSpriteTimerFrame->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
 //	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
 //	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
-//	//制限時間円の画像の設定.
+//	//�������ԉ~�̉摜�̐ݒ�.
 //	m_pSpriteTimer->SetPosition(WND_W - 160.f, WND_H - 96.f, 0.f);
 //	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
 //	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
 
 
-////-----中心表示用座標-----.
+////-----���S�\���p���W-----.
 //	//.
 //	m_pSpritePlayerIcon->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
 //	m_pSpritePlayerIcon->SetRotation(0.f, 0.f, 0.f);
 //	m_pSpritePlayerIcon->SetScale(1.f, 1.f, 0.f);
 
-//-----中間発表用-----.
-	//プレイヤー番号の画像の設定.
+//-----���Ԕ��\�p-----.
+	//�v���C���[�ԍ��̉摜�̐ݒ�.
 	for (int i = 0; i < PLAYERNUM_MAX; i++)
 	{
 		switch (i)
 		{
-		case 0:			//プレイヤー1P.
-		case 2:			//プレイヤー3P.
+		case 0:			//�v���C���[1P.
+		case 2:			//�v���C���[3P.
 			m_pSpritePlayerIcon[i]->SetPosition(0.f, WND_H - 256.f, 0.f);
 			m_pSpritePlayerIcon[i]->SetRotation(0.f, 0.f, 0.f);
 			m_pSpritePlayerIcon[i]->SetScale(1.f, 1.f, 0.f);
 			break;
-		case 1:			//プレイヤー2P.
-		case 3:			//プレイヤー4P.
+		case 1:			//�v���C���[2P.
+		case 3:			//�v���C���[4P.
 			m_pSpritePlayerIcon[i]->SetPosition(WND_W - 256.f, WND_H - 256.f, 0.f);
 			m_pSpritePlayerIcon[i]->SetRotation(0.f, 0.f, 0.f);
 			m_pSpritePlayerIcon[i]->SetScale(1.f, 1.f, 0.f);
@@ -417,27 +434,27 @@ void CGameMain::Init()
 		}
 	}
 
-////-----中心表示用座標-----.
+////-----���S�\���p���W-----.
 //	//.
 //	m_pSpriteKillNomber->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
 //	m_pSpriteKillNomber->SetRotation(0.f, 0.f, 0.f);
 //	m_pSpriteKillNomber->SetScale(1.f, 1.f, 0.f);
 
-//-----中間発表用-----.
-	//プレイヤー番号の画像の設定.
+//-----���Ԕ��\�p-----.
+	//�v���C���[�ԍ��̉摜�̐ݒ�.
 	for (int i = 0; i < KILLNUM_MAX; i++)
 	{
 		switch (i)
 		{
-		case 0:			//プレイヤー1P.
-		case 2:			//プレイヤー3P.
+		case 0:			//�v���C���[1P.
+		case 2:			//�v���C���[3P.
 			m_pSpriteKillNomber[i]->SetPosition(0.f, 0.f, 0.f);
 			m_pSpriteKillNomber[i]->SetRotation(0.f, 0.f, 0.f);
 			m_pSpriteKillNomber[i]->SetScale(0.7f, 0.7f, 0.7f);
 			break;
-		case 1:			//プレイヤー2P.
-		case 3:			//プレイヤー4P.
-			m_pSpriteKillNomber[i]->SetPosition(WND_W - 320.f, 0.f, 0.f);//320:256サイズの画像に文字分64を足した数.
+		case 1:			//�v���C���[2P.
+		case 3:			//�v���C���[4P.
+			m_pSpriteKillNomber[i]->SetPosition(WND_W - 320.f, 0.f, 0.f);//320:256�T�C�Y�̉摜�ɕ�����64�𑫂�����.
 			m_pSpriteKillNomber[i]->SetRotation(0.f, 0.f, 0.f);
 			m_pSpriteKillNomber[i]->SetScale(0.7f, 0.7f, 0.7f);
 			break;
@@ -447,14 +464,14 @@ void CGameMain::Init()
 	}
 
 
-////-----中心表示用座標-----.
+////-----���S�\���p���W-----.
 //	//.
 //	m_pSpriteHitPoint->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
 //	m_pSpriteHitPoint->SetRotation(0.f, 0.f, 0.f);
 //	m_pSpriteHitPoint->SetScale(1.f, 1.f, 0.f);
 
-//-----中間発表用-----.
-	//HPの画像の設定.
+//-----���Ԕ��\�p-----.
+	//HP�̉摜�̐ݒ�.
 	for (int i = 0; i < HP_MAX; i++)
 	{
 		if (i <= 0)
@@ -471,19 +488,18 @@ void CGameMain::Init()
 		}
 	}
 
-	//制限時間の文字サイズ.
+
+	//�������Ԃ̕����T�C�Y.
 	m_pDbgText->SetFontSize(5.0f);
 
-//-----中心表示用座標-----.
-	//ゲームで遊べる(クリア画面に遷移する)時間※引数.
+//-----���S�\���p���W-----.
+	//�Q�[���ŗV�ׂ�(�N���A��ʂɑJ�ڂ���)���ԁ�����.
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
 
-	SetPosition();
-
-////-----中間発表用-----.
-//	//ゲームで遊べる(クリア画面に遷移する)時間※引数.
+////-----���Ԕ��\�p-----.
+//	//�Q�[���ŗV�ׂ�(�N���A��ʂɑJ�ڂ���)���ԁ�����.
 //	m_Timer->StartTimer(TIME);
 //	m_Timer->SetDebugFont(m_pDbgText);
 //	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);
@@ -497,55 +513,57 @@ void CGameMain::Destroy()
 
 void CGameMain::Create()
 {
-	//Effectクラス
+	//Effect�N���X
 	CEffect::GetInstance().Create(
 		CDirectX11::GetInstance().GetDevice(),
 		CDirectX11::GetInstance().GetContext());
 
-	//UIObjectのインスタンス生成.
+	//UIObject�̃C���X�^���X����.
 	m_pSpriteTimerFrame = std::make_shared<CUIObject>();
 	m_pSpriteTimer		= std::make_shared<CUIObject>();
-	//HPの分だけ生成.
+	m_pSpriteTimerArrow = std::make_shared<CUIObject>();
+	//HP�̕���������.
 	for (int i = 0; i < HP_MAX; i++)
 	{
 		m_pSpriteHitPoint[i] = std::make_shared<CUIObject>();
 	}
-	//プレイヤーの分だけ生成.
+	//�v���C���[�̕���������.
 	for (int i = 0; i < PLAYERNUM_MAX; i++)
 	{
 		m_pSpritePlayerIcon[i] = std::make_shared<CUIObject>();
 	}
-	//キル数の分だけ生成.
+	//�L�����̕���������.
 	for (int i = 0; i < KILLNUM_MAX; i++)
 	{
 		m_pSpriteKillNomber[i] = std::make_shared<CUIObject>();
 	}
 
-	//UI系のインスタンス生成.
+	//UI�n�̃C���X�^���X����.
 	m_pSprite2DTimerFrame	= std::make_shared<CSprite2D>();
 	m_pSprite2DTimer		= std::make_shared<CSprite2D>();
+	m_pSprite2DTimerArrow	= std::make_shared<CSprite2D>();
 	m_pSprite2DKillNomber	= std::make_shared<CSprite2D>();
 	m_pSprite2DHitPoint		= std::make_shared<CSprite2D>();
-	//プレイヤーの分だけ生成.
+	//�v���C���[�̕���������.
 	for (int i = 0; i < PLAYERNUM_MAX; i++)
 	{
 		m_pSprite2DPlayerIcon[i] = std::make_shared<CSprite2D>();
 	}
 
-	//スプライトのインスタンス作成.
+	//�X�v���C�g�̃C���X�^���X�쐬.
 	m_pSpriteGround = std::make_unique<CSprite3D>();
 	m_pSpritePlayer = std::make_unique<CSprite3D>();
 	m_pSpriteExplosion = std::make_shared<CSprite3D>();
 
-	//スタティックメッシュオブジェクトのインスタンス作成
+	//�X�^�e�B�b�N���b�V���I�u�W�F�N�g�̃C���X�^���X�쐬
 	m_pStcMeshObj = std::make_unique<CStaticMeshObject>();
 
-	//スタティックメッシュのインスタンス作成
+	//�X�^�e�B�b�N���b�V���̃C���X�^���X�쐬
 	m_pStaticMeshGround			= std::make_shared<CStaticMesh>();
 	m_pStaticMeshBSphere		= std::make_shared<CStaticMesh>();
 	m_pStaticMeshItemBox		= std::make_shared<CStaticMesh>();
 
-	// 戦車のメッシュ.
+	// ��Ԃ̃��b�V��.
 	m_pStaticMesh_TankBodyRed		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_TankCannonRed		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_TankBodyYellow	= std::make_shared<CStaticMesh>();
@@ -555,43 +573,43 @@ void CGameMain::Create()
 	m_pStaticMesh_TankBodyGreen		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_TankCannonGreen	= std::make_shared<CStaticMesh>();
 
-	// 弾のメッシュ.
+	// �e�̃��b�V��.
 	m_pStaticMesh_BulletRed			= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_BulletYellow		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_BulletBlue		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_BulletGreen		= std::make_shared<CStaticMesh>();
 
-	// 壁のメッシュ
+	// �ǂ̃��b�V��
 	m_pStaticMeshWallW				= std::make_shared<CStaticMesh>();
 	m_pStaticMeshWallH				= std::make_shared<CStaticMesh>();
 
-	//デバッグテキストのインスタンス作成
+	//�f�o�b�O�e�L�X�g�̃C���X�^���X�쐬
 	m_pDbgText = std::make_unique<CDebugText>();
 
-	//プレイヤーと砲塔のインスタンス生成
+	//�v���C���[�ƖC���̃C���X�^���X����
 	m_pPlayerManager = std::make_shared<CPlayerManager>();
 	
-	//マネージャーは一回だけInitialize
+	//�}�l�[�W���[�͈�񂾂�Initialize
 	m_pPlayerManager->Initialize();
 
-	//弾クラスのインスタンス作成
+	//�e�N���X�̃C���X�^���X�쐬
 	m_pShotManager = std::make_shared<CShotManager>();
 	m_pShotManager->Initialize(PLAYER_MAX);
 
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		//プレイヤーiの位置を少しずつずらす
+		//�v���C���[i�̈ʒu����������炷
 		float offsetX = (i % 2) * 12.0f;
 		float offsetZ = (i / 2) * 12.0f;
 		m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(offsetX, 0.0f, offsetZ));
-		//回転を設定.
+		//��]��ݒ�.
 		m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, 0.f, 0.f));
 
-		////砲塔の生成もする
+		////�C���̐��������
 		//auto cannon = std::make_unique<CCannon>();
 
-		//カメラ生成・セットアップ
+		//�J���������E�Z�b�g�A�b�v
 		auto camera = std::make_unique<CCamera>();
 		camera->SetTargetPos(m_pPlayerManager->GetPosition(i));
 		camera->SetTargetRotY(m_pPlayerManager->GetRotation(i).y);
@@ -599,91 +617,93 @@ void CGameMain::Create()
 
 	}
 
-	//地面クラスのインスタンス作成.
+	//�n�ʃN���X�̃C���X�^���X�쐬.
 	m_pGround = std::make_unique<CGround>();
 
-	//制限時間のインスタンス生成.
+	//�������Ԃ̃C���X�^���X����.
 	m_Timer = std::make_shared<CTimer>();
 
-	// 壁クラスのインスタンス生成
+	// �ǃN���X�̃C���X�^���X����
 	m_pWallTop		= std::make_shared<CWall>();
 	m_pWallBottom	= std::make_shared<CWall>();
 	m_pWallLeft		= std::make_shared<CWall>();
 	m_pWallRight	= std::make_shared<CWall>();
-	//アイテムマネージャークラスのインスタンス生成.
+	//�A�C�e���}�l�[�W���[�N���X�̃C���X�^���X����.
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
 	m_pItemBoxManager->Create();
 }
 
 HRESULT CGameMain::LoadData()
 {
-	//デバッグテキストの読み込み.
+	//�f�o�b�O�e�L�X�g�̓ǂݍ���.
 	if (FAILED(m_pDbgText->Init(CDirectX11::GetInstance())))
 	{
 		return E_FAIL;
 	}
 
-	//Effectクラス
+	//Effect�N���X
 	if (FAILED(CEffect::GetInstance().LoadData())) {
 		return E_FAIL;
 	}
 
-	//タイマー画像のスプライト設定.
+	//�^�C�}�[�摜�̃X�v���C�g�ݒ�.
 	CSprite2D::SPRITE_STATE WH_SIZE = {
-		1920, 1080,		//描画幅,高さ.
-		1920, 1080,		//元画像の幅,高さ.
-		1920, 1080		//アニメーションをしないので、0でいい.
+		1920, 1080,		//�`�敝,����.
+		1920, 1080,		//���摜�̕�,����.
+		1920, 1080		//�A�j���[�V��������Ȃ��̂ŁA0�ł���.
 	};
-	//タイマー枠画像のスプライト設定.
+	//�^�C�}�[�g�摜�̃X�v���C�g�ݒ�.
 	CSprite2D::SPRITE_STATE TIMER_SIZE = {
-		256, 256,		//描画幅,高さ.
-		256, 256,		//元画像の幅,高さ.
-		256, 256		//アニメーションをしないので、0でいい.
+		256, 256,		//�`�敝,����.
+		256, 256,		//���摜�̕�,����.
+		256, 256		//�A�j���[�V��������Ȃ��̂ŁA0�ł���.
 	};
-	//タイマー枠画像のスプライト設定.
+	//�^�C�}�[�g�摜�̃X�v���C�g�ݒ�.
 	CSprite2D::SPRITE_STATE ICON_SIZE = {
-		256, 256,		//描画幅,高さ.
-		256, 256,		//元画像の幅,高さ.
-		256, 256		//アニメーションをしないので、0でいい.
+		256, 256,		//�`�敝,����.
+		256, 256,		//���摜�̕�,����.
+		256, 256		//�A�j���[�V��������Ȃ��̂ŁA0�ł���.
 	};
-	//制限時間の枠の読み込み.
-	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\TimerFrame.png"), WH_SIZE);
-	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer.png"), TIMER_SIZE);
-	m_pSprite2DKillNomber	->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE);
-	m_pSprite2DHitPoint		->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE);
+	//�������Ԃ̘g�̓ǂݍ���.
+	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE, false);
+	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE, false);
+	m_pSprite2DTimerArrow	->Init(_T("Data\\Texture\\UI\\Timer\\TimerArrow.png"), TIMER_SIZE, true);
+	m_pSprite2DKillNomber	->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE, false);
+	m_pSprite2DHitPoint		->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE, true);
 
-	//画像をアタッチ.
+	//�摜��A�^�b�`.
 	m_pSpriteTimerFrame	->AttachSprite(m_pSprite2DTimerFrame);
 	m_pSpriteTimer		->AttachSprite(m_pSprite2DTimer);
-	//HPの分だけアタッチ.
+	m_pSpriteTimerArrow	->AttachSprite(m_pSprite2DTimerArrow);
+	//HP�̕������A�^�b�`.
 	for (int i = 0; i < HP_MAX; i++)
 	{
 		m_pSpriteHitPoint[i]->AttachSprite(m_pSprite2DHitPoint);
 	}
-	//キル数の分だけアタッチ.
+	//�L�����̕������A�^�b�`.
 	for (int i = 0; i < KILLNUM_MAX; i++)
 	{
 		m_pSpriteKillNomber[i]->AttachSprite(m_pSprite2DKillNomber);
 	}
-	//プレイヤーの分だけアタッチ.
+	//�v���C���[�̕������A�^�b�`.
 	for (int i = 0; i < PLAYERNUM_MAX; i++)
 	{
 		switch (i)
 		{
 			case 0:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\OneP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\OneP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 			case 1:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\TwoP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TwoP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 			case 2:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\TreeP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TreeP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 			case 3:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\FourP.png"), ICON_SIZE);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\FourP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 		default:
@@ -691,7 +711,7 @@ HRESULT CGameMain::LoadData()
 		}
 	}
 
-	//地面スプライトの構造体
+	//�n�ʃX�v���C�g�̍\����
 	CSprite3D::SPRITE_STATE SSGround;
 	SSGround.Disp.w = 1.f;
 	SSGround.Disp.h = 1.f;
@@ -699,65 +719,65 @@ HRESULT CGameMain::LoadData()
 	SSGround.Base.h = 256.f;
 	SSGround.Stride.w = 256.f;
 	SSGround.Stride.h = 256.f;
-	//地面スプライトの読み込み.
+	//�n�ʃX�v���C�g�̓ǂݍ���.
 	m_pSpriteGround->Init(CDirectX11::GetInstance(),
 		_T("Data\\Texture\\Ground.png"), SSGround);
 
-	//プレイヤースプライトの構造体
+	//�v���C���[�X�v���C�g�̍\����
 	CSprite3D::SPRITE_STATE SSPlayer =
 	{ 1.f, 1.f, 64.f, 64.f, 64.f, 64.f };
-	//プレイヤースプライトの読み込み.
+	//�v���C���[�X�v���C�g�̓ǂݍ���.
 	m_pSpritePlayer->Init(CDirectX11::GetInstance(),
 		_T("Data\\Texture\\Player.png"), SSPlayer);
 
-	//爆発スプライトの構造体
+	//�����X�v���C�g�̍\����
 	CSprite3D::SPRITE_STATE SSExplosion =
 	{ 1.f, 1.f, 256.f, 256.f, 32.f, 32.f };
-	//爆発スプライトの読み込み.
+	//�����X�v���C�g�̓ǂݍ���.
 	m_pSpriteExplosion->Init(CDirectX11::GetInstance(),
 		_T("Data\\Texture\\explosion.png"), SSExplosion);
 
 	//--------------------------------------------------------------------------
-	// 	   画像の読み込み.
+	// 	   �摜�̓ǂݍ���.
 	//--------------------------------------------------------------------------
-	//スタティックメッシュの読み込み
+	//�X�^�e�B�b�N���b�V���̓ǂݍ���
 	m_pStaticMeshGround->Init(_T("Data\\Mesh\\Static\\Stage\\stage.x"));
 	m_pStaticMeshItemBox->Init(_T("Data\\Mesh\\Static\\ItemBox\\ItemBox.x"));
 
-	// 戦車(赤)
+	// ���(��)
 	m_pStaticMesh_TankBodyRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Cannon\\Cannon.x"));
 
-	// 戦車(黄)
+	// ���(��)
 	m_pStaticMesh_TankBodyYellow->Init(_T("Data\\Mesh\\Static\\Tank\\Yellow\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonYellow->Init(_T("Data\\Mesh\\Static\\Tank\\Yellow\\Cannon\\Cannon.x"));
 
-	// 戦車(青)
+	// ���(��)
 	m_pStaticMesh_TankBodyBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Cannon\\Cannon.x"));
 
-	// 戦車(緑)
+	// ���(��)
 	m_pStaticMesh_TankBodyGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Cannon\\Cannon.x"));
 	
-	// 弾(赤)
+	// �e(��)
 	m_pStaticMesh_BulletRed->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));
-	// 弾(黄)
+	// �e(��)
 	m_pStaticMesh_BulletYellow->Init(_T("Data\\Mesh\\Static\\Bullet\\Yellow\\Ball.x"));
-	// 弾(青)
+	// �e(��)
 	m_pStaticMesh_BulletBlue->Init(_T("Data\\Mesh\\Static\\Bullet\\Blue\\Ball.x"));
-	// 弾(緑)
+	// �e(��)
 	m_pStaticMesh_BulletGreen->Init(_T("Data\\Mesh\\Static\\Bullet\\Green\\Ball.x"));
 	
-	// 壁
+	// ��
 	m_pStaticMeshWallW->Init(_T("Data\\Mesh\\Static\\Wall\\Wall1.x"));
 	m_pStaticMeshWallH->Init(_T("Data\\Mesh\\Static\\Wall\\Wall2.x"));
 
-	//バウンディングスフィア(当たり判定用).
+	//�o�E���f�B���O�X�t�B�A(�����蔻��p).
 	m_pStaticMeshBSphere->Init(_T("Data\\Collision\\Sphere.x"));
 
 
-	// それぞれのプレイヤーに色にあった戦車をアタッチ
+	// ���ꂼ��̃v���C���[�ɐF�ɂ�������Ԃ�A�^�b�`
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		switch (i)
@@ -783,13 +803,13 @@ HRESULT CGameMain::LoadData()
 		}
 	}
 
-	//スタティックメッシュを設定
+	//�X�^�e�B�b�N���b�V����ݒ�
 	m_pGround->AttachMesh(m_pStaticMeshGround);
 
-	//アイテムボックスマネージャーにメッシュを設定.
+	//�A�C�e���{�b�N�X�}�l�[�W���[�Ƀ��b�V����ݒ�.
 	m_pItemBoxManager->AttachMesh(m_pStaticMeshItemBox);
 
-	////バウンディングスフィアの作成.
+	////�o�E���f�B���O�X�t�B�A�̍쐬.
 	//m_pPlayer->CreateBSphareForMesh(*m_pStaticMeshBSphere);
 
 	m_pWallTop->AttachMesh(m_pStaticMeshWallW);
@@ -804,19 +824,19 @@ HRESULT CGameMain::LoadData()
 
 void CGameMain::SetPosition()
 {
-	// 上の壁の初期座標を設定
+	// ��̕ǂ̏������W��ݒ�
 	m_pWallTop->SetPosition(0, 0, 30);
 	m_pWallTop->SetRotation(0, 0, 0);
 
-	// 下の壁の初期座標を設定
+	// ���̕ǂ̏������W��ݒ�
 	m_pWallBottom->SetPosition(0, 0, -30);
 	m_pWallBottom->SetRotation(0, 0, 0);
 
-	// 左の壁の初期座標を設定
+	// ���̕ǂ̏������W��ݒ�
 	m_pWallLeft->SetPosition(-30, 0, 0);
 	m_pWallLeft->SetRotation(0, 0, 0);
 
-	// 右の壁の初期座標を設定
+	// �E�̕ǂ̏������W��ݒ�
 	m_pWallRight->SetPosition(30, 0, 0);
 	m_pWallRight->SetRotation(0, 0, 0);
 }
@@ -825,7 +845,7 @@ void CGameMain::CreateBounding()
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		//プレイヤーのバウンディングの作成.
+		//�v���C���[�̃o�E���f�B���O�̍쐬.
 		switch (i)
 		{
 		case 0:
@@ -841,59 +861,59 @@ void CGameMain::CreateBounding()
 			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyGreen, m_pStaticMesh_TankCannonGreen);
 			break;
 		}
-		//プレイヤーの当たり判定を作成.
+		//�v���C���[�̓����蔻���쐬.
 		m_pPlayerManager->CreateCollider(i);
 	}
 	
-	//上の壁のバウンディングの作成.
+	//��̕ǂ̃o�E���f�B���O�̍쐬.
 	m_pWallTop->CreateBBoxForMesh(*m_pStaticMeshWallW);
-	//上の壁の当たり判定を設定.
+	//��̕ǂ̓����蔻���ݒ�.
 	m_pWallTop->CreateBoxCollider(m_pWallTop->GetMinPos(), m_pWallTop->GetMaxPos());
 
-	//下の壁のバウンディングの作成.
+	//���̕ǂ̃o�E���f�B���O�̍쐬.
 	m_pWallBottom->CreateBBoxForMesh(*m_pStaticMeshWallW);
-	//下の壁の当たり判定を設定.
+	//���̕ǂ̓����蔻���ݒ�.
 	m_pWallBottom->CreateBoxCollider(m_pWallBottom->GetMinPos(), m_pWallBottom->GetMaxPos());
 
-	//左の壁のバウンディングの作成.
+	//���̕ǂ̃o�E���f�B���O�̍쐬.
 	m_pWallLeft->CreateBBoxForMesh(*m_pStaticMeshWallH);
-	//左の壁の当たり判定を設定.
+	//���̕ǂ̓����蔻���ݒ�.
 	m_pWallLeft->CreateBoxCollider(m_pWallLeft->GetMinPos(), m_pWallLeft->GetMaxPos());
 
-	//右の壁のバウンディングの作成.
+	//�E�̕ǂ̃o�E���f�B���O�̍쐬.
 	m_pWallRight->CreateBBoxForMesh(*m_pStaticMeshWallH);
-	//右の壁の当たり判定を設定.
+	//�E�̕ǂ̓����蔻���ݒ�.
 	m_pWallRight->CreateBoxCollider(m_pWallRight->GetMinPos(), m_pWallRight->GetMaxPos());
 
 
-	//アイテムボックスのバウンディングの作成.
+	//�A�C�e���{�b�N�X�̃o�E���f�B���O�̍쐬.
 	m_pItemBoxManager->CreateBounding(m_pStaticMeshItemBox);
-	//アイテムボックスの当たり判定を設定.
+	//�A�C�e���{�b�N�X�̓����蔻���ݒ�.
 	m_pItemBoxManager->CreateCollider();
 	
 }
 
 void CGameMain::Collision()
 {
-	// 壁とプレイヤーの当たり判定.
+	// �ǂƃv���C���[�̓����蔻��.
 	WalltoPlayer();
 
-	// アイテムボックスとプレイヤーの当たり判定.
+	// �A�C�e���{�b�N�X�ƃv���C���[�̓����蔻��.
 	ItemBoxtoPlayer();
 
 }
 
 void CGameMain::WalltoPlayer()
 {
-	const float pushStrength = 0.1f; // 押し戻しの強さ（フレームごとに調整可能）
+	const float pushStrength = 0.1f; // �����߂��̋����i�t���[�����Ƃɒ����\�j
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		// i 番のプレイヤーを取得
+		// i �Ԃ̃v���C���[��擾
 		auto player = m_pPlayerManager->GetControlPlayer(i);
 		auto Coll = player->GetBody()->GetCollider();
 
-		// 壁との衝突をチェックして法線ベクトルを合成
+		// �ǂƂ̏Փ˂�`�F�b�N���Ė@���x�N�g�������
 		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
 
 		if (Coll && m_pWallTop->GetCollider() &&
@@ -917,7 +937,7 @@ void CGameMain::WalltoPlayer()
 			push += D3DXVECTOR3(-1.f, 0.f, 0.f);
 		}
 
-		// 複数壁に当たった場合は正規化して押し戻しベクトルを自然に
+		// �����ǂɓ��������ꍇ�͐��K�����ĉ����߂��x�N�g������R��
 		if (D3DXVec3Length(&push) > 0.f)
 		{
 			D3DXVec3Normalize(&push, &push);
@@ -928,47 +948,47 @@ void CGameMain::WalltoPlayer()
 	}
 }
 
-//アイテムボックスとプレイヤーの当たり判定.
+//�A�C�e���{�b�N�X�ƃv���C���[�̓����蔻��.
 void CGameMain::ItemBoxtoPlayer()
 {
-	//アイテムボックスとプレイヤーの当たり判定.
+	//�A�C�e���{�b�N�X�ƃv���C���[�̓����蔻��.
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		auto player = m_pPlayerManager->GetControlPlayer(i);
 		auto playerColl = player->GetBody()->GetCollider();
 
-		//アイテムボックスマネージャーからアイテムボックスを取得.
+		//�A�C�e���{�b�N�X�}�l�[�W���[����A�C�e���{�b�N�X��擾.
 		auto itemBoxes = m_pItemBoxManager->GetItem();
 
-		//アイテムボックス全てに対して当たり判定をチェック.
+		//�A�C�e���{�b�N�X�S�Ăɑ΂��ē����蔻���`�F�b�N.
 		for (auto& itemBox : itemBoxes)
 		{
 			if (playerColl && itemBox->GetCollider() &&
 				playerColl->CheckCollision(*itemBox->GetCollider()))
 			{
-				//衝突した場合の処理.
+				//�Փ˂����ꍇ�̏���.
 				itemBox->HitPlayer();
 			}
 		}
 	}
 }
 
-//画面をグリッドに分割したとき、idx番目のマスに対応する
-//D3D11_VIEWPORTを作成して返す関数
+//��ʂ�O���b�h�ɕ��������Ƃ��Aidx�Ԗڂ̃}�X�ɑΉ�����
+//D3D11_VIEWPORT��쐬���ĕԂ��֐�
 D3D11_VIEWPORT CGameMain::MakeGridViewport(int idx, int cols, int rows, float totalW, float totalH)
 {
-	//どのマスか、列・行を算出
-	const int col = idx % cols;	//列番号
-	const int row = idx / cols;	//行番号
+	//�ǂ̃}�X���A��E�s��Z�o
+	const int col = idx % cols;	//��ԍ�
+	const int row = idx / cols;	//�s�ԍ�
 
-	//ビューポートを作成
-	D3D11_VIEWPORT vp{};					//ゼロ初期化
-	vp.TopLeftX = (totalW / cols) * col;	//左上(0,0)からのオフセット
+	//�r���[�|�[�g��쐬
+	D3D11_VIEWPORT vp{};					//�[��������
+	vp.TopLeftX = (totalW / cols) * col;	//����(0,0)����̃I�t�Z�b�g
 	vp.TopLeftY = (totalH / rows) * row;
 	vp.Width = totalW / cols;
 	vp.Height = totalH / rows;
-	vp.MinDepth = 0.0f;						//深度バッファの最小値設定
-	vp.MaxDepth = 1.0f;						//深度バッファの最大値設定
+	vp.MinDepth = 0.0f;						//�[�x�o�b�t�@�̍ŏ��l�ݒ�
+	vp.MaxDepth = 1.0f;						//�[�x�o�b�t�@�̍ő�l�ݒ�
 	return vp;
 }
 
@@ -976,4 +996,120 @@ D3D11_VIEWPORT CGameMain::MakeGridViewport(int idx, int cols, int rows, float to
 CSceneType CGameMain::GetSceneType() const
 {
 	return m_SceneType;
+}
+
+
+//-----�e�ݒ��֐���-----.
+
+//�������ԉ摜�̐ݒ�.
+void CGameMain::EachSettingTimer()
+{
+	//�萔�錾.
+	static constexpr int TIME = 90.0;
+
+	//-----���S�\���p���W-----.
+		//�������Ԙg�̉摜�ݒ�.
+	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
+	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
+	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
+	//�������ԉ~�̉摜�ݒ�.
+	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
+	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
+	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
+	//���v�̐j�̉摜�ݒ�.
+	m_pSpriteTimerArrow->SetPosition(WND_W / 2.f - 42.f, WND_H / 2, 0.f);
+	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, 0.f);
+	m_pSpriteTimerArrow->SetScale(0.25f, 0.25f, 0.f);
+
+	//-----���S�\���p���W-----.
+	//�Q�[���ŗV�ׂ�(�N���A��ʂɑJ�ڂ���)���ԁ�����.
+	m_Timer->StartTimer(TIME);
+	m_Timer->SetDebugFont(m_pDbgText);
+	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
+
+	////-----���Ԕ��\�p-----.
+	//	//�Q�[���ŗV�ׂ�(�N���A��ʂɑJ�ڂ���)���ԁ�����.
+	//	m_Timer->StartTimer(TIME);
+	//	m_Timer->SetDebugFont(m_pDbgText);
+	//	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);
+
+}
+//�v���C���[�ԍ��摜�̐ݒ�.
+void CGameMain::EachSettingPlayerNumber()
+{
+	//-----���Ԕ��\�p-----.
+		//�v���C���[�ԍ��̉摜�̐ݒ�.
+	for (int i = 0; i < PLAYERNUM_MAX; i++)
+	{
+		switch (i)
+		{
+		case 0:			//�v���C���[1P.
+		case 2:			//�v���C���[3P.
+			m_pSpritePlayerIcon[i]->SetPosition(0.f, WND_H - 256.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetScale(1.f, 1.f, 0.f);
+			break;
+		case 1:			//�v���C���[2P.
+		case 3:			//�v���C���[4P.
+			m_pSpritePlayerIcon[i]->SetPosition(WND_W - 256.f, WND_H - 256.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpritePlayerIcon[i]->SetScale(1.f, 1.f, 0.f);
+			break;
+		default:
+			break;
+		}
+	}
+}
+//�|�������摜�̐ݒ�.
+void CGameMain::EachSettingKillNumber()
+{
+	////-----���S�\���p���W-----.
+	//	//.
+	//	m_pSpriteKillNomber->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);
+	//	m_pSpriteKillNomber->SetRotation(0.f, 0.f, 0.f);
+	//	m_pSpriteKillNomber->SetScale(1.f, 1.f, 0.f);
+
+	//-----���Ԕ��\�p-----.
+		//�v���C���[�ԍ��̉摜�̐ݒ�.
+	for (int i = 0; i < KILLNUM_MAX; i++)
+	{
+		switch (i)
+		{
+		case 0:			//�v���C���[1P.
+		case 2:			//�v���C���[3P.
+			m_pSpriteKillNomber[i]->SetPosition(0.f, 0.f, 0.f);
+			m_pSpriteKillNomber[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteKillNomber[i]->SetScale(0.7f, 0.7f, 0.7f);
+			break;
+		case 1:			//�v���C���[2P.
+		case 3:			//�v���C���[4P.
+			m_pSpriteKillNomber[i]->SetPosition(WND_W - 320.f, 0.f, 0.f);//320:256�T�C�Y�̉摜�ɕ�����64�𑫂�����.
+			m_pSpriteKillNomber[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteKillNomber[i]->SetScale(0.7f, 0.7f, 0.7f);
+			break;
+		default:
+			break;
+		}
+	}
+}
+//�|�������摜�̐ݒ�.
+void CGameMain::EachSettingHitPoint()
+{
+	//-----4��ʗp-----.
+		//HP�̉摜�̐ݒ�.
+	for (int i = 0; i < HP_MAX; i++)
+	{
+		if (i <= 0)
+		{
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 64.f, 0.f);
+			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
+		}
+		else
+		{
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2, 64.f, 0.f);
+			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
+			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
+		}
+	}
 }

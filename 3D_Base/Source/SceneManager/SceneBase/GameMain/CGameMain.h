@@ -1,48 +1,48 @@
 #pragma once
-//-----継承するクラス-----
-#include "SceneManager//SceneBase//CSceneBase.h" // シーン基底クラス
+//-----�p������N���X-----
+#include "SceneManager//SceneBase//CSceneBase.h" // �V�[�����N���X
 
-//-----ライブラリ-----
+//-----���C�u����-----
 #include <algorithm>
 #include <vector>
 #include <array>	
 
-//-----デバックテキスト-----
-#include "Assets//DebugText//CDebugText.h"		// デバッグテキストクラス
+//-----�f�o�b�N�e�L�X�g-----
+#include "Assets//DebugText//CDebugText.h"		// �f�o�b�O�e�L�X�g�N���X
 
-//-----スプライト-----
-#include "Assets//Sprite//Sprite3D//CSprite3D.h" // 3Dスプライトクラス.
-#include "Assets//Sprite//Sprite2D//CSprite2D.h" // 2Dスプライトクラス.
+//-----�X�v���C�g-----
+#include "Assets//Sprite//Sprite3D//CSprite3D.h" // 3D�X�v���C�g�N���X.
+#include "Assets//Sprite//Sprite2D//CSprite2D.h" // 2D�X�v���C�g�N���X.
 
-//-----スプライトオブジェクト-----
+//-----�X�v���C�g�I�u�W�F�N�g-----
 #include "GameObject//SpriteObject//CSpriteObject.h"
 
-//-----スプライト-----
-#include "GameObject//SpriteObject//Explosion//CExplosion.h" // 爆発スプライト
+//-----�X�v���C�g-----
+#include "GameObject//SpriteObject//Explosion//CExplosion.h" // �����X�v���C�g
 
-//-----メッシュ-----
-#include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
-#include "GameObject//StaticMeshObject//CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス
+//-----���b�V��-----
+#include "Assets//Mesh//StaticMesh//CStaticMesh.h" // �X�^�e�B�b�N���b�V���N���X
+#include "GameObject//StaticMeshObject//CStaticMeshObject.h" // �X�^�e�B�b�N���b�V���I�u�W�F�N�g�N���X
 
-//-----キャラクター-----
-#include "GameObject//StaticMeshObject//Character//CCharacter.h" // キャラクタークラス
-#include "GameObject//StaticMeshObject//Character//Player//PlayerManager//CPlayerManager.h" // プレイヤーマネージャークラス
-#include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h" // 弾クラスマネージャー
-#include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // 戦車：砲塔クラス
+//-----�L�����N�^�[-----
+#include "GameObject//StaticMeshObject//Character//CCharacter.h" // �L�����N�^�[�N���X
+#include "GameObject//StaticMeshObject//Character//Player//PlayerManager//CPlayerManager.h" // �v���C���[�}�l�[�W���[�N���X
+#include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h" // �e�N���X�}�l�[�W���[
+#include "GameObject//StaticMeshObject//Ground//CGround.h" // �n�ʃN���X
+#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // ��ԁF�C���N���X
 
-#include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"//アイテムボックスマネージャークラス.
+#include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"//�A�C�e���{�b�N�X�}�l�[�W���[�N���X.
 
-#include "Camera//CCamera.h" //カメラクラス
+#include "Camera//CCamera.h" //�J�����N���X
 
 
-//-----壁-----
+//-----��-----
 #include "GameObject//StaticMeshObject//Wall//CWall.h"
 
 // UI
 //-------------------------------
-#include "GameObject//UI//CUIObject//CUIObject.h" // UIオブジェクトクラス
-#include "GameObject//UI//Timer//CTimer.h"		  // タイマークラス
+#include "GameObject//UI//CUIObject//CUIObject.h" // UI�I�u�W�F�N�g�N���X
+#include "GameObject//UI//Timer//CTimer.h"		  // �^�C�}�[�N���X
 
 #include "Global.h"
 
@@ -55,130 +55,153 @@ public:
 	~CGameMain()override;
 
 
-	//動作関数.
+	//����֐�.
 	void Update()override;
-	//描画関数.
+	//�`��֐�.
 	void Draw()override;
-	//初期化関数.
+	//�������֐�.
 	void Init()override;
-	//解放関数.
+	//����֐�.
 	void Destroy()override;
-	//インスタンス作成.
+	//�C���X�^���X�쐬.
 	void Create()override;
-	//データの読み込み.
+	//�f�[�^�̓ǂݍ���.
 	HRESULT LoadData()override;
 
-	// ゲーム開始時の初期座標を設定
+	// �Q�[���J�n���̏������W��ݒ�
 	void SetPosition();
 
-	// 当たり判定のバウンディングと当たり判定の作成
+	// �����蔻��̃o�E���f�B���O�Ɠ����蔻��̍쐬
 	void CreateBounding();
 
-	//当たり判定処理をここに入れる.
+	//�����蔻�菈��������ɓ����.
 	void Collision();
 
-	// 壁とプレイヤーの当たり判定
+	// �ǂƃv���C���[�̓����蔻��
 	void WalltoPlayer();
 
-	// アイテムボックスとプレイヤーの当たり判定
+	// �A�C�e���{�b�N�X�ƃv���C���[�̓����蔻��
 	void ItemBoxtoPlayer();
 
-	//画面をグリッドに分割したとき、idx番目のマスに対応する
-	//D3D11_VIEWPORTを作成して返す関数
+	//��ʂ�O���b�h�ɕ��������Ƃ��Aidx�Ԗڂ̃}�X�ɑΉ�����
+	//D3D11_VIEWPORT��쐬���ĕԂ��֐�
 	static D3D11_VIEWPORT MakeGridViewport(int idx, int cols, int rows, float totalW, float totalH);
 
-	//シーンの種類.
+	//�V�[���̎��.
 	CSceneType GetSceneType() const override;
 
-public:
-	//定数宣言.
-	static constexpr int HP_MAX = 2;			//最大HP.
-	static constexpr int PLAYERNUM_MAX = 4;		//プレイヤー番号.
-	static constexpr int KILLNUM_MAX = 4;		//キル数.
 
-	//ウィンドウハンドル.
+
+	//���b�s���O�֐�.
+	//�������ԉ摜�̐ݒ�.
+	void EachSettingTimer();
+	//�v���C���[�ԍ��摜�̐ݒ�.
+	void EachSettingPlayerNumber();
+	//�|�������摜�̐ݒ�.
+	void EachSettingKillNumber();
+	//�|�������摜�̐ݒ�.
+	void EachSettingHitPoint();
+
+
+
+
+public:		//�N���X�p.
+	//�萔�錾.
+	static constexpr int HP_MAX = 2;			//�ő�HP.
+	static constexpr int PLAYERNUM_MAX = 4;		//�v���C���[�ԍ�.
+	static constexpr int KILLNUM_MAX = 4;		//�L����.
+
+	//�E�B���h�E�n���h��.
 	HWND		m_hWnd;
 
-	//カメラ.
+	//�J����.
 	//std::vector<std::shared_ptr<CCamera>> m_pCameras;
 	std::array<std::shared_ptr<CCamera>, PLAYER_MAX> m_pCameras;
 
-	//デバッグテキスト.
+	//�f�o�b�O�e�L�X�g.
 	std::shared_ptr<CDebugText>		m_pDbgText;
 
-	//ゲーム内で扱うUI系.
-	std::shared_ptr<CSprite2D>									m_pSprite2DTimerFrame;			//制限時間の枠.
-	std::shared_ptr<CSprite2D>									m_pSprite2DTimer;				//制限時間の時計枠.
-	std::shared_ptr<CSprite2D>									m_pSprite2DKillNomber;			//キル数の画像.
-	std::shared_ptr<CSprite2D>									m_pSprite2DHitPoint;			//HPの画像.
-	std::array < std::shared_ptr<CSprite2D>, PLAYERNUM_MAX>		m_pSprite2DPlayerIcon;			//プレイヤー番号画像.
+	//�Q�[����ň���UI�n.
+	std::shared_ptr<CSprite2D>									m_pSprite2DTimerArrow;			//���v�̐j.
+	std::shared_ptr<CSprite2D>									m_pSprite2DTimerFrame;			//�������Ԃ̘g.
+	std::shared_ptr<CSprite2D>									m_pSprite2DTimer;				//�������Ԃ̎��v�g.
+	std::shared_ptr<CSprite2D>									m_pSprite2DKillNomber;			//�L�����̉摜.
+	std::shared_ptr<CSprite2D>									m_pSprite2DHitPoint;			//HP�̉摜.
+	std::array < std::shared_ptr<CSprite2D>, PLAYERNUM_MAX>		m_pSprite2DPlayerIcon;			//�v���C���[�ԍ��摜.
 
-	//スタティックメッシュオブジェクトクラス(UI).
-	std::array<std::shared_ptr<CUIObject>, PLAYERNUM_MAX>	m_pSpritePlayerIcon;			//プレイヤーアイコン.
-	std::array<std::shared_ptr<CUIObject>, KILLNUM_MAX>		m_pSpriteKillNomber;			//キル数アイコン.
-	std::array<std::shared_ptr<CUIObject>, HP_MAX>			m_pSpriteHitPoint;				//HPアイコン.
-	std::shared_ptr<CUIObject>								m_pSpriteTimerFrame;			//制限時間の枠.
-	std::shared_ptr<CUIObject>								m_pSpriteTimer;					//制限時間の時計枠.
+	//�X�^�e�B�b�N���b�V���I�u�W�F�N�g�N���X(UI).
+	std::array<std::shared_ptr<CUIObject>, PLAYERNUM_MAX>	m_pSpritePlayerIcon;			//�v���C���[�A�C�R��.
+	std::array<std::shared_ptr<CUIObject>, KILLNUM_MAX>		m_pSpriteKillNomber;			//�L�����A�C�R��.
+	std::array<std::shared_ptr<CUIObject>, HP_MAX>			m_pSpriteHitPoint;				//HP�A�C�R��.
+	std::shared_ptr<CUIObject>								m_pSpriteTimerFrame;			//�������Ԃ̘g.
+	std::shared_ptr<CUIObject>								m_pSpriteTimer;					//�������Ԃ̎��v�g.
+	std::shared_ptr<CUIObject>								m_pSpriteTimerArrow;			//時計の針.
 
-	//ゲームで扱うスプライトデータ(使いまわす資源).
+	//�Q�[���ň����X�v���C�g�f�[�^(�g���܂킷����).
 	std::unique_ptr<CSprite3D>		m_pSpriteGround;
 	std::unique_ptr<CSprite3D>		m_pSpritePlayer;
 	std::shared_ptr<CSprite3D>		m_pSpriteExplosion;
 
-	//スタティックメッシュ(使いまわす資源)
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshGround;		//地面
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshBSphere;		//バウンディングスフィア(当たり判定用).
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshItemBox;		//アイテムボックス.
+	//�X�^�e�B�b�N���b�V��(�g���܂킷����)
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshGround;		//�n��
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshBSphere;		//�o�E���f�B���O�X�t�B�A(�����蔻��p).
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshItemBox;		//�A�C�e���{�b�N�X.
 
-	// 戦車
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyRed;		// 車体赤
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonRed;	// 砲塔赤
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyYellow;	// 車体黄
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonYellow;	// 砲塔黄
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyBlue;		// 車体青
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonBlue;	// 砲塔青
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyGreen;	// 車体緑
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonGreen;	// 砲塔緑
+	// ���
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyRed;		// �ԑ̐�
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonRed;	// �C����
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyYellow;	// �ԑ̉�
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonYellow;	// �C����
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyBlue;		// �ԑ̐�
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonBlue;	// �C����
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankBodyGreen;	// �ԑ̗�
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_TankCannonGreen;	// �C����
 
-	// 弾
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletRed;		// 弾赤
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletYellow;		// 弾黄
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletBlue;		// 弾青
-	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletGreen;		// 弾緑
+	// �e
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletRed;		// �e��
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletYellow;		// �e��
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletBlue;		// �e��
+	std::shared_ptr<CStaticMesh>	m_pStaticMesh_BulletGreen;		// �e��
 
-	// 壁
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallW;		// 横に長い壁
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallH;		// 縦に長い壁
+	// ��
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallW;		// ���ɒ�����
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallH;		// �c�ɒ�����
 	
-	// スタティックメッシュオブジェクトクラス
+	// �X�^�e�B�b�N���b�V���I�u�W�F�N�g�N���X
 	std::unique_ptr<CStaticMeshObject>			m_pStcMeshObj;
 
-	// プレイヤーマネージャー
+	// �v���C���[�}�l�[�W���[
 	std::shared_ptr<CPlayerManager>				m_pPlayerManager;
 
-	// 弾クラスマネージャー
+	// �e�N���X�}�l�[�W���[
 	std::shared_ptr<CShotManager>				m_pShotManager;
 
-	// 地面クラス.
+	// �n�ʃN���X.
 	std::unique_ptr<CGround>					m_pGround;
 
-	//タイマークラス.
+	//�^�C�}�[�N���X.
 	std::shared_ptr<CTimer>						m_Timer;
 
-	// 壁クラス
-	std::shared_ptr<CWall>		m_pWallTop;		// 上壁
-	std::shared_ptr<CWall>		m_pWallBottom;	// 下壁
-	std::shared_ptr<CWall>		m_pWallLeft;	// 左壁
-	std::shared_ptr<CWall>		m_pWallRight;	// 右壁
-	//アイテムボックスマネージャークラス.
+	// �ǃN���X
+	std::shared_ptr<CWall>		m_pWallTop;		// ���
+	std::shared_ptr<CWall>		m_pWallBottom;	// ����
+	std::shared_ptr<CWall>		m_pWallLeft;	// ����
+	std::shared_ptr<CWall>		m_pWallRight;	// �E��
+	//�A�C�e���{�b�N�X�}�l�[�W���[�N���X.
 	std::shared_ptr<CItemBoxManager>			m_pItemBoxManager;
 
-	// シーン列挙変数.
+	// �V�[���񋓕ϐ�.
 	CSceneType		m_SceneType;
 
-	// 簡易時間を止める変数.
-	int m_StopTimeCount;
+public:		//�ϐ��p.
+	// �ȈՎ��Ԃ�~�߂�ϐ�.
+	int		m_StopTimeCount;
+	//Icon�̉�]�p.
+	float	m_Rot;
 
-	// 試し 戦車の押し戻し
+	//���v�̐j.
+	float	time;
+
+	// ���� ��Ԃ̉����߂�
 	D3DXVECTOR3 push;
 };

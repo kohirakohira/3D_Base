@@ -9,7 +9,7 @@ CTimer::CTimer()
 	, m_HitTime			()
 
 	, m_StartTimer		()
-	, m_TotalTime		( 0.f )
+	, m_TotalTime		( 0 )
 	, m_TimerPosition	()
 {
 }
@@ -29,16 +29,16 @@ void CTimer::Draw()
 
 }
 
-void CTimer::StartTimer(float time)
+void CTimer::StartTimer(int time)
 {
 	// タイマーの開始時間を記録する.
 	m_StartTimer = std::chrono::steady_clock::now();
 
 	//ゲーム時間を設定する.
-	m_TotalTime = std::chrono::duration<float>(time);
+	m_TotalTime = std::chrono::duration<int>(time);
 }
 
-float CTimer::GetRemainingTime() const
+int CTimer::GetRemainingTime() const
 {
 	//今の時間を記録する変数.
 	//今の時間を取得・保持.
@@ -67,7 +67,7 @@ void CTimer::HitTimer()
 	m_HitTime = std::chrono::steady_clock::now();
 }
 
-float CTimer::GetElapsed() const
+int CTimer::GetElapsed() const
 {
 	auto now = std::chrono::steady_clock::now();
 	std::chrono::duration<float> elapsed = now - m_HitTime;

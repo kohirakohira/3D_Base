@@ -26,7 +26,7 @@ CComPlayer::CComPlayer()
     , KeepDistance(9.0f)   // 0‚È‚çƒxƒ^‹l‚ß
     , CannonHeight(0.3f)
     , m_Target(nullptr)
-    , m_AvoidRadius ( 3.0f )
+    , m_AvoidRadius ( 10.0f )
     , m_AvoidWeight ( 0.8f )
     , m_Registered ( false )
 {
