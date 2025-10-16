@@ -193,8 +193,9 @@ public:		//�N���X�p.
 	// �V�[���񋓕ϐ�.
 	CSceneType		m_SceneType;
 
-public:		//�ϐ��p.
-	// �ȈՎ��Ԃ�~�߂�ϐ�.
+public:		
+	//変数用.
+	//簡易時間を止める変数.
 	int		m_StopTimeCount;
 	//Icon�̉�]�p.
 	float	m_Rot;
