@@ -11,6 +11,8 @@
 #include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX9�N���X
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11�N���X
 
+//定数宣言.
+static constexpr int TIME = 90.0;
 
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd					( hWnd )
@@ -310,7 +312,7 @@ void CGameMain::Draw()
 			//////_stprintf_s(dbgText, _T("Float:%f, %f"), 1.f, 2.2f);
 			//////m_pDbgText->Render(dbgText, 10, 110);
 
-//4��ʂ̎��̕\��.
+		//4��ʂ̎��̕\��.
 		//�O��֌W����.
 		CDirectX11::GetInstance().SetDepth(false);
 		//�v���C���[�ԍ��̕`��.
@@ -1004,9 +1006,6 @@ CSceneType CGameMain::GetSceneType() const
 //�������ԉ摜�̐ݒ�.
 void CGameMain::EachSettingTimer()
 {
-	//�萔�錾.
-	static constexpr int TIME = 90.0;
-
 	//-----���S�\���p���W-----.
 		//�������Ԙg�̉摜�ݒ�.
 	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
