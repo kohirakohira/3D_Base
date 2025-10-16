@@ -263,13 +263,27 @@ void CGameMain::Draw()
 		if (owner) m_pGround->SetPlayer(*owner);
 		m_pGround->Draw(view, proj, light, paramC);
 
+		//壁の表示.
 		m_pWallTop->Draw(view, proj, light, paramC);
 		m_pWallBottom->Draw(view, proj, light, paramC);
 		m_pWallLeft->Draw(view, proj, light, paramC);
 		m_pWallRight->Draw(view, proj, light, paramC);
+
 		//アイテムボックスの描画.
 		m_pItemBoxManager->Draw(view, proj, light, paramC);
-		};
+
+//4画面に体力を表示.
+		//前後関係無視..
+		CDirectX11::GetInstance().SetDepth(false);
+		//UI.
+		for (int i = 0; i < HP_MAX; i++)
+		{
+			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, m_Rot);
+			m_pSpriteHitPoint[i]->Draw();
+		}
+		CDirectX11::GetInstance().SetDepth(true);
+
+	};
 	//分割ビューのループ.
 	for (int i = 0; i < VIEWS; ++i)
 	{
