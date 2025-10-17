@@ -622,8 +622,6 @@ void CGameMain::Collision()
 {
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-
-
 		// i ”Ô‚ÌƒvƒŒƒCƒ„[‚ðŽæ“¾
 		auto player = m_pPlayerManager->GetControlPlayer(i);
 		auto Coll = player->GetBody()->GetCollider();
