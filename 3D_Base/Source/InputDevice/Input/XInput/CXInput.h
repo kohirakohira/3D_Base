@@ -100,9 +100,9 @@ private:
 	WORD GenerateGamePadValue( KEY key );
 
 private:
-	DWORD               m_padId;		//パッド番号(0~3).
-	XINPUT_STATE        m_state;		//キー入力情報.
-	XINPUT_STATE		m_stateOld;		//キー入力情報(キーストローク判定用).
-	XINPUT_VIBRATION    m_vibration;	//振動.
-	bool				m_connect;		//接続判定.
+	DWORD               m_padId;		// パッド番号(0~3).
+	XINPUT_STATE        m_state;		// キー入力情報.
+	XINPUT_STATE		m_stateOld;		// キー入力情報(キーストローク判定用).
+	XINPUT_VIBRATION    m_vibration;	// 振動.
+	bool				m_connect;		// 接続判定.
 };

@@ -15,8 +15,6 @@ CCannon::CCannon(int inputID)
 		// 親クラス(CCharacter)の m_Input にも共有
 		CCharacter::m_Input = m_Input;
 	}
-
-	m_pCollider = std::make_shared<CBoxCollider>();
 }
 
 CCannon::~CCannon()
@@ -34,7 +32,6 @@ void CCannon::Update()
 	{
 		m_Input->Update();
 	}
-	m_pCollider->SetPosition(m_vPosition);
 
 	KeyInput();
 
@@ -97,6 +94,7 @@ void CCannon::KeyInput()
 		{
 			m_Shot = true;		// 弾を発射
 			m_ShotCoolTime = 0; // クールダウン再スタート
+
 		}
 	}
 }

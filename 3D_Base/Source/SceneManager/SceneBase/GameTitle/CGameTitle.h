@@ -19,6 +19,7 @@
 //キーの入力.
 #include "InputDevice//Matuoka//CMultiInputKeyManager.h" // キー入力用
 
+
 //演出用.
 #include "Assets//Sprite//Sprite3D//CSprite3D.h" // 3Dスプライトクラス.
 
@@ -85,7 +86,6 @@ public:
 
 	//描画フラグ.
 	bool DrawFlag;
-
 
 
 //------------------------------------------------------------------------------------------

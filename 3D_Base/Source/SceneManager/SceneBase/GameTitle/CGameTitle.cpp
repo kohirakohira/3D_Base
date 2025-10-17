@@ -24,18 +24,9 @@ CGameTitle::CGameTitle(HWND hWnd)
 
 	, DrawFlag				( false )
 
-
 	, m_pGround				( nullptr ) 
 
 	, m_StaticMeshGround	( nullptr )
-
-
-
-
-
-
-
-
 
 {
 	m_SceneType = CSceneType::Title;

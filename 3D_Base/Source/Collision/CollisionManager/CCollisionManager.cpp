@@ -1,50 +1,121 @@
-#if 0
-
 #include "CCollisionManager.h"
-#include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX11クラス
 
 CCollisionManager::CCollisionManager()
+	: m_KeyInput		(nullptr)
+	, m_Draw			(false)
+	, m_pCannonBBox		(nullptr)
+	, m_pBodyBBox		(nullptr)
+	, m_pPlayerManager	(nullptr)
 {
-	//m_pBody = std::make_shared<CBody>();
 }
 
 CCollisionManager::~CCollisionManager()
 {
-	m_pStaticMeshBSphere = std::make_shared<CStaticMesh>();
+
 }
 
-void CCollisionManager::Draw()
+void CCollisionManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
+	////描画フラグ切り替え
+	//if (m_KeyInput->ReleaseInputKey('P') == true)
+	//{
+	//	if (m_Draw == true)
+	//	{
+	//		m_Draw = false;
+	//	}
+	//	else
+	//	{
+	//		m_Draw = true;
+	//	}
+	//}
 
-	//m_pBBox->Draw(CDirectX9::GetInstance().GetDevice(), D3DCOLOR_XRGB(0, 255, 0));
+	m_pStaticMeshBSphere->SetRotation(D3DXVECTOR3(0.f, 0.f, 0.f)); // ← 追加
+
+	m_Draw = true;
+
+
+	//for (int index = 0; index < PLAYER_MAX; ++index)
+	//{
+	//	if (auto player = m_pPlayerManager->GetControlPlayer(index))
+	//	{
+	//		// 各プレイヤーが持つ BBox を取得して描画する想定
+	//		if (auto bodyBBox = player->GetBody()->GetBBox()) // GetBBox() は実装例
+	//			bodyBBox->Render(View, Proj, Light, Camera.vPosition);
+
+	//		if (auto cannonBBox = player->GetCannon()->GetBBox())
+	//			cannonBBox->Render(View, Proj, Light, Camera.vPosition);
+	//	}
+	//}
+
 }
 
 void CCollisionManager::Create()
 {
-	//バウンディングスフィアの作成.
-	m_pBody->CreateBSphereForMesh(*m_pStaticMeshBSphere);
+	m_pStaticMeshBSphere = std::make_shared<CStaticMesh>();
 
-	//if (m_pBody)
-	//m_pBody->CreateBox(m_pBody->GetPosition(), 10.f, 5.f, 20.f);
+	// プレイヤーの数だけ生成
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		// バウンディングボックスのインスタンス生成
+		m_pCannonBBox = std::make_shared<CStaticMesh>();
+		m_pBodyBBox = std::make_shared<CStaticMesh>();
+	}
+
+	// キー入力.
+	m_KeyInput = std::make_shared<CMultiInputKeyManager>();
+
+	//キー入力の初期化.
+	m_KeyInput->Init();
+	m_KeyInput->SetKey({ 'P' });
 }
 
 HRESULT CCollisionManager::LoadData()
 {
 	//バウンディングスフィア(当たり判定用).
-	m_pStaticMeshBSphere->Init(_T("Data\\Collision\\Sphere.x"));
+	m_pStaticMeshBSphere->Init(_T("Data\\Collision\\Body.x"));
+
+	// プレイヤーごとにバウンディング作成
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		// バウンディングボックス(当たり判定用)
+		m_pCannonBBox->Init(_T("Data\\Collision\\Body.x"));
+		m_pBodyBBox	 ->Init(_T("Data\\Collision\\Body.x"));
+
+		m_pPlayerManager->CreateBounding(index, m_pBodyBBox, m_pCannonBBox);
+	}
+
+	//m_pStaticMeshBSphere->SetRotation();
 
 	return S_OK;
 }
 
 void CCollisionManager::UpdateBounding()
 {
-	//m_pBody->UpdateBBoxPos();
-	m_pBody->UpdateBSpherePos();
+	// キー入力受付
+	m_KeyInput->Update();
+
+	// プレイヤーごとにバウンディング座標を更新
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		m_pPlayerManager->UpdateBounding(index);
+	}
+
+	// 当たり判定の向き更新
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		if (auto player = m_pPlayerManager->GetControlPlayer(index))
+		{
+			auto pbody = player->GetBody();
+		}
+	}
 }
 
 void CCollisionManager::CheckAllCollisions()
 {
 }
 
-#endif 
+void CCollisionManager::SetPlayerManager(std::shared_ptr<CPlayerManager> pPlayerMgr)
+{
+	m_pPlayerManager = pPlayerMgr;
+}
 

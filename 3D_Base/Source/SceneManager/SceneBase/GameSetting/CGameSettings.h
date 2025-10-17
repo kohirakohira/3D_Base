@@ -5,6 +5,7 @@
 //-----ライブラリ-----
 #include <iostream>
 #include <windows.h>
+#include <vector>
 
 #include "Global.h"
 
@@ -25,7 +26,8 @@
 
 //キー入力用.
 #include "InputDevice//Matuoka//CMultiInputKeyManager.h" // キー入力用
-
+//コントローラー入力
+#include "InputDevice//Input//CInputManager.h" // 入力マネージャー
 
 //前方宣言.
 class CSprite2D;
@@ -59,6 +61,11 @@ public:
 	//ウィンドウハンドル.
 	HWND		m_hWnd;
 
+
+	//接続確認画像.
+	std::shared_ptr<CSprite2D>			m_SpriteConnection;
+
+
 	//タイトル画像.
 	std::shared_ptr<CSprite2D>			m_pSpriteSetting;
 	//タイトル画像の背景.
@@ -71,6 +78,9 @@ public:
 	std::shared_ptr<CSprite2D>			m_SpriteYesSelect;
 	std::shared_ptr<CSprite2D>			m_SpriteNoSelect;
 
+
+	//接続画像(仮).
+	std::vector<std::shared_ptr<CImageObject>>	m_SpriteConnectionImg;
 
 
 	//タイトル表示用板ポリ.
@@ -88,20 +98,25 @@ public:
 	//シーンタイプ変数.
 	CSceneType					m_SceneType;
 
-
 	//試し.
 	D3DXVECTOR2 m_UV = { 1.f, 1.f };
 
 	//キー入力.
 	std::shared_ptr<CMultiInputKeyManager>		m_InputKey;
 
-
-
+	// コントローラー入力
+	std::shared_ptr<CInputManager>				m_pInputManager;
 
 	//描画フラグ.
 	bool DrawFlag;
 
 private:
+
+
+
+	//確認用.
+	float posx = 80.0f;
+	float posy = WND_H / 2;
 
 
 };

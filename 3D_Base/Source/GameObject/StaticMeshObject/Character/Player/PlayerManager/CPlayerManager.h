@@ -29,9 +29,9 @@ public:
 
 	// バウンディングオブジェクトの作成
 	void CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon);
-	
-	// コライダーの作成
-	void CreateCollider(int index);
+
+	// プレイヤーのバウンディングボックス更新
+	void UpdateBounding(int index);
 
 	//↓松岡.
 	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);
@@ -63,7 +63,6 @@ private:
 	std::shared_ptr<CCannon>				m_pCannon;
 
     std::vector<std::shared_ptr<CPlayer>>	m_pPlayers;
-    std::vector<std::unique_ptr<CShot>>		m_pShots;
 	int m_ActivePlayerIndex;	// 現在操作中のプレイヤー(デバッグ用)
 
 	int m_LockTargetIndex = -1;	//ロック無効(デバック用)

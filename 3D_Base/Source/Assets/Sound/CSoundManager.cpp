@@ -37,6 +37,7 @@ bool CSoundManager::Load(HWND hWnd)
 		{ enList::BGM_Bonus,	_T("Data\\Sound\\BGM\\BonusGameHouse.mp3"),	_T("BGM_Bonus")	},
 		{ enList::BGM_Clear,	_T("Data\\Sound\\BGM\\Ending.mp3"),			_T("BGM_Clear")	},
 		{ enList::BGM_Over,		_T("Data\\Sound\\BGM\\Over.mp3"),			_T("BGM_Over")	},
+		{ enList::BGM_Main,		_T("Data\\Sound\\BGM\\Main.mp3"),			_T("BGM_Main")	},
 
 		{ enList::SE_Click,		_T("Data\\Sound\\SE\\Choice.mp3"),			_T("SE_Click")	},
 		{ enList::SE_Shot,		_T("Data\\Sound\\SE\\shot.mp3"),			_T("SE_Shot")	},
