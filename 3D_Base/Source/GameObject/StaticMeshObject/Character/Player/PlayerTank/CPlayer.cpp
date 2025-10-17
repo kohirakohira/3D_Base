@@ -138,6 +138,7 @@ void CPlayer::Update()
 
 void CPlayer::UpdateHumanInputAndMove()
 {
+#if 1
 	//pad“ü—Í
 	if (!m_pBody || !m_pCannon) return;
 
@@ -156,6 +157,7 @@ void CPlayer::UpdateHumanInputAndMove()
 	else
 	{
 	}
+#endif
 
 	const float dt = 1.0f;	
 	const auto& tuning = GetTuning();
