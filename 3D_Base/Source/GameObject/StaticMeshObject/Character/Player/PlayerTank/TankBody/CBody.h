@@ -54,12 +54,11 @@ private:
 	void KeyInput();
 
 protected:
-	float		m_TurnSpeed;	// 回転速度
-	float		m_MoveSpeed;	// 移動速度
-	enMoveState m_MoveState;	// 移動状態
+	float						m_TurnSpeed;		// 回転速度
+	float						m_MoveSpeed;	// 移動速度
+	enMoveState		m_MoveState;		// 移動状態
 
 private:
 	std::shared_ptr<CInputManager> m_pInput;
 
-	std::shared_ptr<CCollider>			m_pCollider;
 };

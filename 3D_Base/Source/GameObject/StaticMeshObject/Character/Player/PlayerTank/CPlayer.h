@@ -27,6 +27,14 @@ public:
 	//プレイヤーが壁に当たる処理をまとめる.
 	void SetPushBack(const D3DXVECTOR3& push);
 
+	// プレイヤーのバウンディングを作成
+	void CreateBounding(const std::shared_ptr<CStaticMesh> pBody, const std::shared_ptr<CStaticMesh> pCannon);
+
+	// プレイヤーのバウンディング座標を更新
+	void UpdateBoundingPos();
+	// プレイヤーのバウンディング回転を更新
+	void UpdateBoundingRot();
+
 	//Body優先でワールド座標と回転を返す
 	virtual D3DXVECTOR3 GetPosition() const;
 	virtual D3DXVECTOR3 GetRotation() const;
@@ -37,9 +45,6 @@ public:
 
 	// バウンディングオブジェクトを設定
 	void SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon);
-
-	// コライダーの作成
-	void CreateCollider();
 
    	//外部のクラスから情報取得.
 	void SetCBody(std::shared_ptr<CBody> pBody) { m_pBody = pBody; }

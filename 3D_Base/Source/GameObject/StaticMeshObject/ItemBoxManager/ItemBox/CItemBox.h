@@ -29,10 +29,6 @@ public:
 	//アイテムの種類を取得する関数.
 	CItemType GetItemInfo() { return m_ItemType; }
 
-
-
-
-
 public:
 	//各アイテムごとの効果.
 	//シールド効果.
@@ -48,6 +44,12 @@ public:
 	//リロード効果.
 	void ReloadEffect();
 
+	// 当たった時の処理
+	void HitPlayer();
+
+	// バウンディングボックスを作成
+	void CreateBounding(std::shared_ptr<CStaticMesh> pItemBox);
+
 protected:
 	//初期速度.
 	float InitialSpeed;
@@ -56,6 +58,9 @@ protected:
 	//１フレーム(0.016 : 1/60FPS).
 	float Framerate;
 	
+	//	アクティブフラグ(アイテムが取られたかどうか).
+	bool m_Active;
+
 	//アイテムの種類.
 	CItemType m_ItemType;
 
@@ -70,5 +75,5 @@ protected:
 		float	m_Reload;					//プレイヤーのリロード間隔変更用.
 	}m_Item;
 
-
+private:
 };

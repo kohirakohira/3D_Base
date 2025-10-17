@@ -29,7 +29,7 @@ void CItemBoxManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAM
 void CItemBoxManager::Create()
 {
 	//中身を消す.
-	m_Item.clear();
+	//m_Item.clear();
 
 	//アイテムのインスタンス生成.
 	for (int i = 0; i < ITEM_MAX; i++)
@@ -48,12 +48,21 @@ void CItemBoxManager::AttachMesh(std::shared_ptr<CStaticMesh> pMesh)
 	}
 }
 
+void CItemBoxManager::CreateBounding(std::shared_ptr<CStaticMesh>& pItem)
+{
+	// バウンディング設定.
+	for (auto& item : m_Item)
+	{
+		item->CreateBounding(pItem);
+	}
+}
+
 void CItemBoxManager::SetPosition(float x, float y, float z)
 {
 	for (auto& item : m_Item)
 	{
 		//横にずらすだけ.
-		x += 2;
+		x += 3.f;
 		item->SetPosition(x, y, z);
 	}
 }

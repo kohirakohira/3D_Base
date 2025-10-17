@@ -21,6 +21,10 @@ CGameSettings::CGameSettings(HWND hWnd)
 	, m_SpriteYesSelect				( nullptr )
 	, m_SpriteNoSelect				( nullptr )
 
+
+	, m_SpriteConnection			()
+
+
 	, m_pSpriteSettingImg			( nullptr )
 	, m_pSpriteSettingBackGroundImg ( nullptr )
 
@@ -33,6 +37,7 @@ CGameSettings::CGameSettings(HWND hWnd)
 	, DrawFlag						( false )
 
 	, m_InputKey					( nullptr )
+	, m_pInputManager				( nullptr )
 
 {
 	m_SceneType = CSceneType::Setting;
@@ -63,6 +68,9 @@ void CGameSettings::Update()
 
 	//キー入力受付.
 	m_InputKey->Update();
+
+	// コントローラーの接続確認
+	m_pInputManager->UpdateConnectStatus();
 
 	//背景の動かす速度.
 	MoveBackGround();
@@ -110,6 +118,16 @@ void CGameSettings::Draw()
 	m_pSpriteSettingImg->Draw();
 	m_pSpriteSettingBackGroundImg->Draw();
 	m_pSpriteStartImg->Draw();
+
+	//画像インスタンスの複製.
+	for (int i = 0; i < IMAGE; i++)
+	{
+		if (m_pInputManager->IsPadConnect(i))
+		{
+			m_SpriteConnectionImg[i]->Draw();
+		}
+	}
+
 	m_pSpriteYesSelectImg->Draw();
 	m_pSpriteNoSelectImg->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
@@ -155,6 +173,20 @@ void CGameSettings::Init()
 	m_pSpriteNoSelectImg->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteNoSelectImg->SetScale(1.f, 1.f, 0.f);
 
+
+	//画像インスタンスの複製.
+	for (int i = 0; i < IMAGE; i++)
+	{
+
+		m_SpriteConnectionImg[i]->SetPosition(posx, posy, 0.0f);
+		m_SpriteConnectionImg[i]->SetRotation(0.0f, 0.0f, 0.0f);
+		m_SpriteConnectionImg[i]->SetScale(1.0f, 1.0f, 0.f);
+
+		posx += 500.0f;
+
+	}
+
+
 	//キー入力.
 	m_InputKey->Init();
 	//使いたいキーを引数に設定.
@@ -199,6 +231,22 @@ void CGameSettings::Create()
 	//キー入力.
 	m_InputKey = std::make_shared<CMultiInputKeyManager>();
 
+	// コントローラーの生成
+	m_pInputManager = std::make_shared<CInputManager>(IMAGE);
+
+
+	//接続画像のインスタンス生成.
+	m_SpriteConnection = std::make_shared<CSprite2D>();
+
+
+	//画像インスタンスの複製.
+	for (int i = 0; i < IMAGE; i++)
+	{
+		m_SpriteConnectionImg.push_back(std::make_shared<CImageObject>());
+	}
+
+
+
 
 }
 
@@ -235,6 +283,12 @@ HRESULT CGameSettings::LoadData()
 	constexpr float ALPHA_BACK = 0.3f;
 
 
+	//接続確認画像の読み込み.
+	m_SpriteConnection->Init(_T("Data\\Texture\\UI\\Yes.png"), S_SIZE);
+
+
+
+
 	//タイトルスプライトの読み込み.
 	m_pSpriteSetting->Init(_T("Data\\Texture\\Image\\Setting.png"), WH_SIZE);
 	m_pSpriteSetting->SetAlpha(ALPHA_TOP);
@@ -261,6 +315,14 @@ HRESULT CGameSettings::LoadData()
 	m_pSpriteYesSelectImg->AttachSprite(m_SpriteYesSelect);
 	m_pSpriteNoSelectImg->AttachSprite(m_SpriteNoSelect);
 
+
+
+
+	//画像設定.
+	for (int i = 0; i < IMAGE; i++)
+	{
+		m_SpriteConnectionImg[i]->AttachSprite(m_SpriteConnection);
+	}
 
 
 	return S_OK;
