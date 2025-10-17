@@ -30,8 +30,6 @@ public:
 	// バウンディングオブジェクトの作成
 	void CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon);
 
-	// プレイヤーの
-
 	// プレイヤーのバウンディングボックス更新
 	void UpdateBounding(int index);
 

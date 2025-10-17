@@ -53,13 +53,17 @@ public:
 	}
 
 	//バウンディングボックスをオブジェクト位置に合わせる
-//※モデルの原点が中心の場合を想定
+	//※モデルの原点が中心の場合を想定
 	void UpdateBBoxPos() {
 		m_pBBox->SetPosition(m_vPosition);
 	}
+	//回転情報を渡して形を合わせる
+	void UpdateBBoxRot() {
+		m_pBBox->SetRotation(m_vRotation);
+	}
 
 	//バウンディングスフィアをオブジェクト位置に合わせる
-//※モデルの原点が中心の場合を想定
+	//※モデルの原点が中心の場合を想定
 	void UpdateBSpherePos() {
 		m_pBSphere->SetPosition(m_vPosition);
 	}
@@ -92,6 +96,5 @@ protected:
 	std::shared_ptr<CStaticMesh>		m_pMesh;
 	std::shared_ptr<CBoundingSphere>	m_pBSphere;
 	std::shared_ptr<CBoundingBox>		m_pBBox;
-
 };
 

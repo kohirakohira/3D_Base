@@ -32,6 +32,8 @@ public:
 
 	// プレイヤーのバウンディング座標を更新
 	void UpdateBoundingPos();
+	// プレイヤーのバウンディング回転を更新
+	void UpdateBoundingRot();
 
 	//Body優先でワールド座標と回転を返す
 	virtual D3DXVECTOR3 GetPosition() const;
@@ -51,11 +53,10 @@ public:
 	// 外部のクラスに情報を渡す
 	std::shared_ptr<CCannon> GetCannon() const { return m_pCannon; }
 	std::shared_ptr<CCannon> GetCannon() { return m_pCannon; }
-	std::shared_ptr<CBody>		GetBody()   const { return m_pBody; }
+	std::shared_ptr<CBody>	 GetBody()   const { return m_pBody; }
 
 	float GetCannonYaw() const;
 	D3DXVECTOR3 GetCannonPosition() const;
-	D3DXVECTOR3 GetBodyPosition() const;
 
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }

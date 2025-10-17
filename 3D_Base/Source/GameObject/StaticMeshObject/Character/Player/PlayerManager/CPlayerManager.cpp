@@ -62,7 +62,7 @@ void CPlayerManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 {
 	if (index < m_pPlayers.size())
 	{
-		m_pPlayers[index]->SetTankPosition(push);
+		m_pPlayers[index]->SetPushBack(push);
 	}
 }
 
@@ -81,6 +81,7 @@ void CPlayerManager::UpdateBounding(int index)
 	if (index < m_pPlayers.size())
 	{
 		m_pPlayers[index]->UpdateBoundingPos();
+		m_pPlayers[index]->UpdateBoundingRot();
 	}
 }
 
