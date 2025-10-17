@@ -47,19 +47,6 @@ void CPlayer::SetPushBack(const D3DXVECTOR3& push)
 	m_pBody->PushBack(push);
 	m_pCannon->PushBack(push);
 }
-
-void CPlayer::CreateBounding(const std::shared_ptr<CStaticMesh> pBody, const std::shared_ptr<CStaticMesh> pCannon)
-{
-	// 車体と砲塔
-	m_pBody->CreateBSphereForMesh(*pBody);
-	m_pCannon->CreateBSphereForMesh(*pCannon);
-}
-
-// プレイヤーのバウンディングボックス更新
-void CPlayer::UpdateBoundingPos()
-{
-	m_pBody->UpdateBSpherePos();
-}
    
 void CPlayer::Update()
 {
@@ -91,18 +78,6 @@ D3DXVECTOR3 CPlayer::GetCannonPosition() const
 	if (m_pCannon)
 	{
 		return m_pCannon->GetPosition();
-	}
-	else
-	{
-		return GetPosition();
-	}
-}
-
-D3DXVECTOR3 CPlayer::GetBodyPosition() const
-{
-	if (m_pBody)
-	{
-		return m_pBody->GetPosition();
 	}
 	else
 	{
