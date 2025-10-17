@@ -11,6 +11,14 @@
 // 前方宣言
 class CInputManager;		// 入力受付クラス.
 
+struct TankTuning
+{
+	float moveSpeed = 0.08f;		//前進、後退
+	float bodyTurnSpeed = 0.03f;	//車体ヨー
+	float turretTurnSpeed = 0.03f;	//砲塔ヨー
+	float cannonHeight = 0.3f;		//砲塔の取り付けの高さ
+};
+
 class CCharacter
 	: public CStaticMeshObject // スタティックメッシュオブジェクトクラスを継承.
 {
@@ -35,10 +43,17 @@ public:
 	
 	void SetInput(const std::shared_ptr<CInputManager> input) { m_Input = input; }
 
+	//パラメータの外部関数
+	void SetTuning(const TankTuning& tuning) { m_Tune = tuning; }
+	const TankTuning& GetTuning() const { return m_Tune; }
+
+
 protected:
+	TankTuning m_Tune{};
 	bool	m_Shot;		//弾を飛ばすフラグ
 
 	std::shared_ptr<RAY>	m_pRayY;	//Y方向へ伸ばしたレイ.
 
 	std::shared_ptr<CInputManager> m_Input;	// 入力受付クラス.
+
 };

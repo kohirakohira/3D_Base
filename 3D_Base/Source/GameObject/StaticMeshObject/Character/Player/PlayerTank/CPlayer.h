@@ -13,14 +13,6 @@
 
 class CXInput;	//前方宣言
 
-struct TankTuning
-{
-	float moveSpeed = 0.10f;		//前進、後退
-	float bodyTurnSpeed = 0.08f;	//車体ヨー
-	float turretTurnSpeed = 0.12f;	//砲塔ヨー
-	float cannonHeight = 0.3f;		//砲塔の取り付けの高さ
-};
-
 class CPlayer
 	: public CCharacter
 {
@@ -77,11 +69,11 @@ public:
 	void SetKeyboardEnabled(bool on);
 	std::shared_ptr<CInputManager>& GetInputManager() { return m_Input; }
 
-
+#if 0
 	//パラメータの外部関数
 	void SetTuning(const TankTuning& tuning) { m_Tune = tuning; }
 	const TankTuning& GetTuning() const { return m_Tune; }
-
+#endif
 
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }
@@ -97,7 +89,7 @@ protected:
 	CXInput* m_pPad;			//コントローラー
 
 private:
-	TankTuning m_Tune{};
+	//TankTuning m_Tune{};
 	std::shared_ptr<CInputManager> m_pInput;
 
 };

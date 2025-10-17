@@ -6,7 +6,7 @@
 //-----ライブラリ-----
 #include <d3dx9math.h>
 
-class CComPlayer 
+class CComPlayer
 	: public CPlayer
 {
 public:
@@ -20,25 +20,15 @@ public:
 	void SetTarget(std::shared_ptr<CPlayer> player);
 	void ClearTarget();
 
-	//チューニング値,m_を付け忘れたのであとで修正する
-	float MoveSpeed;			// 1フレームの前進量
-	float TurnStep;				// 1フレームの回頭量
-	float AimTurnStep;			// 砲塔回頭の1フレーム量
-	float KeepDistance;			// この距離を保つ
-	float CannonHeight;			// 砲塔の高さオフセッ
-	float m_AvoidRadius;		// ほかCOMから離れる半径
-	float m_AvoidWeight;		// 分離ベクトルの重み(0で無効.1強め)
-
 	D3DXVECTOR3 GetPosition() const override;
 	D3DXVECTOR3 GetRotation() const override;
 
 	//COMの有効無効を決める
 	void SetComEnabled(bool enabled) { m_ComEnabled = enabled; }
 	bool IsComEnabled() const { return m_ComEnabled; }
-	
+
 	//プレイヤーマネージャーで使うよう
 	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
-
 
 private:
 	std::shared_ptr<CPlayer> m_Target;	//追尾対象
@@ -75,31 +65,52 @@ private:
 
 	bool m_ComEnabled = true;	//最初はCOM有効
 
-#if 0
+	//float m_MoveSpeed;			//1フレームの前進量
+	//float m_TurnStep;				//1フレームの回頭量
+	//float m_AimTurnStep;			//砲塔回頭の1フレーム量
+	float m_KeepDistance;			//この距離を保つ
+	//float m_CannonHeight;			//砲塔の高さオフセッ
+	float m_AvoidRadius;			//ほかCOMから離れる半径
+	float m_AvoidWeight;			//分離ベクトルの重み(0で無効.1強め)
+
+
 private:
-	enum class State { Idle, Seek, Chase, Attack, Evade };
-	State m_state = State::Idle;
-	int   m_stateFrames = 0;       // 状態に入ってからの経過フレーム
-	int   m_shotCD = 0;            // 射撃クールダウン（既存流用）
+	//COMの状態
+	enum class State
+	{
+		Idle,
+		Seek,
+		Chase,
+		Attac,
+		Evade,
+		Search,
+	};
+	State m_State = State::Idle;
+	int m_StateFrames;			//その状態に入ってからの経過フレーム
 
-	// 状態遷移ヘルパ
-	void ChangeState(State s) { m_state = s; m_stateFrames = 0; }
+	void ChangeState(State state)
+	{
+		m_State = state;
+		m_StateFrames = 0;
+	}
 
-	// 1フレーム分のステート処理
+	//フレームごとのステート処理
+#if 0
 	void StepIdle();
 	void StepSeek();
 	void StepChase();
 	void StepAttack();
 	void StepEvade();
-
+	void StepSearch(float yaw, const D3DXVECTOR3& targetPos);
+#endif
+#if 0
 	// 判定ヘルパ
 	float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b) const;
 	bool  HasTarget() const { return (bool)m_Target; }
-	bool  InSight(const D3DXVECTOR3& self, const D3DXVECTOR3& tgt) const; // 必要なら
+	bool  InSight(const D3DXVECTOR3& self, const D3DXVECTOR3& tgt) const;
 	bool  InAttackCone(float yaw, const D3DXVECTOR3& self, const D3DXVECTOR3& tgt, float epsRad) const;
 	bool  ShouldEvade(float nearest) const; // 近接COMとの距離で判定
 };
 #endif
-
-
 };
+

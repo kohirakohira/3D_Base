@@ -74,18 +74,19 @@ void CCannon::CreateBounding(std::shared_ptr<CStaticMesh> pCannon)
 // キー入力受付
 void CCannon::KeyInput()
 {
+	auto& tunign = GetTuning();
 	// 左方向に入力検知
 	if (m_Input->GetArrowKeyDirection() == CInputManager::Direction::Left ||
 		m_Input->GetRightStickDirection() == CInputManager::Direction::Left)
 	{
-		m_vRotation.y -= m_TurnSpeed;
+		m_vRotation.y -= tunign.turretTurnSpeed;
 	}
 
 	// 右方向に入力検知
 	if (m_Input->GetArrowKeyDirection() == CInputManager::Direction::Right ||
 		m_Input->GetRightStickDirection() == CInputManager::Direction::Right)
 	{
-		m_vRotation.y += m_TurnSpeed;
+		m_vRotation.y += tunign.turretTurnSpeed;
 	}
 
 	// クールタイマー更新
