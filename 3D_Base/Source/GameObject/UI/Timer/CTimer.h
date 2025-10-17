@@ -29,10 +29,10 @@ public:
 
 
 	//タイマーの開始.
-	void StartTimer(float time);
+	void StartTimer(int time);
 
 	//残り時間の取得.
-	float GetRemainingTime() const;
+	int GetRemainingTime() const;
 
 	//タイマーが終了したかどうかを返す.
 	bool IsFinished() const;
@@ -41,7 +41,7 @@ public:
 	void HitTimer();
 
 	//当たってからの経過時間(無敵時間ととらえてもいい).
-	float GetElapsed() const;
+	int GetElapsed() const;
 
 public:
 	//ゲーム内の時間を保持する変数.
@@ -64,5 +64,5 @@ public:
 	std::shared_ptr<CDebugText>				m_pDbgText;
 
 	//::duration：時間の長さを表すための型.
-	std::chrono::duration<float>			m_TotalTime;	//タイマーの最大時間を記録(ゲーム時間)する.
+	std::chrono::duration<int>				m_TotalTime;	//タイマーの最大時間を記録(ゲーム時間)する.
 };

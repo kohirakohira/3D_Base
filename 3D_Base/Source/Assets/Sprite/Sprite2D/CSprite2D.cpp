@@ -43,7 +43,8 @@ CSprite2D::~CSprite2D()
 //	ID3D11DeviceContext* pContext11 外部で作成して持ってくる。
 HRESULT CSprite2D::Init(
 	LPCTSTR lpFileName,
-	SPRITE_STATE& pSs)
+	SPRITE_STATE& pSs, 
+	bool flg)
 {
 	m_pDevice11 = CDirectX11::GetInstance().GetDevice();		//実態は別のところにある.他とも共有している.
 	m_pContext11 = CDirectX11::GetInstance().GetContext();	//実態は別のところにある.他とも共有している.
@@ -56,7 +57,7 @@ HRESULT CSprite2D::Init(
 		return E_FAIL;
 	}
 	//板ポリゴン作成.
-	if( FAILED( CreateModel() ))
+	if (FAILED(CreateModel(flg)))
 	{
 		return E_FAIL;
 	}
@@ -232,10 +233,19 @@ HRESULT CSprite2D::CreateShader()
 
 
 //モデル作成.
-HRESULT CSprite2D::CreateModel()
+HRESULT CSprite2D::CreateModel(bool flg)
 {
-	float w = m_SpriteState.Disp.w;
-	float h = m_SpriteState.Disp.h;
+	//中心を設定する.
+	if (flg == false)
+	{
+		m_Center.w = m_SpriteState.Disp.w;
+		m_Center.h = m_SpriteState.Disp.h;
+	}
+	else
+	{
+		m_Center.w = m_SpriteState.Disp.w / 2;
+		m_Center.h = m_SpriteState.Disp.h / 2;
+	}
 
 	float u = m_SpriteState.Stride.w / m_SpriteState.Base.w;	//1マスあたりの幅
 	float v = m_SpriteState.Stride.h / m_SpriteState.Base.h;	//1マスあたりの高さ
@@ -246,17 +256,27 @@ HRESULT CSprite2D::CreateModel()
 	m_PatternMax.y =
 		static_cast<SHORT>(m_SpriteState.Base.h / m_SpriteState.Stride.h);
 
-	//板ポリ(四角形)の頂点を作成.
-	VERTEX vertices[]=
+	//回転を中心にするか否かで頂点座標を変える.
+	if (flg == false)
 	{
-		//頂点座標(x,y,z)				 UV座標(u,v)
-		D3DXVECTOR3( 0.0f,    h, 0.0f ), D3DXVECTOR2( 0.0f,    v ),	//頂点１(左下).
-		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ),	//頂点２(左上).
-		D3DXVECTOR3(    w,    h, 0.0f ), D3DXVECTOR2(    u,    v ),	//頂点３(右下).
-		D3DXVECTOR3(    w, 0.0f, 0.0f ), D3DXVECTOR2(    u, 0.0f )	//頂点４(右上).
-	};
+		//板ポリ(四角形)の頂点を作成.
+		//												頂点座標(x,y,z)				 UV座標(u,v)
+		m_Center.vertices[0] = { D3DXVECTOR3(0.0f,			m_Center.h, 0.0f),	D3DXVECTOR2(0.0f,   v)		};		//頂点１(左下).
+		m_Center.vertices[1] = { D3DXVECTOR3(0.0f,			0.0f,		0.0f),	D3DXVECTOR2(0.0f,	0.0f)	};		//頂点２(左上).
+		m_Center.vertices[2] = { D3DXVECTOR3(m_Center.w,	m_Center.h, 0.0f),	D3DXVECTOR2(u,		v)		};		//頂点３(右下).
+		m_Center.vertices[3] = { D3DXVECTOR3(m_Center.w,	0.0f,		0.0f),	D3DXVECTOR2(u,		0.0f)	};		//頂点４(右上).
+	}
+	else
+	{
+		//板ポリ(四角形)の頂点を作成.
+		//												頂点座標(x,y,z)				 UV座標(u,v)
+		m_Center.vertices[0] = { D3DXVECTOR3( m_Center.w,  m_Center.h, 0.0f), D3DXVECTOR2(0.0f,  v)		};		//頂点１(左下).
+		m_Center.vertices[1] = { D3DXVECTOR3( m_Center.w, -m_Center.h, 0.0f), D3DXVECTOR2(0.0f,	 0.0f)	};		//頂点２(左上).
+		m_Center.vertices[2] = { D3DXVECTOR3(-m_Center.w,  m_Center.h, 0.0f), D3DXVECTOR2(u,	 v)		};		//頂点３(右下).
+		m_Center.vertices[3] = { D3DXVECTOR3(-m_Center.w, -m_Center.h, 0.0f), D3DXVECTOR2(u,	 0.0f)	};		//頂点４(右上).
+	}
 	//最大要素数を算出する.
-	UINT uVerMax = sizeof( vertices ) / sizeof( vertices[0] );
+	UINT uVerMax = sizeof(m_Center.vertices) / sizeof(m_Center.vertices[0] );
 
 	//バッファ構造体.
 	D3D11_BUFFER_DESC bd;
@@ -269,7 +289,7 @@ HRESULT CSprite2D::CreateModel()
 
 	//サブリソースデータ構造体.
 	D3D11_SUBRESOURCE_DATA InitData;
-	InitData.pSysMem = vertices;	//板ポリの頂点をセット.
+	InitData.pSysMem = m_Center.vertices;	//板ポリの頂点をセット.
 
 	//頂点バッファの作成.
 	if (FAILED(m_pDevice11->CreateBuffer(

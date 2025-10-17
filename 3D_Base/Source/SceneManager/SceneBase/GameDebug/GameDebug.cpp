@@ -233,9 +233,9 @@ HRESULT CGameDebug::LoadData()
 	m_pStaticMeshGround	->Init(_T("Data\\Mesh\\Static\\Ground\\ground.x"));
 
 	//デバッグスプライトの読み込み.
-	m_pSpriteDebugIcon->Init(_T("Data\\Texture\\Image\\InDebug.png"), WH_SIZE);
+	m_pSpriteDebugIcon->Init(_T("Data\\Texture\\Image\\InDebug.png"), WH_SIZE, false);
 	//タイマースプライトの読み込み.
-	m_pSpriteTimer->Init(_T("Data\\Texture\\Image\\Timer.png"), TIMER_SIZE);
+	m_pSpriteTimer->Init(_T("Data\\Texture\\Image\\Timer.png"), TIMER_SIZE, false);
 
 
 	//画像の設定.

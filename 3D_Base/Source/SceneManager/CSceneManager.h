@@ -12,6 +12,8 @@
 							   
 #include "SceneManager//SceneBase//GameDebug//GameDebug.h"		// デバッグ用クラス.
 
+#include "ImGui//CImguiManager.h"
+
 class CSceneManager
 {
 public:
@@ -48,5 +50,8 @@ private:
 	CSceneType					m_CurrentSceneType;
 	//次のシーン.
 	CSceneType					m_NextType;
+
+	////インスタンスの設定.
+	//CImguiManager& m_ImguiManager = CImguiManager::GetInstance();
 
 };
