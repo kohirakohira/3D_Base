@@ -13,25 +13,25 @@
 
 
 CGameMain::CGameMain(HWND hWnd)
-	: m_hWnd									( hWnd )
+	: m_hWnd							( hWnd )
 
 	//画像.
-	, m_pSprite2DTimerFrame			( nullptr )
-	, m_pSprite2DTimer						( nullptr )
-	, m_pSprite2DKillNomber			( nullptr )
-	, m_pSprite2DHitPoint					( nullptr )
+	, m_pSprite2DTimerFrame				( nullptr )
+	, m_pSprite2DTimer					( nullptr )
+	, m_pSprite2DKillNomber				( nullptr )
+	, m_pSprite2DHitPoint				( nullptr )
 	, m_pSprite2DPlayerIcon				()
 
 	//画像の設定.
 	, m_pSpriteTimerFrame				()
-	, m_pSpriteTimer							()
-	, m_pSpritePlayerIcon					()
+	, m_pSpriteTimer					()
+	, m_pSpritePlayerIcon				()
 	, m_pSpriteKillNomber				()
-	, m_pSpriteHitPoint						()
+	, m_pSpriteHitPoint					()
 
-	, m_pSpriteGround						( nullptr )
-	, m_pSpritePlayer							( nullptr )
-	, m_pSpriteExplosion					( nullptr )
+	, m_pSpriteGround					( nullptr )
+	, m_pSpritePlayer					( nullptr )
+	, m_pSpriteExplosion				( nullptr )
 
 	, m_pStaticMeshGround				( nullptr )
 	, m_pStaticMeshBSphere				( nullptr )
@@ -42,40 +42,39 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pStaticMesh_TankCannonRed		( nullptr )
 	, m_pStaticMesh_TankBodyYellow		( nullptr )
 	, m_pStaticMesh_TankCannonYellow	( nullptr )
-	, m_pStaticMesh_TankBodyBlue			( nullptr )
+	, m_pStaticMesh_TankBodyBlue		( nullptr )
 	, m_pStaticMesh_TankCannonBlue		( nullptr )
 	, m_pStaticMesh_TankBodyGreen		( nullptr )
-	, m_pStaticMesh_TankCannonGreen	( nullptr )
+	, m_pStaticMesh_TankCannonGreen		( nullptr )
 
 	// 弾
 	, m_pStaticMesh_BulletRed			( nullptr )
 	, m_pStaticMesh_BulletYellow		( nullptr )
 	, m_pStaticMesh_BulletBlue			( nullptr )
-	, m_pStaticMesh_BulletGreen		( nullptr )
+	, m_pStaticMesh_BulletGreen			( nullptr )
 
 	// 壁
 	, m_pStaticMeshWallW				( nullptr )
-	, m_pStaticMeshWallH					( nullptr )
+	, m_pStaticMeshWallH				( nullptr )
 
-	, m_pStcMeshObj							( nullptr )
+	, m_pStcMeshObj						( nullptr )
 
 	, m_pPlayerManager					()
-	, m_pShotManager						()
+	, m_pShotManager					()
 
-	, m_pGround								( nullptr )
+	, m_pGround							( nullptr )
 
-	, m_pDbgText								( nullptr )
+	, m_pDbgText						( nullptr )
 
-	, m_StopTimeCount						( 0 )
-	, m_pCameras								()
+	, m_StopTimeCount					( 0 )
+	, m_pCameras						()
+	, m_Timer							( nullptr )
 
-	, m_Timer										( nullptr )
-
-	, m_pWallTop								( nullptr )
-	, m_pWallBottom							( nullptr )
-	, m_pWallLeft								( nullptr )
-	, m_pWallRight							( nullptr )
-	, m_pItemBoxManager				( nullptr )
+	, m_pWallTop						( nullptr )
+	, m_pWallBottom						( nullptr )
+	, m_pWallLeft						( nullptr )
+	, m_pWallRight						( nullptr )
+	, m_pItemBoxManager					( nullptr )
 {
 	//最初のシーンをメインにする.
 	m_SceneType = CSceneType::Main;

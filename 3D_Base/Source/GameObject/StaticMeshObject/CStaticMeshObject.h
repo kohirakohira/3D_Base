@@ -96,6 +96,5 @@ protected:
 	std::shared_ptr<CStaticMesh>		m_pMesh;
 	std::shared_ptr<CBoundingSphere>	m_pBSphere;
 	std::shared_ptr<CBoundingBox>		m_pBBox;
-
 };
 
