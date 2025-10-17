@@ -62,7 +62,7 @@ void CPlayerManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 {
 	if (index < m_pPlayers.size())
 	{
-		m_pPlayers[index]->SetTankPosition(push);
+		m_pPlayers[index]->SetPushBack(push);
 	}
 }
 
@@ -71,15 +71,17 @@ void CPlayerManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh
 {
 	if (index < m_pPlayers.size())
 	{
-		m_pPlayers[index]->SetBounding(body, cannon);
+		m_pPlayers[index]->CreateBounding(body, cannon);
 	}
 }
-// コライダーの作成
-void CPlayerManager::CreateCollider(int index)
+
+// プレイヤーごとにバウンディング座標を更新
+void CPlayerManager::UpdateBounding(int index)
 {
 	if (index < m_pPlayers.size())
 	{
-		m_pPlayers[index]->CreateCollider();
+		m_pPlayers[index]->UpdateBoundingPos();
+		m_pPlayers[index]->UpdateBoundingRot();
 	}
 }
 

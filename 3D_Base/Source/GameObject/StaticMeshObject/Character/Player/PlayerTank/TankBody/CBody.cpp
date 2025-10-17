@@ -16,8 +16,6 @@ CBody::CBody(int inputID)
 		// 親クラス(CCharacter)の m_Input にも共有
 		CCharacter::m_Input = m_Input;
 	}
-
-	m_pCollider = std::make_shared<CBoxCollider>();
 }
 
 CBody::~CBody()
@@ -35,7 +33,9 @@ void CBody::Update()
 		m_Input->Update();
 	}
 
-	m_pCollider->SetPosition(m_vPosition);
+	// Y軸以外の回転軸の停止
+	m_vRotation.x = 0.f;
+	m_vRotation.z = 0.f;
 
 	KeyInput();		// 入力処理
 	RadioControl();	// 回転・移動処理

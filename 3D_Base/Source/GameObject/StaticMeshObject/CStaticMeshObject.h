@@ -9,8 +9,6 @@
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
 #include "Collision//Shape//Volume//BoundingSphere//CBoundingSphere.h" // バウンディングスフィア
 #include "Collision//Shape//Volume//BoudingBox//CBoundingBox.h"	// バウンディングボックス
-#include "Collision//Collider//SphereCollider//CSphereCollider.h" // スフィアコライダークラス
-#include "Collision//Collider//BoxCollider//CBoxCollider.h" // ボックスコライダークラス
 #include "Collision//Shape//Ray//CRay.h" // レイクラス
 
 /************************************************************
@@ -35,10 +33,15 @@ public:
 	void DetachMesh() {
 		m_pMesh = nullptr;
 	}
-	//SphereColliderを作成する.
-	void CreateSpehreCollider(float radius);
-	//BoxColliderを作成する.
-	void CreateBoxCollider(D3DXVECTOR3 min, D3DXVECTOR3 max);
+
+	// バウンディングスフィア取得
+	std::shared_ptr<CBoundingSphere> GetBSphere() const {
+		return m_pBSphere;
+	}
+	// バウンディングボックス取得
+	std::shared_ptr<CBoundingBox> GetBBox() const {
+		return m_pBBox;
+	}
 
 	//モデルに合わせたバウンディングスフィア作成のラッパー関数
 	HRESULT CreateBSphereForMesh(const CStaticMesh& pMesh) {
@@ -49,10 +52,23 @@ public:
 		return m_pBBox->CreateBoxForMesh(pMesh);
 	}
 
-	std::shared_ptr<CStaticMesh> GetStaticMesh() { return m_pMesh; }
+	//バウンディングボックスをオブジェクト位置に合わせる
+	//※モデルの原点が中心の場合を想定
+	void UpdateBBoxPos() {
+		m_pBBox->SetPosition(m_vPosition);
+	}
+	//回転情報を渡して形を合わせる
+	void UpdateBBoxRot() {
+		m_pBBox->SetRotation(m_vRotation);
+	}
 
-	//当たり判定の型を取得.
-	std::shared_ptr<CCollider> GetCollider() const { return m_pCollider; }
+	//バウンディングスフィアをオブジェクト位置に合わせる
+	//※モデルの原点が中心の場合を想定
+	void UpdateBSpherePos() {
+		m_pBSphere->SetPosition(m_vPosition);
+	}
+
+	std::shared_ptr<CStaticMesh> GetStaticMesh() { return m_pMesh; }
 
 	float GetRadius() { return m_pBSphere->GetRadius(); }
 
@@ -80,8 +96,5 @@ protected:
 	std::shared_ptr<CStaticMesh>		m_pMesh;
 	std::shared_ptr<CBoundingSphere>	m_pBSphere;
 	std::shared_ptr<CBoundingBox>		m_pBBox;
-
-	std::shared_ptr<CCollider>			m_pCollider;
-
 };
 
