@@ -4,6 +4,7 @@ CBoundingBox::CBoundingBox()
 	: m_MinPos(0, 0, 0)
 	, m_MaxPos(0, 0, 0)
 	, m_Position(0, 0, 0)
+	, m_Rotation(0, 0, 0)
 	, m_HalfSize(0.5f, 0.5f, 0.5f)
 {
 	m_Axis[0] = D3DXVECTOR3(1, 0, 0);
@@ -145,3 +146,27 @@ bool CBoundingBox::IsHitBox(const CBoundingBox pBBox)
 	// すべての軸で分離していなければ衝突
 	return true;
 }
+
+void CBoundingBox::SetRotation(const D3DXVECTOR3& Rot)
+{
+	m_Rotation = Rot;
+
+	// --- 回転行列を生成 ---
+	D3DXMATRIX rotMat;
+	D3DXMatrixRotationYawPitchRoll(&rotMat, Rot.y, Rot.x, Rot.z);
+
+	// --- ローカル軸ベクトルを定義 ---
+	D3DXVECTOR3 localX(1, 0, 0);
+	D3DXVECTOR3 localY(0, 1, 0);
+	D3DXVECTOR3 localZ(0, 0, 1);
+
+	// --- 回転を適用 ---
+	D3DXVec3TransformNormal(&m_Axis[0], &localX, &rotMat);
+	D3DXVec3TransformNormal(&m_Axis[1], &localY, &rotMat);
+	D3DXVec3TransformNormal(&m_Axis[2], &localZ, &rotMat);
+
+	// --- 正規化（安全対策） ---
+	for (int i = 0; i < 3; i++)
+		D3DXVec3Normalize(&m_Axis[i], &m_Axis[i]);
+}
+

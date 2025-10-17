@@ -40,16 +40,20 @@ public:
 	void UpdateBounding();
 	void CheckAllCollisions();
 
-	void SetCBody(std::shared_ptr<CBody> pBody) { m_pBody = pBody; }
+	// 外部のクラス情報をセット
+	void SetPlayerManager(std::shared_ptr<CPlayerManager> pPlayerMgr);
+
 private:
 	std::shared_ptr<CStaticMesh>			m_pStaticMeshBSphere;		// バウンディングスフィア(当たり判定用).
-	std::shared_ptr<CStaticMesh>			m_pStaticMeshBBox;			// バウンディングボックス(当たり判定用).
 
-	std::shared_ptr<CBoundingBox>			m_pBBox;
-	std::shared_ptr<CBoundingSphere>		m_pBSphere;
+	std::shared_ptr<CStaticMesh>			m_pCannonBBox;				// バウンディングボックス(砲塔)
+	std::shared_ptr<CStaticMesh>			m_pBodyBBox;				// バウンディングボックス(車体)
 
-	std::shared_ptr<CBody>					m_pBody;
-	std::shared_ptr<CCannon>				m_pCannon;
+	// プレイヤーマネージャー
+	std::shared_ptr<CPlayerManager>			m_pPlayerManager;
+
+		//キー入力.
+	std::shared_ptr<CMultiInputKeyManager>	m_KeyInput;
 
 	std::shared_ptr<CCamera>				m_pCamera;
 };
