@@ -382,6 +382,80 @@ void CComPlayer::Update()
     }
 }
 
+#if 0
+    SanitizeParams();
+
+    if (!m_ComEnabled) {
+        // 人間操作
+        CPlayer::Update();
+        return;
+    }
+
+    // 観測（ターゲット・自分の姿勢）
+    std::shared_ptr<CBody>   body = Body();
+    std::shared_ptr<CCannon> cannon = Cannon();
+    if (!body) { if (cannon) cannon->CCharacter::Update(); return; }
+
+    // ターゲット未設定時はアイドル
+    if (!m_Target) {
+        // 見た目更新だけ
+        body->CCharacter::Update();
+        if (cannon) cannon->CCharacter::Update();
+        TransitionTo(State::Idle);
+        return;
+    }
+
+    // ========== 状態の実行 ==========
+    switch (m_State) {
+    case State::Idle:   StepIdle();   break;
+    case State::Chase:  StepChase();  break;
+    case State::Attack: StepAttack(); break;
+    case State::Evade:  StepEvade();  break;
+    }
+
+    // ========== 遷移判定 ==========
+    const D3DXVECTOR3 selfPos = body->GetPosition();
+    const float selfYaw = body->GetRotation().y;
+    const D3DXVECTOR3 tgtPos = m_Target->GetPosition();
+    const float d = DistXZ(selfPos, tgtPos);
+    const float aimErr = AngleError(selfYaw, selfPos, tgtPos);
+
+    switch (m_State) {
+    case State::Idle:
+        // ターゲットが居るなら追跡へ
+        if (d < SeekRadius) TransitionTo(State::Chase);
+        break;
+
+    case State::Chase:
+        if (d <= TooCloseRange) {
+            TransitionTo(State::Evade);
+        }
+        else if (d <= AttackRange) {
+            // 近づいたら攻撃（砲塔精度はStepAttack側で担保）
+            TransitionTo(State::Attack);
+        }
+        break;
+
+    case State::Attack:
+        if (d > AttackRange * 1.25f) {
+            // 離れたら追跡に戻る
+            TransitionTo(State::Chase);
+        }
+        else if (d < TooCloseRange) {
+            TransitionTo(State::Evade);
+        }
+        break;
+
+    case State::Evade:
+        if (--m_EvadeFrames <= 0) {
+            // 一定時間回避したら追撃再開
+            TransitionTo(State::Chase);
+        }
+        break;
+    }
+
+    ++m_StateFrames;
+#endif
 
 void CComPlayer::StepIdle()
 { 
@@ -429,6 +503,71 @@ void CComPlayer::TryAutoFire()
         m_ShotCD = ShotCooldownFrames;
     }
 }
-#
 
+#if 0
+void CComPlayer::StepIdle()
+{
+    if (auto b = Body())   b->CCharacter::Update();
+    if (auto c = Cannon()) c->CCharacter::Update();
+}
+
+void CComPlayer::StepChase()
+{
+    const D3DXVECTOR3 tp = m_Target->GetPosition();
+    TickChaseTo(tp);   // 本体は追尾
+    TickAimTo(tp);     // 砲塔は常に狙う
+}
+
+void CComPlayer::StepAttack()
+{
+    // 近距離は足を止めて照準／中距離は微前進
+    const D3DXVECTOR3 tp = m_Target->GetPosition();
+    const float d = DistXZ(Body()->GetPosition(), tp);
+
+    if (d > KeepDistance * 0.9f) {
+        // 少しだけ詰める（TickChaseToは距離維持ロジックもある）
+        TickChaseTo(tp);
+    }
+    else {
+        // 位置更新だけ（移動なし）
+        if (auto b = Body())   b->CCharacter::Update();
+    }
+    TickAimTo(tp);
+
+    // 発射判定
+    TryAutoFire();
+}
+
+void CComPlayer::StepEvade()
+{
+    // ターゲットと反対方向に少し下がる（簡易版）
+    std::shared_ptr<CBody> body = Body();
+    if (!body) return;
+
+    const D3DXVECTOR3 selfPos = body->GetPosition();
+    const D3DXVECTOR3 tp = m_Target ? m_Target->GetPosition() : selfPos;
+    D3DXVECTOR3 away = selfPos - tp; away.y = 0.f;
+
+    const float len2 = away.x * away.x + away.z * away.z;
+    if (len2 > 1e-6f) {
+        const float inv = 1.0f / std::sqrtf(len2);
+        away.x *= inv; away.z *= inv;
+
+        // 反対方向へ少し移動
+        const float step = MoveSpeed * 0.6f; // 逃げ速度は好みで
+        D3DXVECTOR3 pos = selfPos + away * step;
+
+        // 逃げ方向を向く
+        float yaw = body->GetRotation().y;
+        const float desired = std::atan2f(away.x, away.z);
+        yaw = Approach(yaw, yaw + Wrap(desired - yaw), TurnStep);
+
+        body->SetPosition(pos);
+        body->SetRotation(D3DXVECTOR3(0, yaw, 0));
+        body->CCharacter::Update();
+    }
+    if (auto c = Cannon()) c->CCharacter::Update();
+}
+
+#endif
 

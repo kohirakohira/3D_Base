@@ -72,7 +72,14 @@ private:
 	//float m_CannonHeight;			//砲塔の高さオフセッ
 	float m_AvoidRadius;			//ほかCOMから離れる半径
 	float m_AvoidWeight;			//分離ベクトルの重み(0で無効.1強め)
-
+	
+#if 0
+	float SeekRadius = 9999.0f; // 視界外でもターゲットはManagerがくれるなら大きめでOK
+	float AttackRange = 12.0f;   // これ以内で攻撃モード
+	float TooCloseRange = 5.0f;    // 近すぎならEvade
+	float FireConeDeg = 10.0f;   // 砲塔の許容誤差
+	int   EvadeDuration = 60;      // 回避するフレーム数
+#endif
 
 private:
 	//COMの状態
@@ -86,7 +93,7 @@ private:
 	};
 	State m_State = State::Idle;
 	int m_StateFrames;			//その状態に入ってからの経過フレーム
-
+//	int   m_EvadeFrames = 0;
 	void ChangeState(State state)
 	{
 		m_State = state;
@@ -105,13 +112,26 @@ private:
 	//COMの弾発射処理
 	void TryAutoFire();
 #if 0
-	// 判定ヘルパ
-	float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b) const;
-	bool  HasTarget() const { return (bool)m_Target; }
-	bool  InSight(const D3DXVECTOR3& self, const D3DXVECTOR3& tgt) const;
-	bool  InAttackCone(float yaw, const D3DXVECTOR3& self, const D3DXVECTOR3& tgt, float epsRad) const;
-	bool  ShouldEvade(float nearest) const; // 近接COMとの距離で判定
-};
+	static inline float Deg2Rad(float d) { return d * (D3DX_PI / 180.f); }
+	static inline float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b) {
+		const float dx = a.x - b.x, dz = a.z - b.z;
+		return std::sqrtf(dx * dx + dz * dz);
+	}
+	static inline float AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos) {
+		D3DXVECTOR3 v = toPos - fromPos; v.y = 0.f;
+		if (v.x == 0 && v.z == 0) return 0.f;
+		const float desired = std::atan2f(v.x, v.z);
+		const float err = Wrap(desired - fromYaw);
+		return std::fabs(err);
+	}
+
+	void TransitionTo(State s) {
+		if (m_State == s) return;
+		m_State = s;
+		m_StateFrames = 0;
+		if (s == State::Evade) m_EvadeFrames = EvadeDuration;
+	}
+
 #endif
 };
 
