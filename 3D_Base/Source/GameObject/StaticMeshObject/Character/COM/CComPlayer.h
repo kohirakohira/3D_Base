@@ -78,12 +78,11 @@ private:
 	//COMの状態
 	enum class State
 	{
-		Idle,
-		Seek,
-		Chase,
-		Attac,
-		Evade,
-		Search,
+		Idle,	//待機
+		Seek,	//探索
+		Chase,	//追跡
+		Attac,	//攻撃
+		Evade,	//回避,離脱
 	};
 	State m_State = State::Idle;
 	int m_StateFrames;			//その状態に入ってからの経過フレーム
@@ -95,14 +94,16 @@ private:
 	}
 
 	//フレームごとのステート処理
-#if 0
+#if 1
 	void StepIdle();
 	void StepSeek();
 	void StepChase();
 	void StepAttack();
 	void StepEvade();
-	void StepSearch(float yaw, const D3DXVECTOR3& targetPos);
 #endif
+
+	//COMの弾発射処理
+	void TryAutoFire();
 #if 0
 	// 判定ヘルパ
 	float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b) const;

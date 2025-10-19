@@ -20,7 +20,8 @@ public:
 
 		SE_Click,		//決定.
 		SE_Shot,		//発射.
-		SE_Explosion,	//爆発.
+		SE_Damage,		//ダメージ.
+		SE_Explosion,	//爆発
 		SE_Clear,		//クリア.
 
 		//音が増えたら「ここ」に追加してください.
