@@ -816,52 +816,29 @@ void CGameMain::WalltoPlayer()
 	{
 		// i 番のプレイヤーを取得
 		auto player = m_pPlayerManager->GetControlPlayer(i);
-		auto CollCannon = player->GetCannon()->GetCollider();
-		auto CollBody = player->GetBody()->GetCollider();
+		auto Coll = player->GetBody()->GetCollider();
 
 		// 押し返すための変数
 		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
 
-		// 砲塔が壁に接触したとき
-		if (CollCannon && m_pWallTop->GetCollider() &&
-			CollCannon->CheckCollision(*m_pWallTop->GetCollider()))
-		{
-			push.z -= 0.1f;
-		}
-		if (CollCannon && m_pWallBottom->GetCollider() &&
-			CollCannon->CheckCollision(*m_pWallBottom->GetCollider()))
-		{
-			push.z += 0.1f;
-		}
-		if (CollCannon && m_pWallLeft->GetCollider() &&
-			CollCannon->CheckCollision(*m_pWallLeft->GetCollider()))
-		{
-			push.x += 0.1f;
-		}
-		if (CollCannon && m_pWallRight->GetCollider() &&
-			CollCannon->CheckCollision(*m_pWallRight->GetCollider()))
-		{
-			push.x -= 0.1f;
-		}
-
 		// 車体が壁と接触したとき
-		if (CollBody && m_pWallTop->GetCollider() &&
-			CollBody->CheckCollision(*m_pWallTop->GetCollider()))
+		if (Coll && m_pWallTop->GetCollider() &&
+			Coll->CheckCollision(*m_pWallTop->GetCollider()))
 		{
 			push.z -= 0.1f;
 		}
-		if (CollBody && m_pWallBottom->GetCollider() &&
-			CollBody->CheckCollision(*m_pWallBottom->GetCollider()))
+		if (Coll && m_pWallBottom->GetCollider() &&
+			Coll->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
 			push.z += 0.1f;
 		}
-		if (CollBody && m_pWallLeft->GetCollider() &&
-			CollBody->CheckCollision(*m_pWallLeft->GetCollider()))
+		if (Coll && m_pWallLeft->GetCollider() &&
+			Coll->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
 			push.x += 0.1f;
 		}
-		if (CollBody && m_pWallRight->GetCollider() &&
-			CollBody->CheckCollision(*m_pWallRight->GetCollider()))
+		if (Coll && m_pWallRight->GetCollider() &&
+			Coll->CheckCollision(*m_pWallRight->GetCollider()))
 		{
 			push.x -= 0.1f;
 		}
@@ -874,7 +851,6 @@ void CGameMain::WalltoPlayer()
 		}
 
 		// 壁に当たった時に押し返す
-		player->GetCannon()->PushBack(push);
 		player->GetBody()->PushBack(push);
 	}
 }
@@ -883,8 +859,44 @@ void CGameMain::PlayertoPlayer()
 {
 }
 
+// アイテムボックスの当たり判定
 void CGameMain::PlayertoItemBox()
 {
+
+	//for (int i = 0; i < PLAYER_MAX; i++)
+	//{
+	//	// i 番のプレイヤーを取得
+	//	auto player = m_pPlayerManager->GetControlPlayer(i);
+	//	auto Coll = player->GetBody()->GetCollider();
+
+	//	auto Item = m_pItemBoxManager->GetItem();
+	//	auto ItemColl = Item->
+
+	//	// 押し返すための変数
+	//	D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
+
+	//	// 車体が壁と接触したとき
+	//	if (Coll && m_pWallTop->GetCollider() &&
+	//		Coll->CheckCollision(*m_pWallTop->GetCollider()))
+	//	{
+	//		push.z -= 0.1f;
+	//	}
+	//	if (Coll && m_pWallBottom->GetCollider() &&
+	//		Coll->CheckCollision(*m_pWallBottom->GetCollider()))
+	//	{
+	//		push.z += 0.1f;
+	//	}
+	//	if (Coll && m_pWallLeft->GetCollider() &&
+	//		Coll->CheckCollision(*m_pWallLeft->GetCollider()))
+	//	{
+	//		push.x += 0.1f;
+	//	}
+	//	if (Coll && m_pWallRight->GetCollider() &&
+	//		Coll->CheckCollision(*m_pWallRight->GetCollider()))
+	//	{
+	//		push.x -= 0.1f;
+	//	}
+	//}
 }
 
 //画面をグリッドに分割したとき、idx番目のマスに対応する.
