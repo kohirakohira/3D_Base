@@ -705,8 +705,6 @@ HRESULT CGameMain::LoadData()
 	m_pWallLeft->AttachMesh(m_pStaticMeshWallH);
 	m_pWallRight->AttachMesh(m_pStaticMeshWallH);
 
-	////バウンディングスフィアの作成..
-	//m_pPlayer->CreateBSphareForMesh(*m_pStaticMeshBSphere);.
 	CreateBounding();
 
 	return S_OK;
@@ -779,6 +777,11 @@ void CGameMain::CreateBounding()
 	m_pItemBoxManager->CreateBounding(m_pStaticMeshItemBox);
 	//当たり判定設定.
 	m_pItemBoxManager->CreateCollider();	
+
+	// 弾の当たり判定生成
+	m_pShotManager->CreateBounding(m_pStaticMesh_BulletRed);
+	// 当たり判定設定
+	m_pShotManager->CreateCollider();
 }
 
 void CGameMain::Collision()
@@ -847,6 +850,34 @@ void CGameMain::WalltoPlayer()
 
 void CGameMain::WalltoShot()
 {
+	for (int i = 0; i < ShotMax; i++)
+	{
+		// ショットのコライダー取得
+		auto Shots = m_pShotManager->GetShot();
+		auto ShotsColl = Shots[i]->GetCollider();
+
+		// 壁が弾と接触したとき
+		if (ShotsColl && m_pWallTop->GetCollider() &&
+			ShotsColl->CheckCollision(*m_pWallTop->GetCollider()))
+		{
+			Shots[i]->HitShot();
+		}
+		if (ShotsColl && m_pWallBottom->GetCollider() &&
+			ShotsColl->CheckCollision(*m_pWallBottom->GetCollider()))
+		{
+			Shots[i]->HitShot();
+		}
+		if (ShotsColl && m_pWallLeft->GetCollider() &&
+			ShotsColl->CheckCollision(*m_pWallLeft->GetCollider()))
+		{
+			Shots[i]->HitShot();
+		}
+		if (ShotsColl && m_pWallRight->GetCollider() &&
+			ShotsColl->CheckCollision(*m_pWallRight->GetCollider()))
+		{
+			Shots[i]->HitShot();
+		}
+	}
 }
 
 void CGameMain::PlayertoPlayer()

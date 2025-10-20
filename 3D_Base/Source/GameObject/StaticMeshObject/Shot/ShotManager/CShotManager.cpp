@@ -55,3 +55,19 @@ void CShotManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA
 		shot->Draw(View, Proj, Light, Camera);
 	}
 }
+
+void CShotManager::CreateBounding(std::shared_ptr<CStaticMesh>& pShot)
+{
+	for (auto& shot : m_pShots)
+	{
+		shot->CreateBSphereForMesh(*pShot);
+	}
+}
+
+void CShotManager::CreateCollider()
+{
+	for (auto& shot : m_pShots)
+	{
+		shot->CreateSpehreCollider(shot->GetRadius());
+	}
+}

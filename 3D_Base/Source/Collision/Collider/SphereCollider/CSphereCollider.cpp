@@ -34,10 +34,10 @@ bool CSphereCollider::CheckCollisionBox(const CBoxCollider& box) const
 	//円と一番近いボックスの位置が入る.
 	D3DXVECTOR3 ClosestPoint;
 
-	//それぞれの位置で円に一番近い地点を入れる.
-	//ClosestPoint.x = std::max(box.GetMinPosition().x, std::min(box.GetMaxPosition().x, m_CenterPos.x));
-	//ClosestPoint.y = std::max(box.GetMinPosition().y, std::min(box.GetMaxPosition().y, m_CenterPos.y));
-	//ClosestPoint.z = std::max(box.GetMinPosition().z, std::min(box.GetMaxPosition().z, m_CenterPos.z));
+	// それぞれの位置で円に一番近い地点を入れる.
+	ClosestPoint.x = std::max(box.GetMinPosition().x, std::min(box.GetMaxPosition().x, m_CenterPos.x));
+	ClosestPoint.y = std::max(box.GetMinPosition().y, std::min(box.GetMaxPosition().y, m_CenterPos.y));
+	ClosestPoint.z = std::max(box.GetMinPosition().z, std::min(box.GetMaxPosition().z, m_CenterPos.z));
 
 	D3DXVECTOR3 vLength = m_CenterPos - ClosestPoint;
 

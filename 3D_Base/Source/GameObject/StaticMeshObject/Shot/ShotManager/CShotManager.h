@@ -24,6 +24,18 @@ public:
 	void Update() override;
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
+	// バウンディングオブジェクトの作成
+	void CreateBounding(std::shared_ptr<CStaticMesh>& pShot);
+
+	// コライダーの作成
+	void CreateCollider();
+
+	//外部のクラスから情報取得.
+	void SetCShot(std::vector<std::shared_ptr<CShot>> pShot) { m_pShots = pShot; }
+
+	// 外部のクラスに情報を渡す
+	std::vector<std::shared_ptr<CShot>>	GetShot() const { return m_pShots; }
+
 private:
 	std::vector<std::shared_ptr<CShot>> m_pShots;
 };

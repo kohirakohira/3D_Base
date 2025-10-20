@@ -17,8 +17,11 @@ public:
 	//’e‚ğÄİ’è
 	void Reload(const D3DXVECTOR3& Pos, float RotY);
 
+	void HitShot();
+
 	void SetDisplay(bool disp) { m_Shot.m_Display = disp; }
 	bool IsActive() const;
+
 protected:
 	//’e\‘¢‘Ì.
 	struct Shot

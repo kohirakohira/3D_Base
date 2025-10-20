@@ -12,6 +12,7 @@ CShot::CShot()
 		0.0f
 	};
 
+	// スフィアコライダーを設定
 	m_pCollider = std::make_shared<CSphereCollider>();
 }
 
@@ -93,6 +94,13 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 		m_Shot.m_MoveDirection = D3DXVECTOR3(0.f, 0.f, 1.f);
 		D3DXVec3TransformCoord(&m_Shot.m_MoveDirection, &m_Shot.m_MoveDirection, &mRotationY);
 	}
+}
+
+void CShot::HitShot()
+{
+	m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
+	m_Shot.m_Display = false;
+	m_Shot.m_DisplayTime = 0;
 }
 
 bool CShot::IsActive() const
