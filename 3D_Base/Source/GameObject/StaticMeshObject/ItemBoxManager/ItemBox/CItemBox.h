@@ -79,4 +79,6 @@ protected:
 	//ƒAƒCƒeƒ€‚Ìí—Ş.
 	CItemType m_ItemType;
 
+private:
+	std::shared_ptr<CCollider>			m_pCollider;
 };
