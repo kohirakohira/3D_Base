@@ -26,7 +26,7 @@ CComPlayer::CComPlayer()
     , m_AvoidWeight         ( 0.8f )
     , m_Registered          ( false )
     , m_StateFrames         ( 0 )
-    , m_SeekRadius          ( 9999.0f ) //現状は確実に追尾してほしいので、大きい値に設定
+    , m_SeekRadius          ( 5.0f ) //現状は確実に追尾してほしいので、大きい値に設定
     , m_AttacRadius         ( 12.0f )
     , m_FireConeDeg         ( 10.0f )
     , m_ClosenessRadius     ( 5.f )     //近くにしすぎない
@@ -335,10 +335,6 @@ void CComPlayer::Update()
             TransitionTo(State::Idle);  //ターゲット未設定時は待機
             return;
         }
-        //std::shared_ptr<CBody>   body = Body();
-        //std::shared_ptr<CCannon> cannon = Cannon();
-        //if (!body) { if (cannon) cannon->CCharacter::Update(); return; }
-
         const D3DXVECTOR3 target = m_pTarget->GetPosition();
         TickChaseTo(target);
         TickAimTo(target);
@@ -351,8 +347,8 @@ void CComPlayer::Update()
     case CComPlayer::State::Idle:
         StepIdle();
         break;
-    case CComPlayer::State::Seek:
-        StepSeek();
+    //case CComPlayer::State::Seek:
+    //    StepSeek();
         break;
     case CComPlayer::State::Chase:
         StepChase();
@@ -412,7 +408,7 @@ void CComPlayer::Update()
             TransitionTo(State::Chase);
         }
         break;
-
+    //Seekは一旦なし
     //case CComPlayer::State::Seek:
     //    break;
     }
@@ -501,12 +497,7 @@ void CComPlayer::TransitionTo(State state)
 //探索処理
 void CComPlayer::StepSeek()
 {
-
-}
-
-//退避処理
-void CComPlayer::StepEvade()
-{
+    //今は範囲内に入ったら追尾するシンプル仕様なので書かない
 }
 
 //待機処理
@@ -553,68 +544,45 @@ void CComPlayer::StepAttack()
     auto body = Body();
     auto cannon = Cannon();
 
-    //ポジション.ベクトル取得
+    //近距離では移動停止
     D3DXVECTOR3 selfPos = body->GetPosition();
-    D3DXVECTOR3 target = m_pTarget->GetPosition();
-    float dist = DistXZ(selfPos, target);
+    D3DXVECTOR3 targetPos = m_pTarget->GetPosition();
+    float dist = DistXZ(selfPos, targetPos);
 
-    //弾発射処理呼び出し
-    TryAutoFire();
-
-    //自動射撃
-    if (auto mgr = m_pShotManager.lock()) { //有効ならshared_ptr取得
-        if (m_ShotState.m_ShotCD > 0) --m_ShotState.m_ShotCD; //クールダウン減少
-
-        D3DXVECTOR3 muzzle; float yaw = 0.f;
-        ComputeMuzzle(muzzle, yaw);
-
-        D3DXVECTOR3 toTarget = m_pTarget->GetPosition() - muzzle;
-        toTarget.y = 0.0f; //水平面のみ
-        const float dist2 = toTarget.x * toTarget.x + toTarget.z * toTarget.z;
-        if (dist2 > 1e-6f) {
-            const float desired = std::atan2f(toTarget.x, toTarget.z);
-            const float err = std::fabs(Wrap(desired - yaw));
-            if (err <= ToRad(m_ShotState.FireAngleEpsDeg) && m_ShotState.m_ShotCD == 0) {
-                mgr->SetReload(m_PlayerID, muzzle, yaw);
-                m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames; //クールダウンリセット
-            }
+    if (dist > m_KeepDistance * 0.9f)
+    {
+        //ちょっとだけ動く
+        TickChaseTo(targetPos);
+    }
+    else
+    {
+        //動かなくても見た目だけ同期
+        if (auto body = Body())
+        {
+            body->CCharacter::Update();
         }
+        TickAimTo(targetPos);   //ターゲットの方向にむく
+        TryAutoFire();          //弾発射処理呼び出し
     }
 }
 
+//退避処理
+void CComPlayer::StepEvade()
+{
+    //bodyがないスキップ
+    std::shared_ptr<CBody> body = Body();
+    if (!body) return;
+
+
+    D3DXVECTOR3 selfPos = m_pTarget->GetPosition();
+    D3DXVECTOR3 targetPos = body->GetPosition();
+    D3DXVECTOR3 vec = selfPos - targetPos;
+    vec.y = 0.f;
+    const float len = vec.x* vec.x + vec.z * vec.z;
+}
 
 #if 0
 }
-
-void CComPlayer::StepChase()
-{
-    const D3DXVECTOR3 tp = m_pTarget->GetPosition();
-    TickChaseTo(tp);   // 本体は追尾
-    TickAimTo(tp);     // 砲塔は常に狙う
-}
-
-void CComPlayer::StepAttack()
-{
-    // 近距離は足を止めて照準／中距離は微前進
-    const D3DXVECTOR3 tp = m_pTarget->GetPosition();
-    const float d = DistXZ(Body()->GetPosition(), tp);
-
-    if (d > KeepDistance * 0.9f) {
-        // 少しだけ詰める（TickChaseToは距離維持ロジックもある）
-        TickChaseTo(tp);
-    }
-    else {
-        // 位置更新だけ（移動なし）
-        if (auto b = Body())   b->CCharacter::Update();
-    }
-    TickAimTo(tp);
-
-    // 発射判定
-    TryAutoFire();
-}
-
-void CComPlayer::StepEvade()
-{
     // ターゲットと反対方向に少し下がる（簡易版）
     std::shared_ptr<CBody> body = Body();
     if (!body) return;
