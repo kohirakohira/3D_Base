@@ -127,8 +127,8 @@ void CGameMain::Update()
 					player->GetCannon()->GetRotation().y);
 			}
 		}
-		m_pShotManager->Update();
 	}
+	m_pShotManager->Update();
 
 	//カメラ追従＆更新.砲塔基準.
 	for (int i = 0; i < PLAYER_MAX; i++)

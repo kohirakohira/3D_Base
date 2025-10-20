@@ -23,12 +23,12 @@ protected:
 	//弾構造体.
 	struct Shot
 	{
-		bool		m_Display			= false;				// 表示切替
-		D3DXVECTOR3 m_MoveDirection;							// 移動方向
-		float		m_MoveSpeed			= 0.5f;					// 移動速度
-		int			m_DisplayTime;								// 約3秒くらい表示する
-		float		m_Gravity			= 9.8f;					// 弾の重力
-		float		m_Velocity			= 0.0f;					// 加速度
+		bool		m_Display;				// 表示切替
+		D3DXVECTOR3 m_MoveDirection;		// 移動方向
+		float		m_MoveSpeed;			// 移動速度
+		int			m_DisplayTime;			// 約3秒くらい表示する
+		float		m_Gravity;				// 弾の重力
+		float		m_Velocity;				// 加速度
 	};
 
 private:
