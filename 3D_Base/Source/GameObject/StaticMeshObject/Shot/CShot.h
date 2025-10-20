@@ -31,7 +31,6 @@ private:
 	float 		m_Gravity = 3.0f;		// ’e‚Ìd—Í
 	float 		m_VelocityY = 1.0f;		// ‰Á‘¬“x
 
-#if 0
 protected:
 	//’e\‘¢‘Ì.
 	struct Shot

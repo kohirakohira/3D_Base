@@ -161,6 +161,12 @@ HRESULT CEffect::Create(
 //データ読み込み
 HRESULT CEffect::LoadData()
 {
+	if (m_pManager == nullptr)
+	{
+		OutputDebugStringA("Error: m_pManager is nullptr in CEffect::LoadData\n");
+		return E_FAIL;
+	}
+
 	struct EffectList
 	{
 		enList listNo;				//enList列挙型を設定
@@ -169,11 +175,10 @@ HRESULT CEffect::LoadData()
 	EffectList EList[] =
 	{
 		//u""は、UTF-16エンコーディングの文字列リテラルで、const char16_t* に代入可能
-		{ enList::Test0,	u"Data\\Effekseer\\Laser01.efk"	},
-		{ enList::Test1,	u"Data\\Effekseer\\Laser01.efk"	},
-		{ enList::Hit,		u"Data\\Effekseer\\fire.efk"	},
-		{ enList::Explosion,u"Data\\Effekseer\\bomu.efk"	},
-		{ enList::Bakuhatu ,u"Data\\Effekseer\\bakuhatu.efk"	},
+		{ enList::Test0,	u"Data\\Effekseer\\Basic\\Laser01.efk"	},
+		{ enList::Test1,	u"Data\\Effekseer\\Basic\\Laser01.efk"	},
+		{ enList::Hit,		u"Data\\Effekseer\\AndrewFM01\\fire.efk"	},
+		{ enList::Bakuhatu ,u"Data\\Effekseer\\Tktk03\\bakuhatu.efk"	},
 	};
 	//配列の最大要素数を算出（配列全体のサイズ／配列１つ分のサイズ）
 	int list_max = sizeof(EList) / sizeof(EList[0]);

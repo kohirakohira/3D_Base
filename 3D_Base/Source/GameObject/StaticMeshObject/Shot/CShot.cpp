@@ -26,7 +26,7 @@ void CShot::Update()
 	//時間定数宣言.
 	const float TIME = 1.0f / FPS;
 
-	if (m_Shot.m_Display == true) 
+	if (m_Shot.m_Display == true)
 	{
 		// 移動方向に移動速度をかけ合わせたものを座標に反映
 		m_vPosition += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed * TIME;
@@ -36,15 +36,14 @@ void CShot::Update()
 		// 加速度にYを与える
 		m_vPosition.y += m_Shot.m_Velocity * TIME;
 
-			m_LifeFramesInit--;
-			if (m_LifeFramesInit < 0) {
-				//見えない所に置いておく
-				m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
-				m_Display = false;
-			}
+		m_LifeFramesInit--;
+		if (m_LifeFramesInit < 0) {
+			//見えない所に置いておく
+			m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
+			m_Display = false;
 		}
 	}
-#endif
+
 }
 
 void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)

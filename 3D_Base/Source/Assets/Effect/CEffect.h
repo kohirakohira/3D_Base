@@ -45,7 +45,7 @@ public:
 		Test0 = 0,	//‰¼‚Åİ’è
 		Test1,		//‰¼‚Åİ’è
 		Hit,		//“–‚½‚Á‚½
-		Explosion,	//”š”­
+		Explosion,//”š”­
 		Bakuhatu,	//”š”­i”í’ej
 
 		Max			//Å‘å”

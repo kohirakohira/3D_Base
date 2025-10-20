@@ -155,38 +155,6 @@ void CGameMain::Update()
 	float angle = time * (PI / 180);
 	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, angle);
 
-	//Effect制御..
-	{
-		//エフェクトのインスタンスごとに必要なハンドル.
-		//※３つ描画して制御するなら３つ必要になる.
-		static bool prevY = false, prevT = false;
-		bool nowY = (GetAsyncKeyState('Y') & 0x8000) != 0;   // 押されている
-		bool nowT = (GetAsyncKeyState('T') & 0x8000) != 0;
-
-		bool trigY = nowY && !prevY;   //立ち上がり自前判定
-		bool trigT = nowT && !prevT;
-
-		prevY = nowY;
-		prevT = nowT;
-
-		static ::EsHandle hEffect[PLAYER_MAX];
-		static bool init = (std::fill_n(hEffect, PLAYER_MAX, -1), true);
-
-
-		for (int i = 0; i < PLAYER_MAX; ++i) {
-			if (trigY) {
-				hEffect[i] = CEffect::GetInstance().Play(CEffect::Bakuhatu , D3DXVECTOR3(0.f, 1.f, 0.f));
-				CEffect::GetInstance().SetScale(hEffect[i], D3DXVECTOR3(10.8f, 10.8f, 10.8f));
-				CEffect::GetInstance().SetRotation(hEffect[i], m_pPlayerManager->GetRotation(i));
-				CEffect::GetInstance().SetLocation(hEffect[i], m_pPlayerManager->GetPosition(i));
-			}
-			if (trigT && hEffect[i] >= 0) {
-				CEffect::GetInstance().Stop(hEffect[i]);
-				hEffect[i] = -1;
-			}
-		}
-	}
-
 	//勝敗条件(確認用)..
 	//勝ち..
 	if (GetKey('K') & 0x8000)
