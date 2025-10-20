@@ -20,7 +20,7 @@ public:
 	void Reload(const D3DXVECTOR3& Pos, float RotY);
 
 	void SetDisplay(bool disp) { m_Shot.m_Display = disp; }
-	bool IsActive() const { return m_Shot.m_Display; }
+	bool IsActive() const;
 
 protected:
 	//íeç\ë¢ëÃ.
