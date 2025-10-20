@@ -16,6 +16,7 @@ public:
 		BGM_Title,	//タイトルステージ.
 		BGM_Clear,	//クリアステージ.
 		BGM_Over,	//ゲームオーバーステージ.
+		BGM_Main,	//ゲームメイン.
 
 		SE_Click,		//決定.
 		SE_Shot,		//発射.

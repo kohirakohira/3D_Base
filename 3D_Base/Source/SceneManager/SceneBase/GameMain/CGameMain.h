@@ -83,11 +83,18 @@ public:
 	//当たり判定.
 	void Collision();
 
-	//壁とプレイヤー.
+	//壁とプレイヤーの当たり判定判別.
 	void WalltoPlayer();
 
-	//アイテムボックスとプレイヤー.
-	void ItemBoxtoPlayer();
+	// プレイヤーとプレイヤー当たり判定判別
+	void PlayertoPlayer();
+
+	// プレイヤーとアイテムボックス
+	void PlayertoItemBox();
+
+	// プレイヤーと弾
+	void PlayertoBullet();
+
 
 	//画面をグリッドに分割したとき、idx番目のマスに対応する.
 	//D3D11_VIEWPORTを作成して返す関数.

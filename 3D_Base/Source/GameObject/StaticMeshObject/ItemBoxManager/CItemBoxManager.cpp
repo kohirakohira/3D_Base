@@ -134,3 +134,4 @@ CItemType CItemBoxManager::ItemRandom()
 
 	return static_cast<CItemType>(dist(gen));
 }
+

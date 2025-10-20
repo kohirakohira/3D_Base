@@ -3,6 +3,7 @@
 //-----外部クラス-----
 #include "Assets//DirectX//DirectX9//CDirectX9.h"	// DirectX9クラス
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス
+#include "ImGui//CImguiManager.h"					//ImGuiマネージャークラス.
 #include "Game//CGame.h" // ゲームクラス
 
 //ウィンドウを画面中央で起動を有効にする.
@@ -11,8 +12,8 @@
 //=================================================
 //	定数.
 //=================================================
-const TCHAR WND_TITLE[] = _T( "初めての3Dシューティング" );
-const TCHAR APP_NAME[]	= _T( "3DSTG" );
+const TCHAR WND_TITLE[] = _T( "IronCannon" );
+const TCHAR APP_NAME[]	= _T( "IronCannon" );
 
 
 /********************************************************************************
@@ -52,8 +53,21 @@ void CMain::Update()
 	//描画処理.
 	m_pGame->Draw();
 	
+	////Imguiフレーム管理.
+	//CImguiManager::GetInstance().SetFrame();
+	//{
+	//	ImGui::Begin("Debug Window");
+	//	ImGui::Text("Test");
+	//	static float testValue = 0.5f;
+	//	CImguiManager::GetInstance().Slider("Value", testValue, 0.0f, 1.0f);
+	//	ImGui::End();
+	//}
+	////imguiの描画.
+	//CImguiManager::GetInstance().Render();
+
 	//画面に描画.
 	CDirectX11::GetInstance().Present();
+
 }
 
 
@@ -65,6 +79,9 @@ HRESULT CMain::Create()
 
 	//DirectX11の生成.
 	CDirectX11::GetInstance().Create(m_hWnd);
+
+	//Imguiの生成.
+	CImguiManager::GetInstance().Init(m_hWnd);
 
 	//ゲームクラスのインスタンス生成.
 	m_pGame = new CGame(m_hWnd );
@@ -88,6 +105,7 @@ void CMain::Release()
 	//リーリス関数.
 	CDirectX11::GetInstance().Release();
 	CDirectX9::GetInstance().Release();
+	//CImguiManager::GetInstance().Release();
 }
 
 
