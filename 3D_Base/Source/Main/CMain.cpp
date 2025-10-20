@@ -53,17 +53,22 @@ void CMain::Update()
 	//•`‰æˆ—.
 	m_pGame->Draw();
 	
-	////ImguiƒtƒŒ[ƒ€ŠÇ—.
-	//CImguiManager::GetInstance().SetFrame();
-	//{
-	//	ImGui::Begin("Debug Window");
-	//	ImGui::Text("Test");
-	//	static float testValue = 0.5f;
-	//	CImguiManager::GetInstance().Slider("Value", testValue, 0.0f, 1.0f);
-	//	ImGui::End();
-	//}
-	////imgui‚Ì•`‰æ.
-	//CImguiManager::GetInstance().Render();
+	//ImguiƒtƒŒ[ƒ€ŠÇ—.
+	CImguiManager::GetInstance().SetFrame();
+	//‚±‚±‚Å•`‰æ.
+	{
+		ImGui::Begin("Debug Window");
+		ImGui::Text("Test");
+		static float testValue = 100.0f;
+		static bool  testBox1 = false;
+		static std::vector<float> fpsData;
+
+		CImguiManager::GetInstance().Graph("CheckBox", fpsData, ImVec2(200, 80));
+		CImguiManager::GetInstance().Slider("Value", testValue, 0.0f, 1.0f);
+		ImGui::End();
+	}
+	//imgui‚Ì•`‰æ.
+	CImguiManager::GetInstance().Render();
 
 	//‰æ–Ê‚É•`‰æ.
 	CDirectX11::GetInstance().Present();
@@ -105,7 +110,7 @@ void CMain::Release()
 	//ƒŠ[ƒŠƒXŠÖ”.
 	CDirectX11::GetInstance().Release();
 	CDirectX9::GetInstance().Release();
-	//CImguiManager::GetInstance().Release();
+	CImguiManager::GetInstance().Release();
 }
 
 
