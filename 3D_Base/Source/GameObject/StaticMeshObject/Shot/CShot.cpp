@@ -1,5 +1,5 @@
 #include "CShot.h"
-#include <Collision/CollisionManager/CCollisionManager.h>
+#include "Collision/CollisionManager/CCollisionManager.h"
 
 
 CShot::CShot()
