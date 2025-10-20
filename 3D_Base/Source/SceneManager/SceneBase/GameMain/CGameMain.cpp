@@ -2,6 +2,8 @@
 #undef min	//マクロ定義無効化.
 #undef max	
 
+static bool prevC = false;
+static bool prevA = false;
 #include "CGameMain.h"
 //-----サウンド-----.
 #include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス.
@@ -127,10 +129,11 @@ void CGameMain::Update()
 					player->GetCannon()->GetRotation().y);
 			}
 		}
-		m_pShotManager->Update();
 	}
+	m_pShotManager->Update();
 
-	//カメラ追従＆更新.砲塔基準.
+
+	//カメラ追従＆更新.砲塔基準
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		if (auto player = m_pPlayerManager->GetControlPlayer(i))
@@ -165,7 +168,7 @@ void CGameMain::Update()
 		for (int i = 0; i < PLAYER_MAX; i++)
 		{
 			if (GetAsyncKeyState('Y') & 0x0001) {
-				hEffect = CEffect::GetInstance().Play(CEffect::Test0, D3DXVECTOR3(0.f, 1.f, 0.f));
+				hEffect = CEffect::GetInstance().Play(CEffect::Bakuhatu, D3DXVECTOR3(0.f, 1.f, 0.f));
 
 				//拡大縮小.
 				CEffect::GetInstance().SetScale(hEffect, D3DXVECTOR3(0.8f, 0.8f, 0.8f));
@@ -204,8 +207,18 @@ void CGameMain::Update()
 
 		m_SceneType = CSceneType::Result;
 	}
-	// Cキー押されたら操作プレイヤー切り替え.
-	if (GetKey('C') & 0x8000)
+
+	const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
+
+	if (nowC && !prevC)
+	{
+		m_pPlayerManager->SwitchActivePlayer();
+	}
+	prevC = nowC;
+
+
+	// Cキー押されたら操作プレイヤー切り替え
+	if (GetAsyncKeyState('C') & 0x0001)
 	{
 		m_pPlayerManager->SwitchActivePlayer();
 	}
@@ -215,6 +228,16 @@ void CGameMain::Update()
 	m_pWallLeft->Update();
 	m_pWallRight->Update();
 
+#if 0
+	//コントローラーAボタンで切り替え
+	const bool nowA = (m_pPad->IsDown(CXInput::KEY::A, true)) != 0;
+
+	if (nowA && !prevA)
+	{
+		m_pPlayerManager->SwitchActivePlayer();
+	}
+	prevA = nowA;
+#endif
 	Collision();
 }
 

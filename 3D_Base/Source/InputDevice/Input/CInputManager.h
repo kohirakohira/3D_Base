@@ -1,6 +1,7 @@
 #pragma once
 //-----ライブラリ-----
 #include <memory>
+#include <array>
 
 //-----外部クラス-----
 #include "InputDevice//Input//XInput//CXInput.h"     // コントローラークラス
@@ -56,8 +57,10 @@ public: // 構造体&列挙型
     };
 
 public:
-    CInputManager(DWORD ID);    // コンストラクタ
-    ~CInputManager();           // デストラクタ
+    CInputManager();                           // デフォルトコンストラクタ
+
+    explicit CInputManager(DWORD ID);          // 内部でnewする
+    ~CInputManager();                          // デストラクタ
 
     // 入力を毎フレーム実行
     void Update();
@@ -94,9 +97,17 @@ public:
     // 右スティックの現在の方向を返す
     const Direction GetRightStickDirection() const { return m_RightStickDir; }
 
-    // 接続状態を確認する
+    //外部にパッド情報を渡す
+    void SetPadRef(CXInput* pad);
+    void ClearPadRef();
+
+    //有効化するかどうかのフラグ
+    void SetUseGamePad(bool on) { m_UseGamePad = on; }
+    void SetUseKeyboard(bool on);
+
+
     void UpdateConnectStatus();
-    bool IsPadConnect(int PadID) const;
+    bool IsPadConnect(int padId) const;
 
 private:
     // XY座標から方向判定する共通関数
@@ -105,12 +116,14 @@ private:
 private:
     DWORD                       m_padId;		// パッド番号(0~3).
 	bool                        m_padConnected[4] = { false, false, false, false }; // コントローラーの接続状態
-
-    std::shared_ptr<CXInput>    m_XInput;       // コントローラー入力クラス
+    
+    CXInput*                    m_XInput;
+    std::unique_ptr<CXInput>    m_OwnPad;
     std::unique_ptr<CKeyInput>  m_KeyInput;     // キー入力クラス
 
     bool                        m_UseKeyInput;  // キーボード操作するか
-
+    bool                        m_UseGamePad;   // コントローラーを操作するか
+    bool                        m_OwnXInput;    
     // スティックのベクトル
     Vector2 m_LeftStickVec = { 0.0f, 0.0f };
     Vector2 m_RightStickVec = { 0.0f, 0.0f };
@@ -118,4 +131,5 @@ private:
     // 入力方向をスティックに設定
     Direction m_LeftStickDir = Direction::None;
     Direction m_RightStickDir = Direction::None;
+
 };

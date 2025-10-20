@@ -12,10 +12,13 @@ CBody::CBody(int inputID)
 
 	// 入力受付インスタンスの生成とセット
 	m_Input = std::make_shared<CInputManager>(inputID);
+
+#if 0
 	if (m_Input) {
 		// 親クラス(CCharacter)の m_Input にも共有
 		CCharacter::m_Input = m_Input;
 	}
+#endif
 
 	m_pCollider = std::make_shared<CBoxCollider>();
 }
@@ -87,6 +90,7 @@ void CBody::RadioControl()
 void CBody::SetInputManager(const std::shared_ptr<CInputManager>& input)
 {
 	m_pInput = input;
+	CCharacter::m_Input = m_Input;	//共有しておく
 }
 
 void CBody::PushBack(const D3DXVECTOR3& push)
@@ -167,7 +171,5 @@ void CBody::KeyInput()
 	{
 		m_vRotation.y += m_TurnSpeed;
 	}
-	//------------------------------------------------
-	//------------------------------------------------
-}
 
+}

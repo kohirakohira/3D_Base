@@ -1,20 +1,30 @@
 #include "CInputManager.h"
 #include <cmath>
 
-CInputManager::CInputManager(DWORD ID)
-    : m_XInput      (nullptr)
-    , m_KeyInput    (nullptr)
-    , m_UseKeyInput (false)
-	, m_padId       (ID)
+CInputManager::CInputManager()
+    : m_XInput      ( nullptr )
+    , m_KeyInput    ( nullptr )
+    , m_UseKeyInput ( false )
+    , m_UseGamePad  ( false )
+    , m_OwnXInput   ( false )
 {
-    m_XInput = std::make_shared<CXInput>(m_padId);
+}
 
-    if (m_padId == 0) // 0番だけキーボード操作をできるようにする
+CInputManager::CInputManager(DWORD ID)
+    : m_XInput      ( nullptr )
+    , m_KeyInput    ( nullptr )
+    , m_UseKeyInput ( false )
+    , m_UseGamePad  ( false )
+    , m_OwnXInput   ( false )
+{
+    m_OwnPad = std::make_unique<CXInput>(ID);
+    m_XInput = m_OwnPad.get();
+    m_UseGamePad = true;
+    if (ID == 0) // 0番だけキーボード操作をできるようにする
     {
         m_UseKeyInput = true;
         m_KeyInput = std::make_unique<CKeyInput>();
     }
-
     // ０番がコントローラーが接続されているか調べる
 	if (m_padId == 0 && m_XInput)
 	{
@@ -30,13 +40,19 @@ CInputManager::~CInputManager()
 {
 }
 
+void CInputManager::SetPadRef(CXInput* pad)
+{
+    m_OwnPad.reset();   //外部参照に切り替えるので自前所有は解除する
+    m_XInput =pad;
+}
+
+void CInputManager::ClearPadRef()
+{
+    m_XInput = nullptr;
+}
+
 void CInputManager::Update()
 {
-
-    // スティックの入力と方向を取得し内部に保持
-    m_LeftStickDir = GetLeftStickDirection(m_LeftStickVec);     // 左スティック
-    m_RightStickDir = GetRightStickDirection(m_RightStickVec);  // 右スティック
-    
     if (m_XInput != nullptr)
     {
         m_XInput->Update();
@@ -46,6 +62,11 @@ void CInputManager::Update()
     {
         m_KeyInput->Update();
     }
+
+    // スティックの入力と方向を取得し内部に保持
+    m_LeftStickDir = GetLeftStickDirection(m_LeftStickVec);     // 左スティック
+    m_RightStickDir = GetRightStickDirection(m_RightStickVec);  // 右スティック
+    
 }
 
 // 左スティックの入力検知
@@ -167,6 +188,7 @@ CInputManager::Direction CInputManager::GetArrowKeyDirection()
 
     return GetDirectionFromXY(x, y, THRESHOLD);
 }
+
 
 // コントローラーの接続状態を更新
 void CInputManager::UpdateConnectStatus()
@@ -299,4 +321,15 @@ bool CInputManager::IsControllerUp(CXInput::KEY key)
     if (!m_XInput)
         return false;
     return m_XInput->IsDown(key);
+}
+
+
+void CInputManager::SetUseKeyboard(bool on)
+{
+    m_UseKeyInput = on;
+    
+    if (on && !m_UseKeyInput)
+    {
+        std::make_unique<CInputManager>();
+    }
 }

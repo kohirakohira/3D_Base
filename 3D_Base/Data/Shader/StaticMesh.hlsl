@@ -18,15 +18,17 @@ cbuffer per_mesh	: register( b0 )
 cbuffer per_material: register( b1 )
 {
 	float4	g_Diffuse;		//ディフューズ色(拡散反射色).
-	float4	g_Ambient;		//アンビエント色(環境色).
+    float4 g_Ambient = float4(0.2,0.2,0.2,0.2); //アンビエント色(環境色).
 	float4	g_Specular;		//スペキュラ色(鏡面反射色).
 };
 //フレーム単位.
 cbuffer per_frame	: register( b2 )
 {
 	float4	g_CameraPos;	//カメラ位置(視点位置).
-	float4	g_vLightDir;	//ライトの方向ベクトル.
+    float4 g_vLightDir = normalize(float4(0.1,0.1,0.1,0.1)); //ライトの方向ベクトル.
+	
 };
+
 
 //頂点シェーダの出力パラメータ.
 struct VS_OUTPUT
@@ -81,7 +83,7 @@ float4 PS_Main( VS_OUTPUT input ) : SV_Target
 {
 	//テクスチャカラー.
 	float4 texColor = g_Texture.Sample( g_SamLinear, input.UV );
-
+	
 	//環境光　※１.
 	float4 ambient = texColor * g_Ambient;
 
@@ -98,7 +100,6 @@ float4 PS_Main( VS_OUTPUT input ) : SV_Target
 	float4 Color = ambient + diffuse + specular;
 	return Color;
 }
-
 //========= テクスチャ無し用 ========================================
 //-------------------------------------------------
 //	頂点(バーテックス)シェーダ.
@@ -130,6 +131,7 @@ VS_OUTPUT VS_NoTex(
 
 	return output;
 }
+
 
 //-------------------------------------------------
 //	ピクセルシェーダ.

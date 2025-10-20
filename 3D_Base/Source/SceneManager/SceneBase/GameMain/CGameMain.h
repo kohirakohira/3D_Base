@@ -45,7 +45,12 @@
 #include "GameObject//UI//CUIObject//CUIObject.h" // UIオブジェクトクラス.
 #include "GameObject//UI//Timer//CTimer.h"		  // タイマークラス.
 
+//コントローラー
+#include "XInput.h"
+
 #include "Global.h"
+
+class CXInput;
 
 class CGameMain
 	:public CSceneBase
@@ -207,4 +212,6 @@ public:
 
 	//これは何用？
 	D3DXVECTOR3 push;
+
+	std::shared_ptr<CXInput> m_pPad;
 };

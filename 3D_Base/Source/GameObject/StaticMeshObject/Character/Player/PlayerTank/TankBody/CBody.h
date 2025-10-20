@@ -48,7 +48,6 @@ public:
 	// バウンディングボックスを作成
 	void CreateBounding(std::shared_ptr<CStaticMesh> pBody);
 
-
 private:
 	// キー入力受付.
 	void KeyInput();
