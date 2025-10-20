@@ -19,14 +19,15 @@ void CShot::Initialize(int id)
 
 void CShot::Update()
 {
+	const float Time = 1.0f / FPS;
 	if (m_Shot.m_Display == true) {
 		// 移動方向に移動速度をかけ合わせたものを座標に反映
-		m_vPosition += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed;
+		m_vPosition += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed * Time;
 
 		// 加速度に重力が与えられていく
-		m_Shot.m_Velocity -= m_Shot.m_Gravity;
+		m_Shot.m_Velocity += m_Shot.m_Gravity * Time;
 		// 加速度にYを与える
-		m_vPosition.y += m_Shot.m_Velocity / 2 * m_Shot.m_Gravity;
+		m_vPosition.y += m_Shot.m_Velocity * Time;
 
 		m_Shot.m_DisplayTime--;
 		if (m_Shot.m_DisplayTime < 0) {
