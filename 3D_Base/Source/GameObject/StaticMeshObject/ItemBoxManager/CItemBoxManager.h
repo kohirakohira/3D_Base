@@ -55,7 +55,7 @@ public:
 	std::vector<std::shared_ptr<CItemBox>>	m_Item;
 	//アイテムメッシュ.
 	std::shared_ptr<CStaticMesh>			m_ItemMesh;
-
+	
 	//アイテムの種類.
 	CItemType m_ItemInfo;
 
