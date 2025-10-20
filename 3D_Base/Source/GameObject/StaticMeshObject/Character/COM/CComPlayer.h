@@ -3,6 +3,11 @@
 
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	//ショットマネージャー
 
+//-----外部のヘッダー-----
+//アイテム
+#include "GameObject/StaticMeshObject/ItemBoxManager/ItemBoxType/ItemType.h"
+#include "GameObject/StaticMeshObject/ItemBoxManager/ItemBox/CItemBox.h"
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 
@@ -34,7 +39,8 @@ public:
 
 
 private:
-	std::shared_ptr<CPlayer> m_pTarget;	//追尾対象
+	std::shared_ptr<CPlayer> m_pTarget;		//追尾対象
+	std::shared_ptr<CItemBox> m_pItemBox;	//アイテムボックスクラス
 	bool m_Registered;	//インスタンス登録管理
 
 	//自動発射用のパラメータ
@@ -93,7 +99,7 @@ private:
 		Chase,		//追跡
 		Attack,		//攻撃
 		Evade,		//離脱
-//		ItemSeek,	//アイテム探索
+		ItemSeek,	//アイテム探索
 	};
 	State m_State = State::Idle;
 	int m_StateFrames;			//その状態に入ってからの経過フレーム
@@ -110,7 +116,7 @@ private:
 	void StepChase();		//追跡処理
 	void StepAttack();		//攻撃処理
 	void StepEvade();		//離脱処理
-//	void StepItemSeek();	//アイテム探索処理
+	void StepItemSeek();	//アイテム探索処理
 
 	//COMの弾発射処理
 	void TryAutoFire();

@@ -27,12 +27,13 @@ CComPlayer::CComPlayer()
     , m_Registered          ( false )
     , m_StateFrames         ( 0 )
     , m_SeekRadius          ( 5.0f ) //現状は確実に追尾してほしいので、大きい値に設定
-    , m_AttacRadius         ( 12.0f )
+    , m_AttacRadius         ( 30.0f )
     , m_FireConeDeg         ( 10.0f )
-    , m_ClosenessRadius     ( 5.f )     //近くにしすぎない
+    , m_ClosenessRadius     ( 1.f )     //近くにしすぎない
     , m_EvadeDuration       ( 60 )
     , m_ComEnabled          ( true )
     , m_EvadeFrames         ( 60 )
+    , m_pItemBox            ( nullptr )
 #if 0
     , m_ShotCD()
     , MuzzleOffsetZ()
@@ -63,6 +64,9 @@ void CComPlayer::Initialize(int id)
         Instances().push_back(this);
         m_Registered = true;
     }
+
+    //アイテムボックスクラス生成
+    m_pItemBox = std::make_shared<CItemBox>();
 }
 
 void CComPlayer::SetTarget(std::shared_ptr<CPlayer> player)
@@ -325,8 +329,10 @@ void CComPlayer::Update()
     if (m_ComEnabled)
     {
         //ターゲット不在でも見た目は更新
-        //存在するのかを確認
-        if (!body) { if (cannon = Cannon()) cannon->CCharacter::Update(); return; }
+        if (!body) {
+            if (cannon = Cannon()) cannon->CCharacter::Update();
+            return;
+        }
 
         // 追尾対象がなければ回頭も移動もせず、そのまま更新.自己ターゲットは無視
         if (!m_pTarget || m_pTarget.get() == this) {
@@ -347,8 +353,8 @@ void CComPlayer::Update()
     case CComPlayer::State::Idle:
         StepIdle();
         break;
-    //case CComPlayer::State::Seek:
-    //    StepSeek();
+    case CComPlayer::State::Seek:
+        StepSeek();
         break;
     case CComPlayer::State::Chase:
         StepChase();
@@ -487,7 +493,6 @@ void CComPlayer::TransitionTo(State state)
     m_State = state;
     m_StateFrames = 0;
 
-    //ステータスが離脱の際の秒数
     if (state == State::Evade)
     {
         m_EvadeFrames = m_EvadeDuration;
@@ -514,7 +519,7 @@ void CComPlayer::StepIdle()
         cannon->CCharacter::Update();
     }
 }
-
+//追尾    
 void CComPlayer::StepChase()
 {
     auto body = Body();
@@ -566,6 +571,7 @@ void CComPlayer::StepAttack()
     }
 }
 
+#if 0
 //退避処理
 void CComPlayer::StepEvade()
 {
@@ -580,10 +586,15 @@ void CComPlayer::StepEvade()
     vec.y = 0.f;
     const float len = vec.x* vec.x + vec.z * vec.z;
 }
+#endif
 
-#if 0
-}
-    // ターゲットと反対方向に少し下がる（簡易版）
+//退避
+void CComPlayer::StepEvade()
+{
+    //パラメータ取得
+    auto tuning = GetTuning();
+
+    // ターゲットと反対方向に少し下がる
     std::shared_ptr<CBody> body = Body();
     if (!body) return;
 
@@ -597,13 +608,13 @@ void CComPlayer::StepEvade()
         away.x *= inv; away.z *= inv;
 
         // 反対方向へ少し移動
-        const float step = MoveSpeed * 0.6f; // 逃げ速度は好みで
+        const float step = tuning.moveSpeed * 0.6f; // 逃げ速度は好みで
         D3DXVECTOR3 pos = selfPos + away * step;
 
         // 逃げ方向を向く
         float yaw = body->GetRotation().y;
         const float desired = std::atan2f(away.x, away.z);
-        yaw = Approach(yaw, yaw + Wrap(desired - yaw), TurnStep);
+        yaw = Approach(yaw, yaw + Wrap(desired - yaw), tuning.turretTurnSpeed);
 
         body->SetPosition(pos);
         body->SetRotation(D3DXVECTOR3(0, yaw, 0));
@@ -612,5 +623,10 @@ void CComPlayer::StepEvade()
     if (auto c = Cannon()) c->CCharacter::Update();
 }
 
-#endif
+//アイテム探索
+void CComPlayer::StepItemSeek()
+{
+
+}
+
 
