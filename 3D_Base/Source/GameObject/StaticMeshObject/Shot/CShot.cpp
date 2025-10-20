@@ -3,8 +3,16 @@
 
 
 CShot::CShot()
-	: m_Shot()
 {
+	//弾情報の初期化.
+	m_Shot = {
+		false,				// 表示切替
+		{0.0f, 0.0f, 0.0f}, // 移動方向
+		5.0f,				// 弾の速度
+		3,					// 表示時間
+		-9.8f,				// 重力
+		0.5f				// 加速度	
+	};
 }
 
 CShot::~CShot()
@@ -13,23 +21,30 @@ CShot::~CShot()
 
 void CShot::Initialize(int id)
 {
-	m_Shot.m_Display = false;
-
 }
 
 void CShot::Update()
 {
-	const float Time = 1.0f / FPS;
-	if (m_Shot.m_Display == true) {
-		// 移動方向に移動速度をかけ合わせたものを座標に反映
-		m_vPosition += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed * Time;
+	//時間定数宣言.
+	const float TIME = 1.0f / FPS;
 
-		// 加速度に重力が与えられていく
-		m_Shot.m_Velocity += m_Shot.m_Gravity * Time;
-		// 加速度にYを与える
-		m_vPosition.y += m_Shot.m_Velocity * Time;
-
+	if (m_Shot.m_Display == true)
+	{
+		// 表示時間を減少させる
 		m_Shot.m_DisplayTime--;
+
+		// 移動方向に移動速度をかけ合わせたものを座標に反映
+		m_vPosition += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed * TIME;
+
+		// 表示時間が2秒以下になったら重力を掛ける
+		if (m_Shot.m_DisplayTime <= 2)
+		{
+			// 加速度に重力が与えられていく
+			m_Shot.m_Velocity += m_Shot.m_Gravity * TIME;
+			// 加速度にYを与える
+			m_vPosition.y += m_Shot.m_Velocity * TIME;
+		}
+
 		if (m_Shot.m_DisplayTime < 0) {
 			//見えない所に置いておく
 			m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
@@ -40,7 +55,7 @@ void CShot::Update()
 
 void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	if (m_Shot.m_Display == true) 
+	if (m_Shot.m_Display == true)
 	{
 		CStaticMeshObject::Draw(View, Proj, Light, Camera);
 	}
@@ -52,28 +67,27 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 	{
 		if (m_Shot.m_Display == true) return;
 
-		m_vPosition = Pos;
-		m_vRotation.y = RotY;		// 弾の向き(見た目)も変える
+		// 回転に応じた発射位置を計算
+		D3DXVECTOR3 offset = { 0.f, 0.3f, 1.5f }; // 砲塔の先端に合わせる
+		D3DXMATRIX mRotationY;
+		D3DXMatrixRotationY(&mRotationY, RotY);
+
+		D3DXVECTOR3 rotatedOffset;
+		D3DXVec3TransformCoord(&rotatedOffset, &offset, &mRotationY);
+
+		// プレイヤー位置に加算して弾の位置決定
+		m_vPosition = Pos + rotatedOffset;
+
+		// 弾の回転（見た目用）
+		m_vRotation.y = RotY;
+
 		m_Shot.m_Display = true;
-		m_Shot.m_Velocity = 0.f;
+		m_Shot.m_Velocity = 0.5f;
 		m_Shot.m_DisplayTime = FPS * 3;
 
-
-		// Z軸ベクトル
+		// 弾の進行方向（Z軸を回転させる）
 		m_Shot.m_MoveDirection = D3DXVECTOR3(0.f, 0.f, 1.f);
-
-		// Y軸回転行列
-		D3DXMATRIX mRotationY;
-		// Y軸回転行列を作成
-		D3DXMatrixRotationY(
-			&mRotationY,	// (out)行列
-			m_vRotation.y);	// プレイヤーのY方向の回転値
-
-		// Y軸回転行列を使ってZ軸ベクトルを座標変換する
-		D3DXVec3TransformCoord(
-			&m_Shot.m_MoveDirection,	// (out)Z軸ベクトル
-			&m_Shot.m_MoveDirection,	// (in) Z軸ベクトル
-			&mRotationY);		// Y軸回転行列
+		D3DXVec3TransformCoord(&m_Shot.m_MoveDirection, &m_Shot.m_MoveDirection, &mRotationY);
 	}
 }
 
