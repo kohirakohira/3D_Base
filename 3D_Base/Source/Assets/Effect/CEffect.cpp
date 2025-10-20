@@ -169,9 +169,9 @@ HRESULT CEffect::LoadData()
 	EffectList EList[] =
 	{
 		//u""は、UTF-16エンコーディングの文字列リテラルで、const char16_t* に代入可能
-		{ enList::Test0,	u"Data\\Effekseer\\Laser01.efk"	},
-		{ enList::Test1,	u"Data\\Effekseer\\Laser01.efk"	},
-		{ enList::Test2,	u"Data\\Effekseer\\Laser01.efk"	},
+		{ enList::Test0,	u"Data\\Effekseer\\Basic\\Laser01.efk"	},
+		{ enList::Test1,	u"Data\\Effekseer\\Basic\\Laser01.efk"	},
+		{ enList::Test2,	u"Data\\Effekseer\\Basic\\Laser01.efk"	},
 	};
 	//配列の最大要素数を算出（配列全体のサイズ／配列１つ分のサイズ）
 	int list_max = sizeof(EList) / sizeof(EList[0]);

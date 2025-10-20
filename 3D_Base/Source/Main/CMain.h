@@ -1,7 +1,5 @@
 #pragma once
 #include <Windows.h>
-//ImGuiマネージャークラス.
-#include "ImGui//CImguiManager.h"
 
 //クラスの前方宣言.
 class CGame;

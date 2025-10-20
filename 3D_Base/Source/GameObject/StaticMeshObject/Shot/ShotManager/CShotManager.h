@@ -25,5 +25,5 @@ public:
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
 private:
-	std::vector<std::vector<std::shared_ptr<CShot>>> m_pShots;
+	std::vector<std::shared_ptr<CShot>> m_pShots;
 };

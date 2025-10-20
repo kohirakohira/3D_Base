@@ -12,64 +12,46 @@ CShotManager::~CShotManager()
 
 void CShotManager::Initialize(int playerCount)
 {
-	m_pShots.clear();
-	m_pShots.resize(playerCount);
-
-	for (int i = 0; i < playerCount; ++i)
+	for (int i = 0; i < ShotMax; ++i)
 	{
-		for (int j = 0; j < ShotMax; ++j)
-		{
-			auto shot = std::make_shared<CShot>();
-			shot->Initialize(j);
-			m_pShots[i].push_back(shot);
-		}
+		m_pShots.push_back(std::make_shared<CShot>());
 	}
 }
 
 void CShotManager::AttachMeshToPlayerShot(int playerIndex, std::shared_ptr<CStaticMesh> mesh)
 {
-	if (playerIndex < m_pShots.size())
+	//’†g‚ª–³‚©‚Á‚½‚ç•Ô‚·.
+	if (mesh == nullptr)
 	{
-		for (auto& shot : m_pShots[playerIndex])
-		{
-			shot->AttachMesh(mesh);
-		}
+		return;
 	}
+	m_pShots[playerIndex]->AttachMesh(mesh);
 }
 
 void CShotManager::SetReload(int playerIndex, const D3DXVECTOR3& pos, float rotY)
 {
-	if (playerIndex < m_pShots.size())
+	for (auto& shot : m_pShots)
 	{
-		for (auto& shot : m_pShots[playerIndex])
+		if (!shot->IsActive())  // V‚µ‚­‚±‚ÌŠÖ”‚ð CShot ‚É’Ç‰Á‚µ‚Ä‚­‚¾‚³‚¢
 		{
-			if (!shot->IsActive())  // V‚µ‚­‚±‚ÌŠÖ”‚ð CShot ‚É’Ç‰Á‚µ‚Ä‚­‚¾‚³‚¢
-			{
-				shot->Reload(pos, rotY);
-				break;
-			}
+			shot->Reload(pos, rotY);
+			break;
 		}
 	}
 }
 
 void CShotManager::Update()
 {
-	for (auto& playerShots : m_pShots)
+	for (auto& shot : m_pShots)
 	{
-		for (auto& shot : playerShots)
-		{
-			shot->Update();
-		}
+		shot->Update();
 	}
 }
 
 void CShotManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	for (auto& playerShots : m_pShots)
+	for (auto& shot : m_pShots)
 	{
-		for (auto& shot : playerShots)
-		{
-			shot->Draw(View, Proj, Light, Camera);
-		}
+		shot->Draw(View, Proj, Light, Camera);
 	}
 }

@@ -26,7 +26,7 @@ void CPlayerManager::Initialize()
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 
-		if (i == 0)
+		if (i < 3)
 		{
 			auto player = std::make_shared<CPlayer>();
 			player->Initialize(i);
