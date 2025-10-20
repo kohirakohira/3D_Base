@@ -215,6 +215,7 @@ void CGameMain::Update()
 	m_pWallLeft->Update();
 	m_pWallRight->Update();
 
+	// 当たり判定
 	Collision();
 }
 
@@ -810,27 +811,18 @@ void CGameMain::Collision()
 
 }
 
-//壁とプレイヤーの当たり判定.
-//============================================================
-// 
-// この関数内のコメントを修正してください。
-// 文字化けのせいで何もわからないです。
-// 濵口君、よろしくお願いします。
-// 
-//			by 松岡.
-// 
-//============================================================
 void CGameMain::WalltoPlayer()
 {
-	const float pushStrength = 0.1f; //これは何？
+	// 押し返しの強さ
+	const float pushStrength = 0.1f; 
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		// i �Ԃ̃v���C���[��擾
+		// プレイヤーのコライダー取得
 		auto player = m_pPlayerManager->GetControlPlayer(i);
 		auto Coll = player->GetBody()->GetCollider();
 
-		// �ǂƂ̏Փ˂�`�F�b�N���Ė@���x�N�g�������
+		// 押し返すための変数
 		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
 
 		if (Coll && m_pWallTop->GetCollider() &&
@@ -854,7 +846,7 @@ void CGameMain::WalltoPlayer()
 			push += D3DXVECTOR3(-1.f, 0.f, 0.f);
 		}
 
-		// �����ǂɓ��������ꍇ�͐��K�����ĉ����߂��x�N�g������R��
+		// 押し返しを正規化
 		if (D3DXVec3Length(&push) > 0.f)
 		{
 			D3DXVec3Normalize(&push, &push);
@@ -865,16 +857,6 @@ void CGameMain::WalltoPlayer()
 	}
 }
 
-//アイテムボックスとプレイヤーの当たり判定.
-//============================================================
-// 
-// この関数内のコメントを修正してください。
-// 文字化けのせいで何もわからないです。
-// 濵口君、よろしくお願いします。
-// 
-//			by 松岡.
-// 
-//============================================================
 void CGameMain::ItemBoxtoPlayer()
 {
 	//�A�C�e���{�b�N�X�ƃv���C���[�̓����蔻��.
