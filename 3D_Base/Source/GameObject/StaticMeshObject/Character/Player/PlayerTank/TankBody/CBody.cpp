@@ -7,7 +7,6 @@ CBody::CBody(int inputID)
 	, m_MoveState			( enMoveState::Stop )
 	, m_pInput				( nullptr )
 {
-
 	m_vPosition.y = -0.5f;
 
 	// 入力受付インスタンスの生成とセット
@@ -54,6 +53,7 @@ void CBody::Draw(
 // ラジオ操作
 void CBody::RadioControl()
 {
+	auto& tunign = GetTuning();
 	// Z軸ベクトル(Z+方向への単位ベクトル)
 	// ※大きさ(長さ)が1のベクトルを単位ベクトルという
 	D3DXVECTOR3 vecAxisZ(0.f, 0.f, 1.f);
@@ -75,10 +75,10 @@ void CBody::RadioControl()
 	switch (m_MoveState)
 	{
 	case enMoveState::Forward: 	// 前進
-		m_vPosition += vecAxisZ * m_MoveSpeed;
+		m_vPosition += vecAxisZ * tunign.moveSpeed;
 		break;
 	case enMoveState::Backward: 	// 後退
-		m_vPosition -= vecAxisZ * m_MoveSpeed;
+		m_vPosition -= vecAxisZ * tunign.moveSpeed;
 		break;
 	default:
 		break;
@@ -105,6 +105,7 @@ void CBody::CreateBounding(std::shared_ptr<CStaticMesh> pBody)
 
 void CBody::KeyInput()
 {
+	auto& tunign = GetTuning();
 	// 入力が無ければ処理しない
 	if (!m_Input) return;
 
@@ -123,7 +124,7 @@ void CBody::KeyInput()
 	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::UpLeft ||
 		m_Input->GetLeftStickDirection() == CInputManager::Direction::UpLeft)
 	{
-		m_vRotation.y -= m_TurnSpeed;
+		m_vRotation.y -= tunign.turretTurnSpeed;
 		m_MoveState = enMoveState::Forward;
 	}
 
@@ -131,7 +132,7 @@ void CBody::KeyInput()
 	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::UpRight ||
 		m_Input->GetLeftStickDirection() == CInputManager::Direction::UpRight)
 	{
-		m_vRotation.y += m_TurnSpeed;
+		m_vRotation.y += tunign.turretTurnSpeed;
 		m_MoveState = enMoveState::Forward;
 	}
 
@@ -146,7 +147,7 @@ void CBody::KeyInput()
 	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::DownLeft ||
 		m_Input->GetLeftStickDirection() == CInputManager::Direction::DownLeft)
 	{
-		m_vRotation.y -= m_TurnSpeed;
+		m_vRotation.y -= tunign.turretTurnSpeed;
 		m_MoveState = enMoveState::Backward;
 	}
 
@@ -154,7 +155,7 @@ void CBody::KeyInput()
 	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::DownRight ||
 		m_Input->GetLeftStickDirection() == CInputManager::Direction::DownRight)
 	{
-		m_vRotation.y += m_TurnSpeed;
+		m_vRotation.y += tunign.turretTurnSpeed;
 		m_MoveState = enMoveState::Backward;
 	}
 
@@ -162,14 +163,14 @@ void CBody::KeyInput()
 	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::Left ||
 		m_Input->GetLeftStickDirection() == CInputManager::Direction::Left)
 	{
-		m_vRotation.y -= m_TurnSpeed;
+		m_vRotation.y -= tunign.turretTurnSpeed;
 	}
 
 	// 右方向に入力検知
 	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::Right ||
 		m_Input->GetLeftStickDirection() == CInputManager::Direction::Right)
 	{
-		m_vRotation.y += m_TurnSpeed;
+		m_vRotation.y += tunign.turretTurnSpeed;
 	}
 
 }

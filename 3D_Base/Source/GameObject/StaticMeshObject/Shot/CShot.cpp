@@ -27,7 +27,6 @@ void CShot::Initialize(int id)
 
 void CShot::Update()
 {
-
 	if (!m_Display) return;
 
 	//水平移動

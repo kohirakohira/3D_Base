@@ -108,10 +108,6 @@ void CGameMain::Update()
 	//Iconを回転させる..
 	m_Rot += 0.02f;
 	
-	
-	
-	
-	
 //-----メイン演出用-----..
 
 	//プレイヤー全員更新.
@@ -159,35 +155,37 @@ void CGameMain::Update()
 	float angle = time * (PI / 180);
 	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, angle);
 
-#if 0
 	//Effect制御..
 	{
 		//エフェクトのインスタンスごとに必要なハンドル.
 		//※３つ描画して制御するなら３つ必要になる.
-		static ::EsHandle hEffect = -1;
-		for (int i = 0; i < PLAYER_MAX; i++)
-		{
-			if (GetAsyncKeyState('Y') & 0x0001) {
-				hEffect = CEffect::GetInstance().Play(CEffect::Bakuhatu, D3DXVECTOR3(0.f, 1.f, 0.f));
+		static bool prevY = false, prevT = false;
+		bool nowY = (GetAsyncKeyState('Y') & 0x8000) != 0;   // 押されている
+		bool nowT = (GetAsyncKeyState('T') & 0x8000) != 0;
 
-				//拡大縮小.
-				CEffect::GetInstance().SetScale(hEffect, D3DXVECTOR3(0.8f, 0.8f, 0.8f));
+		bool trigY = nowY && !prevY;   //立ち上がり自前判定
+		bool trigT = nowT && !prevT;
 
-				//回転(Y軸回転).
+		prevY = nowY;
+		prevT = nowT;
 
-				CEffect::GetInstance().SetRotation(hEffect, D3DXVECTOR3(m_pPlayerManager->GetRotation(i)));
+		static ::EsHandle hEffect[PLAYER_MAX];
+		static bool init = (std::fill_n(hEffect, PLAYER_MAX, -1), true);
 
-				//位置を再設定.
-				CEffect::GetInstance().SetLocation(hEffect, D3DXVECTOR3(m_pPlayerManager->GetPosition(i)));
 
+		for (int i = 0; i < PLAYER_MAX; ++i) {
+			if (trigY) {
+				hEffect[i] = CEffect::GetInstance().Play(CEffect::Bakuhatu , D3DXVECTOR3(0.f, 1.f, 0.f));
+				CEffect::GetInstance().SetScale(hEffect[i], D3DXVECTOR3(10.8f, 10.8f, 10.8f));
+				CEffect::GetInstance().SetRotation(hEffect[i], m_pPlayerManager->GetRotation(i));
+				CEffect::GetInstance().SetLocation(hEffect[i], m_pPlayerManager->GetPosition(i));
 			}
-			if (GetAsyncKeyState('T') & 0x0001) {
-				CEffect::GetInstance().Stop(hEffect);
+			if (trigT && hEffect[i] >= 0) {
+				CEffect::GetInstance().Stop(hEffect[i]);
+				hEffect[i] = -1;
 			}
 		}
-
 	}
-#endif
 
 	//勝敗条件(確認用)..
 	//勝ち..
@@ -228,16 +226,6 @@ void CGameMain::Update()
 	m_pWallLeft->Update();
 	m_pWallRight->Update();
 
-#if 0
-	//コントローラーAボタンで切り替え
-	const bool nowA = (m_pPad->IsDown(CXInput::KEY::A, true)) != 0;
-
-	if (nowA && !prevA)
-	{
-		m_pPlayerManager->SwitchActivePlayer();
-	}
-	prevA = nowA;
-#endif
 	Collision();
 }
 

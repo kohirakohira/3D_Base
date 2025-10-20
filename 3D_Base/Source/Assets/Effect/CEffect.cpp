@@ -171,7 +171,7 @@ HRESULT CEffect::LoadData()
 		//u""は、UTF-16エンコーディングの文字列リテラルで、const char16_t* に代入可能
 		{ enList::Test0,	u"Data\\Effekseer\\Laser01.efk"	},
 		{ enList::Test1,	u"Data\\Effekseer\\Laser01.efk"	},
-		{ enList::Test2,	u"Data\\Effekseer\\Laser01.efk"	},
+		{ enList::Hit,		u"Data\\Effekseer\\fire.efk"	},
 		{ enList::Explosion,u"Data\\Effekseer\\bomu.efk"	},
 		{ enList::Bakuhatu ,u"Data\\Effekseer\\bakuhatu.efk"	},
 	};

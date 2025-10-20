@@ -19,17 +19,26 @@ std::vector<CComPlayer*>& CComPlayer::Instances() {
     return registry;
 }
 
-
 CComPlayer::CComPlayer()
-    : MoveSpeed(0.10f)     //見やすい初期値
-    , TurnStep(0.08f)
-    , AimTurnStep(0.12f)
-    , KeepDistance(9.0f)   //0ならベタ詰め
-    , CannonHeight(0.3f)
-    , m_Target(nullptr)
-    , m_AvoidRadius ( 10.0f )
-    , m_AvoidWeight ( 0.8f )
-    , m_Registered ( false )
+    : m_KeepDistance        ( 9.0f )   //0ならベタ詰め
+    , m_pTarget             ( nullptr )
+    , m_AvoidRadius         ( 10.0f )
+    , m_AvoidWeight         ( 0.8f )
+    , m_Registered          ( false )
+    , m_StateFrames         ( 0 )
+    , m_SeekRadius          ( 9999.0f ) //現状は確実に追尾してほしいので、大きい値に設定
+    , m_AttacRadius         ( 12.0f )
+    , m_FireConeDeg         ( 10.0f )
+    , m_ClosenessRadius     ( 5.f )     //近くにしすぎない
+    , m_EvadeDuration       ( 60 )
+    , m_ComEnabled          ( true )
+    , m_EvadeFrames         ( 60 )
+#if 0
+    , m_ShotCD()
+    , MuzzleOffsetZ()
+    , ShotCooldownFrames()
+    , FireAngleEpsDeg()
+#endif
 {
 }
 
@@ -58,11 +67,11 @@ void CComPlayer::Initialize(int id)
 
 void CComPlayer::SetTarget(std::shared_ptr<CPlayer> player)
 {
-    m_Target = player;
+    m_pTarget = player;
 }
 void CComPlayer::ClearTarget()
 {
-    m_Target = nullptr;
+    m_pTarget = nullptr;
 }
 
 D3DXVECTOR3 CComPlayer::GetPosition() const
@@ -80,18 +89,17 @@ D3DXVECTOR3 CComPlayer::GetRotation() const
 //不正値を防ぐ
 void CComPlayer::SanitizeParams()
 {
-#if 0
-    if (MoveSpeed <= 0.0f)      MoveSpeed               = 0.06f;
-    if (TurnStep <= 0.0f)       TurnStep                = 0.08f;
-    if (AimTurnStep <= 0.0f)    AimTurnStep             = 0.12f;
-    if (CannonHeight == 0.0f)   CannonHeight            = 0.3f;
-    if (KeepDistance < 0.0f)    KeepDistance            = 0.0f;
-    if (m_AvoidRadius < 0.0f)   m_AvoidRadius           = 0.0f;
-    if (m_AvoidWeight < 0.0f)   m_AvoidWeight           = 0.0f;
-#endif
+    auto& tuning = GetTuning();
+    if (tuning.moveSpeed <= 0.0f) tuning.moveSpeed;
+    if (tuning.bodyTurnSpeed <= 0.0f) tuning.bodyTurnSpeed;
+    if (tuning.cannonHeight <= 0.0f) tuning.cannonHeight;
+    if (tuning.turretTurnSpeed <= 0.0f) tuning.turretTurnSpeed;
+    if (m_AvoidRadius < 0.0f)       m_AvoidRadius = 0.0f;
+    if (m_AvoidWeight < 0.0f)       m_AvoidWeight = 0.0f;
+
 }
 
-// [-π,π]に正規化
+//[-π,π]に正規化
 float CComPlayer::Wrap(float a)
 {
     while (a > PI())     a -= TWO_PI();
@@ -99,7 +107,7 @@ float CComPlayer::Wrap(float a)
     return a;
 }
 
-// 一方向にstepだけ近づける（過不足なく）
+//一方向にstepだけ近づける
 float CComPlayer::Approach(float cur, float goal, float step)
 {
     const float d = goal - cur;
@@ -119,7 +127,7 @@ void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
 {
     outSep = D3DXVECTOR3(0, 0, 0);
     outNearest = 1e9f;  //大きい値.fをつけてるのはfloat型にするから
-       
+    
     if (m_AvoidRadius <= 0.0f)return;   //回避半径が0以下なら何もしない
 
     const float avoidRadius = m_AvoidRadius;
@@ -208,11 +216,11 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
     }
  
     //前進量の決定
-    float step = MoveSpeed;
+    float step = tuning.moveSpeed;
     if (d2 > 0.0f) {
         const float dist = std::sqrtf(d2);
-        if (KeepDistance > 0.0f) {
-            const float remain = dist - KeepDistance;
+        if (m_KeepDistance > 0.0f) {
+            const float remain = dist - m_KeepDistance;
             if (remain <= 0.0f) {
                 step = 0.0f;    //これ以上は詰めない
             }
@@ -249,20 +257,21 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
 // 砲塔があれば常にターゲットを向く
 void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
 {
+    auto& tuning = GetTuning();
     std::shared_ptr<CCannon> cannon = Cannon();
     const std::shared_ptr<CBody> body = Body();
     if (!cannon) return;
 
     // 砲塔の基準位置
     D3DXVECTOR3 base = body ? body->GetPosition() : cannon->GetPosition();
-    base.y += CannonHeight;
+    base.y += tuning.cannonHeight;
 
     // 目標方位
     const D3DXVECTOR3 to = targetPos - base;
     const float desiredYaw = std::atan2f(to.x, to.z);
 
     float cyaw = cannon->GetRotation().y;
-    cyaw = Approach(cyaw, cyaw + Wrap(desiredYaw - cyaw),AimTurnStep);
+    cyaw = Approach(cyaw, cyaw + Wrap(desiredYaw - cyaw),tuning.turretTurnSpeed);
 
     cannon->SetPosition(base);
     cannon->SetRotation(D3DXVECTOR3(0.0f, cyaw, 0.0f));
@@ -272,6 +281,7 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
 //砲口のワールド座標とヨー角を計算
 void CComPlayer::ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const
 {
+    auto& tunign = GetTuning();
     auto body = Body();
     auto cannon = Cannon();
 
@@ -289,10 +299,10 @@ void CComPlayer::ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const
         yaw = cannon->GetRotation().y;
     }
 
-    base.y += CannonHeight; //砲塔の高さオフセット
+    base.y += tunign.cannonHeight; //砲塔の高さオフセット
     const D3DXVECTOR3 forwared = ForwardFromYaw(yaw);
 
-    outpos = base + forwared * MuzzleOffsetZ;   //砲身先端オフセット
+    outpos = base + forwared * m_ShotState.MuzzleOffsetZ;   //砲身先端オフセット
     outYaw = yaw;
 }
 
@@ -300,68 +310,339 @@ void CComPlayer::Update()
 {
     SanitizeParams();
 
+    //cannon.bodyをPlayerから取得する
+    auto body = Body();
+    auto cannon = Cannon();
+
+    //プレイヤー操作の場合は無視
+    if (!m_ComEnabled)
+    {
+        CPlayer::Update();
+        return;
+    }
+
     //COM無効ならプレイヤー操作
     if (m_ComEnabled)
     {
+        //ターゲット不在でも見た目は更新
+        //存在するのかを確認
+        if (!body) { if (cannon = Cannon()) cannon->CCharacter::Update(); return; }
 
-        // ターゲット不在でも見た目は更新
-        std::shared_ptr<CBody> body = Body();
-        if (!body) { if (auto c = Cannon()) c->CCharacter::Update(); return; }
-
-#if 1
-        // 追尾対象がなければ回頭も移動もせず、そのまま更新
-        if (!m_Target) {
+        // 追尾対象がなければ回頭も移動もせず、そのまま更新.自己ターゲットは無視
+        if (!m_pTarget || m_pTarget.get() == this) {
             body->CCharacter::Update();
-            if (auto c = Cannon()) c->CCharacter::Update();
-            return;
-        }
-#endif
-        // 自己ターゲットは無視
-        if (m_Target.get() == this) {
-            body->CCharacter::Update();
-            if (auto c = Cannon()) c->CCharacter::Update();
-            return;
-        }
-#if 0
-        //ターゲット不在の場合.COM全員が動かなくなるのを防ぐ
-        if (!m_Target)
-        {
-            body->CCharacter::Update(); //見た目更新
             if (auto cannon = Cannon()) cannon->CCharacter::Update();
-            m_vPosition.x += t.moveSpeed;
+            TransitionTo(State::Idle);  //ターゲット未設定時は待機
             return;
         }
-#endif
+        //std::shared_ptr<CBody>   body = Body();
+        //std::shared_ptr<CCannon> cannon = Cannon();
+        //if (!body) { if (cannon) cannon->CCharacter::Update(); return; }
 
-        const D3DXVECTOR3 tp = m_Target->GetPosition();
-        TickChaseTo(tp);
-        TickAimTo(tp);
+        const D3DXVECTOR3 target = m_pTarget->GetPosition();
+        TickChaseTo(target);
+        TickAimTo(target);
         return;
     }
-    else
+
+    //それぞれをフレームごとに実行
+    switch (m_State)
     {
-        CPlayer::Update();
+    case CComPlayer::State::Idle:
+        StepIdle();
+        break;
+    case CComPlayer::State::Seek:
+        StepSeek();
+        break;
+    case CComPlayer::State::Chase:
+        StepChase();
+        break;
+    case CComPlayer::State::Attack:
+        StepAttack();
+        break;
+    case CComPlayer::State::Evade:
+        StepEvade();
+        break;
+    }
+    ++m_StateFrames;
+
+    //状態遷移
+    const D3DXVECTOR3 selfPos = body->GetPosition();        //自分のPosition
+    const float selfYaw = body->GetRotation().y;            //自分ヨー角
+    const D3DXVECTOR3 targetPos = m_pTarget->GetPosition();  //現状はプレイヤーのみターゲット 
+    const float dist = DistXZ(selfPos, targetPos);
+    const float aimError = AngleError(selfYaw, selfPos, targetPos); //角度制限
+
+    switch (m_State)
+    {
+    case CComPlayer::State::Idle:
+        if (dist < m_SeekRadius)
+        {
+            //ターゲットがいる場合は追跡する
+            TransitionTo(State::Chase);
+        }
+        break;
+    case CComPlayer::State::Chase:
+        if (dist < m_ClosenessRadius)
+        {
+            //近くしすぎたらEvadeにして退避を選ぶ.Item追加したらそっちでもあり.
+            TransitionTo(State::Evade);
+        }
+        else if (dist <= m_AttacRadius)
+        {   
+            //近づいたら攻撃する
+            TransitionTo(State::Attack);
+        }
+        break;
+    case CComPlayer::State::Attack:
+        //追跡したら戻る
+        if (dist > m_AttacRadius * 1.25f)
+        {
+            TransitionTo(State::Chase);
+        }
+        else if (dist < m_ClosenessRadius)
+        {
+            TransitionTo(State::Evade);
+        }
+        break;
+    case CComPlayer::State::Evade:
+        if (--m_EvadeFrames <= 0)
+        {
+            //一定時間ごとで追尾
+            TransitionTo(State::Chase);
+        }
+        break;
+
+    //case CComPlayer::State::Seek:
+    //    break;
     }
 
-    //----弾発射処理----//
+}
+
+//COM弾発射処理
+void CComPlayer::TryAutoFire()
+{
+    auto manager = m_pShotManager.lock();
+    if (!manager || !m_pTarget) return;
+
+    if (m_ShotState.m_ShotCD > 0)
+    {
+        --m_ShotState.m_ShotCD;
+        return;
+    }
+
+    D3DXVECTOR3 muzzle;
+    float yaw = 0.f;
+    ComputeMuzzle(muzzle, yaw);
+
+    D3DXVECTOR3 to = m_pTarget->GetPosition() - muzzle;
+    to.y = 0.0f;
+    const float d2 = to.x * to.x + to.z * to.z;
+    if (d2 <= 1e-6f) return;
+
+    const float desired = std::atan2f(to.x, to.z);
+    const float err = std::fabs(Wrap(desired - yaw));
+    if (err <= ToRad(m_ShotState.FireAngleEpsDeg)) {
+        manager->SetReload(m_PlayerID, muzzle, yaw);
+        m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
+    }
+}
+
+
+inline float CComPlayer::DistXZ(const D3DXVECTOR3& targetPos, const D3DXVECTOR3& selfPos)
+{
+    const float dx = targetPos.x - selfPos.x;
+    const float dz = targetPos.z - selfPos.z;
+    return std::sqrtf(dx * dx + dz * dz);
+
+}
+
+inline float CComPlayer::AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos)
+{
+    D3DXVECTOR3 vec = toPos - fromPos;
+    vec.y = 0.f;
+    
+    if (vec.x == 0 && vec.z == 0)
+    {
+        return 0.f;
+    }
+
+    const float desired = std::atan2f(vec.x, vec.z);
+    const float error = Wrap(desired - fromYaw);
+    return std::fabs(error);
+
+#if 0
+    D3DXVECTOR3 v = toPos - fromPos; v.y = 0.f;
+    if (v.x == 0 && v.z == 0) return 0.f;
+    const float desired = std::atan2f(v.x, v.z);
+    const float err = Wrap(desired - fromYaw);
+    return std::fabs(err);
+#endif
+}
+
+
+//ステータスを変更する
+void CComPlayer::TransitionTo(State state)
+{
+    //ステータスが同じであればスキップ
+    if (m_State == state) return;
+
+    //ステータス更新
+    m_State = state;
+    m_StateFrames = 0;
+
+    //ステータスが離脱の際の秒数
+    if (state == State::Evade)
+    {
+        m_EvadeFrames = m_EvadeDuration;
+    }
+}
+
+//探索処理
+void CComPlayer::StepSeek()
+{
+
+}
+
+//退避処理
+void CComPlayer::StepEvade()
+{
+}
+
+//待機処理
+void CComPlayer::StepIdle()
+{
+    //BodyとCannonを取得.見た目だけ同期
+    if (auto body = Body())
+    {
+        body->CCharacter::Update();
+    }
+
+    if (auto cannon = Cannon())
+    {
+        cannon->CCharacter::Update();
+    }
+}
+
+void CComPlayer::StepChase()
+{
+    auto body = Body();
+    auto cannon = Cannon();
+    //プレイヤー位置取得
+    D3DXVECTOR3 target = m_pTarget->GetPosition();
+
+    //ターゲット不在または自分自身の場合
+    if (!m_pTarget || m_pTarget.get() == this)
+    {
+        //ターゲット不在でも見た目だけ同期させておく
+        body->CCharacter::Update();
+        cannon->CCharacter::Update();
+        TransitionTo(State::Idle);  //ターゲットの場合はIdle
+    }
+    else
+
+    {   //ターゲット不在でも自分自身でもない場合
+        TickChaseTo(target);
+        TickAimTo(target);
+    }
+}
+
+//攻撃、基本的には弾発射処理
+void CComPlayer::StepAttack()
+{
+    auto body = Body();
+    auto cannon = Cannon();
+
+    //ポジション.ベクトル取得
+    D3DXVECTOR3 selfPos = body->GetPosition();
+    D3DXVECTOR3 target = m_pTarget->GetPosition();
+    float dist = DistXZ(selfPos, target);
+
+    //弾発射処理呼び出し
+    TryAutoFire();
+
     //自動射撃
     if (auto mgr = m_pShotManager.lock()) { //有効ならshared_ptr取得
-        if (m_ShotCD > 0) --m_ShotCD; //クールダウン減少
+        if (m_ShotState.m_ShotCD > 0) --m_ShotState.m_ShotCD; //クールダウン減少
 
         D3DXVECTOR3 muzzle; float yaw = 0.f;
         ComputeMuzzle(muzzle, yaw);
 
-        D3DXVECTOR3 toTarget = m_Target->GetPosition() - muzzle;
+        D3DXVECTOR3 toTarget = m_pTarget->GetPosition() - muzzle;
         toTarget.y = 0.0f; //水平面のみ
         const float dist2 = toTarget.x * toTarget.x + toTarget.z * toTarget.z;
         if (dist2 > 1e-6f) {
             const float desired = std::atan2f(toTarget.x, toTarget.z);
             const float err = std::fabs(Wrap(desired - yaw));
-            if (err <= ToRad(FireAngleEpsDeg) && m_ShotCD == 0) {
+            if (err <= ToRad(m_ShotState.FireAngleEpsDeg) && m_ShotState.m_ShotCD == 0) {
                 mgr->SetReload(m_PlayerID, muzzle, yaw);
-                m_ShotCD = ShotCooldownFrames; //クールダウンリセット
+                m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames; //クールダウンリセット
             }
         }
     }
-
 }
+
+
+#if 0
+}
+
+void CComPlayer::StepChase()
+{
+    const D3DXVECTOR3 tp = m_pTarget->GetPosition();
+    TickChaseTo(tp);   // 本体は追尾
+    TickAimTo(tp);     // 砲塔は常に狙う
+}
+
+void CComPlayer::StepAttack()
+{
+    // 近距離は足を止めて照準／中距離は微前進
+    const D3DXVECTOR3 tp = m_pTarget->GetPosition();
+    const float d = DistXZ(Body()->GetPosition(), tp);
+
+    if (d > KeepDistance * 0.9f) {
+        // 少しだけ詰める（TickChaseToは距離維持ロジックもある）
+        TickChaseTo(tp);
+    }
+    else {
+        // 位置更新だけ（移動なし）
+        if (auto b = Body())   b->CCharacter::Update();
+    }
+    TickAimTo(tp);
+
+    // 発射判定
+    TryAutoFire();
+}
+
+void CComPlayer::StepEvade()
+{
+    // ターゲットと反対方向に少し下がる（簡易版）
+    std::shared_ptr<CBody> body = Body();
+    if (!body) return;
+
+    const D3DXVECTOR3 selfPos = body->GetPosition();
+    const D3DXVECTOR3 tp = m_pTarget ? m_pTarget->GetPosition() : selfPos;
+    D3DXVECTOR3 away = selfPos - tp; away.y = 0.f;
+
+    const float len2 = away.x * away.x + away.z * away.z;
+    if (len2 > 1e-6f) {
+        const float inv = 1.0f / std::sqrtf(len2);
+        away.x *= inv; away.z *= inv;
+
+        // 反対方向へ少し移動
+        const float step = MoveSpeed * 0.6f; // 逃げ速度は好みで
+        D3DXVECTOR3 pos = selfPos + away * step;
+
+        // 逃げ方向を向く
+        float yaw = body->GetRotation().y;
+        const float desired = std::atan2f(away.x, away.z);
+        yaw = Approach(yaw, yaw + Wrap(desired - yaw), TurnStep);
+
+        body->SetPosition(pos);
+        body->SetRotation(D3DXVECTOR3(0, yaw, 0));
+        body->CCharacter::Update();
+    }
+    if (auto c = Cannon()) c->CCharacter::Update();
+}
+
+#endif
+

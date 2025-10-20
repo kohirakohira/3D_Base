@@ -7,6 +7,7 @@ CInputManager::CInputManager()
     , m_UseKeyInput ( false )
     , m_UseGamePad  ( false )
     , m_OwnXInput   ( false )
+    , m_padId       ()
 {
 }
 
@@ -16,6 +17,7 @@ CInputManager::CInputManager(DWORD ID)
     , m_UseKeyInput ( false )
     , m_UseGamePad  ( false )
     , m_OwnXInput   ( false )
+    , m_padId       ()
 {
     m_OwnPad = std::make_unique<CXInput>(ID);
     m_XInput = m_OwnPad.get();
