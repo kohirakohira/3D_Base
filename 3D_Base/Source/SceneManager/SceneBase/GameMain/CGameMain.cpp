@@ -864,50 +864,39 @@ void CGameMain::WalltoPlayer()
 
 void CGameMain::PlayertoPlayer()
 {
-	// 押し返しの強さ
 	const float pushStrength = 0.1f;
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
-		auto CollA = player->GetBody()->GetCollider();
-		auto CollB = player->GetBody()->GetCollider();
+		// プレイヤーAのコライダー取得
+		auto playerA = m_pPlayerManager->GetControlPlayer(i);
+		auto CollA = playerA->GetBody()->GetCollider();
 
-		// 押し返すための変数
-		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
+		for (int j = 0; j < PLAYER_MAX; j++)
+		{ 
+			// 自分自身との判定をスキップ
+			if (i == j) continue; 
 
-		// 車体が壁と接触したとき
-		if (CollA && CollB &&
-			CollA->CheckCollision(*CollB))
-		{
-			push.z -= 0.1f;
-		}
-		if (CollA && CollB &&
-			CollA->CheckCollision(*CollB))
-		{
-			push.z += 0.1f;
-		}
-		if (CollA && CollB &&
-			CollA->CheckCollision(*CollB))
-		{
-			push.x += 0.1f;
-		}
-		if (CollA && CollB &&
-			CollA->CheckCollision(*CollB))
-		{
-			push.x -= 0.1f;
-		}
+			// プレイヤーBのコライダー取得
+			auto playerB = m_pPlayerManager->GetControlPlayer(j);
+			auto CollB = playerB->GetBody()->GetCollider();
 
-		// 押し返しを正規化
-		if (D3DXVec3Length(&push) > 0.f)
-		{
-			D3DXVec3Normalize(&push, &push);
-			push *= pushStrength;
-		}
+			if (CollA && CollB &&
+				CollA->CheckCollision(*CollB))
+			{
+				// 衝突時の押し返し処理例
+				D3DXVECTOR3 push = playerA->GetBody()->GetPosition() - playerB->GetBody()->GetPosition();
 
-		// 壁に当たった時に押し返す
-		player->GetBody()->PushBack(push);
+				// pushベクトルを正規化して押し返しの強さをかける
+				float length = D3DXVec3Length(&push);
+				if (length > 0.0001f)
+				{
+					push /= length;
+					push *= pushStrength;
+					playerA->GetBody()->PushBack(push);
+				}
+			}
+		}
 	}
 }
 
