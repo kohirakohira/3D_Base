@@ -432,6 +432,7 @@ void CGameMain::Destroy()
 
 void CGameMain::Create()
 {
+	//
 	//Effectクラス.
 	CEffect::GetInstance().Create(
 		CDirectX11::GetInstance().GetDevice(),
