@@ -134,3 +134,9 @@ CItemType CItemBoxManager::ItemRandom()
 
 	return static_cast<CItemType>(dist(gen));
 }
+
+// ŠO•”‚ÌƒNƒ‰ƒX‚Éî•ñ‚ğ“n‚·
+std::vector<std::shared_ptr<CItemBox>> CItemBoxManager::GetItem() const
+{
+	return m_Item;
+}

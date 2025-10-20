@@ -48,8 +48,7 @@ public:
 	void SetCItemBox(std::vector<std::shared_ptr<CItemBox>> pItem) { m_Item = pItem; }
 
 	// 外部のクラスに情報を渡す
-	std::vector<std::shared_ptr<CItemBox>>	GetItem()	const { return m_Item; }
-
+	std::vector<std::shared_ptr<CItemBox>>	GetItem()	const;
 
 
 public:
@@ -57,7 +56,7 @@ public:
 	std::vector<std::shared_ptr<CItemBox>>	m_Item;
 	//アイテムメッシュ.
 	std::shared_ptr<CStaticMesh>			m_ItemMesh;
-
+	
 	//アイテムの種類.
 	CItemType m_ItemInfo;
 
