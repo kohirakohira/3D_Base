@@ -1,6 +1,4 @@
 #include "CShot.h"
-#include "Collision/CollisionManager/CCollisionManager.h"
-
 
 CShot::CShot()
 {
@@ -13,6 +11,8 @@ CShot::CShot()
 		-9.8f,				// 重力
 		0.5f				// 加速度	
 	};
+
+	m_pCollider = std::make_shared<CSphereCollider>();
 }
 
 CShot::~CShot()
@@ -25,6 +25,9 @@ void CShot::Initialize(int id)
 
 void CShot::Update()
 {
+	// コライダーの座標を更新
+	m_pCollider->SetPosition(m_vPosition);
+
 	//時間定数宣言.
 	const float TIME = 1.0f / FPS;
 

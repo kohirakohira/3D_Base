@@ -803,8 +803,11 @@ void CGameMain::CreateBounding()
 
 void CGameMain::Collision()
 {
-	//壁とプレイヤーの当たり判定.
+	// 壁とプレイヤーの当たり判定.
 	WalltoPlayer();
+
+	// 壁と弾の当たり判定
+	WalltoShot();
 
 	// プレイヤーとプレイヤー
 	PlayertoPlayer();
@@ -860,6 +863,10 @@ void CGameMain::WalltoPlayer()
 		player->GetBody()->PushBack(push);
 		player->GetCannon()->PushBack(push);
 	}
+}
+
+void CGameMain::WalltoShot()
+{
 }
 
 void CGameMain::PlayertoPlayer()
@@ -924,7 +931,7 @@ void CGameMain::PlayertoItemBox()
 	}
 }
 
-void CGameMain::PlayertoBullet()
+void CGameMain::PlayertoShot()
 {
 	//for (int i = 0; i < PLAYER_MAX; i++)
 	//{
