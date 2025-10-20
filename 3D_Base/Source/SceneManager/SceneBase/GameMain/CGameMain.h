@@ -78,11 +78,15 @@ public:
 	//当たり判定.
 	void Collision();
 
-	//壁とプレイヤー.
+	//壁とプレイヤーの当たり判定判別.
 	void WalltoPlayer();
 
-	//アイテムボックスとプレイヤー.
-	void ItemBoxtoPlayer();
+	// プレイヤーとプレイヤー当たり判定判別
+	void PlayertoPlayer();
+
+	// プレイヤーとアイテムボックス
+	void PlayertoItemBox();
+
 
 	//画面をグリッドに分割したとき、idx番目のマスに対応する.
 	//D3D11_VIEWPORTを作成して返す関数.
@@ -205,6 +209,4 @@ public:
 	//時計の針.
 	float	time;
 
-	//これは何用？
-	D3DXVECTOR3 push;
 };

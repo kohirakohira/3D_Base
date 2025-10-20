@@ -8,7 +8,7 @@ CGameObject::CGameObject()
 {
 }
 
-// デストラクタ.
+//デストラクタ.
 CGameObject::~CGameObject()
 {
 }
