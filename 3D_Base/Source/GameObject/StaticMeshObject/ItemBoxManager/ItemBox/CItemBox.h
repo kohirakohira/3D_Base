@@ -79,14 +79,4 @@ protected:
 	//アイテムの種類.
 	CItemType m_ItemType;
 
-	//アイテム効果の構造体.
-	struct ItemEffect
-	{
-		bool	m_ShieldFlag = false;		//シールドを張っているかどうか.
-		float	m_Speed;					//プレイヤーの速度変更用.
-		float	m_Power;					//プレイヤーの攻撃変更用.
-		float	m_Blast;					//プレイヤーの爆風増加変更用.
-		bool	m_Reflection = false;		//プレイヤーの反射変更用.
-		float	m_Reload;					//プレイヤーのリロード間隔変更用.
-	}m_Item;
 };
