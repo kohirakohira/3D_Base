@@ -9,9 +9,9 @@ CShot::CShot()
 		false,
 		{0.0f, 0.0f, 0.0f},
 		10.0f,
-		3,
+		0,
 		-9.8f,
-		3.0f
+		0.0f
 	};
 }
 
@@ -33,10 +33,13 @@ void CShot::Update()
 		// 移動方向に移動速度をかけ合わせたものを座標に反映
 		m_vPosition += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed * TIME;
 
-		// 加速度に重力が与えられていく
-		m_Shot.m_Velocity += m_Shot.m_Gravity * TIME;
-		// 加速度にYを与える
-		m_vPosition.y += m_Shot.m_Velocity * TIME;
+		if (m_Shot.m_DisplayTime <= 120)
+		{
+			// 加速度に重力が与えられていく
+			m_Shot.m_Velocity += m_Shot.m_Gravity * TIME;
+			// 加速度にYを与える
+			m_vPosition.y += m_Shot.m_Velocity * TIME;
+		}
 
 		m_Shot.m_DisplayTime--;
 		if (m_Shot.m_DisplayTime < 0) {
@@ -65,7 +68,7 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 		m_vPosition				= { Pos.x, Pos.y + 0.3f, Pos.z + 1.5f };
 		m_vRotation.y			= RotY;		// 弾の向き(見た目)も変える
 		m_Shot.m_Display		= true;
-		m_Shot.m_Velocity		= 3.f;
+		m_Shot.m_Velocity		= 0.f;
 		m_Shot.m_DisplayTime	= FPS * 3;	//三秒描画.
 
 		// Z軸ベクトル
