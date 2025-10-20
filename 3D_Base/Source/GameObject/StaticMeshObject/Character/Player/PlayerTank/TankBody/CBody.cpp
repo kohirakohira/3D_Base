@@ -35,6 +35,7 @@ void CBody::Update()
 		m_Input->Update();
 	}
 
+	// コライダーの座標を更新
 	m_pCollider->SetPosition(m_vPosition);
 
 	KeyInput();		// 入力処理

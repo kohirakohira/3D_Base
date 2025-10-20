@@ -75,17 +75,23 @@ public:
 	//当たり判定の生成.
 	void CreateBounding();
 
-	//当たり判定.
+	// 当たり判定.
 	void Collision();
 
-	//壁とプレイヤーの当たり判定判別.
+	// 壁とプレイヤーの当たり判定判別.
 	void WalltoPlayer();
+
+	// 壁と弾の当たり判定
+	void WalltoShot();
 
 	// プレイヤーとプレイヤー当たり判定判別
 	void PlayertoPlayer();
 
 	// プレイヤーとアイテムボックス
 	void PlayertoItemBox();
+
+	// プレイヤーと弾
+	void PlayertoShot();
 
 
 	//画面をグリッドに分割したとき、idx番目のマスに対応する.
@@ -94,7 +100,6 @@ public:
 
 	//シーンの種類..
 	CSceneType GetSceneType() const override;
-
 
 
 	//ラッピング関数..
@@ -106,9 +111,6 @@ public:
 	void EachSettingKillNumber();
 	//倒した数画像の設定..
 	void EachSettingHitPoint();
-
-
-
 
 public:		
 	//クラス用..

@@ -61,5 +61,4 @@ protected:
 private:
 	std::shared_ptr<CInputManager> m_pInput;
 
-	std::shared_ptr<CCollider>			m_pCollider;
 };
