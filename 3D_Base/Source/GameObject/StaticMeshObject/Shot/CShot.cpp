@@ -19,7 +19,8 @@ void CShot::Initialize(int id)
 
 void CShot::Update()
 {
-	if (m_Shot.m_Display == true) {
+	if (m_Shot.m_Display == true) 
+	{
 		// 移動方向に移動速度をかけ合わせたものを座標に反映
 		m_vPosition += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed;
 
