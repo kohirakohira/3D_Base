@@ -74,7 +74,4 @@ protected:
 		bool	m_Reflection = false;		//プレイヤーの反射変更用.
 		float	m_Reload;					//プレイヤーのリロード間隔変更用.
 	}m_Item;
-
-private:
-	std::shared_ptr<CCollider>			m_pCollider;
 };

@@ -2,10 +2,10 @@
 #include "Collision/CollisionManager/CCollisionManager.h"
 
 CBody::CBody(int inputID)
-	: m_TurnSpeed			( 0.01f )	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
-	, m_MoveSpeed			( 0.1f )
-	, m_MoveState			( enMoveState::Stop )
-	, m_pInput				( nullptr )
+	: m_TurnSpeed(0.01f)	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
+	, m_MoveSpeed(0.1f)
+	, m_MoveState(enMoveState::Stop)
+	, m_pInput(nullptr)
 {
 
 	m_vPosition.y = -0.5f;
@@ -35,6 +35,7 @@ void CBody::Update()
 		m_Input->Update();
 	}
 
+	// コライダーの座標を更新
 	m_pCollider->SetPosition(m_vPosition);
 
 	KeyInput();		// 入力処理
@@ -169,5 +170,6 @@ void CBody::KeyInput()
 	}
 	//------------------------------------------------
 	//------------------------------------------------
+
 }
 

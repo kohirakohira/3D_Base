@@ -18,6 +18,8 @@ CItemBox::~CItemBox()
 
 void CItemBox::Update()
 {
+	// コライダーの座標を更新
+	m_pCollider->SetPosition(m_vPosition);
 	m_pCollider->SetPosition(m_vPosition);
 
 	//アイテムを落下させるための関数.
