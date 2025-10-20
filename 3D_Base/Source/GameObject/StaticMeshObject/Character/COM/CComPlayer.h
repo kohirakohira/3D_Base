@@ -6,6 +6,8 @@
 //-----ライブラリ-----
 #include <d3dx9math.h>
 
+
+
 class CComPlayer
 	: public CPlayer
 {
@@ -30,16 +32,13 @@ public:
 	//プレイヤーマネージャーで使うよう
 	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
 
+
 private:
-	std::shared_ptr<CPlayer> m_Target;	//追尾対象
+	std::shared_ptr<CPlayer> m_pTarget;	//追尾対象
 	bool m_Registered;	//インスタンス登録管理
 
 	//自動発射用のパラメータ
 	std::weak_ptr<CShotManager> m_pShotManager; //弾マネージャー
-	int m_ShotCD;				//クールダウン
-	int	ShotCooldownFrames;		//クールダウン時間(フレーム)
-	float FireAngleEpsDeg;		//この角度以内なら発射
-	float MuzzleOffsetZ;		//砲口のオフセット
 
 
 	//内部処理
@@ -63,33 +62,38 @@ private:
 	//COMインスタンスの静的レジストリ
 	static std::vector<CComPlayer*>& Instances();
 
-	bool m_ComEnabled = true;	//最初はCOM有効
+	//COMの各パラメータ
+	bool	m_ComEnabled;				//最初はCOM有効
+	float	m_KeepDistance;				//この距離を保つ
+	float	m_AvoidRadius;				//ほかCOMから離れる半径
+	float	m_AvoidWeight;				//分離ベクトルの重み(0で無効.1強め)
+	float	m_SeekRadius;				//この範囲ないなら
+	float	m_AttacRadius;				//どの範囲から攻撃体制に入るか
+	float	m_FireConeDeg;				//砲塔の許容誤差
+	float	m_ClosenessRadius;			//近くにしすぎないように一定に保つ半径
+	int		m_EvadeDuration;			//回避するフレーム数
+	int		m_EvadeFrames;
 
-	//float m_MoveSpeed;			//1フレームの前進量
-	//float m_TurnStep;				//1フレームの回頭量
-	//float m_AimTurnStep;			//砲塔回頭の1フレーム量
-	float m_KeepDistance;			//この距離を保つ
-	//float m_CannonHeight;			//砲塔の高さオフセッ
-	float m_AvoidRadius;			//ほかCOMから離れる半径
-	float m_AvoidWeight;			//分離ベクトルの重み(0で無効.1強め)
-	
-#if 0
-	float SeekRadius = 9999.0f; // 視界外でもターゲットはManagerがくれるなら大きめでOK
-	float AttackRange = 12.0f;   // これ以内で攻撃モード
-	float TooCloseRange = 5.0f;    // 近すぎならEvade
-	float FireConeDeg = 10.0f;   // 砲塔の許容誤差
-	int   EvadeDuration = 60;      // 回避するフレーム数
-#endif
 
-private:
+	//COMのショット関連のパラメータ
+	struct ComShotState
+	{
+		int m_ShotCD = 60;					//クールダウン
+		int	ShotCooldownFrames = 60;		//クールダウン時間(フレーム)
+		float FireAngleEpsDeg;				//この角度以内なら発射
+		float MuzzleOffsetZ;				//砲口のオフセット
+	};
+	ComShotState m_ShotState;
+
 	//COMの状態
 	enum class State
 	{
-		Idle,	//待機
-		Seek,	//探索
-		Chase,	//追跡
-		Attac,	//攻撃
-		Evade,	//回避,離脱
+		Idle,		//待機
+		Seek,		//探索
+		Chase,		//追跡
+		Attack,		//攻撃
+		Evade,		//離脱
+//		ItemSeek,	//アイテム探索
 	};
 	State m_State = State::Idle;
 	int m_StateFrames;			//その状態に入ってからの経過フレーム
@@ -101,37 +105,27 @@ private:
 	}
 
 	//フレームごとのステート処理
-#if 1
-	void StepIdle();
-	void StepSeek();
-	void StepChase();
-	void StepAttack();
-	void StepEvade();
-#endif
+	void StepIdle();		//待機処理
+	void StepSeek();		//探索処理
+	void StepChase();		//追跡処理
+	void StepAttack();		//攻撃処理
+	void StepEvade();		//離脱処理
+//	void StepItemSeek();	//アイテム探索処理
 
 	//COMの弾発射処理
 	void TryAutoFire();
-#if 0
-	static inline float Deg2Rad(float d) { return d * (D3DX_PI / 180.f); }
-	static inline float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b) {
-		const float dx = a.x - b.x, dz = a.z - b.z;
-		return std::sqrtf(dx * dx + dz * dz);
-	}
-	static inline float AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos) {
-		D3DXVECTOR3 v = toPos - fromPos; v.y = 0.f;
-		if (v.x == 0 && v.z == 0) return 0.f;
-		const float desired = std::atan2f(v.x, v.z);
-		const float err = Wrap(desired - fromYaw);
-		return std::fabs(err);
-	}
 
-	void TransitionTo(State s) {
-		if (m_State == s) return;
-		m_State = s;
-		m_StateFrames = 0;
-		if (s == State::Evade) m_EvadeFrames = EvadeDuration;
-	}
+	//ToRed使う
+	static inline float Deg2Red(float d) { return d * (D3DX_PI / 180.0f); }
 
-#endif
+	static inline float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b);
+
+	static inline float AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos);
+
+	
+	void TransitionTo(State state);
 };
+
+//一旦退避.初期化は消した
+
 
