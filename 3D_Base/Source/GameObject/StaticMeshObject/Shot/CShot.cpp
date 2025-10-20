@@ -11,15 +11,6 @@ CShot::CShot()
 		-9.8f,
 		0.0f
 	};
-	//弾情報の初期化.
-	m_Shot = {
-		false,				// 表示切替
-		{0.0f, 0.0f, 0.0f}, // 移動方向
-		5.0f,				// 弾の速度
-		3,					// 表示時間
-		-9.8f,				// 重力
-		0.5f				// 加速度	
-	};
 
 	m_pCollider = std::make_shared<CSphereCollider>();
 }
