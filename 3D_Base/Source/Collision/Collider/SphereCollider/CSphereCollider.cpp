@@ -35,9 +35,9 @@ bool CSphereCollider::CheckCollisionBox(const CBoxCollider& box) const
 	D3DXVECTOR3 ClosestPoint;
 
 	//‚»‚ê‚¼‚ê‚ÌˆÊ’u‚Å‰~‚Éˆê”Ô‹ß‚¢’n“_‚ð“ü‚ê‚é.
-	ClosestPoint.x = std::max(box.GetMinPosition().x, std::min(box.GetMaxPosition().x, m_CenterPos.x));
-	ClosestPoint.y = std::max(box.GetMinPosition().y, std::min(box.GetMaxPosition().y, m_CenterPos.y));
-	ClosestPoint.z = std::max(box.GetMinPosition().z, std::min(box.GetMaxPosition().z, m_CenterPos.z));
+	//ClosestPoint.x = std::max(box.GetMinPosition().x, std::min(box.GetMaxPosition().x, m_CenterPos.x));
+	//ClosestPoint.y = std::max(box.GetMinPosition().y, std::min(box.GetMaxPosition().y, m_CenterPos.y));
+	//ClosestPoint.z = std::max(box.GetMinPosition().z, std::min(box.GetMaxPosition().z, m_CenterPos.z));
 
 	D3DXVECTOR3 vLength = m_CenterPos - ClosestPoint;
 

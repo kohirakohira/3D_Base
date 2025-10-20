@@ -87,6 +87,9 @@ public:
 	// プレイヤーとアイテムボックス
 	void PlayertoItemBox();
 
+	// プレイヤーと弾
+	void PlayertoBullet();
+
 
 	//画面をグリッドに分割したとき、idx番目のマスに対応する.
 	//D3D11_VIEWPORTを作成して返す関数.

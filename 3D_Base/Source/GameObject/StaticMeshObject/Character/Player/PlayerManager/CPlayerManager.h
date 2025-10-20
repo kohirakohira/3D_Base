@@ -51,8 +51,6 @@ public:
 	//ロック対象のインデックス指定
 	void SetLockTargetIndex(int index) { m_LockTargetIndex = index; }
 
-
-
 	//↓松岡
 	//子オブジェクトに各BodyとCannonを設定してあげる関数.
 	void SetBodyAndCannon(std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon);
