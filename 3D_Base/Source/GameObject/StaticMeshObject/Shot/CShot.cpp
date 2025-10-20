@@ -39,11 +39,11 @@ void CShot::Update()
 			m_vPosition.y += m_Shot.m_Velocity * TIME;
 		}
 
-		m_LifeFramesInit--;
-		if (m_LifeFramesInit < 0) {
+		m_Shot.m_DisplayTime--;
+		if (m_Shot.m_DisplayTime < 0) {
 			//見えない所に置いておく
 			m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
-			m_Display = false;
+			m_Shot.m_Display = false;
 		}
 	}
 
@@ -51,7 +51,7 @@ void CShot::Update()
 
 void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	if (!m_Display) return;
+	if (!m_Shot.m_Display) return;
 	CStaticMeshObject::Draw(View, Proj, Light, Camera);
 }
 
@@ -62,11 +62,10 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 	m_vRotation.y = RotY;		// 弾の向き(見た目)も変える
 
 	//前方をY回転rotYで回した方向を移動方向にする
-	m_MoveDirection = D3DXVECTOR3(std::sinf(RotY), 0.0f, std::cosf(RotY));	//正規化
-	m_VelocityY = 0.0f;
+	m_Shot.m_MoveDirection = D3DXVECTOR3(std::sinf(RotY), 0.0f, std::cosf(RotY));	//正規化
+	m_Shot.m_Velocity = 0.0f;
 
-	m_LifeFrames = (m_LifeFramesInit > 0) ? m_LifeFramesInit : 120;
-	m_Display = true;
+	m_Shot.m_Display = true;
 
 #if 0
 	for (int i = 0; i < ShotMax; i++)
