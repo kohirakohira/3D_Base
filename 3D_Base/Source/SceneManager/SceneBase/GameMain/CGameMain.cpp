@@ -420,6 +420,8 @@ void CGameMain::Init()
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
+
+	m_pPlayerManager->SetShotManager(m_pShotManager);
 }
 
 void CGameMain::Destroy()

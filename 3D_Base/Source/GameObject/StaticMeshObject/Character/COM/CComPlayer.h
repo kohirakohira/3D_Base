@@ -73,21 +73,22 @@ private:
 	float	m_KeepDistance;				//この距離を保つ
 	float	m_AvoidRadius;				//ほかCOMから離れる半径
 	float	m_AvoidWeight;				//分離ベクトルの重み(0で無効.1強め)
-	float	m_SeekRadius;				//この範囲ないなら
-	float	m_AttacRadius;				//どの範囲から攻撃体制に入るか
+	float	m_SeekRadius;				//視界外でもターゲットはManagerがくれるので大きめ
+	float	m_AttacRadius;				//これ以内で攻撃モード
 	float	m_FireConeDeg;				//砲塔の許容誤差
 	float	m_ClosenessRadius;			//近くにしすぎないように一定に保つ半径
 	int		m_EvadeDuration;			//回避するフレーム数
 	int		m_EvadeFrames;
-
+	D3DXVECTOR3 m_LastSeenPos = D3DXVECTOR3(0, 0, 0);	//最後に見た位置
+	int m_LostSightFrames = 0;
 
 	//COMのショット関連のパラメータ
 	struct ComShotState
 	{
-		int m_ShotCD = 60;					//クールダウン
-		int	ShotCooldownFrames = 60;		//クールダウン時間(フレーム)
-		float FireAngleEpsDeg;				//この角度以内なら発射
-		float MuzzleOffsetZ;				//砲口のオフセット
+		int m_ShotCD = 0;						//クールダウン
+		int	ShotCooldownFrames = 120;			//クールダウン時間(フレーム)
+		float FireAngleEpsDeg = 20;				//この角度以内なら発射
+		float MuzzleOffsetZ = 1;				//砲口のオフセット
 	};
 	ComShotState m_ShotState;
 
@@ -128,10 +129,13 @@ private:
 
 	static inline float AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos);
 
+	//砲塔を車体に追従させる
+	void SyncCannonToBody();
 	
 	void TransitionTo(State state);
+
+	void EvaluateTransitions(float dist);
 };
 
-//一旦退避.初期化は消した
 
 
