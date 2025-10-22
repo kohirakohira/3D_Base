@@ -1,8 +1,7 @@
 #include "CBlastCollision.h"
 
 CBlastCollision::CBlastCollision()
-	: m_Angle			( 0.0f )
-	, m_Radius			( 0.0f )
+	: m_Radius			( 0.0f )
 {
 	//球の当たり判定.
 	m_pCollider = std::make_shared<CSphereCollider>();
@@ -18,13 +17,15 @@ CBlastCollision::~CBlastCollision()
 void CBlastCollision::Update()
 {
 	//定数宣言.
-	const float PI = 3.141592f;
+	const float GROWTH_SPEED = 0.5f;	//大きさの幅.
+	const float MAX_RADIUS = 50.0f;	//半径の最大値.
+	const float MIN_RADIUS = 0.0f;	//半径の最小値.
 
 	//半径を徐々に大きくする.
-	m_Angle += 1.0f;
+	m_Radius += GROWTH_SPEED;
 
-	//半径をラジアン値に変換する.
-	m_Radius = m_Angle * PI / 180.0f;
+	//最小値から最大値までしか反映されない.
+	m_Radius = std::clamp(m_Radius, MIN_RADIUS, MAX_RADIUS);
 
 	//半径を常に設定し続ける.
 	CStaticMeshObject::SetRadius(m_Radius);

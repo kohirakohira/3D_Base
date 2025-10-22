@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <algorithm>
+
 //アセットクラス(当たり判定).
 #include "Collision//Collider//CCollider.h"
 #include "GameObject//StaticMeshObject//CStaticMeshObject.h"
@@ -20,7 +22,5 @@ public:
 
 public:
 	//半径.
-	float m_Angle;
-	//ラジアン値.
 	float m_Radius;
 };
