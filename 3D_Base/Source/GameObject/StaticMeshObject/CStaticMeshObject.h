@@ -53,7 +53,11 @@ public:
 
 	//“–‚½‚è”»’è‚ÌŒ^‚ðŽæ“¾.
 	std::shared_ptr<CCollider> GetCollider() const { return m_pCollider; }
+	
+	//”¼Œa‚ðÝ’è.
+	void SetRadius(float rad) { m_pBSphere->SetRadius(rad); }
 
+	//”¼Œa‚ðŽæ“¾.
 	float GetRadius() { return m_pBSphere->GetRadius(); }
 
 	D3DXVECTOR3 GetMinPos() { return m_pBBox->GetMinPosition(); }
