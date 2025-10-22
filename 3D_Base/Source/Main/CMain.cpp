@@ -110,7 +110,7 @@ void CMain::Release()
 	//ƒŠ[ƒŠƒXŠÖ”.
 	CDirectX11::GetInstance().Release();
 	CDirectX9::GetInstance().Release();
-	CImguiManager::GetInstance().Release();
+	//CImguiManager::GetInstance().Release();
 }
 
 

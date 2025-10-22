@@ -20,7 +20,12 @@ public:
 	//描画処理.
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
+	//爆発フラグ設定.
+	void SetBlastFlag(bool flg) { m_Bom = flg; }
+
 public:
 	//半径.
-	float m_Radius;
+	float	m_Radius;
+	//爆発フラグ.
+	bool	m_Bom;
 };

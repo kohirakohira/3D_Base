@@ -204,8 +204,7 @@ void CGameMain::Update()
 
 	//爆風の動作処理.
 	m_pBlast->Update();
-	//爆風の情報.
-	m_pBlast->SetPosition(0.0f, 2.0f, 0.0f);
+	m_pBlast->SetScale(m_pBlast->GetRadius());
 
 	// 当たり判定
 	Collision();
@@ -890,18 +889,30 @@ void CGameMain::WalltoShot()
 		// 壁が弾と接触したとき
 		if (ShotsColl->CheckCollision(*m_pWallTop->GetCollider()))
 		{
+			//爆風の情報.
+			m_pBlast->SetPosition(Shots[i]->GetPosition());
+			m_pBlast->SetBlastFlag(true);
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
+			//爆風の情報.
+			m_pBlast->SetPosition(Shots[i]->GetPosition());
+			m_pBlast->SetBlastFlag(true);
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
+			//爆風の情報.
+			m_pBlast->SetPosition(Shots[i]->GetPosition());
+			m_pBlast->SetBlastFlag(true);
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWallRight->GetCollider()))
 		{
+			//爆風の情報.
+			m_pBlast->SetPosition(Shots[i]->GetPosition());
+			m_pBlast->SetBlastFlag(true);
 			Shots[i]->HitShot();
 		}
 	}

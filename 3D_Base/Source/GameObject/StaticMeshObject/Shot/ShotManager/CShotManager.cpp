@@ -71,3 +71,12 @@ void CShotManager::CreateCollider()
 		shot->CreateSpehreCollider(shot->GetRadius());
 	}
 }
+
+//ˆÊ’u‚ÌŽæ“¾.
+const D3DXVECTOR3& CShotManager::GetPosition()
+{
+	for (auto& shot : m_pShots)
+	{
+		return shot->GetPosition();
+	}
+}
