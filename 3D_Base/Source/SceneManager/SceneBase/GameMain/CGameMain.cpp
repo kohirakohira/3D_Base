@@ -196,6 +196,12 @@ void CGameMain::Update()
 		m_pPlayerManager->SwitchActivePlayer();
 	}
 
+	// 壁の更新
+	m_pWallTop->Update();
+	m_pWallBottom->Update();
+	m_pWallLeft->Update();
+	m_pWallRight->Update();
+
 	// 当たり判定
 	Collision();
 }
