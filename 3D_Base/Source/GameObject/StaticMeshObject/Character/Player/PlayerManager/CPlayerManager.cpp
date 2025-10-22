@@ -75,6 +75,15 @@ void CPlayerManager::Initialize()
 	}
 
 	SyncByPadConnection();
+
+#if 0
+	for (auto& sp : m_pPlayers) {
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(sp)) {
+			com->SetPlayersRef(&m_pPlayers);
+		}
+	}
+
+#endif
 }
 
 void CPlayerManager::AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)

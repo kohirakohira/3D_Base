@@ -137,6 +137,27 @@ private:
 	void TransitionTo(State state);
 
 	void EvaluateTransitions(float dist);
+
+#if 0
+	// プレイヤー一覧（読み取り専用）を覗くための参照だけ持つ
+	void SetPlayersRef(const std::vector<std::shared_ptr<CPlayer>>* all) { m_AllPlayers = all; }
+
+	// 一定間隔で最寄りの敵にリターゲット
+	void RetargetNearestEnemy();
+
+	// 目標選定に使うパラメータ
+	int   m_RetargetInterval = 30;     // フレーム毎の再探索間隔
+	int   m_RetargetTimer = 0;      // カウントダウン
+	float m_ForgetDistance = 60.0f;  // これ以上離れたら忘れる
+	float m_StickinessRatio = 0.8f;   // 既存ターゲットに残る粘り（距離の比）
+
+private:
+	const std::vector<std::shared_ptr<CPlayer>>* m_AllPlayers = nullptr;
+	// キャッシュ
+	float m_CurTargetDist2 = 1e9f;
+
+#endif
+
 };
 
 

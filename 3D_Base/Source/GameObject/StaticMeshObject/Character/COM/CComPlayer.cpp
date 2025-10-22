@@ -373,6 +373,66 @@ void CComPlayer::Update()
     ++m_StateFrames;
 }
 
+#if 0
+void CComPlayer::Update()
+{
+    SanitizeParams();
+
+    // プレイヤー操作なら親へ
+    if (!m_ComEnabled) { CPlayer::Update(); return; }
+
+    std::shared_ptr<CBody> body = Body();
+    std::shared_ptr<CCannon> cannon = Cannon();
+    if (!body) { if (cannon) cannon->CCharacter::Update(); return; }
+
+    //ターゲット選定
+    if (--m_RetargetTimer <= 0 || !m_pTarget) {
+        RetargetNearestEnemy();
+        m_RetargetTimer = m_RetargetInterval;
+    }
+
+    //ターゲットがいるなら最新距離を測る
+    float dist = 1e9f;
+    if (m_pTarget) {
+        const D3DXVECTOR3 d = m_pTarget->GetPosition() - body->GetPosition();
+        dist = std::sqrtf(d.x * d.x + d.z * d.z);
+    }
+
+    //状態遷移を距離だけで簡潔に
+    //Attack中Chase居ないIdle
+    const float attackNear = std::max(KeepDistance * 0.9f, 3.0f);   // 近距離
+    const float chaseFar = std::max(KeepDistance * 1.5f, 15.0f);   // 追尾継続の上限
+
+    auto to = [&](State s) { if (m_State != s) { m_State = s; m_StateFrames = 0; } };
+
+    if (!m_pTarget) {
+        to(State::Idle);
+    }
+    else if (dist <= attackNear) {
+        to(State::Attack);
+    }
+    else if (dist <= chaseFar) {
+        to(State::Chase);
+    }
+    else {
+        //遠いったん忘れてアイドルへ
+        m_pTarget.reset();
+        to(State::Idle);
+    }
+
+    // --- ステップ ---
+    switch (m_State)
+    {
+    case State::Idle:   StepIdle();   break;
+    case State::Chase:  StepChase();  break;
+    case State::Attack: StepAttack(); break;
+    case State::Evade:  StepEvade();  break; // 使うなら別条件で
+    }
+    ++m_StateFrames;
+}
+
+#endif
+
 //待機処理
 void CComPlayer::StepIdle()
 {
@@ -387,6 +447,30 @@ void CComPlayer::StepIdle()
         cannon->CCharacter::Update();
     }
 }
+
+#if 0
+void CComPlayer::StepIdle()
+{
+    if (auto body = Body())
+    {
+        auto t = GetTuning();
+
+        //ゆっくり旋回しながら前進
+        D3DXVECTOR3 rot = body->GetRotation();
+        rot.y += t.bodyTurnSpeed * 0.25f;                   // ゆるい旋回
+        D3DXVECTOR3 pos = body->GetPosition();
+        D3DXVECTOR3 fwd(std::sinf(rot.y), 0, std::cosf(rot.y));
+        pos += fwd * (t.moveSpeed * 0.4f);                  // ゆっくり移動
+
+        body->SetRotation(rot);
+        body->SetPosition(pos);
+
+        SyncCannonToBody();            // 砲塔を車体に追従
+        body->CCharacter::Update();
+        if (auto cannon = Cannon()) cannon->CCharacter::Update();
+    }
+}
+#endif
 
 //追尾    
 void CComPlayer::StepChase()
@@ -632,6 +716,61 @@ void CComPlayer::StepSeek()
     //今は範囲内に入ったら追尾するシンプル仕様なので書かない
 }
 
+#if 0
+void CComPlayer::RetargetNearestEnemy()
+{
+    if (!m_AllPlayers) return;
+
+    std::shared_ptr<CBody> body = Body();
+    if (!body) return;
+
+    const D3DXVECTOR3 self = body->GetPosition();
+
+    float bestD2 = 1e9f;
+    std::shared_ptr<CPlayer> best;
+
+    for (auto& p : *m_AllPlayers) {
+        if (!p) continue;
+        //自分自身は除外
+        if (p->GetPlayerID() == m_PlayerID) continue;
+        
+
+        const float d2 = DistXZ2(self, p->GetPosition());
+        if (d2 < bestD2) { bestD2 = d2; best = p; }
+    }
+
+    if (!best) {
+        // 見つからなければターゲット忘れてアイドルへ
+        m_pTarget.reset();
+        m_CurTargetDist2 = 1e9f;
+        return;
+    }
+
+    if (!m_pTarget) {
+        // 初回は即採用
+        m_pTarget = best;
+        m_CurTargetDist2 = bestD2;
+        return;
+    }
+
+    //近い相手に切り替え
+    //少しの差では切り替えず、ブレを抑える
+    if (bestD2 < m_CurTargetDist2 * m_StickinessRatio) {
+        m_pTarget = best;
+        m_CurTargetDist2 = bestD2;
+    }
+    else {
+        // 既存ターゲットの距離だけ更新
+        m_CurTargetDist2 = DistXZ2(self, m_pTarget->GetPosition());
+    }
+
+    // すごく遠くなったら忘れる
+    if (m_CurTargetDist2 > (m_ForgetDistance * m_ForgetDistance)) {
+        m_pTarget.reset();
+        m_CurTargetDist2 = 1e9f;
+    }
+}
+#endif
 
 
 
