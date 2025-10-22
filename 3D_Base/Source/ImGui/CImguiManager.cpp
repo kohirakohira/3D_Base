@@ -103,6 +103,14 @@ void CImguiManager::Render()
 
 //入力ボックスの表示.
 //型を後から指定できる関数↓.
+//スライダーの表示.
+//引数：label		= スライダーの名前.
+//		value		= 操作する変数の値.
+//		isLabel		= スライダーの左に表示するテキストラベルのフラグ.
+//		step		= 上下矢印で入力値の増加.
+//		stepFast	= Ctrlキーを教えて上下で変化できる「高速ステップ値」.
+//		format		= 数値表示※小数点2桁.
+//		flags		= 入力を制御するフラグ.
 template<typename T>
 inline bool CImguiManager::Input(const char* label, T& value, bool isLabel, float step, float stepFast, const char* format, ImGuiInputTextFlags flags)
 {
@@ -167,6 +175,11 @@ template bool CImguiManager::Input<D3DXVECTOR3>	(const char*, D3DXVECTOR3&, bool
 template bool CImguiManager::Input<std::string>	(const char*, std::string&, bool, float, float, const char*, ImGuiInputTextFlags);
 
 //スライダーの表示.
+//引数：label		= スライダーの名前.
+//		value		= 動かせる変数の数値.
+//		valueMin	= スライダーの最小値.
+//		valueMax	= スライダーの最大値.
+//		isLabel		= スライダーの左に表示するテキストラベルのフラグ.
 template<typename T>
 void CImguiManager::Slider(const char* label, T& value, T valueMin, T valueMax, bool isLabel)
 {
@@ -199,6 +212,11 @@ template void CImguiManager::Slider<float>(const char*, float&, float, float, bo
 
 //コンボボックス.
 //複数の選択肢から1つを選ぶUIを作る.
+//引数：Label		= 表示名.
+//		NowItem		= 現在選択されている項目を保持する変数.
+//		List		= 選択肢リスト.
+//		isLabel		= コンボボックスの左にラベルを表示.
+//		space		= ラベルとコンボボックスの間のスペース.
 std::string CImguiManager::Combo(const char* Label, std::string& NowItem, const std::vector<std::string>& List, bool isLabel, float space)
 {
 	//選択中のリストの要素番号.
@@ -245,6 +263,9 @@ std::string CImguiManager::Combo(const char* Label, std::string& NowItem, const 
 
 //チェックボックスの表示.
 //On/Offの切り替えスイッチを作る.
+//引数：label		= 内部では"##"を付けてImGui用の内部IDとして使われる.
+//		flag		= チェック状態を保持する.
+//		isLabel		= チェックボックスの左に説明ラベルを表示.
 bool CImguiManager::CheckBox(const char* label, bool& flag, bool isLabel)
 {
 
@@ -260,6 +281,9 @@ bool CImguiManager::CheckBox(const char* label, bool& flag, bool isLabel)
 
 //グラフを表示.
 //折れ線グラフでデータの推移を可視化.
+//引数：Label		= 表示名.
+//		Data		= グラフに描画する数値データ.
+//		Size		= グラフの描画サイズ.
 void CImguiManager::Graph(const char* Label, std::vector<float>& Data, const ImVec2& Size)
 {
 	//std::string：Labelはconst char*なので、「+」で文字列結合できない.
