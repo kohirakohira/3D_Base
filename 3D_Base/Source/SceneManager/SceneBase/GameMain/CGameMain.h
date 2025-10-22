@@ -179,6 +179,9 @@ public:
 	//壁メッシュ.
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallW;
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallH;
+
+	// 木箱メッシュ
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshWoodBox;
 	
 	// スタティックメッシュオブジェクトクラス.
 	std::unique_ptr<CStaticMeshObject>			m_pStcMeshObj;

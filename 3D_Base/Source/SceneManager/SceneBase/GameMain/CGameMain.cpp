@@ -59,9 +59,12 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pStaticMesh_BulletBlue		( nullptr )
 	, m_pStaticMesh_BulletGreen		( nullptr )
 
-	// ��
+	// 壁のメッシュ
 	, m_pStaticMeshWallW			( nullptr )
 	, m_pStaticMeshWallH			( nullptr )
+
+	// 木箱のメッシュ
+	, m_pStaticMeshWoodBox			( nullptr )
 
 	, m_pStcMeshObj					( nullptr )
 
@@ -372,6 +375,7 @@ void CGameMain::Init()
 		m_pCameras[i]->SetLightPos(0.f, 2.f, 5.f);
 	}
 	//地面の大きさ設定..
+	m_pGround->SetRotation(0.f, 0.f, 0.f);
 	m_pGround->SetScale(0.4f, 0.4f, 0.4f);
 
 	//アイテムボックスの設定..
@@ -486,6 +490,9 @@ void CGameMain::Create()
 	m_pStaticMeshWallW				= std::make_shared<CStaticMesh>();
 	m_pStaticMeshWallH				= std::make_shared<CStaticMesh>();
 
+	// 木箱のメッシュ
+	m_pStaticMeshWoodBox			= std::make_shared<CStaticMesh>();
+
 	//デバッグテキストのインスタンス作成.
 	m_pDbgText = std::make_unique<CDebugText>();
 
@@ -501,44 +508,65 @@ void CGameMain::Create()
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		//プレイヤーiの位置を少しずつずらす.
-		float offsetX = (i % 2) * 12.0f;
-		float offsetZ = (i / 2) * 12.0f;
-		m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(offsetX, 0.0f, offsetZ));
-		//回転を設定..
-		m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, 0.f, 0.f));
+		//プレイヤーiの位置を変更
+		float offsetX = 20.0f;
+		float offsetZ = 20.0f;
 
-		////砲塔の生成もする.
-		//auto cannon = std::make_unique<CCannon>();.
+		// プレイヤーの向き
+		float AngleY = 45.0;
+
+		if (i == 0)
+		{
+			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(-offsetX, 0.0f, -offsetZ));
+			//回転を設定..
+			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
+		}
+		else if (i == 1)
+		{
+			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(-offsetX, 0.0f, offsetZ));
+			//回転を設定..
+			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
+		}
+		else if (i == 2)
+		{
+			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(offsetX, 0.0f, offsetZ));
+			//回転を設定..
+			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
+		}
+		else if (i == 3)
+		{
+			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(offsetX, 0.0f, -offsetZ));
+			//回転を設定..
+			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
+		}
 
 		//カメラ生成・セットアップ.
 		auto camera = std::make_unique<CCamera>();
 		camera->SetTargetPos(m_pPlayerManager->GetPosition(i));
 		camera->SetTargetRotY(m_pPlayerManager->GetRotation(i).y);
 		m_pCameras[i] = std::move(camera);
-
 	}
 
-	//地面クラスのインスタンス作成..
+	//地面クラスのインスタンス作成
 	m_pGround = std::make_unique<CGround>();
 
-	//制限時間のインスタンス生成..
+	//制限時間のインスタンス生成
 	m_Timer = std::make_shared<CTimer>();
 
-	//壁.
+	//壁
 	m_pWallTop		= std::make_shared<CStageObject>();
 	m_pWallBottom	= std::make_shared<CStageObject>();
 	m_pWallLeft		= std::make_shared<CStageObject>();
 	m_pWallRight	= std::make_shared<CStageObject>();
 
 	// 木箱
-	m_pWoodBoxTopLeft = std::make_shared<CStageObject>();
-	m_pWoodBoxTopRight = std::make_shared<CStageObject>();
-	m_pWoodBoxCenter = std::make_shared<CStageObject>();
-	m_pWoodBoxBottomLeft = std::make_shared<CStageObject>();
-	m_pWoodBoxBottomRight = std::make_shared<CStageObject>();
+	m_pWoodBoxTopLeft		= std::make_shared<CStageObject>();
+	m_pWoodBoxTopRight		= std::make_shared<CStageObject>();
+	m_pWoodBoxCenter		= std::make_shared<CStageObject>();
+	m_pWoodBoxBottomLeft	= std::make_shared<CStageObject>();
+	m_pWoodBoxBottomRight	= std::make_shared<CStageObject>();
 
-	//アイテムマネージャークラスのインスタンス生成..
+	// アイテムマネージャークラスのインスタンス生成
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
 	m_pItemBoxManager->Create();
 }
@@ -556,25 +584,25 @@ HRESULT CGameMain::LoadData()
 		return E_FAIL;
 	}
 
-	//タイマー画像のスプライト設定..
+	//タイマー画像のスプライト設定
 	CSprite2D::SPRITE_STATE WH_SIZE = {
 		1920, 1080,		//描画幅,高さ..
 		1920, 1080,		//元画像の幅,高さ..
 		1920, 1080		//アニメーションをしないので、0でいい..
 	};
-	//タイマー枠画像のスプライト設定..
+	//タイマー枠画像のスプライト設定
 	CSprite2D::SPRITE_STATE TIMER_SIZE = {
 		256, 256,		//描画幅,高さ..
 		256, 256,		//元画像の幅,高さ..
 		256, 256		//アニメーションをしないので、0でいい..
 	};
-	//タイマー枠画像のスプライト設定..
+	//タイマー枠画像のスプライト設定
 	CSprite2D::SPRITE_STATE ICON_SIZE = {
 		256, 256,		//描画幅,高さ..
 		256, 256,		//元画像の幅,高さ..
 		256, 256		//アニメーションをしないので、0でいい..
 	};
-	//制限時間の枠の読み込み..
+	//制限時間の枠の読み込み
 	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE, false);
 	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE, false);
 	m_pSprite2DTimerArrow	->Init(_T("Data\\Texture\\UI\\Timer\\TimerArrow.png"), TIMER_SIZE, true);
@@ -636,58 +664,61 @@ HRESULT CGameMain::LoadData()
 	//プレイヤースプライトの構造体.
 	CSprite3D::SPRITE_STATE SSPlayer =
 	{ 1.f, 1.f, 64.f, 64.f, 64.f, 64.f };
-	//プレイヤースプライトの読み込み..
+	//プレイヤースプライトの読み込み
 	m_pSpritePlayer->Init(CDirectX11::GetInstance(),
 		_T("Data\\Texture\\Player.png"), SSPlayer);
 
-	//爆発スプライトの構造体.
+	//爆発スプライトの構造体
 	CSprite3D::SPRITE_STATE SSExplosion =
 	{ 1.f, 1.f, 256.f, 256.f, 32.f, 32.f };
-	//爆発スプライトの読み込み..
+	//爆発スプライトの読み込み
 	m_pSpriteExplosion->Init(CDirectX11::GetInstance(),
 		_T("Data\\Texture\\explosion.png"), SSExplosion);
 
 	//--------------------------------------------------------------------------.
-	// 	   画像の読み込み..
+	// 	   メッシュの読み込み..
 	//--------------------------------------------------------------------------.
 	//スタティックメッシュの読み込み.
 	m_pStaticMeshGround->Init(_T("Data\\Mesh\\Static\\Stage\\stage.x"));
 	m_pStaticMeshItemBox->Init(_T("Data\\Mesh\\Static\\ItemBox\\ItemBox.x"));
 
-	// 戦車(赤).
+	// 戦車(赤)
 	m_pStaticMesh_TankBodyRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Cannon\\Cannon.x"));
 
-	// 戦車(黄).
+	// 戦車(黄)
 	m_pStaticMesh_TankBodyYellow->Init(_T("Data\\Mesh\\Static\\Tank\\Yellow\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonYellow->Init(_T("Data\\Mesh\\Static\\Tank\\Yellow\\Cannon\\Cannon.x"));
 
-	// 戦車(青).
+	// 戦車(青)
 	m_pStaticMesh_TankBodyBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Cannon\\Cannon.x"));
 
-	// 戦車(緑).
+	// 戦車(緑)
 	m_pStaticMesh_TankBodyGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Cannon\\Cannon.x"));
 	
-	// 弾(赤).
+	// 弾(赤)
 	m_pStaticMesh_BulletRed->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));
-	// 弾(黄).
+	// 弾(黄)
 	m_pStaticMesh_BulletYellow->Init(_T("Data\\Mesh\\Static\\Bullet\\Yellow\\Ball.x"));
-	// 弾(青).
+	// 弾(青)
 	m_pStaticMesh_BulletBlue->Init(_T("Data\\Mesh\\Static\\Bullet\\Blue\\Ball.x"));
-	// 弾(緑).
+	// 弾(緑)
 	m_pStaticMesh_BulletGreen->Init(_T("Data\\Mesh\\Static\\Bullet\\Green\\Ball.x"));
 	
-	//壁.
+	//壁
 	m_pStaticMeshWallW->Init(_T("Data\\Mesh\\Static\\Wall\\Wall1.x"));
 	m_pStaticMeshWallH->Init(_T("Data\\Mesh\\Static\\Wall\\Wall2.x"));
 
-	//バウンディングスフィア(当たり判定用)..
+	// 木箱
+	m_pStaticMeshWoodBox->Init(_T("Data\\Mesh\\Static\\Block\\Block.x"));
+
+	// バウンディングスフィア(当たり判定用)
 	m_pStaticMeshBSphere->Init(_T("Data\\Collision\\Sphere.x"));
 
 
-	// それぞれのプレイヤーに色にあった戦車をアタッチ.
+	// それぞれのプレイヤーに色にあった戦車をアタッチ
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		switch (i)
@@ -713,19 +744,26 @@ HRESULT CGameMain::LoadData()
 		}
 	}
 
-
-	//スタティックメッシュを設定.
+	//スタティックメッシュを設定
 	m_pGround->AttachMesh(m_pStaticMeshGround);
 
-	//アイテムボックスマネージャーにメッシュを設定..
+	//アイテムボックスマネージャーにメッシュを設定
 	m_pItemBoxManager->AttachMesh(m_pStaticMeshItemBox);
 
-	//壁にメッシュを設定.
+	//壁にメッシュを設定
 	m_pWallTop->AttachMesh(m_pStaticMeshWallW);
 	m_pWallBottom->AttachMesh(m_pStaticMeshWallW);
 	m_pWallLeft->AttachMesh(m_pStaticMeshWallH);
 	m_pWallRight->AttachMesh(m_pStaticMeshWallH);
 
+	// 木箱にメッシュを設定 
+	m_pWoodBoxCenter->AttachMesh(m_pStaticMeshWoodBox);
+	m_pWoodBoxTopLeft->AttachMesh(m_pStaticMeshWoodBox);
+	m_pWoodBoxTopRight->AttachMesh(m_pStaticMeshWoodBox);
+	m_pWoodBoxBottomLeft->AttachMesh(m_pStaticMeshWoodBox);
+	m_pWoodBoxBottomRight->AttachMesh(m_pStaticMeshWoodBox);
+
+	// バウンディングの作成
 	CreateBounding();
 
 	return S_OK;
@@ -733,28 +771,53 @@ HRESULT CGameMain::LoadData()
 
 void CGameMain::SetPosition()
 {
-	//上の位置設定.
+	// 壁上の位置設定
 	m_pWallTop->SetPosition(0, 0, 30);
 	m_pWallTop->SetRotation(0, 0, 0);
 
-	//下の位置設定.
+	// 壁下の位置設定
 	m_pWallBottom->SetPosition(0, 0, -30);
 	m_pWallBottom->SetRotation(0, 0, 0);
 
-	//左の位置設定.
+	// 壁左の位置設定
 	m_pWallLeft->SetPosition(-30, 0, 0);
 	m_pWallLeft->SetRotation(0, 0, 0);
 
-	//右の位置設定.
+	// 壁右の位置設定
 	m_pWallRight->SetPosition(30, 0, 0);
 	m_pWallRight->SetRotation(0, 0, 0);
+
+
+	//-------------------------
+	// 木箱の位置設定
+	// モデルサイズ X:20, Y:5, Z:20;
+	//-------------------------
+	// 左上
+	m_pWoodBoxTopLeft->SetPosition(-12, -0.4, 12);
+	m_pWoodBoxTopLeft->SetRotation(0, 0, 0);
+
+	// 右上
+	m_pWoodBoxTopRight->SetPosition(12, -0.4, 12);
+	m_pWoodBoxTopRight->SetRotation(0, 0, 0);
+
+	// 中央
+	m_pWoodBoxCenter->SetPosition(0, -0.4, 0);
+	m_pWoodBoxCenter->SetRotation(0, 0, 0);
+
+	// 左下
+	m_pWoodBoxBottomLeft->SetPosition(-12, -0.4, -12);
+	m_pWoodBoxBottomLeft->SetRotation(0, 0, 0);
+
+	// 右下
+	m_pWoodBoxBottomRight->SetPosition(12, -0.4, -12);
+	m_pWoodBoxBottomRight->SetRotation(0, 0, 0);
 }
 
 void CGameMain::CreateBounding()
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		//各プレイヤーの当たり判定作成.
+		//各プレイヤーの当たり判定作成
 		switch (i)
 		{
 		case 0:
@@ -774,29 +837,35 @@ void CGameMain::CreateBounding()
 		m_pPlayerManager->CreateCollider(i);
 	}
 	
-	//壁の当たり判定生成.
+	// 壁の当たり判定生成
 	m_pWallTop->CreateBBoxForMesh(*m_pStaticMeshWallW);
-	//当たり判定設定.
-	m_pWallTop->CreateBoxCollider(m_pWallTop->GetMinPos(), m_pWallTop->GetMaxPos());
-
-	//壁の当たり判定生成.
 	m_pWallBottom->CreateBBoxForMesh(*m_pStaticMeshWallW);
-	//当たり判定設定.
-	m_pWallBottom->CreateBoxCollider(m_pWallBottom->GetMinPos(), m_pWallBottom->GetMaxPos());
-
-	//壁の当たり判定生成.
 	m_pWallLeft->CreateBBoxForMesh(*m_pStaticMeshWallH);
-	//当たり判定設定.
-	m_pWallLeft->CreateBoxCollider(m_pWallLeft->GetMinPos(), m_pWallLeft->GetMaxPos());
-
-	//壁の当たり判定生成.
 	m_pWallRight->CreateBBoxForMesh(*m_pStaticMeshWallH);
-	//当たり判定設定.
+
+	// 壁の当たり判定設定
+	m_pWallTop->CreateBoxCollider(m_pWallTop->GetMinPos(), m_pWallTop->GetMaxPos());
+	m_pWallBottom->CreateBoxCollider(m_pWallBottom->GetMinPos(), m_pWallBottom->GetMaxPos());
+	m_pWallLeft->CreateBoxCollider(m_pWallLeft->GetMinPos(), m_pWallLeft->GetMaxPos());
 	m_pWallRight->CreateBoxCollider(m_pWallRight->GetMinPos(), m_pWallRight->GetMaxPos());
 
-	//アイテムボックスの当たり判定生成.
+	// 木箱の当たり判定生成
+	m_pWoodBoxTopLeft->CreateBBoxForMesh(*m_pStaticMeshWoodBox);
+	m_pWoodBoxTopRight->CreateBBoxForMesh(*m_pStaticMeshWoodBox);
+	m_pWoodBoxCenter->CreateBBoxForMesh(*m_pStaticMeshWoodBox);
+	m_pWoodBoxBottomLeft->CreateBBoxForMesh(*m_pStaticMeshWoodBox);
+	m_pWoodBoxBottomRight->CreateBBoxForMesh(*m_pStaticMeshWoodBox);
+
+	// 木箱の当たり判定設定
+	m_pWoodBoxTopLeft->CreateBoxCollider(m_pWoodBoxTopLeft->GetMinPos(), m_pWoodBoxTopLeft->GetMaxPos());
+	m_pWoodBoxTopRight->CreateBoxCollider(m_pWoodBoxTopRight->GetMinPos(), m_pWoodBoxTopRight->GetMaxPos());
+	m_pWoodBoxCenter->CreateBoxCollider(m_pWoodBoxCenter->GetMinPos(), m_pWoodBoxCenter->GetMaxPos());
+	m_pWoodBoxBottomLeft->CreateBoxCollider(m_pWoodBoxBottomLeft->GetMinPos(), m_pWoodBoxBottomLeft->GetMaxPos());
+	m_pWoodBoxBottomRight->CreateBoxCollider(m_pWoodBoxBottomRight->GetMinPos(), m_pWoodBoxBottomRight->GetMaxPos());
+
+	// アイテムボックスの当たり判定生成
 	m_pItemBoxManager->CreateBounding(m_pStaticMeshItemBox);
-	//当たり判定設定.
+	// 当たり判定設定
 	m_pItemBoxManager->CreateCollider();	
 
 	// 弾の当たり判定生成
