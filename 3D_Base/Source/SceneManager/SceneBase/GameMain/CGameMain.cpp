@@ -615,7 +615,6 @@ HRESULT CGameMain::LoadData()
 		}
 	}
 
-
 	//地面スプライトの構造体.
 	CSprite3D::SPRITE_STATE SSGround;
 	SSGround.Disp.w = 1.f;
