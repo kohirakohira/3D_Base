@@ -81,7 +81,14 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pWallBottom					( nullptr )
 	, m_pWallLeft					( nullptr )
 	, m_pWallRight					( nullptr )
-	, m_pItemBoxManager				( nullptr )
+
+	, m_pWoodBoxTopLeft				( nullptr )
+	, m_pWoodBoxTopRight			( nullptr )
+	, m_pWoodBoxCenter				( nullptr )
+	, m_pWoodBoxBottomLeft			( nullptr )
+	, m_pWoodBoxBottomRight			( nullptr )
+	
+	,m_pItemBoxManager				( nullptr )
 
 	, m_Rot							( 0.0f )
 
@@ -189,11 +196,6 @@ void CGameMain::Update()
 		m_pPlayerManager->SwitchActivePlayer();
 	}
 
-	m_pWallTop->Update();
-	m_pWallBottom->Update();
-	m_pWallLeft->Update();
-	m_pWallRight->Update();
-
 	// 当たり判定
 	Collision();
 }
@@ -248,6 +250,13 @@ void CGameMain::Draw()
 		m_pWallBottom->Draw(view, proj, light, paramC);
 		m_pWallLeft->Draw(view, proj, light, paramC);
 		m_pWallRight->Draw(view, proj, light, paramC);
+
+		// 木箱の描画
+		m_pWoodBoxTopLeft->Draw(view, proj, light, paramC);
+		m_pWoodBoxTopRight->Draw(view, proj, light, paramC);
+		m_pWoodBoxCenter->Draw(view, proj, light, paramC);
+		m_pWoodBoxBottomLeft->Draw(view, proj, light, paramC);
+		m_pWoodBoxBottomRight->Draw(view, proj, light, paramC);
 
 		//アイテムボックスの描画.
 		m_pItemBoxManager->Draw(view, proj, light, paramC);
@@ -406,7 +415,7 @@ void CGameMain::Create()
 		CDirectX11::GetInstance().GetDevice(),
 		CDirectX11::GetInstance().GetContext());
 
-	//UIObjectのインスタンス生成..
+	//UIObjectのインスタンス生成.
 	m_pSpriteTimerFrame = std::make_shared<CUIObject>();
 	m_pSpriteTimer		= std::make_shared<CUIObject>();
 	m_pSpriteTimerArrow = std::make_shared<CUIObject>();
@@ -484,7 +493,6 @@ void CGameMain::Create()
 	m_pShotManager = std::make_shared<CShotManager>();
 	m_pShotManager->Initialize(PLAYER_MAX);
 
-
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		//プレイヤーiの位置を少しずつずらす.
@@ -512,10 +520,18 @@ void CGameMain::Create()
 	m_Timer = std::make_shared<CTimer>();
 
 	//壁.
-	m_pWallTop		= std::make_shared<CWall>();
-	m_pWallBottom	= std::make_shared<CWall>();
-	m_pWallLeft		= std::make_shared<CWall>();
-	m_pWallRight	= std::make_shared<CWall>();
+	m_pWallTop		= std::make_shared<CStageObject>();
+	m_pWallBottom	= std::make_shared<CStageObject>();
+	m_pWallLeft		= std::make_shared<CStageObject>();
+	m_pWallRight	= std::make_shared<CStageObject>();
+
+	// 木箱
+	m_pWoodBoxTopLeft = std::make_shared<CStageObject>();
+	m_pWoodBoxTopRight = std::make_shared<CStageObject>();
+	m_pWoodBoxCenter = std::make_shared<CStageObject>();
+	m_pWoodBoxBottomLeft = std::make_shared<CStageObject>();
+	m_pWoodBoxBottomRight = std::make_shared<CStageObject>();
+
 	//アイテムマネージャークラスのインスタンス生成..
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
 	m_pItemBoxManager->Create();

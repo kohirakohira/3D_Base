@@ -1,19 +1,14 @@
 #pragma once
-
+//-----継承するクラス-----
 #include "GameObject//StaticMeshObject//CStaticMeshObject.h"
 
 /*********************************************************
-*	壁クラス
+*	ステージオブジェクトクラス
 **/
-class CWall
+class CStageObject
 	: public CStaticMeshObject
 {
 public:
-	CWall();
-	virtual ~CWall();
-
-	virtual void Update() override;
-
-protected:
-
+	CStageObject();
+	virtual ~CStageObject();
 };

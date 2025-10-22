@@ -36,8 +36,8 @@
 #include "Camera//CCamera.h" //カメラクラス.
 
 
-//-----壁-----
-#include "GameObject//StaticMeshObject//Wall//CWall.h"
+//-----ステージオブジェクトクラス-----
+#include "GameObject//StaticMeshObject//StageObject//CStageObject.h"
 
 //-------------------------------.
 // UI.
@@ -195,11 +195,19 @@ public:
 	//タイマークラス..
 	std::shared_ptr<CTimer>						m_Timer;
 
-	//壁.
-	std::shared_ptr<CWall>		m_pWallTop;		
-	std::shared_ptr<CWall>		m_pWallBottom;	
-	std::shared_ptr<CWall>		m_pWallLeft;	
-	std::shared_ptr<CWall>		m_pWallRight;	
+	// 壁
+	std::shared_ptr<CStageObject>		m_pWallTop;
+	std::shared_ptr<CStageObject>		m_pWallBottom;
+	std::shared_ptr<CStageObject>		m_pWallLeft;
+	std::shared_ptr<CStageObject>		m_pWallRight;
+
+	// 木箱
+	std::shared_ptr<CStageObject>		m_pWoodBoxTopLeft;
+	std::shared_ptr<CStageObject>		m_pWoodBoxTopRight;
+	std::shared_ptr<CStageObject>		m_pWoodBoxCenter;
+	std::shared_ptr<CStageObject>		m_pWoodBoxBottomLeft;
+	std::shared_ptr<CStageObject>		m_pWoodBoxBottomRight;
+
 	//アイテムボックスマネージャークラス..
 	std::shared_ptr<CItemBoxManager>			m_pItemBoxManager;
 
