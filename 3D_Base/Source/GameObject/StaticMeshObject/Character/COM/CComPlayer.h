@@ -37,10 +37,8 @@ public:
 	//プレイヤーマネージャーで使うよう
 	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
 
-
 private:
 	std::shared_ptr<CPlayer> m_pTarget;		//追尾対象
-	std::shared_ptr<CItemBox> m_pItemBox;	//アイテムボックスクラス
 	bool m_Registered;	//インスタンス登録管理
 
 	//自動発射用のパラメータ
@@ -80,14 +78,18 @@ private:
 	int		m_EvadeDuration;			//回避するフレーム数
 	int		m_EvadeFrames;
 	D3DXVECTOR3 m_LastSeenPos = D3DXVECTOR3(0, 0, 0);	//最後に見た位置
-	int m_LostSightFrames = 0;
+	int		m_LostSightFrames;
+
+	//仮の宣言
+	float	m_TargetRadius;				//ターゲット扱いする距離
+	bool	m_IsTarget;					//ターゲットかどうか
 
 	//COMのショット関連のパラメータ
 	struct ComShotState
 	{
 		int m_ShotCD = 0;						//クールダウン
-		int	ShotCooldownFrames = 120;			//クールダウン時間(フレーム)
-		float FireAngleEpsDeg = 20;				//この角度以内なら発射
+		int	ShotCooldownFrames = 120;			//クールダウン時間
+		float FireAngleEpsDeg = 30;				//この角度以内なら発射
 		float MuzzleOffsetZ = 1;				//砲口のオフセット
 	};
 	ComShotState m_ShotState;
