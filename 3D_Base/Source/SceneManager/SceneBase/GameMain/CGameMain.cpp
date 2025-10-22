@@ -835,23 +835,19 @@ void CGameMain::WalltoPlayer()
 		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
 
 		// 車体が壁と接触したとき
-		if (Coll && m_pWallTop->GetCollider() &&
-			Coll->CheckCollision(*m_pWallTop->GetCollider()))
+		if (Coll->CheckCollision(*m_pWallTop->GetCollider()))
 		{
 			push.z -= 0.1f;
 		}
-		if (Coll && m_pWallBottom->GetCollider() &&
-			Coll->CheckCollision(*m_pWallBottom->GetCollider()))
+		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
 			push.z += 0.1f;
 		}
-		if (Coll && m_pWallLeft->GetCollider() &&
-			Coll->CheckCollision(*m_pWallLeft->GetCollider()))
+		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
 			push.x += 0.1f;
 		}
-		if (Coll && m_pWallRight->GetCollider() &&
-			Coll->CheckCollision(*m_pWallRight->GetCollider()))
+		if (Coll->CheckCollision(*m_pWallRight->GetCollider()))
 		{
 			push.x -= 0.1f;
 		}
@@ -878,23 +874,19 @@ void CGameMain::WalltoShot()
 		auto ShotsColl = Shots[i]->GetCollider();
 
 		// 壁が弾と接触したとき
-		if (ShotsColl && m_pWallTop->GetCollider() &&
-			ShotsColl->CheckCollision(*m_pWallTop->GetCollider()))
+		if (ShotsColl->CheckCollision(*m_pWallTop->GetCollider()))
 		{
 			Shots[i]->HitShot();
 		}
-		if (ShotsColl && m_pWallBottom->GetCollider() &&
-			ShotsColl->CheckCollision(*m_pWallBottom->GetCollider()))
+		if (ShotsColl->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
 			Shots[i]->HitShot();
 		}
-		if (ShotsColl && m_pWallLeft->GetCollider() &&
-			ShotsColl->CheckCollision(*m_pWallLeft->GetCollider()))
+		if (ShotsColl->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
 			Shots[i]->HitShot();
 		}
-		if (ShotsColl && m_pWallRight->GetCollider() &&
-			ShotsColl->CheckCollision(*m_pWallRight->GetCollider()))
+		if (ShotsColl->CheckCollision(*m_pWallRight->GetCollider()))
 		{
 			Shots[i]->HitShot();
 		}
@@ -920,8 +912,7 @@ void CGameMain::PlayertoPlayer()
 			auto playerB = m_pPlayerManager->GetControlPlayer(j);
 			auto CollB = playerB->GetBody()->GetCollider();
 
-			if (CollA && CollB &&
-				CollA->CheckCollision(*CollB))
+			if (CollA->CheckCollision(*CollB))
 			{
 				// 衝突時の押し返し処理例
 				D3DXVECTOR3 push = playerA->GetBody()->GetPosition() - playerB->GetBody()->GetPosition();
@@ -954,8 +945,7 @@ void CGameMain::PlayertoItemBox()
 			auto ItemColl = Item[ItemIndex]->GetCollider();
 
 			// プレイヤーがアイテムと接触したとき
-			if (Coll && ItemColl &&
-				Coll->CheckCollision(*ItemColl))
+			if (Coll->CheckCollision(*ItemColl))
 			{
 				Item[ItemIndex]->HitPlayer();
 			}
