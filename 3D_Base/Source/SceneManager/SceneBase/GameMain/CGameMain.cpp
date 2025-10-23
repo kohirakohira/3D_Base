@@ -39,7 +39,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pSpritePlayer				( nullptr )
 	, m_pSpriteExplosion			( nullptr )
 
-	, m_pStaticMeshGround			( nullptr )
+	, m_pStaticMeshStage			( nullptr )
 	, m_pStaticMeshBSphere			( nullptr )
 	, m_pStaticMeshItemBox			( nullptr )
 
@@ -63,6 +63,9 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pStaticMeshWallW			( nullptr )
 	, m_pStaticMeshWallH			( nullptr )
 
+	// 地面のメッシュ
+	, m_pStaticMeshGround			( nullptr )
+
 	// 木箱のメッシュ
 	, m_pStaticMeshWoodBox			( nullptr )
 
@@ -71,7 +74,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pPlayerManager				()
 	, m_pShotManager				()
 
-	, m_pGround						( nullptr )
+	, m_pStage						( nullptr )
 
 	, m_pDbgText					( nullptr )
 
@@ -90,6 +93,8 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pWoodBoxCenter				( nullptr )
 	, m_pWoodBoxBottomLeft			( nullptr )
 	, m_pWoodBoxBottomRight			( nullptr )
+
+	, m_pGround						( nullptr )
 	
 	,m_pItemBoxManager				( nullptr )
 
@@ -197,6 +202,9 @@ void CGameMain::Update()
 	m_pWoodBoxBottomLeft->Update();
 	m_pWoodBoxBottomRight->Update();
 
+	// 地面の更新
+	m_pGround->Update();
+
 	// 当たり判定
 	Collision();
 
@@ -263,8 +271,8 @@ void CGameMain::Draw()
 		m_pShotManager->Draw(view, proj, light, paramC);
 
 		//地面描画.
-		if (owner) m_pGround->SetPlayer(*owner);
-		m_pGround->Draw(view, proj, light, paramC);
+		if (owner) m_pStage->SetPlayer(*owner);
+		m_pStage->Draw(view, proj, light, paramC);
 
 		//壁の表示.
 		m_pWallTop->Draw(view, proj, light, paramC);
@@ -278,6 +286,9 @@ void CGameMain::Draw()
 		m_pWoodBoxCenter->Draw(view, proj, light, paramC);
 		m_pWoodBoxBottomLeft->Draw(view, proj, light, paramC);
 		m_pWoodBoxBottomRight->Draw(view, proj, light, paramC);
+
+		// 地面の描画
+		m_pGround->Draw(view, proj, light, paramC);
 
 		//アイテムボックスの描画.
 		m_pItemBoxManager->Draw(view, proj, light, paramC);
@@ -390,8 +401,8 @@ void CGameMain::Init()
 		m_pCameras[i]->SetLightPos(0.f, 2.f, 5.f);
 	}
 	//地面の大きさ設定..
-	m_pGround->SetRotation(0.f, 0.f, 0.f);
-	m_pGround->SetScale(0.4f, 0.4f, 0.4f);
+	m_pStage->SetRotation(0.f, 0.f, 0.f);
+	m_pStage->SetScale(0.4f, 0.4f, 0.4f);
 
 	//アイテムボックスの設定..
 	m_pItemBoxManager->SetPosition(-10.f, 20.f, 0.f);
@@ -481,7 +492,7 @@ void CGameMain::Create()
 	m_pStcMeshObj = std::make_unique<CStaticMeshObject>();
 
 	//スタティックメッシュのインスタンス作成.
-	m_pStaticMeshGround			= std::make_shared<CStaticMesh>();
+	m_pStaticMeshStage			= std::make_shared<CStaticMesh>();
 	m_pStaticMeshBSphere		= std::make_shared<CStaticMesh>();
 	m_pStaticMeshItemBox		= std::make_shared<CStaticMesh>();
 
@@ -504,6 +515,9 @@ void CGameMain::Create()
 	//壁のメッシュ.
 	m_pStaticMeshWallW				= std::make_shared<CStaticMesh>();
 	m_pStaticMeshWallH				= std::make_shared<CStaticMesh>();
+
+	// 地面のメッシュ
+	m_pStaticMeshGround				= std::make_shared<CStaticMesh>();
 
 	// 木箱のメッシュ
 	m_pStaticMeshWoodBox			= std::make_shared<CStaticMesh>();
@@ -563,7 +577,7 @@ void CGameMain::Create()
 	}
 
 	//地面クラスのインスタンス作成
-	m_pGround = std::make_unique<CGround>();
+	m_pStage = std::make_unique<CGround>();
 
 	//制限時間のインスタンス生成
 	m_Timer = std::make_shared<CTimer>();
@@ -580,6 +594,9 @@ void CGameMain::Create()
 	m_pWoodBoxCenter = std::make_shared<CStageObject>();
 	m_pWoodBoxBottomLeft = std::make_shared<CStageObject>();
 	m_pWoodBoxBottomRight = std::make_shared<CStageObject>();
+
+	// 地面
+	m_pGround = std::make_shared<CStageObject>();
 	
 	//爆発クラスのインスタンス生成.
 	m_pBlast = std::make_shared<CBlastCollision>();
@@ -704,7 +721,7 @@ HRESULT CGameMain::LoadData()
 	// 	   メッシュの読み込み..
 	//--------------------------------------------------------------------------.
 	//スタティックメッシュの読み込み.
-	m_pStaticMeshGround->Init(_T("Data\\Mesh\\Static\\Stage\\stage.x"));
+	m_pStaticMeshStage->Init(_T("Data\\Mesh\\Static\\Stage\\stage.x"));
 	m_pStaticMeshItemBox->Init(_T("Data\\Mesh\\Static\\ItemBox\\ItemBox.x"));
 
 	// 戦車(赤)
@@ -735,6 +752,9 @@ HRESULT CGameMain::LoadData()
 	//壁
 	m_pStaticMeshWallW->Init(_T("Data\\Mesh\\Static\\Wall\\Wall1.x"));
 	m_pStaticMeshWallH->Init(_T("Data\\Mesh\\Static\\Wall\\Wall2.x"));
+
+	// 地面
+	m_pStaticMeshGround->Init(_T("Data\\Collision\\Ground.x"));
 
 	// 木箱
 	m_pStaticMeshWoodBox->Init(_T("Data\\Mesh\\Static\\Block\\Block.x"));
@@ -770,7 +790,7 @@ HRESULT CGameMain::LoadData()
 	}
 
 	//スタティックメッシュを設定
-	m_pGround->AttachMesh(m_pStaticMeshGround);
+	m_pStage->AttachMesh(m_pStaticMeshStage);
 
 	//アイテムボックスマネージャーにメッシュを設定
 	m_pItemBoxManager->AttachMesh(m_pStaticMeshItemBox);
@@ -790,6 +810,9 @@ HRESULT CGameMain::LoadData()
 	m_pWoodBoxTopRight->AttachMesh(m_pStaticMeshWoodBox);
 	m_pWoodBoxBottomLeft->AttachMesh(m_pStaticMeshWoodBox);
 	m_pWoodBoxBottomRight->AttachMesh(m_pStaticMeshWoodBox);
+
+	// 地面にメッシュを設定
+	m_pGround->AttachMesh(m_pStaticMeshGround);
 
 	// バウンディングの作成
 	CreateBounding();
@@ -839,6 +862,10 @@ void CGameMain::SetPosition()
 	// 右下
 	m_pWoodBoxBottomRight->SetPosition(12, -0.4, -12);
 	m_pWoodBoxBottomRight->SetRotation(0, 0, 0);
+
+	// 地面
+	m_pGround->SetPosition(0.f, -3.f, 0.f);
+	m_pGround->SetRotation(D3DXToRadian(0.f), D3DXToRadian(0.f), D3DXToRadian(0.f));
 }
 
 void CGameMain::CreateBounding()
@@ -876,6 +903,11 @@ void CGameMain::CreateBounding()
 	m_pWallBottom->CreateBoxCollider(m_pWallBottom->GetMinPos(), m_pWallBottom->GetMaxPos());
 	m_pWallLeft->CreateBoxCollider(m_pWallLeft->GetMinPos(), m_pWallLeft->GetMaxPos());
 	m_pWallRight->CreateBoxCollider(m_pWallRight->GetMinPos(), m_pWallRight->GetMaxPos());
+
+	// 地面の当たり判定生成
+	m_pGround->CreateBBoxForMesh(*m_pStaticMeshGround);
+	// 地面の当たり判定設定
+	m_pGround->CreateBoxCollider(m_pGround->GetMinPos(), m_pGround->GetMaxPos());
 
 	// 木箱の当たり判定生成
 	m_pWoodBoxTopLeft->CreateBBoxForMesh(*m_pStaticMeshWoodBox);
@@ -923,8 +955,8 @@ void CGameMain::Collision()
 	// プレイヤーとアイテム
 	PlayertoItemBox();
 
-	// プレイヤーと箱
-	PlayertoWoodBox();
+	//// プレイヤーと箱
+	//PlayertoWoodBox();
 
 	//プレイヤーと爆風.
 	PlayertoBlast();
@@ -1082,39 +1114,50 @@ void CGameMain::PlayertoItemBox()
 
 void CGameMain::PlayertoShot()
 {
-	//for (int i = 0; i < PLAYER_MAX; i++)
-	//{
-	//	// i 番のプレイヤーを取得
-	//	auto player = m_pPlayerManager->GetControlPlayer(i);
-	//	auto Coll = player->GetBody()->GetCollider();
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		// プレイヤーのコライダー取得
+		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto Coll = player->GetBody()->GetCollider();
 
-	//	auto Shot = m_pShotManager->GetCollider();
+		for (int i = 0; i < ShotMax; i++)
+		{
+			// ショットのコライダー取得
+			auto Shots = m_pShotManager->GetShot();
+			auto ShotsColl = Shots[i]->GetCollider();
 
-	//	// 車体が壁と接触したとき
-	//	if (Coll && m_pWallTop->GetCollider() &&
-	//		Coll->CheckCollision(*m_pWallTop->GetCollider()))
-	//	{
-	//		push.z -= 0.1f;
-	//	}
-	//	if (Coll && m_pWallBottom->GetCollider() &&
-	//		Coll->CheckCollision(*m_pWallBottom->GetCollider()))
-	//	{
-	//		push.z += 0.1f;
-	//	}
-	//	if (Coll && m_pWallLeft->GetCollider() &&
-	//		Coll->CheckCollision(*m_pWallLeft->GetCollider()))
-	//	{
-	//		push.x += 0.1f;
-	//	}
-	//	if (Coll && m_pWallRight->GetCollider() &&
-	//		Coll->CheckCollision(*m_pWallRight->GetCollider()))
-	//	{
-	//		push.x -= 0.1f;
-	//	}
+			if (ShotsColl->CheckCollision(*Coll))
+			{
+				Shots[i]->HitShot();
+			}
+		}
+	}
+}
 
-	//	// 壁に当たった時に押し返す
-	//	player->GetBody()->PushBack(push);
-	//}
+void CGameMain::ShottoShot()
+{
+	for (int i = 0; i < ShotMax; i++)
+	{
+		// ショットAのコライダー取得
+		auto ShotsA = m_pShotManager->GetShot();
+		auto ShotsCollA = ShotsA[i]->GetCollider();
+
+		for (int j = 0; j < ShotMax; j++)
+		{
+			// 自分自身との判定をスキップ
+			if (i == j) continue;
+
+			// ショットBのコライダー取得
+			auto ShotsB = m_pShotManager->GetShot();
+			auto ShotsCollB = ShotsB[i]->GetCollider();
+
+			if (ShotsCollA->CheckCollision(*ShotsCollB))
+			{
+				ShotsA[i]->HitShot();
+				ShotsB[i]->HitShot();
+			}
+		}
+	}
 }
 
 //爆風とプレイヤーの当たり判定.
@@ -1142,7 +1185,7 @@ void CGameMain::PlayertoBlast()
 	}
 }
 
-void CGameMain::PlayertoWoodBox()
+void CGameMain::WoodBoxtoPlayer()
 {
 	// 押し返しの強さ
 	const float pushStrength = 0.1f;
@@ -1243,6 +1286,68 @@ void CGameMain::PlayertoWoodBox()
 		// 壁に当たった時に押し返す
 		player->GetBody()->PushBack(push);
 		player->GetCannon()->PushBack(push);
+	}
+}
+
+void CGameMain::WoodBoxtoShot()
+{
+	for (int i = 0; i < ShotMax; i++)
+	{
+		// ショットのコライダー取得
+		auto Shots = m_pShotManager->GetShot();
+		auto ShotsColl = Shots[i]->GetCollider();
+
+		// 壁が弾と接触したとき
+		if (ShotsColl->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
+		{
+			Shots[i]->HitShot();
+		}
+		if (ShotsColl->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
+		{
+			Shots[i]->HitShot();
+		}
+		if (ShotsColl->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
+		{
+			Shots[i]->HitShot();
+		}
+		if (ShotsColl->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
+		{
+			Shots[i]->HitShot();
+		}
+		if (ShotsColl->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
+		{
+			Shots[i]->HitShot();
+		}
+	}
+}
+
+void CGameMain::GroundtoShot()
+{
+	for (int i = 0; i < ShotMax; i++)
+	{
+		// ショットのコライダー取得
+		auto Shots = m_pShotManager->GetShot();
+		auto ShotsColl = Shots[i]->GetCollider();
+
+		if (ShotsColl->CheckCollision(*m_pGround->GetCollider()))
+		{
+			Shots[i]->HitShot();
+		}
+	}
+}
+
+void CGameMain::GroundtoItemBox()
+{
+	for (int ItemIndex = 0; ItemIndex < ITEM_MAX; ++ItemIndex)
+	{
+		auto Item = m_pItemBoxManager->GetItem();
+		auto ItemColl = Item[ItemIndex]->GetCollider();
+
+		if (ItemColl->CheckCollision(*m_pGround->GetCollider()))
+		{
+			// アイテムボックスの処理を入れる
+			//Item[ItemIndex]->
+		}
 	}
 }
 
