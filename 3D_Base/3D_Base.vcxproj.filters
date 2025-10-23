@@ -16,7 +16,6 @@
     <ClCompile Include="Data\ImGui\Library\imgui_impl_win32.cpp" />
     <ClCompile Include="Data\ImGui\Library\imgui_tables.cpp" />
     <ClCompile Include="Data\ImGui\Library\imgui_widgets.cpp" />
-    <ClCompile Include="Source\AssetsFile\SpriteAssets\SpriteAssets.cpp" />
     <ClCompile Include="Source\Assets\DebugText\CDebugText.cpp" />
     <ClCompile Include="Source\Assets\DirectX\DirectX11\CDirectX11.cpp" />
     <ClCompile Include="Source\Assets\DirectX\DirectX9\CDirectX9.cpp" />
@@ -76,9 +75,9 @@
     <ClCompile Include="Source\Tameshi\test.cpp" />
     <ClCompile Include="Source\Vector3.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
+    <ClCompile Include="Source\Collision\BlastCollision\CBlastCollision.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\AssetsFile\SpriteAssets\SpriteAssets.h" />
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX11\CDirectX11.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX9\CDirectX9.h" />
@@ -140,6 +139,7 @@
     <ClInclude Include="Source\MyMacro.h" />
     <ClInclude Include="Source\stdafx.h" />
     <ClInclude Include="Source\Vector3.h" />
+    <ClInclude Include="Source\Collision\BlastCollision\CBlastCollision.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />

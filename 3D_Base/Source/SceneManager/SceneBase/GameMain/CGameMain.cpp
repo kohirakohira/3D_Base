@@ -1040,12 +1040,15 @@ void CGameMain::PlayertoBlast()
 		auto player = m_pPlayerManager->GetControlPlayer(i);
 		auto Coll = player->GetBody()->GetCollider();
 
-		auto blast = m_pBlast->GetCollider();
-
 		if (m_pBlast->GetBlastFlag() == true)
 		{
-			//車体が爆風と接触したとき.
-			if (blast->CheckCollision(*Coll))
+			m_pBlast->SetRadius(m_pBlast->GetBlastRadius());
+			////車体が爆風と接触したとき.
+			//if (m_pBlast->GetCollider()->CheckCollision(*Coll))
+			//{
+			//	m_pBlast->HitBlast();
+			//}
+			if (Coll->CheckCollision(*m_pBlast->GetCollider()))
 			{
 				m_pBlast->HitBlast();
 			}

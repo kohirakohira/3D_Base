@@ -1,11 +1,11 @@
 #include "CBlastCollision.h"
 
 //’è”éŒ¾.
-const float MAX_RADIUS = 1.5f;		//”¼Œa‚ÌÅ‘å’l.
+const float MAX_RADIUS = 2.5f;		//”¼Œa‚ÌÅ‘å’l.
 const float MIN_RADIUS = 0.0f;		//”¼Œa‚ÌÅ¬’l.
 
 CBlastCollision::CBlastCollision()
-	: m_Radius			(MAX_RADIUS)
+	: m_Radius			( 0.0f )
 	, m_Bom				( false )
 {
 	//‹…‚Ì“–‚½‚è”»’è.
@@ -25,7 +25,7 @@ void CBlastCollision::Update()
 
 	if (m_Bom == true)
 	{
-#if 0
+#if 1
 		//”¼Œa‚ğ™X‚É‘å‚«‚­‚·‚é.
 		m_Radius += GROWTH_SPEED * deltaTime;
 
@@ -45,9 +45,7 @@ void CBlastCollision::Update()
 #endif
 
 		////“–‚½‚è”»’èİ’è.
-		//CreateSpehreCollider(m_Radius);
-		//”¼Œa‚ğí‚Éİ’è‚µ‘±‚¯‚é.
-		SetRadius(m_Radius);
+		//m_pBSphere->SetRadius(m_Radius);
 	}
 	else
 	{
