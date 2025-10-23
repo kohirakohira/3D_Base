@@ -205,6 +205,11 @@ void CGameMain::Update()
 	m_pWallLeft->Update();
 	m_pWallRight->Update();
 
+	//爆風の動作処理.
+	m_pBlast->Update();
+	//爆風の情報.
+	m_pBlast->SetPosition(0.0f, 2.0f, 0.0f);
+
 	// 木箱の更新
 	m_pWoodBoxTopLeft->Update();
 	m_pWoodBoxTopRight->Update();
@@ -276,6 +281,9 @@ void CGameMain::Draw()
 
 		//アイテムボックスの描画.
 		m_pItemBoxManager->Draw(view, proj, light, paramC);
+
+		//爆風の表示.
+		m_pBlast->Draw(view, proj, light, paramC);
 
 //4画面に体力を表示.
 		//前後関係無視..
@@ -426,7 +434,6 @@ void CGameMain::Destroy()
 
 void CGameMain::Create()
 {
-	//
 	//Effectクラス.
 	CEffect::GetInstance().Create(
 		CDirectX11::GetInstance().GetDevice(),
@@ -436,6 +443,7 @@ void CGameMain::Create()
 	m_pSpriteTimerFrame = std::make_shared<CUIObject>();
 	m_pSpriteTimer		= std::make_shared<CUIObject>();
 	m_pSpriteTimerArrow = std::make_shared<CUIObject>();
+
 	//HPの分だけ生成..
 	for (int i = 0; i < HP_MAX; i++)
 	{
@@ -567,6 +575,16 @@ void CGameMain::Create()
 	m_pWallRight	= std::make_shared<CStageObject>();
 
 	// 木箱
+	m_pWoodBoxTopLeft = std::make_shared<CStageObject>();
+	m_pWoodBoxTopRight = std::make_shared<CStageObject>();
+	m_pWoodBoxCenter = std::make_shared<CStageObject>();
+	m_pWoodBoxBottomLeft = std::make_shared<CStageObject>();
+	m_pWoodBoxBottomRight = std::make_shared<CStageObject>();
+	
+	//爆発クラスのインスタンス生成.
+	m_pBlast = std::make_shared<CBlastCollision>();
+
+	//アイテムマネージャークラスのインスタンス生成..
 	m_pWoodBoxTopLeft		= std::make_shared<CStageObject>();
 	m_pWoodBoxTopRight		= std::make_shared<CStageObject>();
 	m_pWoodBoxCenter		= std::make_shared<CStageObject>();
@@ -762,6 +780,9 @@ HRESULT CGameMain::LoadData()
 	m_pWallBottom->AttachMesh(m_pStaticMeshWallW);
 	m_pWallLeft->AttachMesh(m_pStaticMeshWallH);
 	m_pWallRight->AttachMesh(m_pStaticMeshWallH);
+
+	//爆風のメッシュを設定.
+	m_pBlast->AttachMesh(m_pStaticMesh_BulletRed);
 
 	// 木箱にメッシュを設定 
 	m_pWoodBoxCenter->AttachMesh(m_pStaticMeshWoodBox);

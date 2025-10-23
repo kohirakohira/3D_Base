@@ -31,6 +31,8 @@
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス.
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // 戦車：砲塔クラス.
 
+#include "Collision//BlastCollision//CBlastCollision.h"	//爆風クラス.
+
 #include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"//アイテムボックスマネージャークラス..
 
 #include "Camera//CCamera.h" //カメラクラス.
@@ -145,12 +147,12 @@ public:
 	std::array < std::shared_ptr<CSprite2D>, PLAYERNUM_MAX>		m_pSprite2DPlayerIcon;			//プレイヤー番号画像..
 
 	//スタティックメッシュオブジェクトクラス(UI)..
-	std::array<std::shared_ptr<CUIObject>, PLAYERNUM_MAX>	m_pSpritePlayerIcon;			//プレイヤーアイコン..
-	std::array<std::shared_ptr<CUIObject>, KILLNUM_MAX>		m_pSpriteKillNomber;			//キル数アイコン..
-	std::array<std::shared_ptr<CUIObject>, HP_MAX>			m_pSpriteHitPoint;				//HPアイコン..
-	std::shared_ptr<CUIObject>								m_pSpriteTimerFrame;			//制限時間の枠..
-	std::shared_ptr<CUIObject>								m_pSpriteTimer;					//制限時間の時計枠..
-	std::shared_ptr<CUIObject>								m_pSpriteTimerArrow;			//時計の針..
+	std::array<std::shared_ptr<CUIObject>, PLAYERNUM_MAX>		m_pSpritePlayerIcon;			//プレイヤーアイコン..
+	std::array<std::shared_ptr<CUIObject>, KILLNUM_MAX>			m_pSpriteKillNomber;			//キル数アイコン..
+	std::array<std::shared_ptr<CUIObject>, HP_MAX>				m_pSpriteHitPoint;				//HPアイコン..
+	std::shared_ptr<CUIObject>									m_pSpriteTimerFrame;			//制限時間の枠..
+	std::shared_ptr<CUIObject>									m_pSpriteTimer;					//制限時間の時計枠..
+	std::shared_ptr<CUIObject>									m_pSpriteTimerArrow;			//時計の針..
 
 	//ゲームで扱うスプライトデータ(使いまわす資源)..
 	std::unique_ptr<CSprite3D>		m_pSpriteGround;
@@ -212,6 +214,9 @@ public:
 	std::shared_ptr<CStageObject>		m_pWoodBoxCenter;
 	std::shared_ptr<CStageObject>		m_pWoodBoxBottomLeft;
 	std::shared_ptr<CStageObject>		m_pWoodBoxBottomRight;
+
+	//爆風.
+	std::shared_ptr<CBlastCollision>	m_pBlast;
 
 	//アイテムボックスマネージャークラス..
 	std::shared_ptr<CItemBoxManager>			m_pItemBoxManager;
