@@ -40,6 +40,9 @@ void CBody::Update()
 	// コライダーの座標を更新
 	m_pCollider->SetPosition(m_vPosition);
 
+	// Y座標を固定
+	m_vPosition.y = 0;
+
 	KeyInput();		// 入力処理
 	RadioControl();	// 回転・移動処理
 	CCharacter::Update();
