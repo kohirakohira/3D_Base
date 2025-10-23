@@ -106,8 +106,6 @@ public:
 	//爆風とプレイヤーの当たり判定.
 	void PlayertoBlast();
 
-	//// プレイヤーと箱
-	//void PlayertoWoodBox();
 
 	//画面をグリッドに分割したとき、idx番目のマスに対応する.
 	//D3D11_VIEWPORTを作成して返す関数.

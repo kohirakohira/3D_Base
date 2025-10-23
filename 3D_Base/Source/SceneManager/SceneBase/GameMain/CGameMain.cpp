@@ -960,11 +960,26 @@ void CGameMain::Collision()
 	// プレイヤーとアイテム
 	PlayertoItemBox();
 
-	//// プレイヤーと箱
-	//PlayertoWoodBox();
+	// プレイヤーと弾
+	PlayertoShot();
+
+	// 弾と弾
+	ShottoShot();
+
+	// 箱とプレイヤー
+	WoodBoxtoPlayer();
+
+	// 箱と弾
+	WoodBoxtoShot();
+
+	// 地面と弾
+	GroundtoShot();
+
+	// 地面とアイテムボックス
+	GroundtoItemBox();
 
 	//プレイヤーと爆風.
-	PlayertoBlast();
+	//PlayertoBlast();
 
 }
 
