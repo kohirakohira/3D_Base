@@ -137,17 +137,6 @@ void CPlayerManager::Update()
 	const int count = static_cast<int>(m_pPlayers.size());
 	if (count <= 0)return;
 
-#if 0
-	//プレイヤーコントローラー接続を無視する
-	static bool prevF1 = false;
-	bool nowF1 = (GetAsyncKeyState(VK_F1) & 0x8000) != 0;
-	if (nowF1 && !prevF1)
-	{
-		m_OnePPadEnabled = !m_OnePPadEnabled;
-	}
-	prevF1 = nowF1;
-#endif
-
 	//コントローラー判定
 	SyncByPadConnection();
 
@@ -176,6 +165,7 @@ void CPlayerManager::Update()
 				//COM稼働中だけターゲットをあげる
 				if (target && IsHumanControlled(target) && target != self)
 				{
+					//ターゲットがプレイヤー限定なのであとで消す
 					com->SetTarget(target);
 				}
 				else

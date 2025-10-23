@@ -37,6 +37,9 @@ public:
 	//プレイヤーマネージャーで使うよう
 	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
 
+	//プレイヤーを取得する.読み取り専用
+	void SetPlayerRef(const std::vector<std::shared_ptr<CPlayer>>* all);
+
 private:
 	std::shared_ptr<CPlayer> m_pTarget;		//追尾対象
 	bool m_Registered;	//インスタンス登録管理
@@ -44,6 +47,8 @@ private:
 	//自動発射用のパラメータ
 	std::weak_ptr<CShotManager> m_pShotManager; //弾マネージャー
 
+	//プレイヤーの一覧取得
+	const std::vector<std::shared_ptr<CPlayer>>* m_pAllPlayer;
 
 	//内部処理
 	void SanitizeParams();
@@ -66,6 +71,18 @@ private:
 	//COMインスタンスの静的レジストリ
 	static std::vector<CComPlayer*>& Instances();
 
+	//COMの状態
+	enum class State
+	{
+		Idle,		//待機
+		Seek,		//探索
+		Chase,		//追跡
+		Attack,		//攻撃
+		Evade,		//離脱
+		ItemSeek,	//アイテム探索
+	};
+
+
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
 	float	m_KeepDistance;				//この距離を保つ
@@ -77,12 +94,23 @@ private:
 	float	m_ClosenessRadius;			//近くにしすぎないように一定に保つ半径
 	int		m_EvadeDuration;			//回避するフレーム数
 	int		m_EvadeFrames;
-	D3DXVECTOR3 m_LastSeenPos = D3DXVECTOR3(0, 0, 0);	//最後に見た位置
+	D3DXVECTOR3 m_LastSeenPos;			//最後に見た位置
 	int		m_LostSightFrames;
+	bool	m_IsTarget;					//ターゲットかどうか	
+
+	//探索処理パラメータ
+	int		m_RetargetInterval;				//探索のインターバル
+	int		m_RetargetTimer;				//カウント
+	float	m_ForgetDistance;				//これ以上離れた忘れる
+	float	m_StickinessRatio;				//既存ターゲット
+	float	m_CurTargetDist;				//キャッシュ
+	State	m_State;
+	int m_StateFrames;						//その状態に入ってからの経過フレーム
+
 
 	//仮の宣言
 	float	m_TargetRadius;				//ターゲット扱いする距離
-	bool	m_IsTarget;					//ターゲットかどうか
+
 
 	//COMのショット関連のパラメータ
 	struct ComShotState
@@ -94,19 +122,7 @@ private:
 	};
 	ComShotState m_ShotState;
 
-	//COMの状態
-	enum class State
-	{
-		Idle,		//待機
-		Seek,		//探索
-		Chase,		//追跡
-		Attack,		//攻撃
-		Evade,		//離脱
-		ItemSeek,	//アイテム探索
-	};
-	State m_State = State::Idle;
-	int m_StateFrames;			//その状態に入ってからの経過フレーム
-//	int   m_EvadeFrames = 0;
+	//	int   m_EvadeFrames = 0;
 	void ChangeState(State state)
 	{
 		m_State = state;
@@ -133,31 +149,15 @@ private:
 
 	//砲塔を車体に追従させる
 	void SyncCannonToBody();
-	
+
+	//ステータスを変更する
 	void TransitionTo(State state);
 
+	//条件に応じて状態変更
 	void EvaluateTransitions(float dist);
 
-#if 0
-	// プレイヤー一覧（読み取り専用）を覗くための参照だけ持つ
-	void SetPlayersRef(const std::vector<std::shared_ptr<CPlayer>>* all) { m_AllPlayers = all; }
-
-	// 一定間隔で最寄りの敵にリターゲット
-	void RetargetNearestEnemy();
-
-	// 目標選定に使うパラメータ
-	int   m_RetargetInterval = 30;     // フレーム毎の再探索間隔
-	int   m_RetargetTimer = 0;      // カウントダウン
-	float m_ForgetDistance = 60.0f;  // これ以上離れたら忘れる
-	float m_StickinessRatio = 0.8f;   // 既存ターゲットに残る粘り（距離の比）
-
-private:
-	const std::vector<std::shared_ptr<CPlayer>>* m_AllPlayers = nullptr;
-	// キャッシュ
-	float m_CurTargetDist2 = 1e9f;
-
-#endif
-
+	//一定時間ターゲットにする
+	void MakeFixedTimeTarget();
 };
 
 
