@@ -142,8 +142,6 @@ void CGameResult::Create()
 
 	//地面クラスのインスタンス作成.
 	m_pGround = std::make_shared<CGround>();
-	//地面に設定する.
-	m_pGround->SetPlayer(*m_pPlayerManager);
 
 	//カメラクラスのインスタンス作成.
 	m_pCamera = std::make_shared<CCamera>();

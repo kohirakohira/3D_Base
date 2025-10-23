@@ -271,7 +271,6 @@ void CGameMain::Draw()
 		m_pShotManager->Draw(view, proj, light, paramC);
 
 		//地面描画.
-		if (owner) m_pStage->SetPlayer(*owner);
 		m_pStage->Draw(view, proj, light, paramC);
 
 		//壁の表示.

@@ -3,10 +3,10 @@
 #include "GameObject//StaticMeshObject//CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス 
 
 //-----外部クラス-----
-#include "GameObject//StaticMeshObject//Character//CCharacter.h" // キャラクタークラス
+#include "GameObject/StaticMeshObject/Character/Player/PlayerManager/CPlayerManager.h"
 
 //==================================
-//	ステージクラス
+//	グラウンドクラス
 //==================================
 class CGround
 	: public CStaticMeshObject // スタティックメッシュオブジェクトクラスを継承
@@ -17,10 +17,17 @@ public:
 
 	virtual void Update() override;
 
-	//プレイヤーを設定.
-	void SetPlayer( CCharacter& pPlayer ) { m_pPlayer = &pPlayer; }
+	// リスポーン可能エリアに
+	// プレイヤーの座標を指定する
+	void RespawnArea();
 
+	// マップの中央を跨がないように計算する
+	int GetAreaIndex(float x, float z);
+
+	//プレイヤーを設定.
+	void SetPlayer(std::shared_ptr<CPlayerManager> pPlayer) { m_pPlayerManager = pPlayer; }
 protected:
-	CCharacter* m_pPlayer;
+
+	std::shared_ptr<CPlayerManager>		m_pPlayerManager;
 
 };

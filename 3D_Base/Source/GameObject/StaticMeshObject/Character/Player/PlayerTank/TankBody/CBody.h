@@ -48,6 +48,15 @@ public:
 	// バウンディングボックスを作成
 	void CreateBounding(std::shared_ptr<CStaticMesh> pBody);
 
+	// リスポーンエリア設定
+	void SetRespawnArea(int Area);
+
+	// リスポーン
+	void Respawn();
+
+	// 死亡確認
+	void Death();
+
 private:
 	// キー入力受付.
 	void KeyInput();
@@ -58,6 +67,9 @@ protected:
 	enMoveState m_MoveState;	// 移動状態
 
 private:
-	std::shared_ptr<CInputManager> m_pInput;
+	bool		m_Death;			// 死亡
+	int			m_RespawnCoolTime;  // リスポーンクールタイム
+	int			m_RespawnTime;		// リスポーン時間測定
 
+	std::shared_ptr<CInputManager> m_pInput;
 };
