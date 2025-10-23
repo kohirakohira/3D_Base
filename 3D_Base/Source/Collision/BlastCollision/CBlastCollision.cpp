@@ -1,12 +1,15 @@
 #include "CBlastCollision.h"
 
+//’è”éŒ¾.
+const float MAX_RADIUS = 2.5f;		//”¼Œa‚ÌÅ‘å’l.
+const float MIN_RADIUS = 0.0f;		//”¼Œa‚ÌÅ¬’l.
+
 CBlastCollision::CBlastCollision()
 	: m_Radius			( 0.0f )
+	, m_Bom				( false )
 {
 	//‹…‚Ì“–‚½‚è”»’è.
 	m_pCollider = std::make_shared<CSphereCollider>();
-	//”¼Œa‚ğİ’è‚µ‚Ä‚©‚ç“–‚½‚è”»’è‚ğì¬.
-	CreateSpehreCollider(m_Radius);
 }
 
 CBlastCollision::~CBlastCollision()
@@ -17,22 +20,49 @@ CBlastCollision::~CBlastCollision()
 void CBlastCollision::Update()
 {
 	//’è”éŒ¾.
-	const float GROWTH_SPEED = 0.5f;	//‘å‚«‚³‚Ì•.
-	const float MAX_RADIUS = 50.0f;	//”¼Œa‚ÌÅ‘å’l.
-	const float MIN_RADIUS = 0.0f;	//”¼Œa‚ÌÅ¬’l.
+	const float GROWTH_SPEED = 10.0f;	//‘å‚«‚³‚Ìã‚ª‚è•.
+	const float deltaTime = 1.0f / FPS;
 
-	//”¼Œa‚ğ™X‚É‘å‚«‚­‚·‚é.
-	m_Radius += GROWTH_SPEED;
+	if (m_Bom == true)
+	{
+#if 1
+		//”¼Œa‚ğ™X‚É‘å‚«‚­‚·‚é.
+		m_Radius += GROWTH_SPEED * deltaTime;
 
-	//Å¬’l‚©‚çÅ‘å’l‚Ü‚Å‚µ‚©”½‰f‚³‚ê‚È‚¢.
-	m_Radius = std::clamp(m_Radius, MIN_RADIUS, MAX_RADIUS);
+		//Å¬’l‚©‚çÅ‘å’l‚Ü‚Å‚µ‚©”½‰f‚³‚ê‚È‚¢.
+		m_Radius = std::clamp(m_Radius, MIN_RADIUS, MAX_RADIUS);
 
-	//”¼Œa‚ğí‚Éİ’è‚µ‘±‚¯‚é.
-	CStaticMeshObject::SetRadius(m_Radius);
+		//”š”­‚ğ–ß‚·.
+		if (m_Radius >= MAX_RADIUS)
+		{
+			//‰Šú‰».
+			m_Radius = MIN_RADIUS;
+			m_Bom = false;
+		}
+#else
+		//”¼Œa‚ğŒÅ’è.
+		m_Radius = MAX_RADIUS;
+#endif
+
+		////“–‚½‚è”»’èİ’è.
+		//m_pBSphere->SetRadius(m_Radius);
+	}
+	else
+	{
+		return;
+	}
 }
 
 //•`‰æˆ—.
 void CBlastCollision::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
 	CStaticMeshObject::Draw(View, Proj, Light, Camera);
+}
+
+//“–‚½‚Á‚½‚ÌŠÖ”.
+void CBlastCollision::HitBlast()
+{
+	//‰Šú‰».
+	//m_Radius = 0.0f;
+	//m_Bom = false;
 }

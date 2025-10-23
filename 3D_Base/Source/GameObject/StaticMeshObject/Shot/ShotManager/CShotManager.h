@@ -11,7 +11,7 @@
 #include "GameObject//StaticMeshObject//Shot//CShot.h" // ショットクラス
 
 class CShotManager 
-	: public CCharacter // キャラクタークラスを継承.
+	//: public CCharacter // キャラクタークラスを継承.
 {
 public:
 	CShotManager();
@@ -21,14 +21,17 @@ public:
 	void AttachMeshToPlayerShot(int playerIndex, std::shared_ptr<CStaticMesh> mesh);
 	void SetReload(int playerIndex, const D3DXVECTOR3& pos, float rotY);
 
-	void Update() override;
-	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+	void Update() ;
+	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) ;
 
 	// バウンディングオブジェクトの作成
 	void CreateBounding(std::shared_ptr<CStaticMesh>& pShot);
 
 	// コライダーの作成
 	void CreateCollider();
+
+	//位置の取得.
+	const D3DXVECTOR3& GetPosition();
 
 	//外部のクラスから情報取得.
 	void SetCShot(std::vector<std::shared_ptr<CShot>> pShot) { m_pShots = pShot; }

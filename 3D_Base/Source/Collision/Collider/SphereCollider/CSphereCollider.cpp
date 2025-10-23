@@ -15,9 +15,9 @@ CSphereCollider::~CSphereCollider()
 bool CSphereCollider::CheckCollisionSphere(const CSphereCollider& sphere) const
 {
 	//D3Dxで実装版.
-	//２つの球体の中心間の距離を求める
+	//２つの球体の中心間の距離を求める※ベクトル.
 	D3DXVECTOR3 vLength = m_CenterPos - sphere.GetPosition();
-	//上記のベクトルから長さに変換
+	//上記のベクトルから長さに変換※スカラー値.
 	float Length = D3DXVec3Length(&vLength);
 
 	//「２つの球体の距離」が「２つの球体のそれぞれの半径を足したもの」より、
