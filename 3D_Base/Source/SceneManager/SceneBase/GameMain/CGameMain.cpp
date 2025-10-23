@@ -975,7 +975,7 @@ void CGameMain::Collision()
 	GroundtoItemBox();
 
 	//プレイヤーと爆風.
-	PlayertoBlast();
+	//PlayertoBlast();
 
 }
 
