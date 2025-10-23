@@ -5,7 +5,7 @@
 //-----ライブラリ-----
 #include <vector>
 #include <memory>
-
+#include <array>
 //-----メッシュ-----
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
 #include "GameObject//StaticMeshObject//Shot//CShot.h" // ショットクラス
@@ -17,9 +17,9 @@ public:
 	CShotManager();
 	~CShotManager();
 
-	void Initialize(int playerCount);
-	void AttachMeshToPlayerShot(int playerIndex, std::shared_ptr<CStaticMesh> mesh);
-	void SetReload(int playerIndex, const D3DXVECTOR3& pos, float rotY);
+	void Initialize();
+	void AttachMeshToPlayerShot(BulletKinds kind, std::shared_ptr<CStaticMesh> mesh);
+	void SetReload(int No, const D3DXVECTOR3& pos, float rotY);
 
 	void Update() ;
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) ;
@@ -40,5 +40,9 @@ public:
 	std::vector<std::shared_ptr<CShot>>	GetShot() const { return m_pShots; }
 
 private:
+	//メッシュの情報を持つ変数.
+	std::array<std::shared_ptr<CStaticMesh>, PLAYER_MAX>	m_Mesh;
+
+	//弾クラス.
 	std::vector<std::shared_ptr<CShot>> m_pShots;
 };

@@ -1,16 +1,16 @@
 #include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h" // ショットマネージャークラス
 
 CShotManager::CShotManager()
-	: m_pShots()
+	: m_pShots			()
+	, m_Mesh			()
 {
-	
 }
 
 CShotManager::~CShotManager()
 {
 }
 
-void CShotManager::Initialize(int playerCount)
+void CShotManager::Initialize()
 {
 	for (int i = 0; i < ShotMax; ++i)
 	{
@@ -18,23 +18,24 @@ void CShotManager::Initialize(int playerCount)
 	}
 }
 
-void CShotManager::AttachMeshToPlayerShot(int playerIndex, std::shared_ptr<CStaticMesh> mesh)
+void CShotManager::AttachMeshToPlayerShot(BulletKinds kind, std::shared_ptr<CStaticMesh> mesh)
 {
 	//中身が無かったら返す.
 	if (mesh == nullptr)
 	{
 		return;
 	}
-	m_pShots[playerIndex]->AttachMesh(mesh);
+	m_Mesh[kind] = mesh;
 }
 
-void CShotManager::SetReload(int playerIndex, const D3DXVECTOR3& pos, float rotY)
+void CShotManager::SetReload(int No, const D3DXVECTOR3& pos, float rotY)
 {
-	for (auto& shot : m_pShots)
+	for (int i = 0; i < ShotMax; ++i)
 	{
-		if (!shot->IsActive())  // 新しくこの関数を CShot に追加してください
+		if (!m_pShots[i]->IsActive())  // 新しくこの関数を CShot に追加してください
 		{
-			shot->Reload(pos, rotY);
+			m_pShots[i]->AttachMesh(m_Mesh[No]);
+			m_pShots[i]->Reload(pos, rotY);
 			break;
 		}
 	}

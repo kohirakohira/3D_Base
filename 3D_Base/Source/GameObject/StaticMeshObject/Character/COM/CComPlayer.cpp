@@ -443,7 +443,7 @@ void CComPlayer::TryAutoFire()
     const float desired = std::atan2f(to.x, to.z);
     const float err = std::fabs(Wrap(desired - yaw));
     if (err <= ToRad(m_ShotState.FireAngleEpsDeg)) {
-        manager->SetReload(m_PlayerID, muzzle, yaw);
+        manager->SetReload(BulletKinds::Mesh_2, muzzle, yaw);
         m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
     }
 }
@@ -575,7 +575,7 @@ void CComPlayer::StepAttack()
             const float desired = std::atan2f(toTarget.x, toTarget.z);
             const float err = std::fabs(Wrap(desired - yaw));
             if (err <= ToRad(m_ShotState.FireAngleEpsDeg) && m_ShotState.m_ShotCD == 0) {
-                mgr->SetReload(m_PlayerID, muzzle, yaw);
+                mgr->SetReload(BulletKinds::Mesh_2, muzzle, yaw);
                 m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames; //クールダウンリセット
             }
         }

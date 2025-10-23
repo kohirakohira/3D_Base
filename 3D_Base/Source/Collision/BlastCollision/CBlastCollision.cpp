@@ -25,7 +25,7 @@ void CBlastCollision::Update()
 
 	if (m_Bom == true)
 	{
-#if 1
+#if 0
 		//”¼Œa‚ğ™X‚É‘å‚«‚­‚·‚é.
 		m_Radius += GROWTH_SPEED * deltaTime;
 
@@ -44,8 +44,11 @@ void CBlastCollision::Update()
 		m_Radius = MAX_RADIUS;
 #endif
 
-		////“–‚½‚è”»’èİ’è.
-		//m_pBSphere->SetRadius(m_Radius);
+		//“–‚½‚è”»’èİ’è.
+		SetRadius(m_Radius);
+		//”¼Œa‚ğİ’è‚µ‚Ä‚ ‚°‚é.
+		std::shared_ptr<CSphereCollider> m_ShereCollider = std::dynamic_pointer_cast<CSphereCollider>(m_pCollider);
+		m_ShereCollider->SetRadius(m_Radius);
 	}
 	else
 	{
@@ -63,6 +66,6 @@ void CBlastCollision::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAM
 void CBlastCollision::HitBlast()
 {
 	//‰Šú‰».
-	//m_Radius = 0.0f;
-	//m_Bom = false;
+	m_Radius = 0.0f;
+	m_Bom = false;
 }
