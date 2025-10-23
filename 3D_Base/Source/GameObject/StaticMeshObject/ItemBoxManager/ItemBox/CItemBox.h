@@ -37,7 +37,10 @@ public:
 
 	// アイテムの情報を設定する.
 	void SetItemInfo(CItemType item);
-
+	//重力の有無を設定する関数.
+	void SetGravity(bool flg) { IsGravity = flg; }
+	//重力の有無取得.
+	bool GetGravity() { return IsGravity; }
 	//アイテム情報を渡す用.
 	ItemEffect GetItem() const { return m_Item; }
 
@@ -66,6 +69,9 @@ public:
 	void CreateBounding(std::shared_ptr<CStaticMesh> pItemBox);
 
 protected:
+	//重力があるかないか.
+	bool IsGravity;
+
 	//初期速度.
 	float InitialSpeed;
 	//重力加速度(9.8m/sの2乗だけど、下向きに落ちるので-を付ける).

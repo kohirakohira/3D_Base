@@ -20,7 +20,7 @@ CBlastCollision::~CBlastCollision()
 void CBlastCollision::Update()
 {
 	//’è”éŒ¾.
-	const float GROWTH_SPEED = 10.0f;	//‘å‚«‚³‚Ìã‚ª‚è•.
+	const float GROWTH_SPEED = 6.0f;	//‘å‚«‚³‚Ìã‚ª‚è•.
 	const float deltaTime = 1.0f / FPS;
 
 	if (m_Bom == true)

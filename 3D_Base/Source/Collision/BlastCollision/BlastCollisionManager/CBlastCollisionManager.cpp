@@ -12,37 +12,36 @@ CBlastCollisionManager::~CBlastCollisionManager()
 //動作処理.
 void CBlastCollisionManager::Update()
 {
-	for (auto& blast : m_pBlastCollision)
+	for (int i = 0; i < m_pBlastCollision.size(); i++)
 	{
-		blast->Update();
+		m_pBlastCollision[i]->Update();
 	}
 }
 
 //描画処理.
 void CBlastCollisionManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	for (auto& blast : m_pBlastCollision)
+	for (int i = 0; i < m_pBlastCollision.size(); i++)
 	{
-		blast->Draw(View, Proj, Light, Camera);
+		m_pBlastCollision[i]->Draw(View, Proj, Light, Camera);
 	}
 }
 
 //インスタンス生成.
 void CBlastCollisionManager::Create()
 {
-	for (int i = 0; i < ShotMax; i++)
-	{
-		//インスタンス生成.
-		m_pBlastCollision.push_back(std::make_shared<CBlastCollision>());
-	}
+	//インスタンス生成.
+	m_pBlastCollision.push_back(std::make_shared<CBlastCollision>());
 }
 
 //当たった時の関数.
 void CBlastCollisionManager::HitBlast()
 {
-	for (auto& blast : m_pBlastCollision)
+	for (int i = 0; i < m_pBlastCollision.size(); i++)
 	{
-		blast->HitBlast();
+		m_pBlastCollision[i]->HitBlast();
+		//先頭(一番古いモノ)を削除.
+		m_pBlastCollision.erase(m_pBlastCollision.begin());
 	}
 }
 
@@ -94,9 +93,9 @@ void CBlastCollisionManager::SetRotation(D3DXVECTOR3 rot)
 //大きさの設定.
 void CBlastCollisionManager::SetScale(float xyz)
 {
-	for (auto& blast : m_pBlastCollision)
+	for (int i = 0; i < m_pBlastCollision.size(); i++)
 	{
-		blast->SetScale(xyz);
+		m_pBlastCollision[i]->SetScale(xyz);
 	}
 }
 

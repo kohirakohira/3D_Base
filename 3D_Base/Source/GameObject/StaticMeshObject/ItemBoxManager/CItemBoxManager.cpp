@@ -94,6 +94,16 @@ void CItemBoxManager::SetScale(float x, float y, float z)
 	}
 }
 
+//重力の有無を設定.
+void CItemBoxManager::SetGravity(bool flg)
+{
+	for (auto& item : m_Item)
+	{
+		//重力の有無を設定.
+		item->SetGravity(flg);
+	}
+}
+
 void CItemBoxManager::SetItemInfo()
 {
 	for (auto& item : m_Item)
