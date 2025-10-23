@@ -74,7 +74,6 @@ private:
 	//COMの状態
 	enum class State
 	{
-		Idle,		//待機
 		Seek,		//探索
 		Chase,		//追跡
 		Attack,		//攻撃
@@ -130,7 +129,6 @@ private:
 	}
 
 	//フレームごとのステート処理
-	void StepIdle();		//待機処理
 	void StepSeek();		//探索処理
 	void StepChase();		//追跡処理
 	void StepAttack();		//攻撃処理

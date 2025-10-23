@@ -23,7 +23,7 @@ CComPlayer::CComPlayer()
     : m_KeepDistance        ( 9.0f )   //0ならベタ詰め
     , m_pTarget             ( nullptr )
     , m_AvoidRadius         ( 10.0f )
-    , m_AvoidWeight         ( 0.8f )
+    , m_AvoidWeight         ( 2.0f )
     , m_Registered          ( false )
     , m_StateFrames         ( 0 )
     , m_SeekRadius          ( 5.0f ) 
@@ -43,7 +43,7 @@ CComPlayer::CComPlayer()
     , m_StickinessRatio     ( 0.8f)
     , m_CurTargetDist       ( 1e9f )
     , m_LastSeenPos         ( D3DXVECTOR3(0, 0, 0) )
-    , m_State               ( State::Idle )
+    , m_State               ( State::Seek )
 #if 0
     , m_ShotCD()
     , MuzzleOffsetZ()
@@ -352,33 +352,21 @@ void CComPlayer::Update()
         m_RetargetTimer = m_RetargetInterval;
     }
 
-#if 1
     //対象からの最新距離を測る
     if (m_pTarget)
     {
         const D3DXVECTOR3 distance = m_pTarget->GetPosition() - body->GetPosition();
         dist = std::sqrt(distance.x * distance.x + distance.z * distance.z);
-    }
-#endif
-    
-#if 0
-    //ターゲット情報の更新
-    if (m_pTarget)
-    {
-        m_LastSeenPos = m_pTarget->GetPosition();
-        const D3DXVECTOR3 distance = m_LastSeenPos - body->GetPosition();
-        dist = std::sqrtf(distance.x * distance.x + distance.z * distance.z);
         m_LostSightFrames = 0;
     }
     else
     {
         ++m_LostSightFrames;
     }
-#endif
     
     const float AttackDistanceClose = std::max(m_KeepDistance * 0.9f, 3.f);
-    const float chaseDistanceFar = std::max(m_KeepDistance * 1.5f, 5.f);
-
+    const float ChaseDistanceFar = std::max(m_KeepDistance * 1.5f, 5.f);
+    const float ItemDistanceClose = std::max(m_KeepDistance * 2.f, 3.f);
     //状態遷移
     auto to = [&](State state)
         {
@@ -391,20 +379,24 @@ void CComPlayer::Update()
 
     if (!m_pTarget)
     {
-        to(State::Idle);
+        to(State::Seek);
     }
     else if(dist <= AttackDistanceClose)
     {
         to(State::Attack);
     }
-    else if (dist <= chaseDistanceFar)
+    else if (dist <= ChaseDistanceFar)
     {
         to(State::Chase);
     }
+    //else if (dist < ItemDistanceClose)
+    //{
+    //    to(State::ItemSeek);
+    //}
     else
     {
         m_pTarget.reset();
-        to(State::Idle);
+        to(State::Seek);
     }
 
     EvaluateTransitions(dist);
@@ -412,9 +404,6 @@ void CComPlayer::Update()
     //状態の実行
     switch (m_State)
     {
-    case CComPlayer::State::Idle:
-        StepIdle();
-        break;
     case CComPlayer::State::Seek:
         StepSeek();
         break;
@@ -435,9 +424,8 @@ void CComPlayer::Update()
 }
 
 
-#if 1
-//待機処理
-void CComPlayer::StepIdle()
+//探索処理
+void CComPlayer::StepSeek()
 {
     auto body = Body();
     auto tuning = GetTuning();
@@ -464,31 +452,6 @@ void CComPlayer::StepIdle()
     SyncCannonToBody();
 
 }
-#endif
-
-
-//探索処理
-void CComPlayer::StepSeek()
-{
-    auto tuning = GetTuning();
-    std::shared_ptr<CBody> body = Body();
-    std::shared_ptr<CCannon> cannon = Cannon();
-    
-    if (!body) return;
-    if (!cannon) return;
-
-    const D3DXVECTOR3 target = m_pTarget->GetPosition();
-    if (m_pTarget)
-    {
-        //追尾処理
-        TickAimTo(target);
-        TickChaseTo(target);
-    }
-
-    D3DXVECTOR3 rot = body->GetRotation();
-    rot.y += tuning.bodyTurnSpeed * 0.25f;
-}
-
 
 //追尾    
 void CComPlayer::StepChase()
@@ -588,8 +551,19 @@ void CComPlayer::StepItemSeek()
     auto tuning = GetTuning();
     std::shared_ptr<CBody> body = Body();
     std::shared_ptr<CItemBox> ItemBox;
-
+    std::shared_ptr<CCannon> cannon =Cannon();
     if (!body) return;
+    if (!cannon) return;
+
+    if (body)
+    {
+        body->CCharacter::Update();
+    }
+
+    if (cannon)
+    {
+        cannon->CCharacter::Update();
+    }
 
     if (ItemBox)
     {
@@ -599,7 +573,10 @@ void CComPlayer::StepItemSeek()
 
         TickAimTo(item);
         TickChaseTo(item);
+        SyncCannonToBody();
     }
+
+    
 }
 
 //動作切り替え
@@ -611,33 +588,32 @@ void CComPlayer::EvaluateTransitions(float dist)
     const int   loseFrames = 120;                       //2秒
 
     switch (m_State) {
-    case State::Idle:
+    case State::Seek:
         if (m_pTarget) ChangeState(State::Chase);
         break;
 
     case State::Chase:
-        if (!m_pTarget) { ChangeState(State::Idle); break; }
+        if (!m_pTarget) { ChangeState(State::Seek); break; }
         if (dist <= evadeDist) { ChangeState(State::Evade);  break; }
         if (dist <= attackEnter) { ChangeState(State::Attack); break; }
         break;
 
     case State::Attack:
-        if (!m_pTarget) { ChangeState(State::Idle);   break; }
+        if (!m_pTarget) { ChangeState(State::Seek);   break; }
         if (dist < evadeDist) { ChangeState(State::Evade);  break; }
         if (dist > attackExit) { ChangeState(State::Chase);  break; }
-//        else if (dist >= attackEnter) { ChangeState(State::ItemSeek); break; }
         break;
 
     case State::Evade:
-        if (!m_pTarget) { ChangeState(State::Idle);   break; }
+        if (!m_pTarget) { ChangeState(State::Seek);   break; }
         if (dist >= attackEnter) { ChangeState(State::Chase);  break; }
         else if (dist >= evadeDist) { ChangeState(State::Attack); break; }
         //見失い長すぎなら待機に戻す
-        if (m_LostSightFrames > loseFrames) { ChangeState(State::Idle); }
+        if (m_LostSightFrames > loseFrames) { ChangeState(State::Seek); }
         break;
 
     case State::ItemSeek:
-        if (!m_pTarget) { ChangeState(State::Idle); break; }
+        if (!m_pTarget) { ChangeState(State::Seek); break; }
         break;
     }
 }
@@ -671,7 +647,7 @@ void CComPlayer::MakeFixedTimeTarget()
 
         if (!player)
         {
-            //認識できなった場合Idle
+            //認識できなった場合Seek
             m_pTarget.reset();
             m_CurTargetDist = 1e9f;
             return;

@@ -20,6 +20,7 @@ CCannon::CCannon(int inputID)
 #endif
 
 	m_pCollider = std::make_shared<CBoxCollider>();
+	//m_pRay = std::make_shared<CRay>();
 }
 
 CCannon::~CCannon()
@@ -28,7 +29,6 @@ CCannon::~CCannon()
 
 void CCannon::Initialize(int id)
 {
-	
 }
 
 void CCannon::Update()
@@ -42,6 +42,8 @@ void CCannon::Update()
 	KeyInput();
 
 	CCharacter::Update();
+
+	auto ray = CCharacter::GetRayY();	//YŽ²ƒŒƒCŽæ“¾
 }
 
 void CCannon::Draw(
