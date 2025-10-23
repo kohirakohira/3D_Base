@@ -960,7 +960,7 @@ void CGameMain::Collision()
 	// 地面と弾
 	GroundtoShot();
 
-	// 地面とアイテムボックス
+	/// 地面とアイテムボックス
 	GroundtoItemBox();
 }
 
