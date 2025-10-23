@@ -10,7 +10,8 @@
 
 //-----ライブラリ-----
 #include <d3dx9math.h>
-
+#include <unordered_map>
+#include <limits>
 
 
 class CComPlayer
@@ -22,6 +23,9 @@ public:
 
 	void Initialize(int id)override;
 	void Update() override;
+
+	//敵判定
+	inline bool IsEnemy(const CPlayer& other) const;
 
 	//追尾対象の設定
 	void SetTarget(std::shared_ptr<CPlayer> player);
@@ -38,7 +42,13 @@ public:
 	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
 
 	//プレイヤーを取得する.読み取り専用
-	void SetPlayerRef(const std::vector<std::shared_ptr<CPlayer>>* all);
+	void SetPlayersRef(const std::vector<std::shared_ptr<CPlayer>>* all);
+
+#if 0
+	// マネージャから全アイテム配列の参照（生存期間は外側で管理）
+	void SetItemBoxesRef(std::vector<std::shared_ptr<CItemBox>>* boxes) { m_pItemBoxes = boxes; }
+
+#endif
 
 private:
 	std::shared_ptr<CPlayer> m_pTarget;		//追尾対象
@@ -98,14 +108,45 @@ private:
 	bool	m_IsTarget;					//ターゲットかどうか	
 
 	//探索処理パラメータ
-	int		m_RetargetInterval;				//探索のインターバル
-	int		m_RetargetTimer;				//カウント
-	float	m_ForgetDistance;				//これ以上離れた忘れる
-	float	m_StickinessRatio;				//既存ターゲット
-	float	m_CurTargetDist;				//キャッシュ
+	int		m_RetargetInterval;					//探索のインターバル
+	int		m_RetargetTimer;					//カウント
+	float	m_ForgetDistance;					//これ以上離れた忘れる
+	float	m_StickinessRatio;					//既存ターゲット
+	float	m_CurTargetDist;					//キャッシュ
 	State	m_State;
-	int m_StateFrames;						//その状態に入ってからの経過フレーム
+	int m_StateFrames;							//その状態に入ってからの経過フレーム
+	float m_WanderAngle = 0.0f;
+	float m_CurTargetDist2 = std::numeric_limits<float>::infinity(); // 現在ターゲットとの距離^2
 
+	std::unordered_map<int, int> m_TargetBlackList;	//キーは相手のID.値は残りフレーム数
+	int m_BlackListTime = 1200;						//何秒無視するか
+
+	void TickWander(float turnStep, float moveStep);
+
+	//一定時間ターゲットにしない
+	void Blacklist(int id) { m_TargetBlackList[id] = m_BlackListTime;
+	}
+
+	//IDがリストに登録されているか判定
+	//読み取り専用
+	bool IsBlacklisted(int id) const
+	{
+		auto it = m_TargetBlackList.find(id);
+		return it != m_TargetBlackList.end();
+	}
+	//フレームごとにブラックリストを更新
+	void TickBlacklist()
+	{
+		for (auto it = m_TargetBlackList.begin(); it != m_TargetBlackList.end();)
+		{
+			if (--(it->second) <= 0) {	//残りフレーム数を減らす
+				it = m_TargetBlackList.erase(it);	//0以下ならその要素を削除して次のア
+			}
+			else {
+				++it;	//まだ残っているなら次
+			}
+		}
+	}
 
 	//仮の宣言
 	float	m_TargetRadius;				//ターゲット扱いする距離
@@ -156,6 +197,22 @@ private:
 
 	//一定時間ターゲットにする
 	void MakeFixedTimeTarget();
+
+	void TickOrbit(const D3DXVECTOR3& targetPos, float r, float angStep);
+
+#if 0
+	// アイテムターゲティング用
+	std::vector<std::shared_ptr<CItemBox>>* m_pItemBoxes = nullptr;
+	std::weak_ptr<CItemBox> m_pItemTarget;
+
+	int   m_ItemRetargetTimer = 0;
+	int   m_ItemRetargetInterval = 30;		// 0.5秒ごと
+	float m_ItemAttractRadius = 20.f;		// この距離以内なら狙う
+	float m_ItemPickupRadius = 1.2f;		// これ以下とれた
+
+	void   MakeItemTarget();      // アクティブ箱を選定
+	float  NearestItemDist2(float& outDist2) const; // 近い箱の距離^2
+#endif
 };
 
 

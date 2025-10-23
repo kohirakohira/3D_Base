@@ -29,6 +29,9 @@ public:
 	//アイテムの種類を取得する関数.
 	CItemType GetItemInfo() { return m_ItemType; }
 
+	//アクティブフラグの取得関数.
+	bool IsActive() { return m_Active; }
+
 public:
 	//各アイテムごとの効果.
 	//シールド効果.

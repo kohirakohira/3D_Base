@@ -70,7 +70,8 @@ public:
 	std::shared_ptr<CInputManager>& GetInputManager() { return m_Input; }
 
 	//PlayerID‚ðCOM‚É“n‚·
-	int GetPlayerID() { return m_PlayerID; }
+	int GetPlayerID() const { return m_PlayerID; }
+
 
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }
