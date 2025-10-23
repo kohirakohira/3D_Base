@@ -434,39 +434,6 @@ void CComPlayer::Update()
     ++m_StateFrames;
 }
 
-#if 0
-
-    auto to = [&](State s) {
-        if (m_State != s) 
-        { m_State = s; m_StateFrames = 0; } };
-
-    if (!m_pTarget) {
-        to(State::Idle);
-    }
-    else if (dist <= attackNear) {
-        to(State::Attack);
-    }
-    else if (dist <= chaseFar) {
-        to(State::Chase);
-    }
-    else {
-        //遠いったん忘れてアイドルへ
-        m_pTarget.reset();
-        to(State::Idle);
-    }
-
-    // --- ステップ ---
-    switch (m_State)
-    {
-    case State::Idle:   StepIdle();   break;
-    case State::Chase:  StepChase();  break;
-    case State::Attack: StepAttack(); break;
-    case State::Evade:  StepEvade();  break; // 使うなら別条件で
-    }
-    ++m_StateFrames;
-}
-
-#endif
 
 #if 1
 //待機処理
