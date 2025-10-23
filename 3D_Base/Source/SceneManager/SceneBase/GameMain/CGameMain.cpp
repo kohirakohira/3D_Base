@@ -162,25 +162,6 @@ void CGameMain::Update()
 	float angle = time * (PI / 180);
 	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, angle);
 
-	//勝敗条件(確認用)..
-	//勝ち..
-	if (GetKey('K') & 0x8000)
-	{
-		//BGMのループ停止..
-		CSoundManager::Stop(CSoundManager::BGM_Bonus);
-
-		m_SceneType = CSceneType::Result;
-	}
-	//敗北..
-	//体力がなくなるか.
-	if (GetKey('L') & 0x8000)
-	{
-		//BGMのループ停止..
-		CSoundManager::Stop(CSoundManager::BGM_Bonus);
-
-		m_SceneType = CSceneType::Result;
-	}
-
 	const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
 
 	if (nowC && !prevC)
@@ -204,10 +185,30 @@ void CGameMain::Update()
 
 	//爆風の動作処理.
 	m_pBlast->Update();
-	m_pBlast->SetScale(m_pBlast->GetRadius());
+	m_pBlast->SetScale(m_pBlast->GetRadius() * 2);
 
 	// 当たり判定
 	Collision();
+
+	//勝敗条件(確認用)..
+	//勝ち..
+	if (GetKey('K') & 0x8000)
+	{
+		//BGMのループ停止..
+		CSoundManager::Stop(CSoundManager::BGM_Bonus);
+
+		m_SceneType = CSceneType::Result;
+	}
+	//敗北..
+	//体力がなくなるか.
+	if (GetKey('L') & 0x8000)
+	{
+		//BGMのループ停止..
+		CSoundManager::Stop(CSoundManager::BGM_Bonus);
+
+		m_SceneType = CSceneType::Result;
+	}
+
 }
 
 
@@ -816,6 +817,13 @@ void CGameMain::CreateBounding()
 	m_pShotManager->CreateBounding(m_pStaticMesh_BulletRed);
 	// 当たり判定設定
 	m_pShotManager->CreateCollider();
+
+
+	//爆風の当たり判定生成.
+	m_pBlast->CreateBSphereForMesh(*m_pStaticMesh_BulletRed);
+	//当たり判定設定.
+	m_pBlast->CreateSpehreCollider(m_pBlast->GetBlastRadius());
+
 }
 
 void CGameMain::Collision()
@@ -831,6 +839,10 @@ void CGameMain::Collision()
 
 	// プレイヤーとアイテム
 	PlayertoItemBox();
+
+	//プレイヤーと爆風.
+	PlayertoBlast();
+
 }
 
 void CGameMain::WalltoPlayer()
@@ -891,6 +903,7 @@ void CGameMain::WalltoShot()
 		{
 			//爆風の情報.
 			m_pBlast->SetPosition(Shots[i]->GetPosition());
+			m_pBlast->GetCollider()->SetPosition(Shots[i]->GetPosition());
 			m_pBlast->SetBlastFlag(true);
 			Shots[i]->HitShot();
 		}
@@ -898,6 +911,7 @@ void CGameMain::WalltoShot()
 		{
 			//爆風の情報.
 			m_pBlast->SetPosition(Shots[i]->GetPosition());
+			m_pBlast->GetCollider()->SetPosition(Shots[i]->GetPosition());
 			m_pBlast->SetBlastFlag(true);
 			Shots[i]->HitShot();
 		}
@@ -905,6 +919,7 @@ void CGameMain::WalltoShot()
 		{
 			//爆風の情報.
 			m_pBlast->SetPosition(Shots[i]->GetPosition());
+			m_pBlast->GetCollider()->SetPosition(Shots[i]->GetPosition());
 			m_pBlast->SetBlastFlag(true);
 			Shots[i]->HitShot();
 		}
@@ -912,6 +927,7 @@ void CGameMain::WalltoShot()
 		{
 			//爆風の情報.
 			m_pBlast->SetPosition(Shots[i]->GetPosition());
+			m_pBlast->GetCollider()->SetPosition(Shots[i]->GetPosition());
 			m_pBlast->SetBlastFlag(true);
 			Shots[i]->HitShot();
 		}
@@ -1013,6 +1029,28 @@ void CGameMain::PlayertoShot()
 	//	// 壁に当たった時に押し返す
 	//	player->GetBody()->PushBack(push);
 	//}
+}
+
+//爆風とプレイヤーの当たり判定.
+void CGameMain::PlayertoBlast()
+{
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		//i番目のプレイヤーを取得.
+		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto Coll = player->GetBody()->GetCollider();
+
+		auto blast = m_pBlast->GetCollider();
+
+		if (m_pBlast->GetBlastFlag() == true)
+		{
+			//車体が爆風と接触したとき.
+			if (blast->CheckCollision(*Coll))
+			{
+				m_pBlast->HitBlast();
+			}
+		}
+	}
 }
 
 //画面をグリッドに分割したとき、idx番目のマスに対応する.
