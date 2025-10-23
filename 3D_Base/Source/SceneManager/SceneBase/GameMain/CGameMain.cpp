@@ -194,6 +194,7 @@ void CGameMain::Update()
 	//爆風の動作処理.
 	m_pBlast->Update();
 	m_pBlast->SetScale(m_pBlast->GetRadius() * 2);
+	m_pBlast->SetRadius(m_pBlast->GetBlastRadius());
 
 	// 木箱の更新
 	m_pWoodBoxTopLeft->Update();
@@ -1186,7 +1187,6 @@ void CGameMain::PlayertoBlast()
 
 		if (m_pBlast->GetBlastFlag() == true)
 		{
-			m_pBlast->SetRadius(m_pBlast->GetBlastRadius());
 			////車体が爆風と接触したとき.
 			//if (m_pBlast->GetCollider()->CheckCollision(*Coll))
 			//{
