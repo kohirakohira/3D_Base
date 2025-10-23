@@ -963,8 +963,9 @@ void CGameMain::Collision()
 	// プレイヤーと弾
 	PlayertoShot();
 
-	// 弾と弾
-	ShottoShot();
+	//// 弾と弾
+	// このコードやばい(重い).
+	//ShottoShot();
 
 	// 箱とプレイヤー
 	WoodBoxtoPlayer();
@@ -979,7 +980,7 @@ void CGameMain::Collision()
 	GroundtoItemBox();
 
 	//プレイヤーと爆風.
-	//PlayertoBlast();
+	PlayertoBlast();
 
 }
 

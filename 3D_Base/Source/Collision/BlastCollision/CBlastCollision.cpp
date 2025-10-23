@@ -25,7 +25,7 @@ void CBlastCollision::Update()
 
 	if (m_Bom == true)
 	{
-#if 0
+#if 1
 		//”¼Œa‚ğ™X‚É‘å‚«‚­‚·‚é.
 		m_Radius += GROWTH_SPEED * deltaTime;
 
