@@ -87,21 +87,24 @@ public:
 
 	// 壁とプレイヤーの当たり判定判別.
 	void WalltoPlayer();
-
 	// 壁と弾の当たり判定
 	void WalltoShot();
-
 	// プレイヤーとプレイヤー当たり判定判別
 	void PlayertoPlayer();
-
 	// プレイヤーとアイテムボックス
 	void PlayertoItemBox();
-
 	// プレイヤーと弾
 	void PlayertoShot();
-
-	// プレイヤーと箱
-	void PlayertoWoodBox();
+	// 弾と弾
+	void ShottoShot();
+	// 箱とプレイヤー
+	void WoodBoxtoPlayer();
+	// 箱と弾
+	void WoodBoxtoShot();
+	// 地面と弾
+	void GroundtoShot();
+	// 地面とアイテムボックス
+	void GroundtoItemBox();
 
 	//画面をグリッドに分割したとき、idx番目のマスに対応する.
 	//D3D11_VIEWPORTを作成して返す関数.
@@ -160,7 +163,7 @@ public:
 	std::shared_ptr<CSprite3D>		m_pSpriteExplosion;
 
 	//スタティックメッシュ(使いまわす資源).
-	std::shared_ptr<CStaticMesh>	m_pStaticMeshGround;		//地面.
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshStage;			//ステージ
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshBSphere;		//バウンディングスフィア(当たり判定用)..
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshItemBox;		//アイテムボックス..
 
@@ -183,6 +186,7 @@ public:
 	//壁メッシュ.
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallW;
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallH;
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshGround;
 
 	// 木箱メッシュ
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshWoodBox;
@@ -197,7 +201,7 @@ public:
 	std::shared_ptr<CShotManager>				m_pShotManager;
 
 	// 地面クラス..
-	std::unique_ptr<CGround>					m_pGround;
+	std::unique_ptr<CGround>					m_pStage;
 
 	//タイマークラス..
 	std::shared_ptr<CTimer>						m_Timer;
@@ -214,6 +218,9 @@ public:
 	std::shared_ptr<CStageObject>		m_pWoodBoxCenter;
 	std::shared_ptr<CStageObject>		m_pWoodBoxBottomLeft;
 	std::shared_ptr<CStageObject>		m_pWoodBoxBottomRight;
+
+	// 地面
+	std::shared_ptr<CStageObject>		m_pGround;
 
 	//爆風.
 	std::shared_ptr<CBlastCollision>	m_pBlast;

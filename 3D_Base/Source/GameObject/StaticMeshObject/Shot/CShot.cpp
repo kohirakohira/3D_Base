@@ -12,8 +12,6 @@ CShot::CShot()
 		0.0f
 	};
 
-	// スフィアコライダーを設定
-	m_pCollider = std::make_shared<CSphereCollider>();
 }
 
 CShot::~CShot()

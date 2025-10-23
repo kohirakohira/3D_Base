@@ -1,12 +1,13 @@
 #pragma once
-#include "GameObject//StaticMeshObject//CStaticMeshObject.h" /* 継承クラス || スタティックメッシュオブジェクトクラス */
+//-----継承するクラス-----
+#include "GameObject//StaticMeshObject//CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス 
 
 //-----外部クラス-----
 #include "GameObject//StaticMeshObject//Character//CCharacter.h" // キャラクタークラス
 
-/*********************************************************
-*	地面クラス
-**/
+//==================================
+//	ステージクラス
+//==================================
 class CGround
 	: public CStaticMeshObject // スタティックメッシュオブジェクトクラスを継承
 {
