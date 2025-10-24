@@ -21,8 +21,8 @@ bool CBoxCollider::CheckCollisionSphere(const CSphereCollider& sphere) const
 bool CBoxCollider::CheckCollisionBox(const CBoxCollider& box) const
 {
 	return (m_MinPos.x <= box.m_MaxPos.x && m_MaxPos.x >= box.m_MinPos.x) &&
-		(m_MinPos.y <= box.m_MaxPos.y && m_MaxPos.y >= box.m_MinPos.y) &&
-		(m_MinPos.z <= box.m_MaxPos.z && m_MaxPos.z >= box.m_MinPos.z);
+		   (m_MinPos.y <= box.m_MaxPos.y && m_MaxPos.y >= box.m_MinPos.y) &&
+		   (m_MinPos.z <= box.m_MaxPos.z && m_MaxPos.z >= box.m_MinPos.z);
 }
 
 bool CBoxCollider::CheckCollisionOBBtoOBB( OBB* A, OBB* B)
@@ -190,6 +190,10 @@ void CBoxCollider::SetPosition(const D3DXVECTOR3& pos)
 	m_CenterPos = pos;
 	m_MaxPos = m_CenterPos + m_Max;
 	m_MinPos = m_CenterPos + m_Min;
+}
+
+void CBoxCollider::SetRotation(const D3DXVECTOR3& rotation)
+{
 }
 
 void CBoxCollider::SetScale(const D3DXVECTOR3& scale)

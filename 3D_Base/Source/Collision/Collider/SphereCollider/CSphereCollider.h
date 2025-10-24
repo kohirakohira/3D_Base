@@ -27,6 +27,11 @@ public:
 	//半径(長さ)を設定する
 	void SetRadius(float Radius) { m_Radius = Radius; }
 
+	// 回転を取得する
+	const D3DXVECTOR3& GetRotation()const override { return m_Rotation; }
+	//	回転を設定する
+	void SetRotation(const D3DXVECTOR3& rotation) override;
+
 	// 受け取ったスケールを取得
 	const D3DXVECTOR3& GetScale()const override { return m_Scale; }
 	// 受け取ったスケールを設定する

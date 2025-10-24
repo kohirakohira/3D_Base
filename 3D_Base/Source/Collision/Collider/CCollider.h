@@ -26,6 +26,11 @@ public:
 	// 中心座標を設定.
 	virtual void SetPosition(const D3DXVECTOR3& pos) = 0;
 
+	// 回転を取得
+	virtual const D3DXVECTOR3& GetRotation()const = 0;
+	// 回転を設定
+	virtual void SetRotation(const D3DXVECTOR3& rot) = 0;
+
 	// スケールを取得
 	virtual const D3DXVECTOR3& GetScale()const = 0;
 	// スケールを設定

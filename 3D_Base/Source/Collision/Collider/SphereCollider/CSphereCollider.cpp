@@ -47,6 +47,10 @@ bool CSphereCollider::CheckCollisionBox(const CBoxCollider& box) const
 	return Length < m_Radius;
 }
 
+void CSphereCollider::SetRotation(const D3DXVECTOR3& rotation)
+{
+}
+
 void CSphereCollider::SetScale(const D3DXVECTOR3& scale)
 {
 }
