@@ -22,7 +22,7 @@ public:
 
 	virtual void Initialize(int id);
 
-	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) ;
+	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon);
 	void SetTankPosition(const D3DXVECTOR3& pos);
 	void SetTankRotation(const D3DXVECTOR3& pos);
 
@@ -43,7 +43,7 @@ public:
 	// コライダーの作成
 	void CreateCollider();
 
-   	//外部のクラスから情報取得.
+	//外部のクラスから情報取得.
 	void SetCBody(std::shared_ptr<CBody> pBody) { m_pBody = pBody; }
 	void SetCCannon(std::shared_ptr<CCannon> pCannon) { m_pCannon = pCannon; }
 
@@ -69,16 +69,18 @@ public:
 	void SetKeyboardEnabled(bool on);
 	std::shared_ptr<CInputManager>& GetInputManager() { return m_Input; }
 
-#if 0
-	//パラメータの外部関数
-	void SetTuning(const TankTuning& tuning) { m_Tune = tuning; }
-	const TankTuning& GetTuning() const { return m_Tune; }
-#endif
+	//PlayerIDをCOMに渡す
+	int GetPlayerID() const { return m_PlayerID; }
+
 
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }
 	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
 	void UpdateHumanInputAndMove();	//プレイヤー処理をいれておく
+
+	//砲塔と車体の同期
+	void SyncCannonToBody();
+
 protected:
 
 	std::shared_ptr<CBody>		m_pBody;

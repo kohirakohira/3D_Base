@@ -63,8 +63,6 @@ public:
 	//子オブジェクトに各BodyとCannonを設定してあげる関数.
 	void SetBodyAndCannon(std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon);
 
-	
-
 private:
 	//↓松岡.
 	std::shared_ptr<CBody>					m_pBody;

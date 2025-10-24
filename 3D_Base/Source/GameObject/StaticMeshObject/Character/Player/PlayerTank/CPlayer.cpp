@@ -99,6 +99,7 @@ void CPlayer::SetKeyboardEnabled(bool on)
 	}
 }
 
+
 void CPlayer::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
 {
 	m_pBody->AttachMesh(pBody);
@@ -159,7 +160,7 @@ void CPlayer::UpdateHumanInputAndMove()
 	}
 #endif
 
-	const float dt = 1.0f;	
+	const float dt = 1.f;	
 	const auto& tuning = GetTuning();
 
 	D3DXVECTOR3 pos = m_pBody->GetPosition();
@@ -172,15 +173,30 @@ void CPlayer::UpdateHumanInputAndMove()
 	cannonrot.y += aim * (tuning.turretTurnSpeed * dt);
 
 	m_pBody->SetRotation(bodyrot);
-	m_pBody->SetPosition(pos);
+	m_pBody->SetPosition(pos.x,pos.y = 0, pos.z);
 	m_pBody->Update();
 
+	SyncCannonToBody();
 	D3DXVECTOR3 cannonpos = pos;
 	cannonpos.y += tuning.cannonHeight;
 
 	m_pCannon->SetPosition(cannonpos);
 	m_pCannon->SetRotation(cannonrot);
 	m_pCannon->Update();
+}
+
+//砲塔と車体を同期する
+void CPlayer::SyncCannonToBody()
+{
+	auto tuning = GetTuning();
+	auto body = Body();
+	auto cannon = Cannon();
+	if (!body || !cannon) return;
+
+	D3DXVECTOR3 pos = body->GetPosition();
+	pos.y += tuning.cannonHeight;   //砲塔の高さオフセット
+	cannon->SetPosition(pos);       //位置を同期
+
 }
 
 void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)

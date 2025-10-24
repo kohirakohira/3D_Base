@@ -33,6 +33,7 @@ public:
 
 	// バウンディングボックスを作成
 	void CreateBounding(std::shared_ptr<CStaticMesh> pCannon);
+
 private:
 	// キー入力受付
 	void KeyInput();

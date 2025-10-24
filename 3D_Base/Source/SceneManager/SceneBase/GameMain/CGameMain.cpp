@@ -388,8 +388,6 @@ void CGameMain::Draw()
 }
 
 
-
-
 void CGameMain::Init()
 {
 	//カメラ位置設定..
@@ -436,7 +434,8 @@ void CGameMain::Init()
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
 
-	SetPosition();
+	m_pPlayerManager->SetShotManager(m_pShotManager);
+	//m_pPlayerManager->SetItemBoxesRef(&m_ItemBoxes);
 }
 
 void CGameMain::Destroy()
