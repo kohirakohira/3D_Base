@@ -28,10 +28,24 @@ void CBlastCollisionManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Lig
 }
 
 //インスタンス生成.
-void CBlastCollisionManager::Create()
+void CBlastCollisionManager::Create(const D3DXVECTOR3& pos, bool blast, std::shared_ptr<CStaticMesh> mesh)
 {
 	//インスタンス生成.
-	m_pBlastCollision.push_back(std::make_shared<CBlastCollision>());
+	auto blastColl = std::make_unique<CBlastCollision>();
+
+	//メッシュのアタッチ.
+	blastColl->AttachMesh(mesh);
+	//位置の設定.
+	blastColl->SetPosition(pos);
+	//爆発フラグの設定.
+	blastColl->SetBlastFlag(blast);
+	//当たり判定の生成.
+	blastColl->CreateBSphereForMesh(*mesh);
+	//当たり判定の設定.
+	blastColl->CreateSpehreCollider(GetBlastRadius());
+
+	//情報の保存.
+	m_pBlastCollision.push_back(std::move(blastColl));
 }
 
 //当たった時の関数.
@@ -40,8 +54,8 @@ void CBlastCollisionManager::HitBlast()
 	for (int i = 0; i < m_pBlastCollision.size(); i++)
 	{
 		m_pBlastCollision[i]->HitBlast();
-		//先頭(一番古いモノ)を削除.
-		m_pBlastCollision.erase(m_pBlastCollision.begin());
+		////先頭(一番古いモノ)を削除.
+		//m_pBlastCollision.erase(m_pBlastCollision.begin());
 	}
 }
 

@@ -19,7 +19,7 @@ public:
 	//描画処理.
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera);
 	//インスタンス生成.
-	void Create();
+	void Create(const D3DXVECTOR3& pos, bool blast, std::shared_ptr<CStaticMesh> mesh);
 
 	//当たった時の関数.
 	void HitBlast();
@@ -50,6 +50,6 @@ public:
 
 public:
 	//爆風クラスの変数.
-	std::vector<std::shared_ptr<CBlastCollision>>	m_pBlastCollision;
+	std::vector<std::unique_ptr<CBlastCollision>>	m_pBlastCollision;
 
 };
