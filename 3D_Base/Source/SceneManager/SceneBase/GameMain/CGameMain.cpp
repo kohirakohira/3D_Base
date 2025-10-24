@@ -388,8 +388,6 @@ void CGameMain::Draw()
 }
 
 
-
-
 void CGameMain::Init()
 {
 	//カメラ位置設定..
