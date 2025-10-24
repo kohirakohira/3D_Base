@@ -435,7 +435,7 @@ void CGameMain::Init()
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
 
 	m_pPlayerManager->SetShotManager(m_pShotManager);
-	//m_pPlayerManager->SetItemBoxesRef(&m_ItemBoxes);
+	SetPosition();
 }
 
 void CGameMain::Destroy()
