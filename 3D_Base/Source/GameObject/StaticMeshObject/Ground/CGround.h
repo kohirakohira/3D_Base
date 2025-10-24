@@ -29,5 +29,4 @@ public:
 protected:
 
 	std::shared_ptr<CPlayerManager>		m_pPlayerManager;
-
 };

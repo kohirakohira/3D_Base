@@ -12,27 +12,22 @@ CGround::~CGround()
 
 void CGround::Update()
 {
-	//地面をスクロールさせる
-	m_vPosition.z -= 0.2f;
-	if (m_vPosition.z < -100.f) {
-		m_vPosition.z = 0.f;
-	}
-
+	RespawnArea();
 }
 
 void CGround::RespawnArea()
 {
 	struct Area {
-		bool taken = false;
+		bool Taken = false;
 		D3DXVECTOR3 RespawnPos; // リスポーン位置
 	};
 
 	// エリア4つを定義（マップの座標系に合わせて調整）
 	Area areas[4];
-	areas[0].RespawnPos = { -30.f, 0.f,  30.f }; // 左上
-	areas[1].RespawnPos = { 30.f, 0.f,  30.f }; // 右上
-	areas[2].RespawnPos = { -30.f, 0.f, -30.f }; // 左下
-	areas[3].RespawnPos = { 30.f, 0.f, -30.f }; // 右下
+	areas[0].RespawnPos = { -20.f, 0.f,  20.f };	// 左上
+	areas[1].RespawnPos = { 20.f, 0.f,  20.f };		// 右上
+	areas[2].RespawnPos = { -20.f, 0.f, -20.f };	// 左下
+	areas[3].RespawnPos = { 20.f, 0.f, -20.f };		// 右下
 
 	// 各プレイヤーがどのエリアにいるか調べる
 	for (int i = 0; i < 4; ++i)
@@ -43,14 +38,14 @@ void CGround::RespawnArea()
 
 		int areaIndex = GetAreaIndex(PPos.x, PPos.z);
 
-		areas[areaIndex].taken = true;
+		areas[areaIndex].Taken = true;
 	}
 
 	// 空いているエリアを探す
 	int freeIndex = -1;
 	for (int i = 0; i < 4; ++i)
 	{
-		if (!areas[i].taken)
+		if (!areas[i].Taken)
 		{
 			freeIndex = i;
 			break;
@@ -66,7 +61,7 @@ void CGround::RespawnArea()
 	// 各プレイヤーがどのエリアにいるか調べる
 	for (int i = 0; i < 4; ++i)
 	{
-		// リスポーンしたいプレイヤーを取得（例：0番）
+		// リスポーンしたいプレイヤーを取得
 		auto respawnPlayer = m_pPlayerManager->GetControlPlayer(i);
 		if (respawnPlayer)
 		{

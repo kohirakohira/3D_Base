@@ -192,19 +192,19 @@ public:
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshWoodBox;
 	
 	// スタティックメッシュオブジェクトクラス.
-	std::unique_ptr<CStaticMeshObject>			m_pStcMeshObj;
+	std::unique_ptr<CStaticMeshObject>		m_pStcMeshObj;
 
 	// プレイヤーマネージャー.
-	std::shared_ptr<CPlayerManager>				m_pPlayerManager;
+	std::shared_ptr<CPlayerManager>			m_pPlayerManager;
 
 	// 弾クラスマネージャー.
-	std::shared_ptr<CShotManager>				m_pShotManager;
+	std::shared_ptr<CShotManager>			m_pShotManager;
 
 	// 地面クラス..
-	std::unique_ptr<CGround>					m_pStage;
+	std::unique_ptr<CGround>				m_pStage;
 
 	//タイマークラス..
-	std::shared_ptr<CTimer>						m_Timer;
+	std::shared_ptr<CTimer>					m_Timer;
 
 	// 壁
 	std::shared_ptr<CStageObject>		m_pWallTop;
@@ -225,8 +225,8 @@ public:
 	//爆風.
 	std::shared_ptr<CBlastCollision>	m_pBlast;
 
-	//アイテムボックスマネージャークラス..
-	std::shared_ptr<CItemBoxManager>			m_pItemBoxManager;
+	//アイテムボックスマネージャークラス
+	std::shared_ptr<CItemBoxManager>	m_pItemBoxManager;
 
 	// シーン列挙変数..
 	CSceneType		m_SceneType;
