@@ -15,6 +15,8 @@ static bool prevA = false;
 
 //定数宣言.
 static constexpr int TIME = 90.0;
+const float deltaTime = 1.0f / FPS;
+const float DIAMETER = 360.0f;
 
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd					( hWnd )
@@ -123,7 +125,11 @@ void CGameMain::Update()
 //-----メイン演出用-----..
 	
 	//Iconを回転させる..
-	m_Rot += 0.02f;
+	m_Rot += 1.0f * deltaTime;
+	if (m_Rot >= DIAMETER)
+	{
+		m_Rot = 0.0f;
+	}
 	
 //-----メイン演出用-----..
 
