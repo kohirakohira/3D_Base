@@ -435,14 +435,5 @@ void CPlayerManager::SetPlayerTuning(int idx, const TankTuning& t) {
 	if (idx >= 0 && idx < (int)m_pPlayers.size()) m_pPlayers[idx]->SetTuning(t);
 }
 
-#if 0
-void CPlayerManager::SetItemBoxesRef(std::vector<std::shared_ptr<CItemBox>>* boxes) {
-	for (auto& p : m_pPlayers) {
-		if (auto com = std::dynamic_pointer_cast<CComPlayer>(p)) {
-			com->SetItemBoxesRef(boxes);
-		}
-	}
-}
-#endif
 
 
