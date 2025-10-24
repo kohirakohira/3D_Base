@@ -407,7 +407,7 @@ void CGameMain::Init()
 
 	//アイテムボックスの設定..
 	m_pItemBoxManager->SetPosition(-10.f, 20.f, 0.f);
-	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
+	m_pItemBoxManager->SetRotation(D3DXToRadian(0.f), D3DXToRadian(0.f), D3DXToRadian(0.f));
 	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
 
 //-----UI系統の初期化-----.

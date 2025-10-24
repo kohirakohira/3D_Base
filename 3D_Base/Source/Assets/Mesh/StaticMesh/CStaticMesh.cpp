@@ -636,7 +636,6 @@ void CStaticMesh::Render(
 	//拡縮×回転×移動 ※順番がとても大切！！.
 	mWorld = mScale * mRot * mTran;
 
-
 	//使用するシェーダのセット.
 	m_pContext11->VSSetShader( m_pVertexShader, nullptr, 0 );	//頂点シェーダ.
 	m_pContext11->PSSetShader( m_pPixelShader, nullptr, 0 );	//ピクセルシェーダ.

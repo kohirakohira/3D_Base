@@ -16,7 +16,6 @@ void CShotManager::Initialize()
 	{
 		m_pShots.push_back(std::make_shared<CShot>());
 	}
-
 	m_pShots.reserve(ShotMax);
 }
 

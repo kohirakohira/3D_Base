@@ -20,6 +20,7 @@ void CStaticMeshObject::Update()
 	{
 		//Collider‚ÉˆÊ’u‚ð“n‚·.
 		m_pCollider->SetPosition(m_vPosition);
+		//m_pCollider->SetPosition(m_vScale);
 	}
 
 	if (m_pMesh == nullptr) {

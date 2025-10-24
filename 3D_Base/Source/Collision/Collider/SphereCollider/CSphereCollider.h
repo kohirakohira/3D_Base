@@ -27,8 +27,13 @@ public:
 	//半径(長さ)を設定する
 	void SetRadius(float Radius) { m_Radius = Radius; }
 
+	// 受け取ったスケールを取得
+	const D3DXVECTOR3& GetScale()const override { return m_Scale; }
+	// 受け取ったスケールを設定する
+	void SetScale(const D3DXVECTOR3& scale) override;
+
 	//自身の型が何の型かを返す.
-	ColliderTipe GetColType()const override { return ColliderTipe::Sphere; }
+	ColliderType GetColType()const override { return ColliderType::Sphere; }
 
 private:
 	float		m_Radius;

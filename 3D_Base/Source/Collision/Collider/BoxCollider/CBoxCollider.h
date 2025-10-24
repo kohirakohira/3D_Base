@@ -7,6 +7,14 @@ class SohereCollider;
 class CBoxCollider
 	: public CCollider
 {
+public: // 構造体
+	struct OBB
+	{
+		D3DXVECTOR3 CenterPos;		// 中心点の座標
+		D3DXVECTOR3 LocalAxes[3];	// XYZの各座標軸の傾きを表す方向ベクトル
+		D3DXVECTOR3 HarfLength;		// OBBの各座標軸に沿った長さの半分(中心点から面の長さ)
+	}; 
+
 public:
 	CBoxCollider();
 	virtual~CBoxCollider()override;
@@ -17,9 +25,11 @@ public:
 		return other.CheckCollisionBox(*this);
 	}
 
+
 	bool CheckCollisionSphere(const class CSphereCollider& sphere)const override;
 	bool CheckCollisionBox(const class CBoxCollider& box)const override;
-
+	
+	bool CheckCollisionOBBtoOBB(OBB* A, OBB* B);
 	//中心座標を取得する.
 	const D3DXVECTOR3& GetPosition()const override { return m_CenterPos; }
 	//最小座標を取得する.
@@ -27,16 +37,21 @@ public:
 	//最大座標を取得する.
 	D3DXVECTOR3 GetMaxPosition()const { return m_MaxPos; }
 
-	//受け取った中心座標から、最小、最大座標を設定.
+	// 受け取った中心座標から、最小、最大座標を設定.
 	void SetPosition(const D3DXVECTOR3& pos) override;
-
 	//最小座標を設定する.
 	void SetMinPosition(const D3DXVECTOR3& MinPos) { m_Min = MinPos; }
 	//最大座標を設定する.
 	void SetMaxPosition(const D3DXVECTOR3& MaxPos) { m_Max = MaxPos; }
 
+	// 受け取ったスケールを取得
+	const D3DXVECTOR3& GetScale()const override { return m_Scale; }
+	// 受け取ったスケールを設定する
+	void SetScale(const D3DXVECTOR3& scale) override;
+
+
 	//自身の型が何の型かを返す.
-	ColliderTipe GetColType()const override { return ColliderTipe::Box; }
+	ColliderType GetColType()const override { return ColliderType::Box; }
 
 private:
 	D3DXVECTOR3 m_Min;

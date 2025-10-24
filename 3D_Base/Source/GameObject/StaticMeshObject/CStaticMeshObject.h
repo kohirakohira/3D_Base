@@ -66,7 +66,6 @@ public:
 	D3DXVECTOR3 DebugMin() { return m_vPosition + m_pBBox->GetMinPosition(); }
 	D3DXVECTOR3 DebugMax() { return m_vPosition + m_pBBox->GetMaxPosition(); }
 
-
 	//レイとメッシュの当たり判定
 	bool IsHitForRay(
 		const RAY& pRay,			//レイ構造体
