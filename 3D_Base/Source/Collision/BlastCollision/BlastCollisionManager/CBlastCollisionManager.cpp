@@ -14,7 +14,17 @@ void CBlastCollisionManager::Update()
 {
 	for (int i = 0; i < m_pBlastCollision.size(); i++)
 	{
-		m_pBlastCollision[i]->Update();
+		if (m_pBlastCollision[i]->GetBlastFlag() == true)
+		{
+			m_pBlastCollision[i]->Update();
+
+			//確認用.
+			if (m_pBlastCollision[i]->GetScale().x <= 0)
+			{
+				break;
+			}
+			SetScale(GetBlastRadius() * 2, i);
+		}
 	}
 }
 
@@ -43,108 +53,110 @@ void CBlastCollisionManager::Create(const D3DXVECTOR3& pos, bool blast, std::sha
 	blastColl->CreateBSphereForMesh(*mesh);
 	//当たり判定の設定.
 	blastColl->CreateSpehreCollider(GetBlastRadius());
+	//当たり判定の位置設定.
+	blastColl->GetCollider()->SetPosition(pos);
 
 	//情報の保存.
 	m_pBlastCollision.push_back(std::move(blastColl));
 }
 
 //当たった時の関数.
-void CBlastCollisionManager::HitBlast()
+void CBlastCollisionManager::HitBlast(int index)
 {
-	for (int i = 0; i < m_pBlastCollision.size(); i++)
+	if (index >= 0 && index < m_pBlastCollision.size())
 	{
-		m_pBlastCollision[i]->HitBlast();
+		m_pBlastCollision[index]->HitBlast();
 		////先頭(一番古いモノ)を削除.
 		//m_pBlastCollision.erase(m_pBlastCollision.begin());
 	}
 }
 
 //爆風メッシュのアタッチ.
-void CBlastCollisionManager::AttachMesh(std::shared_ptr<CStaticMesh> mesh)
+void CBlastCollisionManager::AttachMesh(std::shared_ptr<CStaticMesh> mesh, int index)
 {
-	for (auto& blast : m_pBlastCollision)
+	if (index >= 0 && index < m_pBlastCollision.size())
 	{
-		blast->AttachMesh(mesh);
+		m_pBlastCollision[index]->AttachMesh(mesh);
 	}
 }
 
 //モデルに合わせたバウンディングスフィア作成のラッパー関数
-void CBlastCollisionManager::CreateBSphereForMesh(std::shared_ptr<CStaticMesh> mesh)
+void CBlastCollisionManager::CreateBSphereForMesh(std::shared_ptr<CStaticMesh> mesh, int index)
 {
-	for (auto& blast : m_pBlastCollision)
+	if (index >= 0 && index < m_pBlastCollision.size())
 	{
-		blast->CreateBSphereForMesh(*mesh);
+		m_pBlastCollision[index]->CreateBSphereForMesh(*mesh);
 	}
 }
 
 //スフィアのコライダーの生成.
-void CBlastCollisionManager::CreateSpehreCollider(float rad)
+void CBlastCollisionManager::CreateSpehreCollider(float rad, int index)
 {
-	for (auto& blast : m_pBlastCollision)
+	if (index >= 0 && index < m_pBlastCollision.size())
 	{
-		blast->CreateSpehreCollider(rad);
+		m_pBlastCollision[index]->CreateSpehreCollider(rad);
 	}
 }
 
 //位置の設定.
-void CBlastCollisionManager::SetPosition(D3DXVECTOR3 pos)
+void CBlastCollisionManager::SetPosition(D3DXVECTOR3 pos, int index)
 {
-	for (auto& blast : m_pBlastCollision)
+	if (index >= 0 && index < m_pBlastCollision.size())
 	{
-		blast->SetPosition(pos);
+		m_pBlastCollision[index]->SetPosition(pos);
 	}
 }
 
 //回転の設定.
-void CBlastCollisionManager::SetRotation(D3DXVECTOR3 rot)
+void CBlastCollisionManager::SetRotation(D3DXVECTOR3 rot, int index)
 {
-	for (auto& blast : m_pBlastCollision)
+	if (index >= 0 && index < m_pBlastCollision.size())
 	{
-		blast->SetRotation(rot);
+		m_pBlastCollision[index]->SetRotation(rot);
 	}
 }
 
 //大きさの設定.
-void CBlastCollisionManager::SetScale(float xyz)
+void CBlastCollisionManager::SetScale(float xyz, int index)
 {
-	for (int i = 0; i < m_pBlastCollision.size(); i++)
+	if (index >= 0 && index < m_pBlastCollision.size())
 	{
-		m_pBlastCollision[i]->SetScale(xyz);
+		m_pBlastCollision[index]->SetScale(xyz);
 	}
 }
 
 //爆発フラグ設定.
-void CBlastCollisionManager::SetBlastFlag(bool flg)
+void CBlastCollisionManager::SetBlastFlag(bool flg, int index)
 {
-	for (auto& blast : m_pBlastCollision)
+	if (index >= 0 && index < m_pBlastCollision.size())
 	{
-		blast->SetBlastFlag(flg);
+		m_pBlastCollision[index]->SetBlastFlag(flg);
 	}
 }
 
 //爆発フラグの取得.
 bool CBlastCollisionManager::GetBlastFlag()
 {
-	for (auto& blast : m_pBlastCollision)
+	for (int i = 0; i < m_pBlastCollision.size(); i++)
 	{
-		return blast->GetBlastFlag();
+		return m_pBlastCollision[i]->GetBlastFlag();
 	}
 }
 
 //半径の取得.
 float CBlastCollisionManager::GetBlastRadius()
 {
-	for (auto& blast : m_pBlastCollision)
+	for(int i = 0; i < m_pBlastCollision.size(); i++)
 	{
-		return blast->GetBlastRadius();
+		return m_pBlastCollision[i]->GetBlastRadius();
 	}
 }
 
 //コライダーの取得.
 std::shared_ptr<CCollider> CBlastCollisionManager::GetCollider()
 {
-	for (auto& blast : m_pBlastCollision)
+	for (int i = 0; i < m_pBlastCollision.size(); i++)
 	{
-		return blast->GetCollider();
+		return m_pBlastCollision[i]->GetCollider();
 	}
 }

@@ -170,7 +170,7 @@ void CGameMain::Update()
 	float totle = 90.f;
 	time = (remaining / totle) * 360;
 	float angle = time * (PI / 180);
-	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, angle);
+	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, -angle);
 
 	const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
 
@@ -195,7 +195,6 @@ void CGameMain::Update()
 
 	//爆風の動作処理.
 	m_pBlastManager->Update();
-	m_pBlastManager->SetScale(m_pBlastManager->GetBlastRadius() * 2);
 
 	// 木箱の更新
 	m_pWoodBoxTopLeft->Update();
@@ -1199,7 +1198,7 @@ void CGameMain::PlayertoBlast()
 			////車体が爆風と接触したとき.
 			if (Coll->CheckCollision(*m_pBlastManager->GetCollider()))
 			{
-				m_pBlastManager->HitBlast();
+				m_pBlastManager->HitBlast(i);
 			}
 		}
 	}

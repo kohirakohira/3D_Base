@@ -22,25 +22,25 @@ public:
 	void Create(const D3DXVECTOR3& pos, bool blast, std::shared_ptr<CStaticMesh> mesh);
 
 	//当たった時の関数.
-	void HitBlast();
+	void HitBlast(int index);
 
 	//爆風メッシュのアタッチ.
-	void AttachMesh(std::shared_ptr<CStaticMesh> mesh);
+	void AttachMesh(std::shared_ptr<CStaticMesh> mesh, int index);
 	//モデルに合わせたバウンディングスフィア作成のラッパー関数
-	void CreateBSphereForMesh(std::shared_ptr<CStaticMesh> mesh);
+	void CreateBSphereForMesh(std::shared_ptr<CStaticMesh> mesh, int index);
 	//スフィアのコライダーの生成.
-	void CreateSpehreCollider(float rad);
+	void CreateSpehreCollider(float rad, int index);
 
 	//位置の設定.
-	void SetPosition(D3DXVECTOR3 pos);
+	void SetPosition(D3DXVECTOR3 pos, int index);
 	void SetPosition(float x, float y, float z);
 	//回転の設定.
-	void SetRotation(D3DXVECTOR3 rot);
+	void SetRotation(D3DXVECTOR3 rot, int index);
 	void SetRotation(float x, float y, float z);
 	//大きさの設定.
-	void SetScale(float xyz );
+	void SetScale(float xyz, int index);
 	//爆発フラグ設定.
-	void SetBlastFlag(bool flg);
+	void SetBlastFlag(bool flg,  int index);
 	//爆発フラグの取得.
 	bool GetBlastFlag();
 	//半径の取得.
