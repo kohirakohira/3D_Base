@@ -965,7 +965,7 @@ void CGameMain::Collision()
 
 	//// 弾と弾
 	// このコードやばい(重い).
-	//ShottoShot();
+	ShottoShot();
 
 	// 箱とプレイヤー
 	WoodBoxtoPlayer();
