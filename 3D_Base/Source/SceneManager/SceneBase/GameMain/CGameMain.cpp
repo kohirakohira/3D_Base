@@ -1457,7 +1457,7 @@ void CGameMain::EachSettingTimer()
 	//時計の針の画像設定..
 	m_pSpriteTimerArrow->SetPosition(WND_W / 2.f - 42.f, WND_H / 2, 0.f);
 	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, 0.f);
-	m_pSpriteTimerArrow->SetScale(0.25f, 0.25f, 0.f);
+	m_pSpriteTimerArrow->SetScale(-0.25f, 0.25f, 0.f);
 
 	//-----中心表示用座標-----..
 	//ゲームで遊べる(クリア画面に遷移する)時間※引数..

@@ -200,7 +200,7 @@ HRESULT CDirectX11::CreateRasterizer()
 	//D3D11_CULL_BACK	:背面を描画しない.
 	//D3D11_CULL_FRONT	:正面を描画しない.
 	//D3D11_CULL_NONE	:カリングを切る（正背面を描画する）.
-	rdc.CullMode = D3D11_CULL_NONE;
+	rdc.CullMode = D3D11_CULL_BACK;
 
 	//ポリゴンの表裏を決定するフラグ.
 	//TRUE	:左回りなら前向き。右回りなら後ろ向き。
