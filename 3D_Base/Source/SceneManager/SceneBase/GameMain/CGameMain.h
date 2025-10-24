@@ -31,7 +31,7 @@
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス.
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // 戦車：砲塔クラス.
 
-#include "Collision//BlastCollision//CBlastCollision.h"	//爆風クラス.
+#include "Collision//BlastCollision//BlastCollisionManager//CBlastCollisionManager.h"	//爆風クラス.
 
 #include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"//アイテムボックスマネージャークラス..
 
@@ -81,10 +81,8 @@ public:
 
 	//当たり判定の生成.
 	void CreateBounding();
-
 	// 当たり判定.
 	void Collision();
-
 	// 壁とプレイヤーの当たり判定判別.
 	void WalltoPlayer();
 	// 壁と弾の当たり判定
@@ -105,6 +103,9 @@ public:
 	void GroundtoShot();
 	// 地面とアイテムボックス
 	void GroundtoItemBox();
+	//爆風とプレイヤーの当たり判定.
+	void PlayertoBlast();
+
 
 	//画面をグリッドに分割したとき、idx番目のマスに対応する.
 	//D3D11_VIEWPORTを作成して返す関数.
@@ -223,7 +224,7 @@ public:
 	std::shared_ptr<CStageObject>		m_pGround;
 
 	//爆風.
-	std::shared_ptr<CBlastCollision>	m_pBlast;
+	std::shared_ptr<CBlastCollisionManager>	m_pBlastManager;
 
 	//アイテムボックスマネージャークラス
 	std::shared_ptr<CItemBoxManager>	m_pItemBoxManager;

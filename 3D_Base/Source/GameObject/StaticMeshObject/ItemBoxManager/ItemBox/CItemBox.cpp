@@ -5,6 +5,7 @@ CItemBox::CItemBox()
 	, GravitySpeed			( -9.8f )
 	, m_Active				( true )
 	, m_ItemType			()
+	, IsGravity				( false )
 {
 	//大体0.016辺りになる.
 	Framerate = 1.f / 60.f;
@@ -66,17 +67,21 @@ void CItemBox::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Ca
 //重力の計算用(下に落下).
 void CItemBox::GravityMath()
 {
-	//位置変化(Y座標 += 初期速度 * 1フレーム + 0.5f * 重力加速度 * 1フレーム * 1フレーム)※0.5fは1/2のこと.
-	//「0.5f * 重力加速度 * 1フレーム * 1フレーム」は「加速度によって物体がどれだけ移動するか」を表す式.
-	//1フレーム * 1フレームは1フレームにかかる時間.
-	//公式:等加速度直線運動.
-	m_vPosition.y += InitialSpeed * Framerate + 0.5f * GravitySpeed * Framerate * Framerate;
-
-	//速度変化(初期速度 += 重力加速度 / 2 * 1フレーム)※/ 2 は落下速度の調整用.
-	InitialSpeed += GravitySpeed / 2 * Framerate;
-
-	if (m_vPosition.y < 0.5f)
+	if (IsGravity == false)
 	{
+		//位置変化(Y座標 += 初期速度 * 1フレーム + 0.5f * 重力加速度 * 1フレーム * 1フレーム)※0.5fは1/2のこと.
+		//「0.5f * 重力加速度 * 1フレーム * 1フレーム」は「加速度によって物体がどれだけ移動するか」を表す式.
+		//1フレーム * 1フレームは1フレームにかかる時間.
+		//公式:等加速度直線運動.
+		m_vPosition.y += InitialSpeed * Framerate + 0.5f * GravitySpeed * Framerate * Framerate;
+
+		//速度変化(初期速度 += 重力加速度 / 2 * 1フレーム)※/ 2 は落下速度の調整用.
+		InitialSpeed += GravitySpeed / 2 * Framerate;
+	}
+	else
+	{
+		//重力無し.
+		//地面についた.
 		m_vPosition.y = 0.2f;
 		InitialSpeed = 0.f;
 	}
