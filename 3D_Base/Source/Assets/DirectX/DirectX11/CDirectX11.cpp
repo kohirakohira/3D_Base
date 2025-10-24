@@ -196,10 +196,12 @@ HRESULT CDirectX11::CreateRasterizer()
 	ZeroMemory( &rdc, sizeof( rdc ) );
 	rdc.FillMode = D3D11_FILL_SOLID;//塗りつぶし（ソリッド）.
 
+#if 0
 	//カリングの設定.
-	//D3D11_CULL_BACK	:背面を描画しない.
-	//D3D11_CULL_FRONT	:正面を描画しない.
-	//D3D11_CULL_NONE	:カリングを切る（正背面を描画する）.
+	//D3D11_CULL_BACK	:	//背面を描画しない.
+	//D3D11_CULL_FRONT	:	//正面を描画しない.
+	D3D11_CULL_NONE	://カリングを切る（正背面を描画する）.
+#endif
 	rdc.CullMode = D3D11_CULL_NONE;
 
 	//ポリゴンの表裏を決定するフラグ.
