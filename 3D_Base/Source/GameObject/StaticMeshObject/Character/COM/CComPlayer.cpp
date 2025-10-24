@@ -392,7 +392,7 @@ void CComPlayer::Update()
         {   
             //ãﬂÇ√Ç¢ÇΩÇÁçUåÇÇ∑ÇÈ
             TransitionTo(State::Attack);
-        }//aaaa
+        }
         break;
     case CComPlayer::State::Attack:
         //í«ê’ÇµÇΩÇÁñﬂÇÈ
