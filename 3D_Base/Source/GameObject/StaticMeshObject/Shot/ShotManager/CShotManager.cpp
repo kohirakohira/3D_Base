@@ -22,7 +22,7 @@ void CShotManager::Initialize()
 
 void CShotManager::AttachMeshToPlayerShot(BulletKinds kind, std::shared_ptr<CStaticMesh> mesh)
 {
-	//’†g‚ª–³‚©‚Á‚½‚ç•Ô‚·.
+	//’†g‚ª–³‚©‚Á‚½‚ç•Ô‚·
 	if (mesh == nullptr)
 	{
 		return;
