@@ -34,7 +34,7 @@ void CShotManager::SetReload(int No, const D3DXVECTOR3& pos, float rotY)
 {
 	for (int i = 0; i < ShotMax; ++i)
 	{
-		if (!m_pShots[i]->IsActive())  // V‚µ‚­‚±‚ÌŠÖ”‚ð CShot ‚É’Ç‰Á‚µ‚Ä‚­‚¾‚³‚¢
+		if (!m_pShots[i]->IsActive())
 		{
 			m_pShots[i]->AttachMesh(m_Mesh[No]);
 			m_pShots[i]->Reload(pos, rotY);

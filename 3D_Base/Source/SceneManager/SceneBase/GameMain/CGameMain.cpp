@@ -591,11 +591,11 @@ void CGameMain::Create()
 	m_pWallRight	= std::make_shared<CStageObject>();
 
 	// 木箱
-	m_pWoodBoxTopLeft = std::make_shared<CStageObject>();
-	m_pWoodBoxTopRight = std::make_shared<CStageObject>();
-	m_pWoodBoxCenter = std::make_shared<CStageObject>();
-	m_pWoodBoxBottomLeft = std::make_shared<CStageObject>();
-	m_pWoodBoxBottomRight = std::make_shared<CStageObject>();
+	m_pWoodBoxTopLeft		= std::make_shared<CStageObject>();
+	m_pWoodBoxTopRight		= std::make_shared<CStageObject>();
+	m_pWoodBoxCenter		= std::make_shared<CStageObject>();
+	m_pWoodBoxBottomLeft	= std::make_shared<CStageObject>();
+	m_pWoodBoxBottomRight	= std::make_shared<CStageObject>();
 
 	// 地面
 	m_pGround = std::make_shared<CStageObject>();
