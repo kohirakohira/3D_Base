@@ -16,6 +16,8 @@ void CShotManager::Initialize()
 	{
 		m_pShots.push_back(std::make_shared<CShot>());
 	}
+
+	m_pShots.reserve(ShotMax);
 }
 
 void CShotManager::AttachMeshToPlayerShot(BulletKinds kind, std::shared_ptr<CStaticMesh> mesh)
