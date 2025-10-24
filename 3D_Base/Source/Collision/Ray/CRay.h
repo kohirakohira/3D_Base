@@ -59,9 +59,9 @@ private:
 	ID3D11DeviceContext* m_pContext11;
 
 	ID3D11VertexShader* m_pVertexShader;	//頂点シェーダ.
-	ID3D11InputLayout* m_pVertexLayout;	//頂点レイアウト.
+	ID3D11InputLayout* m_pVertexLayout;		//頂点レイアウト.
 	ID3D11PixelShader* m_pPixelShader;		//ピクセルシェーダ.
-	ID3D11Buffer* m_pConstantBuffer;	//コンスタントバッファ.
+	ID3D11Buffer* m_pConstantBuffer;		//コンスタントバッファ.
 
 	ID3D11Buffer* m_pVertexBuffer;	//頂点バッファ.
 
