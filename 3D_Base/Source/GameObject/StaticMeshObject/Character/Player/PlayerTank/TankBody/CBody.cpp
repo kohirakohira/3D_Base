@@ -6,6 +6,8 @@ CBody::CBody(int inputID)
 	, m_MoveSpeed(0.1f)
 	, m_MoveState(enMoveState::Stop)
 	, m_pInput(nullptr)
+	, m_LockY	(true)
+	, m_LockYValue	(0.5f)
 {
 	m_vPosition.y = -0.5f;
 
@@ -32,20 +34,21 @@ void CBody::Initialize(int id)
 
 void CBody::Update()
 {
-	if (m_Input)
-	{
+	if (m_Input) { 
 		m_Input->Update();
 	}
 
-	// コライダーの座標を更新
+	KeyInput();
+	RadioControl();
+
+	if (m_LockY) {
+		m_vPosition.y = m_LockYValue;
+	}
+
 	m_pCollider->SetPosition(m_vPosition);
 
-	// Y座標を固定
-	m_vPosition.y = 0;
-
-	KeyInput();		// 入力処理
-	RadioControl();	// 回転・移動処理
 	CCharacter::Update();
+
 }
 
 void CBody::Draw(

@@ -75,6 +75,8 @@ void CPlayer::Initialize(int id)
 
 	auto im = std::make_shared<CInputManager>();	
 	SetInputManagerShared(im);
+
+
 }
 
 //‹¤—L
@@ -183,6 +185,8 @@ void CPlayer::UpdateHumanInputAndMove()
 	m_pCannon->SetPosition(cannonpos);
 	m_pCannon->SetRotation(cannonrot);
 	m_pCannon->Update();
+
+
 }
 
 //–C“ƒ‚ÆŽÔ‘Ì‚ð“¯Šú‚·‚é
