@@ -19,6 +19,9 @@ public:
 	CBoxCollider();
 	virtual~CBoxCollider()override;
 
+	// 行列変換を更新
+	void UpdateTransform(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale) override;
+
 	//自身の型がBoxなので相手の型のCheckCollisionBoxを通る.
 	bool CheckCollision(const CCollider& other)const override
 	{
@@ -28,8 +31,8 @@ public:
 
 	bool CheckCollisionSphere(const class CSphereCollider& sphere)const override;
 	bool CheckCollisionBox(const class CBoxCollider& box)const override;
-	
-	bool CheckCollisionOBBtoOBB(OBB* A, OBB* B);
+
+
 	// 中心座標を取得する.
 	const D3DXVECTOR3& GetPosition()const override { return m_CenterPos; }
 	// 受け取った中心座標から、最小、最大座標を設定.
@@ -45,22 +48,16 @@ public:
 	// スケールを設定する
 	void SetScale(const D3DXVECTOR3& scale) override;
 
-	//最小座標を取得する.
-	D3DXVECTOR3 GetMinPosition()const { return m_MinPos; }
-	//最大座標を取得する.
-	D3DXVECTOR3 GetMaxPosition()const { return m_MaxPos; }
-	//最小座標を設定する.
-	void SetMinPosition(const D3DXVECTOR3& MinPos) { m_Min = MinPos; }
-	//最大座標を設定する.
-	void SetMaxPosition(const D3DXVECTOR3& MaxPos) { m_Max = MaxPos; }
+	// 初期サイズの設定
+	void SetBaseHalfExtents(const D3DXVECTOR3& min_local, const D3DXVECTOR3& max_local);
 
 	//自身の型が何の型かを返す.
 	ColliderType GetColType()const override { return ColliderType::Box; }
 
 private:
-	D3DXVECTOR3 m_Min;
-	D3DXVECTOR3 m_Max;
+	// OBB同士の判定
+	static bool CheckCollisionOBBtoOBB(const OBB* A, const OBB* B);
 
-	D3DXVECTOR3 m_MinPos;
-	D3DXVECTOR3 m_MaxPos;
+private:
+	D3DXVECTOR3 m_BaseHalfExtents; // 半分のサイズ
 };

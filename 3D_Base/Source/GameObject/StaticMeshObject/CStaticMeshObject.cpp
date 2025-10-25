@@ -19,8 +19,7 @@ void CStaticMeshObject::Update()
 	if (m_pCollider)
 	{
 		//Colliderに位置を渡す.
-		m_pCollider->SetPosition(m_vPosition);
-		//m_pCollider->SetPosition(m_vScale);
+		m_pCollider->UpdateTransform(m_vPosition, m_vRotation, m_vScale);
 	}
 
 	if (m_pMesh == nullptr) {
@@ -60,9 +59,9 @@ void CStaticMeshObject::CreateBoxCollider(D3DXVECTOR3 min, D3DXVECTOR3 max)
 {
 	//BoxColliderを生成.
 	auto box = std::make_shared<CBoxCollider>();
-	//生成したBoxColliderに最小、最大座標を入れる.
-	box->SetMinPosition(min);
-	box->SetMaxPosition(max);
+	// 最小・最大座標から Box の初期サイズを計算・設定する
+	box->SetBaseHalfExtents(min, max);
+	
 	//最小、最大座標が入ったBoxColliderをCColliderのユニークポインタm_pColliderに入れる.
 	m_pCollider = std::move(box);
 }

@@ -33,9 +33,9 @@ public:
 	void SetPosition(float x, float y, float z);
 	//回転設定.
 	void SetRotation(float x, float y, float z);
+	void SetRotation(D3DXVECTOR3 xyz);
 	//大きさ設定.
 	void SetScale(float x, float y, float z);
-
 	//重力の有無を設定.
 	void SetGravity(bool flg);
 	//アイテムの中身を設定してあげる.

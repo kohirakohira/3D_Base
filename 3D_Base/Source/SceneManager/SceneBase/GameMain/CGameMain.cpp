@@ -118,7 +118,7 @@ CGameMain::~CGameMain()
 void CGameMain::Update()
 {
 	//BGMのループ再生..
-	CSoundManager::PlayLoop(CSoundManager::BGM_Main);
+	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
 //-----メイン演出用-----..
 	
@@ -275,21 +275,12 @@ void CGameMain::Draw()
 		//地面描画.
 		m_pStage->Draw(view, proj, light, paramC);
 
-		//壁の表示.
-		m_pWallTop->Draw(view, proj, light, paramC);
-		m_pWallBottom->Draw(view, proj, light, paramC);
-		m_pWallLeft->Draw(view, proj, light, paramC);
-		m_pWallRight->Draw(view, proj, light, paramC);
-
 		// 木箱の描画
 		m_pWoodBoxTopLeft->Draw(view, proj, light, paramC);
 		m_pWoodBoxTopRight->Draw(view, proj, light, paramC);
 		m_pWoodBoxCenter->Draw(view, proj, light, paramC);
 		m_pWoodBoxBottomLeft->Draw(view, proj, light, paramC);
 		m_pWoodBoxBottomRight->Draw(view, proj, light, paramC);
-
-		// 地面の描画
-		m_pGround->Draw(view, proj, light, paramC);
 
 		//アイテムボックスの描画.
 		m_pItemBoxManager->Draw(view, proj, light, paramC);
@@ -406,8 +397,9 @@ void CGameMain::Init()
 	m_pStage->SetScale(0.4f, 0.4f, 0.4f);
 
 	//アイテムボックスの設定..
+	D3DXVECTOR3 Rot{ 0.f, 5.0f, 0.0f };
 	m_pItemBoxManager->SetPosition(-10.f, 20.f, 0.f);
-	m_pItemBoxManager->SetRotation(D3DXToRadian(0.f), D3DXToRadian(0.f), D3DXToRadian(0.f));
+	m_pItemBoxManager->SetRotation(Rot);
 	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
 
 //-----UI系統の初期化-----.
@@ -938,7 +930,6 @@ void CGameMain::CreateBounding()
 	//当たり判定設定.
 	m_pBlastManager->CreateSpehreCollider(m_pBlastManager->GetBlastRadius());
 
-
 }
 
 void CGameMain::Collision()
@@ -947,7 +938,7 @@ void CGameMain::Collision()
 	WalltoPlayer();
 
 	// 壁と弾の当たり判定
-	WalltoShot();
+	//WalltoShot();
 
 	// プレイヤーとプレイヤー
 	PlayertoPlayer();
@@ -956,7 +947,7 @@ void CGameMain::Collision()
 	PlayertoItemBox();
 
 	// プレイヤーと弾
-	PlayertoShot();
+	//PlayertoShot();
 
 	//// 弾と弾
 	// このコードやばい(重い).
@@ -966,17 +957,16 @@ void CGameMain::Collision()
 	WoodBoxtoPlayer();
 
 	// 箱と弾
-	WoodBoxtoShot();
+	//WoodBoxtoShot();
 
 	// 地面と弾
-	GroundtoShot();
+	//GroundtoShot();
 
 	// 地面とアイテムボックス
 	GroundtoItemBox();
 
 	//プレイヤーと爆風.
-	PlayertoBlast();
-
+	//PlayertoBlast();
 }
 
 void CGameMain::WalltoPlayer()

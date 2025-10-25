@@ -15,6 +15,9 @@ public:
 	CCollider();
 	virtual ~CCollider();
 
+	// s—ñXV
+	virtual void UpdateTransform(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale) = 0;
+
 	// ‘Šè‚ÌCollider‚ğó‚¯æ‚é.
 	virtual bool CheckCollision(const CCollider& other)const = 0;
 

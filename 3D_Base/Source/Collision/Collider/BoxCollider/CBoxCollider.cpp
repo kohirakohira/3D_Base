@@ -2,15 +2,37 @@
 #include "Collision//Collider//SphereCollider//CSphereCollider.h"
 
 CBoxCollider::CBoxCollider()
-	: m_Min()
-	, m_Max()
-	, m_MaxPos()
-	, m_MinPos()
+	: m_BaseHalfExtents ()
 {
 }
 
 CBoxCollider::~CBoxCollider()
 {
+}
+
+void CBoxCollider::UpdateTransform(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale)
+{
+	// CCOlliderのメンバーを更新
+	m_CenterPos = pos;
+	m_Rotation = rot;
+	m_Scale = scale;
+
+	// OBBのサイズにHarfLengthとスケールを計算したものを設定
+	m_OBB.HarfLength.x = m_BaseHalfExtents.x * scale.x;
+	m_OBB.HarfLength.y = m_BaseHalfExtents.y * scale.y;
+	m_OBB.HarfLength.z = m_BaseHalfExtents.z * scale.z;
+
+	// OBBの中心点を設定
+	m_OBB.CenterPos = pos;
+
+	// OBBの方向ベクトルを計算
+	D3DXMATRIX matRot;
+	D3DXMatrixRotationYawPitchRoll(&matRot, rot.y, rot.x, rot.z);
+
+	// 回転行列の行ベクトルからローカル軸を抽出
+	m_OBB.LocalAxes[0] = D3DXVECTOR3(matRot._11, matRot._12, matRot._13);
+	m_OBB.LocalAxes[1] = D3DXVECTOR3(matRot._21, matRot._22, matRot._23);
+	m_OBB.LocalAxes[2] = D3DXVECTOR3(matRot._31, matRot._32, matRot._33);
 }
 
 bool CBoxCollider::CheckCollisionSphere(const CSphereCollider& sphere) const
@@ -20,12 +42,11 @@ bool CBoxCollider::CheckCollisionSphere(const CSphereCollider& sphere) const
 
 bool CBoxCollider::CheckCollisionBox(const CBoxCollider& box) const
 {
-	return (m_MinPos.x <= box.m_MaxPos.x && m_MaxPos.x >= box.m_MinPos.x) &&
-		   (m_MinPos.y <= box.m_MaxPos.y && m_MaxPos.y >= box.m_MinPos.y) &&
-		   (m_MinPos.z <= box.m_MaxPos.z && m_MaxPos.z >= box.m_MinPos.z);
+	return CheckCollisionOBBtoOBB(&m_OBB, &box.m_OBB);
 }
 
-bool CBoxCollider::CheckCollisionOBBtoOBB( OBB* A, OBB* B)
+
+bool CBoxCollider::CheckCollisionOBBtoOBB(const OBB* A, const OBB* B)
 {
 	// ゼロに近い微小な量(誤差)
 	/* EPSILONは、軸が完全に平行(R[i][j] = 0)または直交(R[i][j] = ± 1)に
@@ -188,8 +209,6 @@ bool CBoxCollider::CheckCollisionOBBtoOBB( OBB* A, OBB* B)
 void CBoxCollider::SetPosition(const D3DXVECTOR3& pos)
 {
 	m_CenterPos = pos;
-	m_MaxPos = m_CenterPos + m_Max;
-	m_MinPos = m_CenterPos + m_Min;
 }
 
 void CBoxCollider::SetRotation(const D3DXVECTOR3& rotation)
@@ -198,13 +217,15 @@ void CBoxCollider::SetRotation(const D3DXVECTOR3& rotation)
 
 void CBoxCollider::SetScale(const D3DXVECTOR3& scale)
 {
-	// 最大値のスケール計算
-	m_Max.x *= scale.x;
-	m_Max.y *= scale.y;
-	m_Max.z *= scale.z;
+}
 
-	// 最小値のスケールの計算
-	m_Min.x *= scale.x;
-	m_Min.y *= scale.y;
-	m_Min.z *= scale.z;
+void CBoxCollider::SetBaseHalfExtents(const D3DXVECTOR3& min_local, const D3DXVECTOR3& max_local)
+{
+	// OBBで使用する「半分のサイズ」を計算して、基底サイズとして保持する
+	m_BaseHalfExtents.x = fabsf(max_local.x - min_local.x) * 0.5f;
+	m_BaseHalfExtents.y = fabsf(max_local.y - min_local.y) * 0.5f;
+	m_BaseHalfExtents.z = fabsf(max_local.z - min_local.z) * 0.5f;
+
+	// OBBの現在のサイズも初期化
+	m_OBB.HarfLength = m_BaseHalfExtents;
 }

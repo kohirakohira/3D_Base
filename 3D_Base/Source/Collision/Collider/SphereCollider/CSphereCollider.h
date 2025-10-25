@@ -8,6 +8,9 @@ public:
 	CSphereCollider();
 	virtual~CSphereCollider() override;
 
+	// 行列変換を更新
+	void UpdateTransform(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale) override;
+
 	//自身の型がSphereなので相手の型のCheckCollisionSphereを通る.
 	bool CheckCollision(const CCollider& other)const override
 	{
