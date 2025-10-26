@@ -4,8 +4,12 @@
 #include <algorithm>
 
 CSphereCollider::CSphereCollider()
-	: m_Radius()
+	: m_Radius		(0.0f)
+	, m_BaseRadius	(0.0f)
 {
+	// 初期化
+	m_Sphere.CenterPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_Sphere.Radius = 0.0f;
 }
 
 CSphereCollider::~CSphereCollider()
@@ -14,6 +18,19 @@ CSphereCollider::~CSphereCollider()
 
 void CSphereCollider::UpdateTransform(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const D3DXVECTOR3& scale)
 {
+	// CCollider のメンバーを更新
+	m_CenterPos = pos;
+	m_Rotation = rot;
+	m_Scale = scale;
+
+	// 半径を計算 (最も大きなスケールを適用)
+	float maxScale = std::max(std::max(scale.x, scale.y), scale.z);
+
+	m_Radius = m_BaseRadius * maxScale;
+
+	// 構造体メンバーの更新
+	m_Sphere.CenterPos = m_CenterPos;
+	m_Sphere.Radius = m_Radius;
 }
 
 bool CSphereCollider::CheckCollisionSphere(const CSphereCollider& sphere) const
@@ -35,21 +52,14 @@ bool CSphereCollider::CheckCollisionSphere(const CSphereCollider& sphere) const
 
 bool CSphereCollider::CheckCollisionBox(const CBoxCollider& box) const
 {
-	//円と一番近いボックスの位置が入る.
-	D3DXVECTOR3 ClosestPoint;
-
-	D3DXVECTOR3 vLength = m_CenterPos - ClosestPoint;
-
-	float Length = D3DXVec3Length(&vLength);
-
-	//円と円と違い、やっていることが円と点なので半径は一つだけ.
-	return Length < m_Radius;
+	return box.CheckCollisionSphere(*this);
 }
 
-void CSphereCollider::SetRotation(const D3DXVECTOR3& rotation)
+void CSphereCollider::SetRadius(float radius)
 {
-}
+	m_BaseRadius = fabsf(radius);
 
-void CSphereCollider::SetScale(const D3DXVECTOR3& scale)
-{
+	// 現在の半径を初期化
+	m_Radius = m_BaseRadius;
+	m_Sphere.Radius = m_Radius;
 }
