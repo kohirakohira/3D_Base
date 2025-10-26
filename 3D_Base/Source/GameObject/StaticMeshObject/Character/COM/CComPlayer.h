@@ -182,3 +182,14 @@ private:
 
 
 
+#if 0
+//障害物回避
+float m_ProbeDist = 3.0f;   // 前方レイの長さ
+float m_ProbeAngleRad = D3DX_PI / 4.0f;  // 左右45°
+float m_ProbeYOffset = 0.3f;   // レイ開始Y（
+int   m_AvoidHoldMax = 20;     // 回避継続フレーム
+
+int   m_AvoidSide = 0;      // -1:左へ回る / +1:右へ回る / 0:通常
+int   m_AvoidHold = 0;      // 回避継続カウント
+
+#endif
