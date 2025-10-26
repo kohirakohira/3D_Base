@@ -174,8 +174,6 @@ void CPlayer::UpdateHumanInputAndMove()
 	pos += fwd * (move * tuning.moveSpeed * dt);
 	cannonrot.y += aim * (tuning.turretTurnSpeed * dt);
 
-	m_pBody->SetRotation(bodyrot);
-	m_pBody->SetPosition(pos.x,pos.y = 0, pos.z);
 	m_pBody->Update();
 
 	SyncCannonToBody();

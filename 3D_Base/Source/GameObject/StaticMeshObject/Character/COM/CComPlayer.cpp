@@ -397,10 +397,9 @@ void CComPlayer::StepChase()
     const auto tuning = GetTuning();
     TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);
 
-    if (!m_pTarget)
+    if (m_pTarget)
     {
         const D3DXVECTOR3 target = m_pTarget->GetPosition();
-        TickChaseTo(target);        // ‘O‚Öo‚é
         TryAutoFire();
     }
 }
@@ -724,12 +723,6 @@ void CComPlayer::TickWander(float turnStep, float moveStep)
     pos.x += dir.x * 0.02f;
     pos.z += dir.z * 0.02f;
 
-#if 0
-    D3DXVECTOR3 Dir = ForwardFromYaw(yawRed);
-    pos += Dir * moveStep;
-    pos.x += dir.x * 0.02f;
-    pos.z += dir.z * 0.02f;
-#endif
     //Œ©‚½–Ú‚É”½‰f
     body->SetRotation({ 0.f,yawRed,0.f });
     body->SetPosition(pos);
