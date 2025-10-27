@@ -922,10 +922,10 @@ void CGameMain::CreateBounding()
 	// 当たり判定設定
 	m_pShotManager->CreateCollider();
 
-	//爆風の当たり判定生成.
-	m_pBlastManager->CreateBSphereForMesh(m_pStaticMesh_BulletRed);
-	//当たり判定設定.
-	m_pBlastManager->CreateSpehreCollider(m_pBlastManager->GetBlastRadius());
+	////爆風の当たり判定生成.
+	//m_pBlastManager->CreateBSphereForMesh(m_pStaticMesh_BulletRed);
+	////当たり判定設定.
+	//m_pBlastManager->CreateSpehreCollider(m_pBlastManager->GetBlastRadius());
 
 }
 
@@ -1117,7 +1117,7 @@ void CGameMain::PlayertoItemBox()
 			// プレイヤーがアイテムと接触したとき
 			if (Coll->CheckCollision(*ItemColl))
 			{
-				Item[ItemIndex]->HitPlayer();
+				Item->HitPlayer();
 			}
 		}
 	}
