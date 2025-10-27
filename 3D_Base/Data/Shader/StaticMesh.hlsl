@@ -18,15 +18,14 @@ cbuffer per_mesh	: register( b0 )
 cbuffer per_material: register( b1 )
 {
 	float4	g_Diffuse;		//ディフューズ色(拡散反射色).
-    float4 g_Ambient = float4(0.2,0.2,0.2,0.2); //アンビエント色(環境色).
+    float4	g_Ambient = float4(0.2,0.2,0.2,0.2); //アンビエント色(環境色).
 	float4	g_Specular;		//スペキュラ色(鏡面反射色).
 };
 //フレーム単位.
 cbuffer per_frame	: register( b2 )
 {
-	float4	g_CameraPos;	//カメラ位置(視点位置).
-    float4 g_vLightDir = normalize(float4(0.1,0.1,0.1,0.1)); //ライトの方向ベクトル.
-	
+	float4	g_CameraPos;	//カメラ位置(視点位置).光の位置
+    float4	g_vLightDir = normalize(float4(0.1,0.1,0.1,0.1)); //ライトの方向ベクトル.
 };
 
 
@@ -63,6 +62,11 @@ VS_OUTPUT VS_Main(
 	//ライト方向:
 	// ディレクショナルライトは、どこでも同じ方向.位置は無関係.
 	output.Light = normalize( g_vLightDir );
+	
+	////中心の定義
+	//float m_wolrdPos = (output.Pos, g_mW);
+	////ライトを中心におく
+	//output.Light = normalize(m_wolrdPos);
 
 	output.PosWorld = mul( Pos, g_mW );
 
@@ -88,8 +92,8 @@ float4 PS_Main( VS_OUTPUT input ) : SV_Target
 	float4 ambient = texColor * g_Ambient;
 
 	//拡散反射光 ※２.
-	float NL = saturate( dot( input.Normal, input.Light ) );
-	float4 diffuse = ( g_Diffuse / 2 + texColor / 2 )*NL;
+	float NL = saturate( dot( input.Normal, input.Light )  * 0.8f + 0.8f);	
+	float4 diffuse = ( g_Diffuse / 3 + texColor / 3 )*NL;
 
 	//鏡面反射光 ※３.
 	float3 reflect = normalize( 2 * NL * input.Normal - input.Light );
@@ -112,12 +116,12 @@ VS_OUTPUT VS_NoTex(
 
 	//プロジェクション変換(ワールド,ビュー,プロジェクション).
 	output.Pos = mul( Pos, g_mWVP );
-
+	
 	//法線をモデルの姿勢に合わせる.
 	// (モデルが回転すれば法線も回転させる必要があるため).
 	output.Normal = mul( Norm, ( float3x3 )g_mW );
 	output.Normal = normalize( output.Normal );
-
+	
 	//ライト方向:
 	// ディレクショナルライトは、どこでも同じ方向.位置は無関係.
 	output.Light = normalize( g_vLightDir );

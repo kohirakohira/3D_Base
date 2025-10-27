@@ -11,13 +11,6 @@
 // 前方宣言
 class CInputManager;		// 入力受付クラス.
 
-struct TankTuning
-{
-	float moveSpeed = 0.08f;		//前進、後退
-	float bodyTurnSpeed = 0.03f;	//車体ヨー
-	float turretTurnSpeed = 0.03f;	//砲塔ヨー
-	float cannonHeight = 0.3f;		//砲塔の取り付けの高さ
-};
 
 class CCharacter
 	: public CStaticMeshObject // スタティックメッシュオブジェクトクラスを継承.

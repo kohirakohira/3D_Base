@@ -87,10 +87,6 @@ private:
 	int  FindFirstComPlayer() const;
 	int FindFirstPadReceiver(int StartIndex = 1)const;
 
-	//パラメータ設定用
-	void SetPlayerTuningAll(const TankTuning& t);
-	void SetPlayerTuning(int idx, const TankTuning& t);
-
 };
 
 

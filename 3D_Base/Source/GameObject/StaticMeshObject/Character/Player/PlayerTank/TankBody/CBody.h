@@ -48,10 +48,6 @@ public:
 	// バウンディングボックスを作成
 	void CreateBounding(std::shared_ptr<CStaticMesh> pBody);
 
-	void EnableYLock(bool on) { m_LockY = on; }
-	void SetYLockValue(float y) { m_LockYValue = y; }
-	void SetYLockToCurrent() { m_LockYValue = m_vPosition.y; m_LockY = true; }
-
 private:
 	// キー入力受付.
 	void KeyInput();

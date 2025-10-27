@@ -91,3 +91,13 @@ struct LIGHT
 	D3DXMATRIX	mRotation;	//回転行列.
 	float		fIntensity;	//強度(明るさ).
 };
+
+//共通パラメータ
+struct TankTuning
+{
+	float moveSpeed = 0.08f;		//前進、後退
+	float bodyTurnSpeed = 0.03f;	//車体ヨー
+	float turretTurnSpeed = 0.03f;	//砲塔ヨー
+	float cannonHeight = 0.3f;		//砲塔の取り付けの高さ
+};
+
