@@ -182,6 +182,7 @@ void CPlayer::UpdateHumanInputAndMove()
 	m_pBody->SetPosition(pos.x,pos.y = 0, pos.z);
 	m_pBody->Update();
 
+	//砲塔と車体を同期する.
 	SyncCannonToBody();
 	{
 		//この下のコメントを外したら、車体と砲塔が別々に動く.
