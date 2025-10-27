@@ -54,7 +54,7 @@ void CBlastCollisionManager::AttachMesh(std::shared_ptr<CStaticMesh> mesh)
 	}
 }
 
-//モデルに合わせたバウンディングスフィア作成のラッパー関数
+//モデルに合わせたバウンディングスフィア作成のラッパー関数.
 void CBlastCollisionManager::CreateBSphereForMesh(std::shared_ptr<CStaticMesh> mesh)
 {
 	for (auto& blast : m_pBlastCollision)

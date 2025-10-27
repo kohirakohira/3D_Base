@@ -42,22 +42,25 @@ void CShotManager::SetReload(int No, const D3DXVECTOR3& pos, float rotY)
 	}
 }
 
+// 動作処理
 void CShotManager::Update()
 {
-	for (auto& shot : m_pShots)
+	for (int i = 0; i < m_pShots.size(); ++i)
 	{
-		shot->Update();
+		m_pShots[i]->Update();
 	}
 }
 
+// 描画処理
 void CShotManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	for (auto& shot : m_pShots)
+	for (int i = 0; i < m_pShots.size(); ++i)
 	{
-		shot->Draw(View, Proj, Light, Camera);
+		m_pShots[i]->Draw(View, Proj, Light, Camera);
 	}
 }
 
+// モデルに合わせたバウンディングスフィア作成のラッパー関数
 void CShotManager::CreateBounding(std::shared_ptr<CStaticMesh>& pShot)
 {
 	for (auto& shot : m_pShots)
@@ -66,6 +69,7 @@ void CShotManager::CreateBounding(std::shared_ptr<CStaticMesh>& pShot)
 	}
 }
 
+// スフィアのコライダーの生成
 void CShotManager::CreateCollider()
 {
 	for (auto& shot : m_pShots)
