@@ -69,7 +69,7 @@ CGameMain::CGameMain(HWND hWnd)
 	// 木箱のメッシュ
 	, m_pStaticMeshWoodBox			( nullptr )
 
-	, m_pStcMeshObj					( nullptr )
+	, m_pBackImgObject				( nullptr )
 
 	, m_pPlayerManager				()
 	, m_pShotManager				()
@@ -488,8 +488,8 @@ void CGameMain::Create()
 	m_pSpritePlayer = std::make_unique<CSprite3D>();
 	m_pSpriteExplosion = std::make_shared<CSprite3D>();
 
-	//スタティックメッシュオブジェクトのインスタンス作成.
-	m_pStcMeshObj = std::make_unique<CStaticMeshObject>();
+	//壁を外から見たときのオブジェクトのインスタンス作成.
+	m_pBackImgObject = std::make_unique<CStaticMeshObject>();
 
 	//スタティックメッシュのインスタンス作成.
 	m_pStaticMeshStage			= std::make_shared<CStaticMesh>();

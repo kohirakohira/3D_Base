@@ -192,7 +192,7 @@ public:
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshWoodBox;
 	
 	// スタティックメッシュオブジェクトクラス.
-	std::unique_ptr<CStaticMeshObject>			m_pStcMeshObj;
+	std::unique_ptr<CStaticMeshObject>			m_pBackImgObject;
 
 	// プレイヤーマネージャー.
 	std::shared_ptr<CPlayerManager>				m_pPlayerManager;
