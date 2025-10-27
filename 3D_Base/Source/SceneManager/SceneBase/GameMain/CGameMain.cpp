@@ -397,9 +397,8 @@ void CGameMain::Init()
 	m_pStage->SetScale(0.4f, 0.4f, 0.4f);
 
 	//アイテムボックスの設定..
-	D3DXVECTOR3 Rot{ 0.f, 5.0f, 0.0f };
 	m_pItemBoxManager->SetPosition(-10.f, 20.f, 0.f);
-	m_pItemBoxManager->SetRotation(Rot);
+	m_pItemBoxManager->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
 
 //-----UI系統の初期化-----.
@@ -938,10 +937,10 @@ void CGameMain::Collision()
 	WalltoPlayer();
 
 	// 壁と弾の当たり判定
-	WalltoShot();
+	//WalltoShot();
 
 	// プレイヤーとプレイヤー
-	PlayertoPlayer();
+	//PlayertoPlayer();
 
 	// プレイヤーとアイテム
 	PlayertoItemBox();
@@ -960,7 +959,7 @@ void CGameMain::Collision()
 	WoodBoxtoShot();
 
 	// 地面と弾
-	GroundtoShot();
+	//GroundtoShot();
 
 	// 地面とアイテムボックス
 	GroundtoItemBox();

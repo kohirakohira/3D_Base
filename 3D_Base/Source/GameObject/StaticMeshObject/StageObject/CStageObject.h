@@ -11,4 +11,6 @@ class CStageObject
 public:
 	CStageObject();
 	virtual ~CStageObject();
+
+	void Update() override;
 };

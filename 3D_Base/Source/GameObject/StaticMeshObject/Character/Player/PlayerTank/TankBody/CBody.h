@@ -14,7 +14,7 @@
 class CInputManager;
 
 class CBody
-	: public CCharacter	//キャラクタークラスを継承.
+	: public CCharacter	// キャラクタークラスを継承
 {
 public:
 	// 移動状態

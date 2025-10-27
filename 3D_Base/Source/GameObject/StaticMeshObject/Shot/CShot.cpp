@@ -11,7 +11,6 @@ CShot::CShot()
 		-9.8f,
 		0.0f
 	};
-
 }
 
 CShot::~CShot()
@@ -24,9 +23,6 @@ void CShot::Initialize(int id)
 
 void CShot::Update()
 {
-	// コライダーの座標を更新
-	m_pCollider->SetPosition(m_vPosition);
-
 	//時間定数宣言.
 	const float TIME = 1.0f / FPS;
 
@@ -53,6 +49,7 @@ void CShot::Update()
 			m_Shot.m_Display = false;
 		}
 	}
+	CStaticMeshObject::Update();
 }
 
 void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
