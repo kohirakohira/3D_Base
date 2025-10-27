@@ -20,14 +20,17 @@ CBlastCollision::~CBlastCollision()
 void CBlastCollision::Update()
 {
 	//定数宣言.
-	const float GROWTH_SPEED = 6.0f;	//大きさの上がり幅.
-	const float deltaTime = 1.0f / FPS;
+	const float GROWTH_SPEED = 10.0f;	//大きさの上がり幅.
+	const float deltaTime = 1.0f / 60.0f;
+
+	// コライダーの座標を更新
+	m_pCollider->SetPosition(m_vPosition);
 
 	if (m_Bom == true)
 	{
 #if 1
 		//半径を徐々に大きくする.
-		m_Radius += GROWTH_SPEED * deltaTime;
+		m_Radius += (GROWTH_SPEED * deltaTime);
 
 		//最小値から最大値までしか反映されない.
 		m_Radius = std::clamp(m_Radius, MIN_RADIUS, MAX_RADIUS);
@@ -39,6 +42,7 @@ void CBlastCollision::Update()
 			m_Radius = MIN_RADIUS;
 			m_Bom = false;
 		}
+
 #else
 		//半径を固定.
 		m_Radius = MAX_RADIUS;

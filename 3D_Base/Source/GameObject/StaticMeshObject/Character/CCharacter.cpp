@@ -12,7 +12,6 @@ CCharacter::CCharacter()
 
 CCharacter::~CCharacter()
 {
-	//SAFE_DELETE( m_pRayY );
 }
 
 void CCharacter::Update()
