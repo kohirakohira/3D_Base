@@ -957,7 +957,7 @@ void CGameMain::Collision()
 	WoodBoxtoPlayer();
 
 	// 箱と弾
-	//WoodBoxtoShot();
+	WoodBoxtoShot();
 
 	// 地面と弾
 	//GroundtoShot();
