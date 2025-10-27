@@ -39,10 +39,13 @@ public:
 	//重力の有無を設定.
 	void SetGravity(bool flg);
 	//アイテムの中身を設定してあげる.
-	void SetItemInfo();
+	void SetItemInfo(int index);
 
 	//アイテムの中身をランダム化.
 	CItemType ItemRandom();
+
+	//アイテムの情報を取得する.
+	ItemInfomation GetItemInfo(int index);
 
 	//外部のクラスから情報取得.
 	void SetCItemBox(std::vector<std::shared_ptr<CItemBox>> pItem) { m_Item = pItem; }

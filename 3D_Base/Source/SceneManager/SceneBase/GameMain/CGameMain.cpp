@@ -714,6 +714,20 @@ HRESULT CGameMain::LoadData()
 	m_pStaticMeshStage->Init(_T("Data\\Mesh\\Static\\Stage\\stage.x"));
 	m_pStaticMeshItemBox->Init(_T("Data\\Mesh\\Static\\ItemBox\\ItemBox.x"));
 
+#if 1
+
+	m_pStaticMesh_TankBodyRed->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Red\\Body.x"));
+	m_pStaticMesh_TankCannonRed->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Red\\Cannon.x"));
+	m_pStaticMesh_TankBodyYellow->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Yellow\\Body.x"));
+	m_pStaticMesh_TankCannonYellow->Init(	_T("Data\\Mesh\\Static\\Tank_n\\Yellow\\Cannon.x"));
+	m_pStaticMesh_TankBodyBlue->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Blue\\Body.x"));
+	m_pStaticMesh_TankCannonBlue->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Blue\\Cannon.x"));
+	m_pStaticMesh_TankBodyGreen->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Green\\Body.x"));
+	m_pStaticMesh_TankCannonGreen->Init(	_T("Data\\Mesh\\Static\\Tank_n\\Green\\Cannon.x"));
+
+#else
+
+
 	// 戦車(赤)
 	m_pStaticMesh_TankBodyRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Cannon\\Cannon.x"));
@@ -730,6 +744,8 @@ HRESULT CGameMain::LoadData()
 	m_pStaticMesh_TankBodyGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Cannon\\Cannon.x"));
 	
+#endif
+
 	// 弾(赤)
 	m_pStaticMesh_BulletRed->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));
 	// 弾(黄)
@@ -1117,7 +1133,21 @@ void CGameMain::PlayertoItemBox()
 			// プレイヤーがアイテムと接触したとき
 			if (Coll->CheckCollision(*ItemColl))
 			{
-				Item->HitPlayer();
+				if (m_pItemBoxManager->GetItem()[ItemIndex]->IsActive() == false)
+				{
+					//アイテムの中を設定してあげる.
+					m_pItemBoxManager->SetItemInfo(ItemIndex);
+					//プレイヤーの速度を設定.
+					//const TankTuning Info = {
+					//	m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed,
+					//	m_pPlayerManager->GetTuning().bodyTurnSpeed, 
+					//	m_pPlayerManager->GetTuning().turretTurnSpeed,
+					//	m_pPlayerManager->GetTuning().cannonHeight };
+					const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 5.0f, 0.030f, 0.30f };
+					Item[ItemIndex]->HitPlayer();
+					//プレイヤーの情報を設定.
+					m_pPlayerManager->SetPlayerTuning(PlayerIndex, Info);
+				}
 			}
 		}
 	}

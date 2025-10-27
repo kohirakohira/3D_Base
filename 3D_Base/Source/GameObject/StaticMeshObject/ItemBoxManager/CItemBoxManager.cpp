@@ -112,15 +112,15 @@ void CItemBoxManager::SetGravity(bool flg)
 	}
 }
 
-void CItemBoxManager::SetItemInfo()
-{
-	for (auto& item : m_Item)
+void CItemBoxManager::SetItemInfo(int index)
+{	
+	if (index >= 0 && index < m_Item.size())
 	{
 		//中身を順番に設定.
 		//ランダムで設定.
 		m_ItemInfo = ItemRandom();
 
-		item->SetItemInfo(m_ItemInfo);
+		m_Item[index]->SetItemInfo(m_ItemInfo);
 	}
 }
 
@@ -142,14 +142,22 @@ CItemType CItemBoxManager::ItemRandom()
 	//例：シールド30枚、リフレクション5枚のチケットがある、合計は35枚だが、
 	//そのうち30枚はシールドで(30/35)、残りはリフレクション(5/35)ということ.
 	std::discrete_distribution<> dist({
-		20,			// Shield      → よく出る.
-		25,			// SpeedUp     → よく出る.
-		25,			// PowerUp     → そこそこ.
-		10,			// BlastUp     → ちょっと出にくい.
-		8,			// Reflection  → 出にくい.
-		12			// Reload      → 普通.
+		0,			// Shield      → よく出る.
+		100,			// SpeedUp     → よく出る.
+		0,			// PowerUp     → そこそこ.
+		0,			// BlastUp     → ちょっと出にくい.
+		0,			// Reflection  → 出にくい.
+		0			// Reload      → 普通.
 		});
 
 	return static_cast<CItemType>(dist(gen));
 }
 
+//アイテムの情報を取得する.
+ItemInfomation CItemBoxManager::GetItemInfo(int index)
+{
+	if (index >= 0 && index < m_Item.size())
+	{
+		return m_Item[index]->GetItem();
+	}
+}
