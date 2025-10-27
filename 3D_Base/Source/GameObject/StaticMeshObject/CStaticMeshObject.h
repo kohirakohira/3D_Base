@@ -35,9 +35,9 @@ public:
 	void DetachMesh() {
 		m_pMesh = nullptr;
 	}
-	//SphereColliderを作成する.
+	// SphereColliderを作成する
 	void CreateSpehreCollider(float radius);
-	//BoxColliderを作成する.
+	// BoxColliderを作成する
 	void CreateBoxCollider(D3DXVECTOR3 min, D3DXVECTOR3 max);
 
 	//モデルに合わせたバウンディングスフィア作成のラッパー関数
@@ -51,13 +51,13 @@ public:
 
 	std::shared_ptr<CStaticMesh> GetStaticMesh() { return m_pMesh; }
 
-	//当たり判定の型を取得.
+	//当たり判定の型を取得
 	std::shared_ptr<CCollider> GetCollider() const { return m_pCollider; }
 	
-	//半径を設定.
+	//半径を設定
 	void SetRadius(float rad) { m_pBSphere->SetRadius(rad); }
 
-	//半径を取得.
+	//半径を取得
 	float GetRadius() { return m_pBSphere->GetRadius(); }
 
 	D3DXVECTOR3 GetMinPos() { return m_pBBox->GetMinPosition(); }

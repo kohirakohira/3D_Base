@@ -69,8 +69,6 @@ CGameMain::CGameMain(HWND hWnd)
 	// 木箱のメッシュ
 	, m_pStaticMeshWoodBox			( nullptr )
 
-	, m_pStcMeshObj					( nullptr )
-
 	, m_pPlayerManager				()
 	, m_pShotManager				()
 
@@ -194,8 +192,8 @@ void CGameMain::Update()
 	m_pWallRight->Update();
 
 	//爆風の動作処理.
-	m_pBlastManager->Update();
-	m_pBlastManager->SetScale(m_pBlastManager->GetBlastRadius() * 2);
+	//m_pBlastManager->Update();
+	//m_pBlastManager->SetScale(m_pBlastManager->GetBlastRadius() * 2);
 
 	// 木箱の更新
 	m_pWoodBoxTopLeft->Update();
@@ -479,9 +477,6 @@ void CGameMain::Create()
 	m_pSpriteGround = std::make_unique<CSprite3D>();
 	m_pSpritePlayer = std::make_unique<CSprite3D>();
 	m_pSpriteExplosion = std::make_shared<CSprite3D>();
-
-	//スタティックメッシュオブジェクトのインスタンス作成.
-	m_pStcMeshObj = std::make_unique<CStaticMeshObject>();
 
 	//スタティックメッシュのインスタンス作成.
 	m_pStaticMeshStage			= std::make_shared<CStaticMesh>();
@@ -835,24 +830,29 @@ void CGameMain::SetPosition()
 	// モデルサイズ X:20, Y:5, Z:20;
 	//-------------------------
 	// 左上
-	m_pWoodBoxTopLeft->SetPosition(-12, -0.4, 12);
-	m_pWoodBoxTopLeft->SetRotation(0, 0, 0);
+	m_pWoodBoxTopLeft->SetPosition(-12.0f, -0.4f, 12.0f);
+	m_pWoodBoxTopLeft->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pWoodBoxTopLeft->SetScale(1.0f, 1.0f, 1.0f);
 
 	// 右上
-	m_pWoodBoxTopRight->SetPosition(12, -0.4, 12);
-	m_pWoodBoxTopRight->SetRotation(0, 0, 0);
+	m_pWoodBoxTopRight->SetPosition(12.0f, -0.4f, 12.0f);
+	m_pWoodBoxTopRight->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pWoodBoxTopRight->SetScale(1.0f, 1.0f, 1.0f);
 
 	// 中央
-	m_pWoodBoxCenter->SetPosition(0, -0.4, 0);
-	m_pWoodBoxCenter->SetRotation(0, 0, 0);
+	m_pWoodBoxCenter->SetPosition(0.0f, -0.4f, 0.0f);
+	m_pWoodBoxCenter->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pWoodBoxCenter->SetScale(1.0f, 1.0f, 1.0f);
 
 	// 左下
-	m_pWoodBoxBottomLeft->SetPosition(-12, -0.4, -12);
-	m_pWoodBoxBottomLeft->SetRotation(0, 0, 0);
+	m_pWoodBoxBottomLeft->SetPosition(-12.0f, -0.4f, -12.0f);
+	m_pWoodBoxBottomLeft->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pWoodBoxBottomLeft->SetScale(1.0f, 1.3f, 1.0f);
 
 	// 右下
-	m_pWoodBoxBottomRight->SetPosition(12, -0.4, -12);
-	m_pWoodBoxBottomRight->SetRotation(0, 0, 0);
+	m_pWoodBoxBottomRight->SetPosition(12.0f, -0.4f, -12.0f);
+	m_pWoodBoxBottomRight->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pWoodBoxBottomRight->SetScale(1.0f, 1.0f, 1.0f);
 
 	// 地面
 	m_pGround->SetPosition(0.f, -3.f, 0.f);
@@ -924,10 +924,10 @@ void CGameMain::CreateBounding()
 	// 当たり判定設定
 	m_pShotManager->CreateCollider();
 
-	//爆風の当たり判定生成.
-	m_pBlastManager->CreateBSphereForMesh(m_pStaticMesh_BulletRed);
-	//当たり判定設定.
-	m_pBlastManager->CreateSpehreCollider(m_pBlastManager->GetBlastRadius());
+	////爆風の当たり判定生成.
+	//m_pBlastManager->CreateBSphereForMesh(m_pStaticMesh_BulletRed);
+	////当たり判定設定.
+	//m_pBlastManager->CreateSpehreCollider(m_pBlastManager->GetBlastRadius());
 
 }
 
@@ -937,16 +937,16 @@ void CGameMain::Collision()
 	WalltoPlayer();
 
 	// 壁と弾の当たり判定
-	//WalltoShot();
+	WalltoShot();
 
 	// プレイヤーとプレイヤー
-	//PlayertoPlayer();
+	PlayertoPlayer();
 
 	// プレイヤーとアイテム
 	PlayertoItemBox();
 
 	// プレイヤーと弾
-	//PlayertoShot();
+	PlayertoShot();
 
 	//// 弾と弾
 	// このコードやばい(重い).
@@ -959,12 +959,12 @@ void CGameMain::Collision()
 	WoodBoxtoShot();
 
 	// 地面と弾
-	//GroundtoShot();
+	GroundtoShot();
 
 	// 地面とアイテムボックス
 	GroundtoItemBox();
 
-	//プレイヤーと爆風.
+	//  プレイヤーと爆風.
 	//PlayertoBlast();
 }
 
@@ -1021,9 +1021,10 @@ void CGameMain::WalltoShot()
 		auto Shots = m_pShotManager->GetShot();
 		auto ShotsColl = Shots[i]->GetCollider();
 
+
 		// 壁が弾と接触したとき
 		if (ShotsColl->CheckCollision(*m_pWallTop->GetCollider()))
-		{
+		{			
 			//動的に作成.
 			m_pBlastManager->Create();
 			//爆風のメッシュを設定.
@@ -1032,6 +1033,7 @@ void CGameMain::WalltoShot()
 			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->SetBlastFlag(true);
+			
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWallBottom->GetCollider()))
@@ -1044,6 +1046,7 @@ void CGameMain::WalltoShot()
 			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->SetBlastFlag(true);
+
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWallLeft->GetCollider()))
@@ -1056,6 +1059,7 @@ void CGameMain::WalltoShot()
 			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->SetBlastFlag(true);
+
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWallRight->GetCollider()))
@@ -1068,6 +1072,7 @@ void CGameMain::WalltoShot()
 			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->SetBlastFlag(true);
+
 			Shots[i]->HitShot();
 		}
 	}
@@ -1338,11 +1343,11 @@ void CGameMain::WoodBoxtoShot()
 		}
 		if (ShotsColl->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
 		{
-			//動的に作成.
+			// 動的に作成
 			m_pBlastManager->Create();
-			//爆風のメッシュを設定.
+			// 爆風のメッシュを設定
 			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			//爆風の情報.
+			// 爆風の情報
 			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->SetBlastFlag(true);
@@ -1364,11 +1369,11 @@ void CGameMain::WoodBoxtoShot()
 		}
 		if (ShotsColl->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
 		{
-			//動的に作成.
+			//動的に作成
 			m_pBlastManager->Create();
-			//爆風のメッシュを設定.
+			//爆風のメッシュを設定
 			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			//爆風の情報.
+			//爆風の情報
 			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
 			m_pBlastManager->SetBlastFlag(true);
