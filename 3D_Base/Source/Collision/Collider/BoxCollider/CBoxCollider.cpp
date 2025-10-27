@@ -37,7 +37,11 @@ void CBoxCollider::UpdateTransform(const D3DXVECTOR3& pos, const D3DXVECTOR3& ro
 
 bool CBoxCollider::CheckCollisionSphere(const CSphereCollider& sphere) const
 {
-	return sphere.CheckCollisionBox(*this);
+	// 仮計算用の最接近点
+	D3DXVECTOR3 tempP;
+
+	// OBBとSphereの当たり判定
+	return CheckCollisionOBBtoSphere(sphere, &m_OBB, &tempP);
 }
 
 bool CBoxCollider::CheckCollisionBox(const CBoxCollider& box) const
@@ -206,17 +210,55 @@ bool CBoxCollider::CheckCollisionOBBtoOBB(const OBB* A, const OBB* B)
 	return true;
 }
 
+bool CBoxCollider::CheckCollisionOBBtoSphere(const CSphereCollider& sphere, const OBB* box, D3DXVECTOR3* tempP)
+{
+	// OBBと球の最近接点を求める
+	ClosestPointOBB(&sphere.GetPosition(), box, tempP);
+
+	// 最近接点と球の中心とのベクトルを求める
+	D3DXVECTOR3 v = *tempP - sphere.GetPosition();
+
+	// 最近接点と球の中心との距離の二乗が、球の半径の二乗以下なら衝突
+	return D3DXVec3Dot(&v, &v) <= sphere.GetRadius()* sphere.GetRadius();
+}
+
+void CBoxCollider::ClosestPointOBB(const D3DXVECTOR3* centorPoint, const OBB* box, D3DXVECTOR3* closePoint)
+{
+	// 入力点 *closePointと中心 box->CenterPosの差分ベクトル d
+	D3DXVECTOR3 d = *closePoint - box->CenterPos;
+
+	// 最近接点 *closePointの初期値を OBB の中心に設定
+	*closePoint = box->CenterPos;
+
+	// 各軸に投影して、OBBの範囲内に制限する
+	float dist;
+	for (int i = 0; i < 3; ++i)
+	{
+		// 点からOBBへのベクトルdを各軸に投影
+		dist = D3DXVec3Dot(&d, &box->LocalAxes[i]);
+
+		// 投影長をOBBの範囲内に制限
+		if (dist > box->HarfLength[i])
+		{
+			/* 投影距離が長すぎる場合、
+			   Boxの境界 -HarfLength[i] に制限*/
+			dist = box->HarfLength[i];
+		}
+		if (dist < -box->HarfLength[i])
+		{
+			/* 投影距離が短すぎる場合、
+			   Boxの境界 -HarfLength[i] に制限*/
+			dist = -box->HarfLength[i];
+		}
+
+		// 制限された距離分だけ移動
+		*closePoint += dist * box->LocalAxes[i];
+	}
+}
+
 void CBoxCollider::SetPosition(const D3DXVECTOR3& pos)
 {
 	m_CenterPos = pos;
-}
-
-void CBoxCollider::SetRotation(const D3DXVECTOR3& rotation)
-{
-}
-
-void CBoxCollider::SetScale(const D3DXVECTOR3& scale)
-{
 }
 
 void CBoxCollider::SetBaseHalfExtents(const D3DXVECTOR3& min_local, const D3DXVECTOR3& max_local)

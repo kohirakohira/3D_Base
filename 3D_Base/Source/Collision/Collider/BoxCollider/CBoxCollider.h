@@ -28,25 +28,13 @@ public:
 		return other.CheckCollisionBox(*this);
 	}
 
-
 	bool CheckCollisionSphere(const class CSphereCollider& sphere)const override;
 	bool CheckCollisionBox(const class CBoxCollider& box)const override;
-
 
 	// 中心座標を取得する.
 	const D3DXVECTOR3& GetPosition()const override { return m_CenterPos; }
 	// 受け取った中心座標から、最小、最大座標を設定.
 	void SetPosition(const D3DXVECTOR3& pos) override;
-
-	// 回転を取得する
-	const D3DXVECTOR3& GetRotation()const override { return m_Rotation; }
-	//	回転を設定する
-	void SetRotation(const D3DXVECTOR3& rotation) override;
-
-	// スケールを取得する
-	const D3DXVECTOR3& GetScale()const override { return m_Scale; }
-	// スケールを設定する
-	void SetScale(const D3DXVECTOR3& scale) override;
 
 	// 初期サイズの設定
 	void SetBaseHalfExtents(const D3DXVECTOR3& min_local, const D3DXVECTOR3& max_local);
@@ -57,6 +45,10 @@ public:
 private:
 	// OBB同士の判定
 	static bool CheckCollisionOBBtoOBB(const OBB* A, const OBB* B);
+	static bool CheckCollisionOBBtoSphere(const CSphereCollider& sphere, const OBB* box, D3DXVECTOR3* tempP); // tempP:仮計算した最接近点
+
+	// OBBと点の最接近点の算出
+	static void ClosestPointOBB(const D3DXVECTOR3* centorPoint, const OBB* box, D3DXVECTOR3* closePoint);
 
 private:
 	D3DXVECTOR3 m_BaseHalfExtents; // 半分のサイズ

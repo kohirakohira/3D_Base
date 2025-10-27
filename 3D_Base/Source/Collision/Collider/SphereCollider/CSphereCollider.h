@@ -4,6 +4,13 @@
 class CSphereCollider
 	: public CCollider
 {
+public: // 構造体
+	struct SPHERE
+	{
+		D3DXVECTOR3 CenterPos;
+		float Radius;
+	} m_Sphere;
+
 public:
 	CSphereCollider();
 	virtual~CSphereCollider() override;
@@ -27,22 +34,14 @@ public:
 
 	//中心座標を設定する
 	void SetPosition(const D3DXVECTOR3& Pos) override { m_CenterPos = Pos; }
+	
 	//半径(長さ)を設定する
-	void SetRadius(float Radius) { m_Radius = Radius; }
-
-	// 回転を取得する
-	const D3DXVECTOR3& GetRotation()const override { return m_Rotation; }
-	//	回転を設定する
-	void SetRotation(const D3DXVECTOR3& rotation) override;
-
-	// 受け取ったスケールを取得
-	const D3DXVECTOR3& GetScale()const override { return m_Scale; }
-	// 受け取ったスケールを設定する
-	void SetScale(const D3DXVECTOR3& scale) override;
+	void SetRadius(float radius);
 
 	//自身の型が何の型かを返す.
 	ColliderType GetColType()const override { return ColliderType::Sphere; }
 
 private:
-	float		m_Radius;
+	float	m_Radius;
+	float	m_BaseRadius; // 初期化時に計算される半径
 };

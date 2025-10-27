@@ -938,7 +938,7 @@ void CGameMain::Collision()
 	WalltoPlayer();
 
 	// 壁と弾の当たり判定
-	//WalltoShot();
+	WalltoShot();
 
 	// プレイヤーとプレイヤー
 	PlayertoPlayer();
@@ -960,7 +960,7 @@ void CGameMain::Collision()
 	WoodBoxtoShot();
 
 	// 地面と弾
-	//GroundtoShot();
+	GroundtoShot();
 
 	// 地面とアイテムボックス
 	GroundtoItemBox();
