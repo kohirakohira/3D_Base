@@ -170,7 +170,7 @@ void CGameMain::Update()
 	float totle = 90.f;
 	time = (remaining / totle) * 360;
 	float angle = time * (PI / 180);
-	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, -angle);
+	m_pSpriteTimerArrow->SetRotation(0.f, D3DXToRadian(180.0f), -angle);
 
 	const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
 
@@ -1133,21 +1133,13 @@ void CGameMain::PlayertoItemBox()
 			// プレイヤーがアイテムと接触したとき
 			if (Coll->CheckCollision(*ItemColl))
 			{
-				if (m_pItemBoxManager->GetItem()[ItemIndex]->IsActive() == false)
-				{
-					//アイテムの中を設定してあげる.
-					m_pItemBoxManager->SetItemInfo(ItemIndex);
-					//プレイヤーの速度を設定.
-					//const TankTuning Info = {
-					//	m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed,
-					//	m_pPlayerManager->GetTuning().bodyTurnSpeed, 
-					//	m_pPlayerManager->GetTuning().turretTurnSpeed,
-					//	m_pPlayerManager->GetTuning().cannonHeight };
-					const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 5.0f, 0.030f, 0.30f };
-					Item[ItemIndex]->HitPlayer();
-					//プレイヤーの情報を設定.
-					m_pPlayerManager->SetPlayerTuning(PlayerIndex, Info);
-				}
+				//アイテムの中を設定してあげる.
+				m_pItemBoxManager->SetItemInfo(ItemIndex);
+				//プレイヤーの速度を設定.
+				const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 0.03f, 0.03f, 0.3f };
+				Item[ItemIndex]->HitPlayer();
+				//プレイヤーの情報を設定.
+				m_pPlayerManager->SetPlayerTuning(PlayerIndex, Info);
 			}
 		}
 	}

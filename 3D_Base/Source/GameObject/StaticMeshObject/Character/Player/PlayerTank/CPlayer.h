@@ -72,6 +72,9 @@ public:
 	//PlayerID‚ğCOM‚É“n‚·
 	int GetPlayerID() const { return m_PlayerID; }
 
+	//ƒvƒŒƒCƒ„[‚ÌTune‚ğİ’è.
+	void SetTune(const TankTuning& info);
+
 
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }

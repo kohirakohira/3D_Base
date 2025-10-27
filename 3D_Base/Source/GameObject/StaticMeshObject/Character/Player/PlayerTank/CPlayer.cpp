@@ -137,6 +137,12 @@ void CPlayer::Update()
 	UpdateHumanInputAndMove();
 }
 
+void CPlayer::SetTune(const TankTuning& info)
+{
+	m_pBody->SetTuning(info);
+	m_pCannon->SetTuning(info);
+}
+
 void CPlayer::UpdateHumanInputAndMove()
 {
 #if 1

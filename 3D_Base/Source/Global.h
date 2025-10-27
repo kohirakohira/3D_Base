@@ -93,6 +93,15 @@ struct LIGHT
 };
 
 
+//タンクの情報構造体.
+struct TankTuning
+{
+	float moveSpeed;		//前進、後退
+	float bodyTurnSpeed;	//車体ヨー
+	float turretTurnSpeed;	//砲塔ヨー
+	float cannonHeight;		//砲塔の取り付けの高さ
+};
+
 //車体の情報.
 struct TankBody
 {
@@ -106,19 +115,24 @@ struct TankCannon
 	float cannonHeight;		//砲塔の取り付けの高さ
 };
 
-//タンクの情報構造体.
-struct TankTuning
-	: public TankBody, TankCannon
-{
-};
-
 //アイテム効果の構造体.
 struct ItemInfomation
 {
-	bool	m_ShieldFlag = false;		//シールドを張っているかどうか.
+	bool	m_ShieldFlag;				//シールドを張っているかどうか.
 	float	m_Speed;					//プレイヤーの速度変更用.
 	float	m_Power;					//プレイヤーの攻撃変更用.
 	float	m_Blast;					//プレイヤーの爆風増加変更用.
-	bool	m_Reflection = false;		//プレイヤーの反射変更用.
+	bool	m_Reflection;				//プレイヤーの反射変更用.
 	float	m_Reload;					//プレイヤーのリロード間隔変更用.
+
+	//コンストラクタ.
+	ItemInfomation()
+		: m_ShieldFlag		(false)
+		, m_Speed			(0.0f)
+		, m_Power			(0.0f)
+		, m_Blast			(0.0f)
+		, m_Reflection		(false)
+		, m_Reload			(0.0f)
+	{
+	}
 };
