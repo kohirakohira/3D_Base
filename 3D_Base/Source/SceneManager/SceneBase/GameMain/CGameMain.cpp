@@ -17,9 +17,9 @@ static bool prevA = false;
 static constexpr int TIME = 90.0;
 
 CGameMain::CGameMain(HWND hWnd)
-	: m_hWnd					( hWnd )
+	: m_hWnd						( hWnd )
 
-	//画像..
+	// 画像
 	, m_pSprite2DTimerArrow			( nullptr )
 	, m_pSprite2DTimerFrame			( nullptr )
 	, m_pSprite2DTimer				( nullptr )
@@ -27,7 +27,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pSprite2DHitPoint			( nullptr )
 	, m_pSprite2DPlayerIcon			()
 
-	//画像の設定..
+	// 画像の設定
 	, m_pSpriteTimerFrame			()
 	, m_pSpriteTimer				()
 	, m_pSpriteTimerArrow			()
@@ -43,7 +43,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pStaticMeshBSphere			( nullptr )
 	, m_pStaticMeshItemBox			( nullptr )
 
-	// 戦車.
+	// 戦車
 	, m_pStaticMesh_TankBodyRed		( nullptr )
 	, m_pStaticMesh_TankCannonRed	( nullptr )
 	, m_pStaticMesh_TankBodyYellow	( nullptr )
@@ -53,7 +53,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pStaticMesh_TankBodyGreen	( nullptr )
 	, m_pStaticMesh_TankCannonGreen	( nullptr )
 
-	// 弾.
+	// 弾
 	, m_pStaticMesh_BulletRed		( nullptr )
 	, m_pStaticMesh_BulletYellow	( nullptr )
 	, m_pStaticMesh_BulletBlue		( nullptr )
@@ -833,24 +833,29 @@ void CGameMain::SetPosition()
 	// モデルサイズ X:20, Y:5, Z:20;
 	//-------------------------
 	// 左上
-	m_pWoodBoxTopLeft->SetPosition(-12, -0.4, 12);
-	m_pWoodBoxTopLeft->SetRotation(0, 0, 0);
+	m_pWoodBoxTopLeft->SetPosition(-12.0f, -0.4f, 12.0f);
+	m_pWoodBoxTopLeft->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pWoodBoxTopLeft->SetScale(1.0f, 1.3f, 1.0f);
 
 	// 右上
-	m_pWoodBoxTopRight->SetPosition(12, -0.4, 12);
-	m_pWoodBoxTopRight->SetRotation(0, 0, 0);
+	m_pWoodBoxTopRight->SetPosition(12.0f, -0.4f, 12.0f);
+	m_pWoodBoxTopRight->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pWoodBoxTopRight->SetScale(1.0f, 1.3f, 1.0f);
 
 	// 中央
-	m_pWoodBoxCenter->SetPosition(0, -0.4, 0);
-	m_pWoodBoxCenter->SetRotation(0, 0, 0);
+	m_pWoodBoxCenter->SetPosition(0.0f, -0.4f, 0.0f);
+	m_pWoodBoxCenter->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pWoodBoxCenter->SetScale(1.0f, 1.3f, 1.0f);
 
 	// 左下
-	m_pWoodBoxBottomLeft->SetPosition(-12, -0.4, -12);
-	m_pWoodBoxBottomLeft->SetRotation(0, 0, 0);
+	m_pWoodBoxBottomLeft->SetPosition(-12.0f, -0.4f, -12.0f);
+	m_pWoodBoxBottomLeft->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pWoodBoxBottomLeft->SetScale(1.0f, 1.3f, 1.0f);
 
 	// 右下
-	m_pWoodBoxBottomRight->SetPosition(12, -0.4, -12);
-	m_pWoodBoxBottomRight->SetRotation(0, 0, 0);
+	m_pWoodBoxBottomRight->SetPosition(12.0f, -0.4f, -12.0f);
+	m_pWoodBoxBottomRight->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pWoodBoxBottomRight->SetScale(1.0f, 1.3f, 1.0f);
 
 	// 地面
 	m_pGround->SetPosition(0.f, -3.f, 0.f);
@@ -935,16 +940,16 @@ void CGameMain::Collision()
 	WalltoPlayer();
 
 	// 壁と弾の当たり判定
-	//WalltoShot();
+	WalltoShot();
 
 	// プレイヤーとプレイヤー
-	//PlayertoPlayer();
+	PlayertoPlayer();
 
 	// プレイヤーとアイテム
 	PlayertoItemBox();
 
 	// プレイヤーと弾
-	//PlayertoShot();
+	PlayertoShot();
 
 	//// 弾と弾
 	// このコードやばい(重い).
@@ -957,12 +962,12 @@ void CGameMain::Collision()
 	WoodBoxtoShot();
 
 	// 地面と弾
-	//GroundtoShot();
+	GroundtoShot();
 
 	// 地面とアイテムボックス
 	GroundtoItemBox();
 
-	//プレイヤーと爆風.
+	//  プレイヤーと爆風.
 	//PlayertoBlast();
 }
 
@@ -1019,9 +1024,10 @@ void CGameMain::WalltoShot()
 		auto Shots = m_pShotManager->GetShot();
 		auto ShotsColl = Shots[i]->GetCollider();
 
+
 		// 壁が弾と接触したとき
 		if (ShotsColl->CheckCollision(*m_pWallTop->GetCollider()))
-		{
+		{			
 			//動的に作成.
 			m_pBlastManager->Create(
 				Shots[i]->GetPosition(),

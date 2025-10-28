@@ -15,10 +15,10 @@ CStaticMeshObject::~CStaticMeshObject()
 
 void CStaticMeshObject::Update()
 {
-	//m_pColliderに中身がある時だけ通る.
+	// m_pColliderに中身がある時だけ通る
 	if (m_pCollider)
 	{
-		//Colliderに位置を渡す.
+		// Colliderに位置を渡す
 		m_pCollider->UpdateTransform(m_vPosition, m_vRotation, m_vScale);
 	}
 
@@ -129,13 +129,13 @@ bool CStaticMeshObject::IsHitForRay(
 
 	//メッシュとレイの交差を調べる.
 	D3DXIntersect(
-		m_pMesh->GetMeshForRay(),	//対象メッシュ.
-		&StartPoint,				//レイの始点.
-		&vDirection,				//レイの向きと長さ(大きさ).
-		&bHit,						//(out)判定結果.
-		&dwIndex,	//(out)bHitがTRUEの時、レイの始点に最も近い面のインデックス値へのポインタ.
-		&U, &V,						//(out)重心ヒット座標.
-		pDistance,					//(out)メッシュとの距離.
+		m_pMesh->GetMeshForRay(),	// 対象メッシュ.
+		&StartPoint,				// レイの始点.
+		&vDirection,				// レイの向きと長さ(大きさ).
+		&bHit,						// (out)判定結果.
+		&dwIndex,					// (out)bHitがTRUEの時、レイの始点に最も近い面のインデックス値へのポインタ.
+		&U, &V,						// (out)重心ヒット座標.
+		pDistance,					// (out)メッシュとの距離.
 		nullptr, nullptr);
 
 	//無限に伸びるレイのどこかでメッシュが当たっていたら.
