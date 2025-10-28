@@ -1123,7 +1123,7 @@ void CGameMain::PlayertoItemBox()
 			// プレイヤーがアイテムと接触したとき
 			if (Coll->CheckCollision(*ItemColl))
 			{
-				Item->HitPlayer();
+				Item[ItemIndex]->HitPlayer();
 			}
 		}
 	}
