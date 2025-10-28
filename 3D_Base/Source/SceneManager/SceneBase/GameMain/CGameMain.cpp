@@ -251,7 +251,12 @@ void CGameMain::Draw()
 	{
 		//カメラ更新.
 		camera->Update();
-
+		auto Camera = camera->GetPosition();
+		camera->SetLightPos(0.f, 10.f, 0.f);
+        camera->SetLightColor(1.f, 1.f, 1.f);          // 暖色寄り
+        camera->SetLightIntensity(10.0f);
+        camera->SetLightRange(1e9f);                       // 影響半径
+        camera->SetLightAtten(0.0f, 0.0f, 0.0f);         // kc,kl,kq
 		//スナップショットをconst参照でキャプチャ.
 		D3DXMATRIX& view	= camera->m_mView;
 		D3DXMATRIX& proj	= camera->m_mProj;

@@ -19,7 +19,11 @@ CCamera::CCamera()
 	m_Camera.vLook = D3DXVECTOR3(0.0f, 2.0f, 5.0f);
 
 	//ライト情報
-	m_Light.vDirection = D3DXVECTOR3(1.5f, 1.f, -1.f);	//ライト方向
+	m_Light.Position = D3DXVECTOR3(0.f, 3.f, 0.f);	//ライト方向
+	m_Light.Range = 12.0f;
+	m_Light.Color = D3DXVECTOR3(1.f, 1.f, 1.f);
+	m_Light.fIntensity = 1.0f;
+	m_Light.Atten = D3DXVECTOR3(0.0f, 0.f, 0.0f);
 
 	//Update();
 }
@@ -90,11 +94,6 @@ void CCamera::SetCameraPos(float x, float y, float z)
 	m_Camera.vPosition = { x, y, z };
 }
 
-void CCamera::SetLightPos(float x, float y, float z)
-{
-	//位置の設定.
-	m_Light.Position = { x, y, z };	//ライト方向
-}
 
 void CCamera::SetLightRot(float x, float y, float z)
 {

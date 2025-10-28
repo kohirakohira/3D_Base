@@ -656,12 +656,18 @@ void CStaticMesh::Render(
 		cb.CameraPos = D3DXVECTOR4( CamPos.x, CamPos.y, CamPos.z, 0.0f );
 
 		//----- ライト情報 -----.
-		//ライト方向.
-		cb.vLightDir = D3DXVECTOR4(
-			Light.vDirection.x, Light.vDirection.y, Light.vDirection.z, 0.0f );
-		//ライト方向の正規化(ノーマライズ）.
-		// ※モデルからライトへ向かう方向. ディレクショナルライトで重要な要素.
-		D3DXVec4Normalize( &cb.vLightDir, &cb.vLightDir );
+		//ライト位置.
+		D3DXVECTOR3 lp = Light.Position;
+		cb.LightPos = D3DXVECTOR4(lp.x, lp.y, lp.z, 1.0f);
+
+		//減衰
+		float range = (Light.Range > 0.0f) ? Light.Range : 12.0f;
+		cb.Attenuation = D3DXVECTOR4(1.0f, 0.09f, 0.032f, range);
+
+		//光色と強度
+		D3DXVECTOR3 col = Light.Color;
+		float I = (Light.fIntensity > 0.0f) ? Light.fIntensity : 1.0f;;
+		cb.LightColor = D3DXVECTOR4(col.x, col.y, col.z, I);
 
 		memcpy_s(
 			pData.pData,	//コピー先のバッファ.

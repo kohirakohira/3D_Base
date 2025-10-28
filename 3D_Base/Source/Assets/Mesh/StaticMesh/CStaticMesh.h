@@ -39,7 +39,9 @@ public:
 	struct CBUFFER_PER_FRAME
 	{
 		D3DXVECTOR4	CameraPos;		//カメラ位置(視点位置).
-		D3DXVECTOR4	vLightDir;		//ライト方向.
+		D3DXVECTOR4	LightPos;		//ライトの方向からポジションにした
+		D3DXVECTOR4 Attenuation;	
+		D3DXVECTOR4 LightColor;
 	};
 
 	//頂点の構造体.

@@ -90,6 +90,9 @@ struct LIGHT
 	D3DXVECTOR3	vDirection;	//方向.
 	D3DXMATRIX	mRotation;	//回転行列.
 	float		fIntensity;	//強度(明るさ).
+	float		Range;		//位置,影響半径
+	D3DXVECTOR3	Color;
+	D3DXVECTOR3 Atten;		//減衰
 };
 
 //共通パラメータ
