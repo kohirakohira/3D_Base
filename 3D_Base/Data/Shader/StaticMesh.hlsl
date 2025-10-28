@@ -35,12 +35,12 @@ cbuffer per_frame	: register( b2 )
 struct VS_OUTPUT
 {
 	float4	Pos			: SV_Position;
-	float3	Normal		: TEXCOORD0;
-	float2	UV			: TEXCOORD1;
+	float3	Normal		: TEXCOORD0;    //ワールド空間の法線
+	float2	UV			: TEXCOORD1;    //テクスチャ画像
 	float3	LightVec	: TEXCOORD2;	//光源から点へのベクトル
 	float3	EyeVector	: TEXCOORD3;	//視線ベクトル
-	float4	PosWorld	: TEXCOORD4;
-	float4	Color		: COLOR;
+	float4	PosWorld	: TEXCOORD4;    //頂点のワールド座標
+	float4	Color		: COLOR;        
 };
 
 //-------------------------------------------------
@@ -129,39 +129,48 @@ VS_OUTPUT VS_Main(float4 Pos : POSITION, float4 Norm : NORMAL, float2 UV : TEXCO
 
 float4 PS_Main(VS_OUTPUT input): SV_Target
 {
-    float4 texColor = g_Texture.Sample(g_SamLinear, input.UV);
+    float4 texColor = g_Texture.Sample(g_SamLinear, input.UV);  //テクスチャの色を取得
 	
 	//距離と方向
     float d = length(input.LightVec);
-    float3 L = input.LightVec / max(d, 1e-4);	//正規化
+    float3 L = input.LightVec / max(d, 1e-4);	//正規化.1e-4はゼロ除算
 	
 	//減衰
     float kc = g_Attenuation.x;
     float kl = g_Attenuation.y;
     float kq = g_Attenuation.z;
-    float range = max(g_Attenuation.w, 1e-4);
+    float range = g_Attenuation.w;
 	
-    float att = 1.0 / (kc + kl * d + kq * d * d);
+    float denom = kc + kl * d + kq * d * d;
+    denom = max(denom, 1e-4);
+    float att = 1.0 / denom;
 	
 	//範囲減衰
-    att *= saturate(1.0 - (d / range));
-	
-	//拡散
-    float NdotL = 1.0;
-    float3 lightRGB = g_LightColor.rgb * g_LightColor.a;	//光色.強度
+    float rangeAtt = (range > 0.0) ? saturate(1.0 - (d / range)) : 1.0;
+    att *= rangeAtt;
+
+    //拡散
+    float3 N = normalize(input.Normal);
+    float w = 0.6; //0.20.8で調整。大きいほどムラ減
+    float NdotL = saturate((dot(N, L) + w) / (1.0 + w));
+
+    float3 lightRGB = g_LightColor.rgb * g_LightColor.a;
     float4 diffuse = (g_Diffuse * 0.5 + texColor * 0.5) * (NdotL * att);
     diffuse.rgb *= lightRGB;
-	
-	//鏡面
+
+    //鏡面
+    float specScale = 0.0; 
     float shininess = max(g_Specular.a, 1.0);
-    float3 H = normalize(L + normalize(input.EyeVector));
-    float specPow = pow(saturate(dot(normalize(input.Normal), H)), shininess);
-    float4 specular = float4(g_Specular.rgb * lightRGB * (specPow * att), 1.0);
-	
-	//環境
+    float3 V = normalize(input.EyeVector);
+    float3 H = normalize(L + V);
+    float specPow = pow(saturate(dot(N, H)), shininess);
+    float3 specRGB = g_Specular.rgb * lightRGB * (specPow * att) * specScale;
+    float4 specular = float4(specRGB, 1.0);
+
+    //環境
     float4 ambient = g_Ambient * texColor;
-	
-	//合成
+
+    //合成
     float4 color = ambient + diffuse + specular;
     color.a = texColor.a;
     return color;
@@ -249,22 +258,33 @@ float4 PS_NoTex(VS_OUTPUT i) : SV_Target
     float kc = g_Attenuation.x;
     float kl = g_Attenuation.y;
     float kq = g_Attenuation.z;
-    float range = max(g_Attenuation.w, 1e-4);
+    float range = g_Attenuation.w;
 
-    float att = 1.0 / (kc + kl * d + kq * d * d);
-    att *= saturate(1.0 - (d / range));
+    float denom = kc + kl * d + kq * d * d;
+    denom = max(denom, 1e-4); 
+    float att = 1.0 / denom;
 
-    float NdotL = 1.0;
+    float rangeAtt = (range > 0.0) ? saturate(1.0 - (d / range)) : 1.0;
+    att *= rangeAtt;
+
+    float3 N = normalize(i.Normal);
+    float w = 0.6;
+    float NdotL = saturate((dot(N, L) + w) / (1.0 + w));
+    //完全フラットにしたいならfloat NdotL = 1.0;
+
     float3 lightRGB = g_LightColor.rgb * g_LightColor.a;
 
     float4 ambient = g_Ambient;
     float4 diffuse = g_Diffuse * (NdotL * att);
     diffuse.rgb *= lightRGB;
 
+    float specScale = 0.0; 
     float shininess = max(g_Specular.a, 1.0);
-    float3 H = normalize(L + normalize(i.EyeVector));
-    float specPow = pow(saturate(dot(normalize(i.Normal), H)), shininess);
-    float4 specular = float4(g_Specular.rgb * lightRGB * (specPow * att), 1.0);
+    float3 V = normalize(i.EyeVector);
+    float3 H = normalize(L + V);
+    float specPow = pow(saturate(dot(N, H)), shininess);
+    float3 specRGB = g_Specular.rgb * lightRGB * (specPow * att) * specScale;
+    float4 specular = float4(specRGB, 1.0);
 
     float4 color = ambient + diffuse + specular;
     color.a = 1.0;
