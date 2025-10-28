@@ -120,6 +120,11 @@ void CGameMain::Update()
 	//BGMのループ再生..
 	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
+	//動的に生成.
+	//アイテムボックス.
+	m_pItemBoxManager->Create();
+
+
 //-----メイン演出用-----..
 	
 	//Iconを回転させる..
@@ -600,7 +605,6 @@ void CGameMain::Create()
 
 	// アイテムマネージャークラスのインスタンス生成
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
-	m_pItemBoxManager->Create();
 }
 
 HRESULT CGameMain::LoadData()
@@ -928,11 +932,6 @@ void CGameMain::CreateBounding()
 	m_pWoodBoxBottomLeft->CreateBoxCollider(m_pWoodBoxBottomLeft->GetMinPos(), m_pWoodBoxBottomLeft->GetMaxPos());
 	m_pWoodBoxBottomRight->CreateBoxCollider(m_pWoodBoxBottomRight->GetMinPos(), m_pWoodBoxBottomRight->GetMaxPos());
 
-	// アイテムボックスの当たり判定生成
-	m_pItemBoxManager->CreateBounding(m_pStaticMeshItemBox);
-	// 当たり判定設定
-	m_pItemBoxManager->CreateCollider();	
-
 	// 弾の当たり判定生成
 	m_pShotManager->CreateBounding(m_pStaticMesh_BulletRed);
 	// 当たり判定設定
@@ -1127,17 +1126,14 @@ void CGameMain::PlayertoItemBox()
 
 		for (int ItemIndex = 0; ItemIndex < ITEM_MAX; ++ItemIndex)
 		{
-			auto Item = m_pItemBoxManager->GetItem();
-			auto ItemColl = Item[ItemIndex]->GetCollider();
-
 			// プレイヤーがアイテムと接触したとき
-			if (Coll->CheckCollision(*ItemColl))
+			if (Coll->CheckCollision(*m_pItemBoxManager->GetCollider()))
 			{
 				//アイテムの中を設定してあげる.
 				m_pItemBoxManager->SetItemInfo(ItemIndex);
 				//プレイヤーの速度を設定.
 				const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 0.03f, 0.03f, 0.3f };
-				Item[ItemIndex]->HitPlayer();
+				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
 				//プレイヤーの情報を設定.
 				m_pPlayerManager->SetPlayerTuning(PlayerIndex, Info);
 			}
@@ -1409,13 +1405,10 @@ void CGameMain::GroundtoItemBox()
 {
 	for (int ItemIndex = 0; ItemIndex < ITEM_MAX; ++ItemIndex)
 	{
-		auto Item = m_pItemBoxManager->GetItem();
-		auto ItemColl = Item[ItemIndex]->GetCollider();
-
-		if (ItemColl->CheckCollision(*m_pGround->GetCollider()))
+		if (m_pItemBoxManager->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
 		{
 			// アイテムボックスの処理を入れる
-			Item[ItemIndex]->SetGravity(true);
+			m_pItemBoxManager->GetItem()[ItemIndex]->SetGravity(true);
 		}
 	}
 }

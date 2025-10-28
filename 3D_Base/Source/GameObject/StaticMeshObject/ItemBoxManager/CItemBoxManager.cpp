@@ -1,3 +1,4 @@
+//全アイテムのリセット.
 #include "CItemBoxManager.h"
 
 CItemBoxManager::CItemBoxManager()
@@ -16,6 +17,16 @@ void CItemBoxManager::Update()
 	{
 		item->Update();
 	}
+
+	//無くなったアイテムを削除.
+	m_Item.erase(
+		std::remove_if(
+			m_Item.begin(), m_Item.end(),
+			[](const std::shared_ptr<CItemBox>& item)
+			{
+				return !item->IsActive();
+			}),
+		m_Item.end());
 }
 
 void CItemBoxManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
@@ -28,24 +39,35 @@ void CItemBoxManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAM
 
 void CItemBoxManager::Create()
 {
-	//中身を消す.
-	//m_Item.clear();
-
-	//アイテムのインスタンス生成.
-	for (int i = 0; i < ITEM_MAX; i++)
+	//アイテムの最大数以下なら生成.
+	if (m_Item.size() < ITEM_MAX)
 	{
 		//アイテムボックスのインスタンス生成.
-		m_Item.push_back(std::make_shared<CItemBox>());
+		std::unique_ptr<CItemBox> item = std::make_unique<CItemBox>();
+		//メッシュの設定.
+		item->AttachMesh(m_ItemMesh);
+		//当たり判定の設定.
+		item->CreateBBoxForMesh(*m_ItemMesh);
+		item->CreateBoxCollider(item->GetMinPos(), item->GetMaxPos());
+		//アイテムのインスタンスを移動.
+		m_Item.push_back(std::move(item));
 	}
+}
+
+void CItemBoxManager::Clear()
+{
+	//全アイテムのリセット.
+	m_Item.clear();
 }
 
 void CItemBoxManager::AttachMesh(std::shared_ptr<CStaticMesh> pMesh)
 {
 	//メッシュ設定.
-	for (auto& item : m_Item)
+	if (pMesh == nullptr)
 	{
-		item->AttachMesh(pMesh);
+		return;
 	}
+	m_ItemMesh = pMesh;
 }
 
 void CItemBoxManager::CreateBounding(std::shared_ptr<CStaticMesh>& pItem)
@@ -57,21 +79,24 @@ void CItemBoxManager::CreateBounding(std::shared_ptr<CStaticMesh>& pItem)
 	}
 }
 
-void CItemBoxManager::CreateCollider()
-{
-	// コライダー設定.
-	for (auto& item : m_Item)
-	{
-		item->CreateBoxCollider(item->GetMinPos(), item->GetMaxPos());
-	}
-}
+//void CItemBoxManager::CreateCollider()
+//{
+//	// コライダー設定.
+//	for (auto& item : m_Item)
+//	{
+//		item->CreateBoxCollider(item->GetMinPos(), item->GetMaxPos());
+//	}
+//}
 
 void CItemBoxManager::SetPosition(float x, float y, float z)
 {
 	for (auto& item : m_Item)
 	{
+		//↓お試し配置.
+#if 1
 		//横にずらすだけ.
 		x += 3.f;
+#endif
 		item->SetPosition(x, y, z);
 	}
 }
@@ -159,5 +184,13 @@ ItemInfomation CItemBoxManager::GetItemInfo(int index)
 	if (index >= 0 && index < m_Item.size())
 	{
 		return m_Item[index]->GetItem();
+	}
+}
+
+std::shared_ptr<CCollider> CItemBoxManager::GetCollider() const
+{
+	for (auto& item : m_Item)
+	{
+		return item->GetCollider();
 	}
 }

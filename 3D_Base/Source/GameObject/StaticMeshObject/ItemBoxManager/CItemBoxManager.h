@@ -20,14 +20,17 @@ public:
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera);
 	//インスタンス生成(複製).
 	void Create();
+	//全アイテムのリセット.
+	void Clear();
+
 	//メッシュの設定.
 	void AttachMesh(std::shared_ptr<CStaticMesh> pMesh);
 
 	// バウンディングオブジェクトの作成
 	void CreateBounding(std::shared_ptr<CStaticMesh>& pItem);
 
-	// コライダーの作成
-	void CreateCollider();
+	//// コライダーの作成
+	//void CreateCollider();
 
 	//位置設定.
 	void SetPosition(float x, float y, float z);
@@ -52,6 +55,9 @@ public:
 
 	// 外部のクラスに情報を渡す
 	std::vector<std::shared_ptr<CItemBox>>	GetItem() const { return m_Item; }
+
+	//当たり判定の取得.
+	std::shared_ptr<CCollider> GetCollider() const;
 
 public:
 	//アイテムボックス.
