@@ -252,9 +252,9 @@ void CGameMain::Draw()
 		//カメラ更新.
 		camera->Update();
 		auto Camera = camera->GetPosition();
-		camera->SetLightPos(0.f, 50.f, 0.f);
-        camera->SetLightColor(1.f, 1.f, 1.f);			// 暖色寄り
-        camera->SetLightIntensity(70.f);
+		camera->SetLightPos(0.f, 50.f, 0.f);			//ライトのポジション.高くして白飛びしないよにしている
+        camera->SetLightColor(1.f, 1.f, 1.f);			//色は通常
+        camera->SetLightIntensity(70.f);				//ライトの明るさ
         camera->SetLightRange(1e9);                     // 影響半径
         camera->SetLightAtten(1e9, 1e9, 1e9);			// kc,kl,kq
 		//スナップショットをconst参照でキャプチャ.
