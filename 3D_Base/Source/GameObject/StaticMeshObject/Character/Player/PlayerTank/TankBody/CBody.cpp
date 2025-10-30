@@ -8,6 +8,7 @@ CBody::CBody(int inputID)
 	, m_pInput(nullptr)
 	, m_LockY	(true)
 	, m_LockYValue	(0.5f)
+	, m_GroundY		(0.2f)
 {
 	m_vPosition.y = -0.5f;
 

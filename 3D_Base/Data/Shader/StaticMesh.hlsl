@@ -24,10 +24,10 @@ cbuffer per_material: register( b1 )
 //フレーム単位.
 cbuffer per_frame	: register( b2 )
 {
-	float4	g_CameraPos;	//カメラ位置(視点位置).光の位置
+	float4	g_CameraPos;	//カメラ位置(視点位置).
     float4  g_LightPos;		//光源の位置.wは未使用
     float4	g_Attenuation;	//X:定数項,Y:線形,Z:2乗,w有効距離
-    float4 g_LightColor;    //光の色
+    float4  g_LightColor;   //光の色
 };
 
 
@@ -77,6 +77,7 @@ struct VS_OUTPUT
 
 //	return output;
 //}
+//Norm.法線
 VS_OUTPUT VS_Main(float4 Pos : POSITION, float4 Norm : NORMAL, float2 UV : TEXCOORD)
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
@@ -85,7 +86,7 @@ VS_OUTPUT VS_Main(float4 Pos : POSITION, float4 Norm : NORMAL, float2 UV : TEXCO
     output.Pos = mul(Pos, g_mWVP);
 	
 	//ワールド座標
-    output.PosWorld = mul(Pos, g_mW);
+    output.PosWorld = mul(Pos, g_mW);   //モデル空間からワールド空間に変換した頂点座標
 	
 	//法線をワールド座標に変換して正規化
     float3x3 nmat = (float3x3) g_mW;
@@ -146,7 +147,15 @@ float4 PS_Main(VS_OUTPUT input): SV_Target
     float att = 1.0 / denom;
 	
 	//範囲減衰
-    float rangeAtt = (range > 0.0) ? saturate(1.0 - (d / range)) : 1.0;
+    float rangeAtt;
+    if (range > 0.0)
+    {
+        rangeAtt = saturate(1.0 - (d / range));
+    }
+    else
+    {
+        rangeAtt = 1.0;
+    }
     att *= rangeAtt;
 
     //拡散
@@ -159,7 +168,7 @@ float4 PS_Main(VS_OUTPUT input): SV_Target
     diffuse.rgb *= lightRGB;
 
     //鏡面
-    float specScale = 0.0; 
+    float specScale = 0.0;  //今は事実上オフ.一応白と飛び対策
     float shininess = max(g_Specular.a, 1.0);
     float3 V = normalize(input.EyeVector);
     float3 H = normalize(L + V);
@@ -252,28 +261,39 @@ VS_OUTPUT VS_NoTex(float4 Pos : POSITION, float4 Norm: NORMAL)
 
 float4 PS_NoTex(VS_OUTPUT i) : SV_Target
 {
+    //点から光源の長さが距離d,正規化で方向L
     float d = length(i.LightVec);
-    float3 L = i.LightVec / max(d, 1e-4);
+    float3 L = i.LightVec / max(d, 1e-4);   //1e-4はゼロ割防止
 
-    float kc = g_Attenuation.x;
-    float kl = g_Attenuation.y;
-    float kq = g_Attenuation.z;
-    float range = g_Attenuation.w;
+    float kc = g_Attenuation.x; //定数項
+    float kl = g_Attenuation.y; //線形項
+    float kq = g_Attenuation.z; //二次頂
+    float range = g_Attenuation.w;  //影響半径
 
+    //近いほど大きく、遠いほど小さくなる減衰係数
     float denom = kc + kl * d + kq * d * d;
     denom = max(denom, 1e-4); 
     float att = 1.0 / denom;
 
-    float rangeAtt = (range > 0.0) ? saturate(1.0 - (d / range)) : 1.0;
+    float rangeAtt;
+    if (range > 0.0)
+    {
+        rangeAtt = saturate(1.0 - (d / range));
+    }
+    else
+    {
+        rangeAtt = 1.0;
+    }
     att *= rangeAtt;
 
+    //拡散
     float3 N = normalize(i.Normal);
     float w = 0.6;
     float NdotL = saturate((dot(N, L) + w) / (1.0 + w));
-    //完全フラットにしたいならfloat NdotL = 1.0;
 
     float3 lightRGB = g_LightColor.rgb * g_LightColor.a;
 
+    //環境光と最終合成
     float4 ambient = g_Ambient;
     float4 diffuse = g_Diffuse * (NdotL * att);
     diffuse.rgb *= lightRGB;

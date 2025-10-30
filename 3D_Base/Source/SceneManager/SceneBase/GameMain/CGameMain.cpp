@@ -821,6 +821,26 @@ HRESULT CGameMain::LoadData()
 	// バウンディングの作成
 	CreateBounding();
 
+#if 0
+	// ステージが持つ静的障害物コライダー群
+	std::vector<std::shared_ptr<CBoxCollider>> m_StaticBoxes;
+
+	// 障害物メッシュを作る時に AABB を生成して登録
+	auto wallCol = std::make_shared<CBoxCollider>();
+	wallCol->SetMinPosition({ -1.0f,-0.5f,-3.0f }); // メッシュのローカルAABB半径
+	wallCol->SetMaxPosition({ +1.0f,+0.5f,+3.0f });
+	wallCol->SetPosition(worldPosOfWall);
+	m_StaticBoxes.push_back(wallCol);
+
+	// 全COMに障害物ソースを渡す
+	for (auto& p : m_pPlayerManager->Players()) {
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(p)) {
+			com->SetObstacleSource(&m_StaticBoxes);
+		}
+	}
+
+#endif
+
 	return S_OK;
 }
 

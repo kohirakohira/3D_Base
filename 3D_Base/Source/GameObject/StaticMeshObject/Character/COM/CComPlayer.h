@@ -50,6 +50,11 @@ public:
 
 	//マネージャーからアイテムの参照
 	void SetItemBox(std::vector<std::shared_ptr<CItemBox>>* item) { m_pItemBox = item; }
+#if 0
+	void SetObstacleSource(const std::vector<std::shared_ptr<CBoxCollider>>* obstacles) {
+		m_Obstacles = obstacles;
+	}
+#endif
 
 private:
 	//構造体
@@ -174,19 +179,12 @@ private:
 	float	m_ItemPickUpRaius;			//以下なら取得.最終的には当たり判定でやる
 	ComShotState m_ShotState;
 
-	//障害物判定用.最終的にはRayを使う
-	float	m_Prode;			//長さ
-	float	m_ProdeAngleRed;	//左右45度
-	float	m_ProdeOffsetY;		//Yのオフセット
-	int		m_AvoidHoldMax;		//回頭を継続するフレーム
-	int		m_AvoidSede;		//-1左,1右
-	int		m_AvoidHold;		//回避カウント
 };
 
-
 #if 0
-
-int   m_AvoidSide = 0;      // -1:左へ回る / +1:右へ回る / 0:通常
-int   m_AvoidHold = 0;      // 回避継続カウント
+//障害物の一覧を外から差し込むだけ。管理は外側
+	const std::vector<std::shared_ptr<CBoxCollider>>* m_Obstacles = nullptr;
 
 #endif
+
+

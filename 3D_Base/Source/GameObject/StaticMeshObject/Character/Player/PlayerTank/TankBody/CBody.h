@@ -48,6 +48,7 @@ public:
 	// バウンディングボックスを作成
 	void CreateBounding(std::shared_ptr<CStaticMesh> pBody);
 
+	//void  SetGroundY(float y) { m_GroundY = y; m_LockY = true; }
 private:
 	// キー入力受付.
 	void KeyInput();
@@ -61,5 +62,5 @@ private:
 	std::shared_ptr<CInputManager> m_pInput;
 	bool  m_LockY;  
 	float m_LockYValue;
-
+	float m_GroundY;
 };
