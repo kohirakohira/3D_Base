@@ -24,7 +24,6 @@
 //-----演出用クラス-----
 #include "SceneManager//SceneBase//GameTitle//TitleProduction//CTitleProduction.h"	//タイトル演出クラス.
 
-
 //前方宣言.
 class CSprite2D;
 
@@ -83,7 +82,6 @@ public:
 
 	//描画フラグ.
 	bool DrawFlag;
-
 
 
 //------------------------------------------------------------------------------------------

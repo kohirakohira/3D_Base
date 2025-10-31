@@ -263,11 +263,11 @@ void CGameMain::Draw()
 		camera->Update();
 		auto Camera = camera->GetPosition();
 		//ライト設定
-		camera->SetLightPos(0.f, 40.f, 0.f);			//ライトのポジション
+		camera->SetLightPos(0.f, 100.f, 0.f);			//ライトのポジション
         camera->SetLightColor(1.f, 1.f, 1.f);			//色は通常
-        camera->SetLightIntensity(55.f);				//ライトの明るさ
-        camera->SetLightRange(1e9);						//影響半径
-        camera->SetLightAtten(1e9, 1e9, 1e9);			//kc,kl,kq
+        camera->SetLightIntensity(300.f);				//ライトの明るさ
+        camera->SetLightRange(1e18);					//影響半径
+        camera->SetLightAtten(1e18, 1e18, 1e18);		//kc,kl,kq
 		//スナップショットをconst参照でキャプチャ.
 		D3DXMATRIX& view	= camera->m_mView;
 		D3DXMATRIX& proj	= camera->m_mProj;

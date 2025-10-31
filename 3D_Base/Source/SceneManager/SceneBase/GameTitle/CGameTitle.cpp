@@ -131,6 +131,7 @@ void CGameTitle::Update()
 
 void CGameTitle::Draw()
 {
+
 	if (DrawFlag == true) {
 		return;
 	}
