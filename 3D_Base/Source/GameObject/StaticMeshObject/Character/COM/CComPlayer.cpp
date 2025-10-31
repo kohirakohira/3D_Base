@@ -52,7 +52,8 @@ CComPlayer::CComPlayer()
     , m_ProdeAngleRad       ( 0.f ) 
     , m_ProdeDist           ( 10.f )
     , m_AvoidHolde          ( 0.f )
-    , m_AvoidSede           ( 0 )
+    , m_AvoidSide           ( 0 )
+    , m_AvoidMax            ( 0.f )
 {
 }
 
@@ -414,12 +415,6 @@ bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
     return false;
 }
 
-//
-//            if (ob && ghost.CheckCollisionBox(*ob)) { outHitDist = d; return true; }
-//        }
-//    }
-//    return false;
-//}
 
 
 //’Tõˆ—
@@ -437,22 +432,20 @@ void CComPlayer::StepSeek()
     }
 }
 
-//’Ç”ö    
+
 void CComPlayer::StepChase()
 {
+
+    //ƒpƒ‰ƒ[ƒ^
     const auto tuning = GetTuning();
     TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);
 
     if (m_pTarget)
     {
-        const D3DXVECTOR3 target = m_pTarget->GetPosition();
+        TickAimTo(m_pTarget->GetPosition());
         TryAutoFire();
     }
-}
-
 #if 0
-void CComPlayer::StepChase()
-{
     auto body = Body(); if (!body || !m_pTarget) { StepSeek(); return; }
     const auto t = GetTuning();
 
@@ -464,16 +457,17 @@ void CComPlayer::StepChase()
 
     const float nextYaw = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
 
-    SafeAdvance(*body, nextYaw, t.moveSpeed);
+//  SafeAdvance(*body, nextYaw, t.moveSpeed);
 
     //–C“ƒE”­–C
     body->CCharacter::Update();
     SyncCannonToBody();
     TickAimTo(m_pTarget->GetPosition());
     TryAutoFire();
+#endif
 }
 
-#endif
+
 
 //UŒ‚AŠî–{“I‚É‚Í’e”­ŽËˆ—
 void CComPlayer::StepAttack()
@@ -901,48 +895,27 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
     if(m_AvoidHolde > 0)
     { 
         --m_AvoidHolde;
-        return curYaw + turnStep * (float)m_AvoidSede;
+        return curYaw + turnStep * (float)m_AvoidSide;
     }
+    //Šî–{“I‚É‚Í¶
     if (blocke)
     {
-        
+        if (m_AvoidSide  == 0)
+        {
+            m_AvoidSide = (avoid.x + avoid.z >= 0) ? +1 : -1;
+        }
+        m_AvoidHolde = m_AvoidMax;
+        return curYaw + turnStep * m_AvoidSide;
     }
+    
+    //’ÊíŽž‚Ì“®ì
+    const float d = Wrap(curYaw - desiredYaw);
+    if (d > turnStep) return curYaw + turnStep;
+    if (d < -turnStep) return curYaw - turnStep;
+    return curYaw + d;
 }
 
 
-//
-//// Šù‘¶‚ÌSteer‚É‰ñ”ð‘¤‚Ö‚ÌŒÅ’èù‰ñ‚ð¬‚º‚é
-//float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep)
-//{
-//    auto body = Body(); if (!body) return curYaw;
-//    auto box = std::dynamic_pointer_cast<CBoxCollider>(body->GetCollider());
-//    if (!box) return curYaw;
-//
-//    D3DXVECTOR3 avoid; float nearHit;
-//    const bool blocked = SenseObstacleAABB(*box, curYaw, avoid, nearHit);
-//
-//    //Œp‘±‰ñ”ð
-//    if (m_AvoidHold > 0) {
-//        --m_AvoidHold;
-//        return curYaw + turnStep * (float)m_AvoidSide;
-//    }
-//
-//    if (blocked) {
-//        if (m_AvoidSide == 0) {
-//            m_AvoidSide = (avoid.x + avoid.z >= 0.f) ? +1 : -1; // ‚»‚Ìê‚Å¶‰EŒˆ’è
-//        }
-//        m_AvoidHold = m_AvoidHoldMax; 
-//        return curYaw + turnStep * (float)m_AvoidSide;
-//    }
-//
-//    //’Êí‚ÌÅ’Z·‘€‘Ç
-//    const float d = Wrap(desiredYaw - curYaw);
-//    if (d > turnStep) return curYaw + turnStep;
-//    if (d < -turnStep) return curYaw - turnStep;
-//    return curYaw + d;
-//}
-//
-//#endif
 
 
 

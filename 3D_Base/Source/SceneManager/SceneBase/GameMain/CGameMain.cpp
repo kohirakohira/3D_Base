@@ -253,10 +253,10 @@ void CGameMain::Draw()
 		camera->Update();
 		auto Camera = camera->GetPosition();
 		//ライト設定
-		camera->SetLightPos(0.f, 40.f, 0.f);			//ライトのポジション.高くして白飛びしないよにしている
+		camera->SetLightPos(0.f, 40.f, 0.f);			//ライトのポジション
         camera->SetLightColor(1.f, 1.f, 1.f);			//色は通常
-        camera->SetLightIntensity(60.f);				//ライトの明るさ
-        camera->SetLightRange(1e9);                    //影響半径
+        camera->SetLightIntensity(55.f);				//ライトの明るさ
+        camera->SetLightRange(1e9);						//影響半径
         camera->SetLightAtten(1e9, 1e9, 1e9);			//kc,kl,kq
 		//スナップショットをconst参照でキャプチャ.
 		D3DXMATRIX& view	= camera->m_mView;
@@ -822,14 +822,17 @@ HRESULT CGameMain::LoadData()
 	// バウンディングの作成
 	CreateBounding();
 
+
 	//ステージが持つ静的障害物
-	std::vector<std::shared_ptr<CBoxCollider>> m_StaticBox;		
+	std::vector<std::shared_ptr<CBoxCollider>> m_StaticBox;
 
 
 	if (auto com = std::make_shared<CComPlayer>())
 	{
 		com->SetObject(&m_StaticBox);
 	}
+
+
 
 #if 0
 

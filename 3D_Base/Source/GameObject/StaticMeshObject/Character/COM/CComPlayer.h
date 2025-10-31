@@ -195,11 +195,10 @@ private:
 	const float m_ProdeAngleRad;		
 	float		m_ProdeDist;
 	float		m_AvoidHolde;
-	int			m_AvoidSede;
+	int			m_AvoidSide;
+	float		m_AvoidMax;
 };
 
-#if 0
 
-#endif
 
 
