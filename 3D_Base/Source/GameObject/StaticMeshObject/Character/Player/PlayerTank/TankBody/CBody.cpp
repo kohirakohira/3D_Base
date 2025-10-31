@@ -2,13 +2,13 @@
 #include "Collision/CollisionManager/CCollisionManager.h"
 
 CBody::CBody(int inputID)
-	: m_TurnSpeed		(0.01f)	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
-	, m_MoveSpeed		(0.1f)
-	, m_MoveState		(enMoveState::Stop)
-	, m_Death			(false)
-	, m_RespawnCoolTime	(120)
-	, m_RespawnTime		(0)
-	, m_pInput			(nullptr)
+	: m_TurnSpeed(0.01f)	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
+	, m_MoveSpeed(0.1f)
+	, m_MoveState(enMoveState::Stop)
+	, m_Death(false)
+	, m_RespawnCoolTime(120)
+	, m_RespawnTime(0)
+	, m_pInput(nullptr)
 {
 	m_vPosition.y = -0.5f;
 
@@ -35,13 +35,17 @@ void CBody::Initialize(int id)
 
 void CBody::Update()
 {
-	if (m_Input) { 
+	if (m_Input)
+	{
 		m_Input->Update();
 	}
 
 	// Y座標を固定
 	m_vPosition.y = 0;
 
+	KeyInput();		// 入力処理
+	RadioControl();	// 回転・移動処理
+	CCharacter::Update();
 }
 
 void CBody::Draw(
