@@ -48,7 +48,7 @@ private:
 	static bool CheckCollisionOBBtoSphere(const CSphereCollider& sphere, const OBB* box, D3DXVECTOR3* tempP); // tempP:仮計算した最接近点
 
 	// OBBと点の最接近点の算出
-	static void ClosestPointOBB(const D3DXVECTOR3* centorPoint, const OBB* box, D3DXVECTOR3* closePoint);
+	static void ClosestPointOBB(const D3DXVECTOR3* centerPoint, const OBB* box, D3DXVECTOR3* closePoint);
 
 private:
 	D3DXVECTOR3 m_BaseHalfExtents; // 半分のサイズ

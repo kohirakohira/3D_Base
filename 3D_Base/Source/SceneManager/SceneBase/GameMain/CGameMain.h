@@ -55,25 +55,23 @@
 class CXInput;
 
 class CGameMain
-	:public CSceneBase
+	: public CSceneBase
 {
 public:
-
 	CGameMain(HWND hWnd);
 	~CGameMain()override;
 
-
-	//動作関数..
+	// 動作関数
 	void Update()override;
-	//描画関数..
+	// 描画関数
 	void Draw()override;
-	//初期化関数..
+	// 初期化関数
 	void Init()override;
-	//解放関数..
+	// 解放関数
 	void Destroy()override;
-	//インスタンス作成..
+	// インスタンス作成
 	void Create()override;
-	//データの読み込み..
+	// データの読み込み
 	HRESULT LoadData()override;
 
 	//壁の位置設定.
@@ -114,34 +112,34 @@ public:
 	CSceneType GetSceneType() const override;
 
 
-	//ラッピング関数..
-	//制限時間画像の設定..
+	// ラッピング関数
+	// 制限時間画像の設定
 	void EachSettingTimer();
-	//プレイヤー番号画像の設定..
+	// プレイヤー番号画像の設定
 	void EachSettingPlayerNumber();
-	//倒した数画像の設定..
+	// 倒した数画像の設定
 	void EachSettingKillNumber();
-	//倒した数画像の設定..
+	// 倒した数画像の設定
 	void EachSettingHitPoint();
 
 public:		
-	//クラス用..
-	//定数宣言..
+	// クラス用
+	// 定数宣言
 	static constexpr int HP_MAX = 2;			//最大HP..
 	static constexpr int PLAYERNUM_MAX = 4;		//プレイヤー番号..
 	static constexpr int KILLNUM_MAX = 4;		//キル数..
 
-	//ウィンドウハンドル..
+	// ウィンドウハンドル
 	HWND		m_hWnd;
 
 	//カメラ..
 	//std::vector<std::shared_ptr<CCamera>> m_pCameras;.
 	std::array<std::shared_ptr<CCamera>, PLAYER_MAX> m_pCameras;
 
-	//デバッグテキスト..
+	// デバッグテキスト
 	std::shared_ptr<CDebugText>									m_pDbgText;
 
-	//ゲーム内で扱うUI系..
+	// ゲーム内で扱うUI系
 	std::shared_ptr<CSprite2D>									m_pSprite2DTimerArrow;			//時計の針..
 	std::shared_ptr<CSprite2D>									m_pSprite2DTimerFrame;			//制限時間の枠..
 	std::shared_ptr<CSprite2D>									m_pSprite2DTimer;				//制限時間の時計枠..
@@ -225,18 +223,18 @@ public:
 	// 地面
 	std::shared_ptr<CStageObject>		m_pGround;
 
-	//爆風.
+	// 爆風
 	std::shared_ptr<CBlastCollisionManager>	m_pBlastManager;
 
-	//アイテムボックスマネージャークラス
+	// アイテムボックスマネージャークラス
 	std::shared_ptr<CItemBoxManager>	m_pItemBoxManager;
 
-	// シーン列挙変数..
+	// シーン列挙変数
 	CSceneType		m_SceneType;
 
 public:		
-	//変数用..
-	//簡易時間を止める変数..
+	// 変数用
+	// 簡易時間を止める変数
 	int		m_StopTimeCount;
 	//Iconの回転用..
 	float	m_Rot;

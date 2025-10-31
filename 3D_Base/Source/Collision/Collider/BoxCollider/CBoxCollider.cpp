@@ -222,10 +222,10 @@ bool CBoxCollider::CheckCollisionOBBtoSphere(const CSphereCollider& sphere, cons
 	return D3DXVec3Dot(&v, &v) <= sphere.GetRadius()* sphere.GetRadius();
 }
 
-void CBoxCollider::ClosestPointOBB(const D3DXVECTOR3* centorPoint, const OBB* box, D3DXVECTOR3* closePoint)
+void CBoxCollider::ClosestPointOBB(const D3DXVECTOR3* centerPoint, const OBB* box, D3DXVECTOR3* closePoint)
 {
-	// 入力点 *closePointと中心 box->CenterPosの差分ベクトル d
-	D3DXVECTOR3 d = *closePoint - box->CenterPos;
+	// 入力点 *centerPointと中心 box->CenterPosの差分ベクトル d
+	D3DXVECTOR3 d = *centerPoint - box->CenterPos;
 
 	// 最近接点 *closePointの初期値を OBB の中心に設定
 	*closePoint = box->CenterPos;
