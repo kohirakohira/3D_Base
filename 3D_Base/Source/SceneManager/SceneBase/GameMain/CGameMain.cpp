@@ -998,14 +998,13 @@ void CGameMain::Collision()
 
 void CGameMain::WalltoPlayer()
 {
-	// 押し返しの強さ
-	const float pushStrength = 0.1f; 
-
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		// i 番のプレイヤーを取得
 		auto player = m_pPlayerManager->GetControlPlayer(i);
 		auto Coll = player->GetBody()->GetCollider();
+		//速度.
+		float pushStrength = m_pPlayerManager->GetControlPlayer(i)->GetBody()->GetTuning().moveSpeed;
 
 		// 押し返すための変数
 		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
@@ -1013,19 +1012,23 @@ void CGameMain::WalltoPlayer()
 		// 車体が壁と接触したとき
 		if (Coll->CheckCollision(*m_pWallTop->GetCollider()))
 		{
-			push.z -= 0.1f;
+			//push.z -= 0.1f;
+			push.z -= pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
-			push.z += 0.1f;
+			//push.z += 0.1f;
+			push.z += pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
-			push.x += 0.1f;
+			//push.x += 0.1f;
+			push.x += pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallRight->GetCollider()))
 		{
-			push.x -= 0.1f;
+			//push.x -= 0.1f;
+			push.x -= pushStrength;
 		}
 
 		// 押し返しを正規化
@@ -1147,9 +1150,10 @@ void CGameMain::PlayertoItemBox()
 			{
 				//アイテムの中を設定してあげる.
 				m_pItemBoxManager->SetItemInfo(ItemIndex);
+				//画面から消す.
+				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
 				//プレイヤーの速度を設定.
 				const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 0.03f, 0.03f, 0.3f };
-				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
 				//プレイヤーの情報を設定.
 				m_pPlayerManager->SetPlayerTuning(PlayerIndex, Info);
 			}

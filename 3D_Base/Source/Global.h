@@ -102,19 +102,6 @@ struct TankTuning
 	float cannonHeight;		//砲塔の取り付けの高さ
 };
 
-//車体の情報.
-struct TankBody
-{
-	float moveSpeed;		//前進、後退
-	float bodyTurnSpeed;	//車体ヨー
-};
-//砲塔の情報.
-struct TankCannon
-{
-	float turretTurnSpeed;	//砲塔ヨー
-	float cannonHeight;		//砲塔の取り付けの高さ
-};
-
 //アイテム効果の構造体.
 struct ItemInfomation
 {
