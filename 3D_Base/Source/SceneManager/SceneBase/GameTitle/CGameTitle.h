@@ -19,14 +19,10 @@
 //キーの入力.
 #include "InputDevice//Matuoka//CMultiInputKeyManager.h" // キー入力用
 
-//演出用.
 #include "Assets//Sprite//Sprite3D//CSprite3D.h" // 3Dスプライトクラス.
 
-#include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
-#include "Camera//CCamera.h" //カメラクラス
-
-//地面クラス.
-#include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス
+//-----演出用クラス-----
+#include "SceneManager//SceneBase//GameTitle//TitleProduction//CTitleProduction.h"	//タイトル演出クラス.
 
 
 //前方宣言.
@@ -76,6 +72,8 @@ public:
 	std::shared_ptr<CUIObject>			m_pSpritePlaySelectImg;
 	std::shared_ptr<CUIObject>			m_pSpriteEndSelectImg;
 
+	//タイトル演出用クラス.
+	std::unique_ptr<CTitleProduction>	m_TitleProduction;
 
 	//シーンタイプ変数.
 	CSceneType m_SceneType;
@@ -91,21 +89,5 @@ public:
 //------------------------------------------------------------------------------------------
 //	演出.
 //------------------------------------------------------------------------------------------
-public:
-	//カメラクラス.
-	std::shared_ptr<CCamera>			m_pCamera;
-
-	//地面クラス.
-	std::shared_ptr<CGround>			m_pGround;
-	//地面のメッシュ.
-	std::shared_ptr<CStaticMesh>		m_StaticMeshGround;
-
-	
-	
-	float y = 0.f;
-
-	float rad = 0.f;
-
-
 
 };

@@ -1,3 +1,4 @@
+//全アイテムのリセット.
 #include "CItemBoxManager.h"
 
 CItemBoxManager::CItemBoxManager()
@@ -16,6 +17,16 @@ void CItemBoxManager::Update()
 	{
 		item->Update();
 	}
+
+	//無くなったアイテムを削除.
+	m_Item.erase(
+		std::remove_if(
+			m_Item.begin(), m_Item.end(),
+			[](const std::shared_ptr<CItemBox>& item)
+			{
+				return !item->IsActive();
+			}),
+		m_Item.end());
 }
 
 void CItemBoxManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
@@ -28,24 +39,39 @@ void CItemBoxManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAM
 
 void CItemBoxManager::Create()
 {
-	//中身を消す.
-	//m_Item.clear();
-
-	//アイテムのインスタンス生成.
-	for (int i = 0; i < ITEM_MAX; i++)
+	//アイテムの最大数以下なら生成.
+	if (m_Item.size() < ITEM_MAX)
 	{
 		//アイテムボックスのインスタンス生成.
-		m_Item.push_back(std::make_shared<CItemBox>());
+		std::unique_ptr<CItemBox> item = std::make_unique<CItemBox>();
+		//メッシュの設定.
+		item->AttachMesh(m_ItemMesh);
+		//各設定.
+		item->SetPosition(ItemPositionRandom().x, ItemPositionRandom().y, ItemPositionRandom().z);
+		item->SetRotation(0.0f, 0.0f, 0.0f);
+		item->SetScale(0.2f);
+		//当たり判定の設定.
+		item->CreateBBoxForMesh(*m_ItemMesh);
+		item->CreateBoxCollider(item->GetMinPos(), item->GetMaxPos());
+		//アイテムのインスタンスを移動.
+		m_Item.push_back(std::move(item));
 	}
+}
+
+void CItemBoxManager::Clear()
+{
+	//全アイテムのリセット.
+	m_Item.clear();
 }
 
 void CItemBoxManager::AttachMesh(std::shared_ptr<CStaticMesh> pMesh)
 {
 	//メッシュ設定.
-	for (auto& item : m_Item)
+	if (pMesh == nullptr)
 	{
-		item->AttachMesh(pMesh);
+		return;
 	}
+	m_ItemMesh = pMesh;
 }
 
 void CItemBoxManager::CreateBounding(std::shared_ptr<CStaticMesh>& pItem)
@@ -57,21 +83,19 @@ void CItemBoxManager::CreateBounding(std::shared_ptr<CStaticMesh>& pItem)
 	}
 }
 
-void CItemBoxManager::CreateCollider()
-{
-	// コライダー設定.
-	for (auto& item : m_Item)
-	{
-		item->CreateBoxCollider(item->GetMinPos(), item->GetMaxPos());
-	}
-}
+//void CItemBoxManager::CreateCollider()
+//{
+//	// コライダー設定.
+//	for (auto& item : m_Item)
+//	{
+//		item->CreateBoxCollider(item->GetMinPos(), item->GetMaxPos());
+//	}
+//}
 
 void CItemBoxManager::SetPosition(float x, float y, float z)
 {
 	for (auto& item : m_Item)
 	{
-		//横にずらすだけ.
-		x += 3.f;
 		item->SetPosition(x, y, z);
 	}
 }
@@ -112,15 +136,15 @@ void CItemBoxManager::SetGravity(bool flg)
 	}
 }
 
-void CItemBoxManager::SetItemInfo()
-{
-	for (auto& item : m_Item)
+void CItemBoxManager::SetItemInfo(int index)
+{	
+	if (index >= 0 && index < m_Item.size())
 	{
 		//中身を順番に設定.
 		//ランダムで設定.
 		m_ItemInfo = ItemRandom();
 
-		item->SetItemInfo(m_ItemInfo);
+		m_Item[index]->SetItemInfo(m_ItemInfo);
 	}
 }
 
@@ -142,14 +166,58 @@ CItemType CItemBoxManager::ItemRandom()
 	//例：シールド30枚、リフレクション5枚のチケットがある、合計は35枚だが、
 	//そのうち30枚はシールドで(30/35)、残りはリフレクション(5/35)ということ.
 	std::discrete_distribution<> dist({
-		20,			// Shield      → よく出る.
-		25,			// SpeedUp     → よく出る.
-		25,			// PowerUp     → そこそこ.
-		10,			// BlastUp     → ちょっと出にくい.
-		8,			// Reflection  → 出にくい.
-		12			// Reload      → 普通.
+		0,			// Shield      → よく出る.
+		100,		// SpeedUp     → よく出る.
+		0,			// PowerUp     → そこそこ.
+		0,			// BlastUp     → ちょっと出にくい.
+		0,			// Reflection  → 出にくい.
+		0			// Reload      → 普通.
 		});
 
 	return static_cast<CItemType>(dist(gen));
 }
 
+//位置をランダム化.
+D3DXVECTOR3 CItemBoxManager::ItemPositionRandom()
+{
+	//staticを付けるのは、毎回作っていると、処理速度が低下するから、一度だけ作成.
+
+	//シード値を作成.
+	//毎回違う値をくれる.
+	static std::random_device rd;
+	//メルセンヌ・ツイスタという乱数エンジン※高速.
+	//genはインスタンス.
+	//rd()は初期値に戻す.
+	static std::mt19937 gen(rd());
+
+	//範囲設定.
+	std::uniform_real_distribution < float > distX(-25.0f, 25.0f);
+	std::uniform_real_distribution < float > distZ(-25.0f, 25.0f);
+
+	//Y軸固定.
+	const float fixedY = 20.0f;
+
+	return D3DXVECTOR3(distX(gen), fixedY, distZ(gen));
+}
+
+//アイテムの情報を取得する.
+ItemInfomation CItemBoxManager::GetItemInfo(int index)
+{
+	if (index >= 0 && index < m_Item.size())
+	{
+		return m_Item[index]->GetItem();
+	}
+}
+
+std::vector<std::shared_ptr<CItemBox>> CItemBoxManager::GetItem() const
+{
+	return m_Item;
+}
+
+std::shared_ptr<CCollider> CItemBoxManager::GetCollider() const
+{
+	for (auto& item : m_Item)
+	{
+		return item->GetCollider();
+	}
+}

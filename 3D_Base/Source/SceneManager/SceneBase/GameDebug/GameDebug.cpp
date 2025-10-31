@@ -79,7 +79,7 @@ void CGameDebug::Draw()
 	}
 
 	//ƒJƒƒ‰‚Ì•`‰æ.
-	m_pCamera->Draw();
+	m_pCamera->Info();
 
 	//’n–Ê‚Ì•`‰æ.
 	m_pGround->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
@@ -136,7 +136,6 @@ void CGameDebug::Init()
 	m_pItemBoxManager->SetPosition(0.f, 20.f, 0.f);
 	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
 	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
-	m_pItemBoxManager->SetItemInfo();
 
 
 

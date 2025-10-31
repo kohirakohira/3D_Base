@@ -112,10 +112,16 @@ void CPlayer::SetTankPosition(const D3DXVECTOR3& pos)
 	m_pCannon->SetPosition(pos);	// 砲塔座標指定
 }
 
-void CPlayer::SetTankRotation(const D3DXVECTOR3& pos)
+void CPlayer::SetTankRotation(const D3DXVECTOR3& rot)
 {
-	m_pBody->SetRotation(pos);		// 車体回転指定
-	m_pCannon->SetRotation(pos);	// 砲塔回転指定
+	m_pBody->SetRotation(rot);		// 車体回転指定
+	m_pCannon->SetRotation(rot);	// 砲塔回転指定
+}
+
+void CPlayer::SetTankScale(const float& sca)
+{
+	m_pBody->SetScale(sca);			// 車体大きさ指定
+	m_pCannon->SetScale(sca);		// 砲塔大きさ指定
 }
 
 void CPlayer::SetPushBack(const D3DXVECTOR3& push)
@@ -135,6 +141,12 @@ void CPlayer::Update()
 	}
 	//移動とか適用
 	UpdateHumanInputAndMove();
+}
+
+void CPlayer::SetTune(const TankTuning& info)
+{
+	m_pBody->SetTuning(info);
+	m_pCannon->SetTuning(info);
 }
 
 void CPlayer::UpdateHumanInputAndMove()
@@ -176,11 +188,14 @@ void CPlayer::UpdateHumanInputAndMove()
 	m_pBody->SetPosition(pos.x,pos.y = 0, pos.z);
 	m_pBody->Update();
 
+	//砲塔と車体を同期する.
 	SyncCannonToBody();
-	D3DXVECTOR3 cannonpos = pos;
-	cannonpos.y += tuning.cannonHeight;
-
-	m_pCannon->SetPosition(cannonpos);
+	{
+		//この下のコメントを外したら、車体と砲塔が別々に動く.
+		//D3DXVECTOR3 cannonpos = pos;
+		//cannonpos.y += tuning.cannonHeight;
+		//m_pCannon->SetPosition(cannonpos);
+	}
 	m_pCannon->SetRotation(cannonrot);
 	m_pCannon->Update();
 }
@@ -189,13 +204,11 @@ void CPlayer::UpdateHumanInputAndMove()
 void CPlayer::SyncCannonToBody()
 {
 	auto tuning = GetTuning();
-	auto body = Body();
-	auto cannon = Cannon();
-	if (!body || !cannon) return;
+	if (!Body() || !Cannon()) return;
 
-	D3DXVECTOR3 pos = body->GetPosition();
-	pos.y += tuning.cannonHeight;   //砲塔の高さオフセット
-	cannon->SetPosition(pos);       //位置を同期
+	D3DXVECTOR3 pos = Body()->GetPosition();
+	pos.y += tuning.cannonHeight;		//砲塔の高さオフセット
+	Cannon()->SetPosition(pos);			//位置を同期
 
 }
 

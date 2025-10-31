@@ -15,6 +15,8 @@ static bool prevA = false;
 
 //定数宣言.
 static constexpr int TIME = 90.0;
+const float deltaTime = 1.0f / FPS;
+const float DIAMETER = 360.0f;
 
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd						( hWnd )
@@ -69,6 +71,8 @@ CGameMain::CGameMain(HWND hWnd)
 	// 木箱のメッシュ
 	, m_pStaticMeshWoodBox			( nullptr )
 
+	, m_pStaticMeshBackImg			( nullptr )
+
 	, m_pBackImgObject				( nullptr )
 
 	, m_pPlayerManager				()
@@ -120,10 +124,22 @@ void CGameMain::Update()
 	//BGMのループ再生..
 	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
+	//動的に生成.
+	//アイテムボックス.
+	m_pItemBoxManager->Create();
+	//アイテムボックスの位置設定.
+	//m_pItemBoxManager->;
+	//アイテムの動作..
+	m_pItemBoxManager->Update();
+
 //-----メイン演出用-----..
 	
 	//Iconを回転させる..
-	m_Rot += 0.02f;
+	m_Rot += 1.0f * deltaTime;
+	if (m_Rot >= DIAMETER)
+	{
+		m_Rot = 0.0f;
+	}
 	
 //-----メイン演出用-----..
 
@@ -159,9 +175,6 @@ void CGameMain::Update()
 		}
 		m_pCameras[i]->Update();
 	}
-
-	//アイテムの動作..
-	m_pItemBoxManager->Update();
 	
 	//定数宣言..
 	const float PI = 3.14159265358979f;
@@ -170,7 +183,7 @@ void CGameMain::Update()
 	float totle = 90.f;
 	time = (remaining / totle) * 360;
 	float angle = time * (PI / 180);
-	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, -angle);
+	m_pSpriteTimerArrow->SetRotation(0.f, D3DXToRadian(180.0f), -angle);
 
 	const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
 
@@ -274,6 +287,12 @@ void CGameMain::Draw()
 		//地面描画.
 		m_pStage->Draw(view, proj, light, paramC);
 
+		////壁の表示.
+		//m_pWallTop->Draw(view, proj, light, paramC);
+		//m_pWallBottom->Draw(view, proj, light, paramC);
+		//m_pWallLeft->Draw(view, proj, light, paramC);
+		//m_pWallRight->Draw(view, proj, light, paramC);
+
 		// 木箱の描画
 		m_pWoodBoxTopLeft->Draw(view, proj, light, paramC);
 		m_pWoodBoxTopRight->Draw(view, proj, light, paramC);
@@ -281,11 +300,17 @@ void CGameMain::Draw()
 		m_pWoodBoxBottomLeft->Draw(view, proj, light, paramC);
 		m_pWoodBoxBottomRight->Draw(view, proj, light, paramC);
 
+		//// 地面の描画
+		//m_pGround->Draw(view, proj, light, paramC);
+
 		//アイテムボックスの描画.
 		m_pItemBoxManager->Draw(view, proj, light, paramC);
 
 		//爆風の表示.
 		m_pBlastManager->Draw(view, proj, light, paramC);
+
+		//背景の表示.
+		m_pBackImgObject->Draw(view, proj, light, paramC);
 
 //4画面に体力を表示.
 		//前後関係無視..
@@ -390,23 +415,18 @@ void CGameMain::Init()
 		m_pCameras[i]->SetLightPos(0.f, 2.f, 5.f);
 	}
 	//地面の大きさ設定..
-	m_pStage->SetRotation(0.f, 0.f, 0.f);
+	m_pStage->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pStage->SetScale(0.4f, 0.4f, 0.4f);
-
-	//アイテムボックスの設定..
-	m_pItemBoxManager->SetPosition(-10.f, 20.f, 0.f);
-	m_pItemBoxManager->SetRotation(0.0f, 0.0f, 0.0f);
-	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
 
 //-----UI系統の初期化-----.
 	//時計の枠.
-	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
-	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
+	m_pSpriteTimerFrame->SetPosition(0.0f, 0.0f, 0.0f);
+	m_pSpriteTimerFrame->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
 	//時計本体.
-	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
-	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
-	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
+	m_pSpriteTimer->SetPosition(WND_W / 2.0f - 74.0f, WND_H / 2 - 32.f, 0.0f);
+	m_pSpriteTimer->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.0f);
 	//制限時間画像の設定..
 	EachSettingTimer();
 	//プレイヤー番号画像の設定..
@@ -424,7 +444,11 @@ void CGameMain::Init()
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
 
-	m_pPlayerManager->SetShotManager(m_pShotManager);
+	//カメラがめり込んだ時のオブジェクト設定.
+	m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
+	m_pBackImgObject->SetScale(7.5f, 7.5f, 7.5f);
+	m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
+
 	SetPosition();
 }
 
@@ -512,6 +536,9 @@ void CGameMain::Create()
 	// 木箱のメッシュ
 	m_pStaticMeshWoodBox			= std::make_shared<CStaticMesh>();
 
+	//背景画像のメッシュ.
+	m_pStaticMeshBackImg			= std::make_shared<CStaticMesh>();
+
 	//デバッグテキストのインスタンス作成.
 	m_pDbgText = std::make_unique<CDebugText>();
 
@@ -539,24 +566,28 @@ void CGameMain::Create()
 			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(-offsetX, 0.0f, -offsetZ));
 			//回転を設定..
 			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
+			m_pPlayerManager->SetPlayerScale(i, 1.8f);
 		}
 		else if (i == 1)
 		{
 			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(-offsetX, 0.0f, offsetZ));
 			//回転を設定..
 			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
+			m_pPlayerManager->SetPlayerScale(i, 1.8f);
 		}
 		else if (i == 2)
 		{
 			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(offsetX, 0.0f, offsetZ));
 			//回転を設定..
 			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
+			m_pPlayerManager->SetPlayerScale(i, 1.8f);
 		}
 		else if (i == 3)
 		{
 			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(offsetX, 0.0f, -offsetZ));
 			//回転を設定..
 			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
+			m_pPlayerManager->SetPlayerScale(i, 1.8f);
 		}
 
 		//カメラ生成・セットアップ.
@@ -600,7 +631,6 @@ void CGameMain::Create()
 
 	// アイテムマネージャークラスのインスタンス生成
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
-	m_pItemBoxManager->Create();
 }
 
 HRESULT CGameMain::LoadData()
@@ -714,21 +744,15 @@ HRESULT CGameMain::LoadData()
 	m_pStaticMeshStage->Init(_T("Data\\Mesh\\Static\\Stage\\stage.x"));
 	m_pStaticMeshItemBox->Init(_T("Data\\Mesh\\Static\\ItemBox\\ItemBox.x"));
 
-	// 戦車(赤)
-	m_pStaticMesh_TankBodyRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Body\\Body.x"));
-	m_pStaticMesh_TankCannonRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Cannon\\Cannon.x"));
-
-	// 戦車(黄)
-	m_pStaticMesh_TankBodyYellow->Init(_T("Data\\Mesh\\Static\\Tank\\Yellow\\Body\\Body.x"));
-	m_pStaticMesh_TankCannonYellow->Init(_T("Data\\Mesh\\Static\\Tank\\Yellow\\Cannon\\Cannon.x"));
-
-	// 戦車(青)
-	m_pStaticMesh_TankBodyBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Body\\Body.x"));
-	m_pStaticMesh_TankCannonBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Cannon\\Cannon.x"));
-
-	// 戦車(緑)
-	m_pStaticMesh_TankBodyGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Body\\Body.x"));
-	m_pStaticMesh_TankCannonGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Cannon\\Cannon.x"));
+	// 戦車.
+	m_pStaticMesh_TankBodyRed->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Red\\Body.x"));
+	m_pStaticMesh_TankCannonRed->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Red\\Cannon.x"));
+	m_pStaticMesh_TankBodyYellow->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Yellow\\Body.x"));
+	m_pStaticMesh_TankCannonYellow->Init(	_T("Data\\Mesh\\Static\\Tank_n\\Yellow\\Cannon.x"));
+	m_pStaticMesh_TankBodyBlue->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Blue\\Body.x"));
+	m_pStaticMesh_TankCannonBlue->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Blue\\Cannon.x"));
+	m_pStaticMesh_TankBodyGreen->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Green\\Body.x"));
+	m_pStaticMesh_TankCannonGreen->Init(	_T("Data\\Mesh\\Static\\Tank_n\\Green\\Cannon.x"));
 	
 	// 弾(赤)
 	m_pStaticMesh_BulletRed->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));
@@ -748,6 +772,9 @@ HRESULT CGameMain::LoadData()
 
 	// 木箱
 	m_pStaticMeshWoodBox->Init(_T("Data\\Mesh\\Static\\Block\\Block.x"));
+
+	//壁の外側の背景画像メッシュ.
+	m_pStaticMeshBackImg->Init(_T("Data\\Mesh\\Static\\OutBackImage\\BackImage.x"));
 
 	// バウンディングスフィア(当たり判定用)
 	m_pStaticMeshBSphere->Init(_T("Data\\Collision\\Sphere.x"));
@@ -802,6 +829,9 @@ HRESULT CGameMain::LoadData()
 
 	// 地面にメッシュを設定
 	m_pGround->AttachMesh(m_pStaticMeshGround);
+
+	//背景画像を設定.
+	m_pBackImgObject->AttachMesh(m_pStaticMeshBackImg);
 
 	// バウンディングの作成
 	CreateBounding();
@@ -916,11 +946,6 @@ void CGameMain::CreateBounding()
 	m_pWoodBoxCenter->CreateBoxCollider(m_pWoodBoxCenter->GetMinPos(), m_pWoodBoxCenter->GetMaxPos());
 	m_pWoodBoxBottomLeft->CreateBoxCollider(m_pWoodBoxBottomLeft->GetMinPos(), m_pWoodBoxBottomLeft->GetMaxPos());
 	m_pWoodBoxBottomRight->CreateBoxCollider(m_pWoodBoxBottomRight->GetMinPos(), m_pWoodBoxBottomRight->GetMaxPos());
-
-	// アイテムボックスの当たり判定生成
-	m_pItemBoxManager->CreateBounding(m_pStaticMeshItemBox);
-	// 当たり判定設定
-	m_pItemBoxManager->CreateCollider();	
 
 	// 弾の当たり判定生成
 	m_pShotManager->CreateBounding(m_pStaticMesh_BulletRed);
@@ -1116,13 +1141,10 @@ void CGameMain::PlayertoItemBox()
 
 		for (int ItemIndex = 0; ItemIndex < ITEM_MAX; ++ItemIndex)
 		{
-			auto Item = m_pItemBoxManager->GetItem();
-			auto ItemColl = Item[ItemIndex]->GetCollider();
-
 			// プレイヤーがアイテムと接触したとき
-			if (Coll->CheckCollision(*ItemColl))
+			if (Coll->CheckCollision(*m_pItemBoxManager->GetCollider()))
 			{
-				Item[ItemIndex]->HitPlayer();
+				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
 			}
 		}
 	}
@@ -1390,15 +1412,12 @@ void CGameMain::GroundtoShot()
 
 void CGameMain::GroundtoItemBox()
 {
-	for (int ItemIndex = 0; ItemIndex < ITEM_MAX; ++ItemIndex)
+	for (auto& item : m_pItemBoxManager->GetItem())
 	{
-		auto Item = m_pItemBoxManager->GetItem();
-		auto ItemColl = Item[ItemIndex]->GetCollider();
-
-		if (ItemColl->CheckCollision(*m_pGround->GetCollider()))
+		if (m_pItemBoxManager->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
 		{
 			// アイテムボックスの処理を入れる
-			Item[ItemIndex]->SetGravity(true);
+			item->SetGravity(true);
 		}
 	}
 }
@@ -1449,7 +1468,7 @@ void CGameMain::EachSettingTimer()
 	//時計の針の画像設定..
 	m_pSpriteTimerArrow->SetPosition(WND_W / 2.f - 42.f, WND_H / 2, 0.f);
 	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, 0.f);
-	m_pSpriteTimerArrow->SetScale(0.25f, 0.25f, 0.f);
+	m_pSpriteTimerArrow->SetScale(-0.25f, 0.25f, 0.f);
 
 	//-----中心表示用座標-----..
 	//ゲームで遊べる(クリア画面に遷移する)時間※引数..

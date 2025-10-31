@@ -60,10 +60,10 @@ void CCamera::Update()
 }
 
 
-void CCamera::Draw()
+void CCamera::Info()
 {
-	//SetCamera();
-	//Projection();
+	SetCamera();
+	Projection();
 }
 
 void CCamera::Init()

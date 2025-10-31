@@ -24,7 +24,8 @@ public:
 
 	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon);
 	void SetTankPosition(const D3DXVECTOR3& pos);
-	void SetTankRotation(const D3DXVECTOR3& pos);
+	void SetTankRotation(const D3DXVECTOR3& rot);
+	void SetTankScale(const float& sca);
 
 	//プレイヤーが壁に当たる処理をまとめる.
 	void SetPushBack(const D3DXVECTOR3& push);
@@ -71,6 +72,9 @@ public:
 
 	//PlayerIDをCOMに渡す
 	int GetPlayerID() const { return m_PlayerID; }
+
+	//プレイヤーのTuneを設定.
+	void SetTune(const TankTuning& info);
 
 
 protected:
