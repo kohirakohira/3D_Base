@@ -61,13 +61,6 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pStaticMesh_BulletBlue		( nullptr )
 	, m_pStaticMesh_BulletGreen		( nullptr )
 
-	// 壁のメッシュ
-	, m_pStaticMeshWallW			( nullptr )
-	, m_pStaticMeshWallH			( nullptr )
-
-	// 地面のメッシュ
-	, m_pStaticMeshGround			( nullptr )
-
 	// 木箱のメッシュ
 	, m_pStaticMeshWoodBox			( nullptr )
 
@@ -107,6 +100,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, time							( 0.0f )
 
 	, m_pBlastManager				( nullptr )
+	, m_pCollisionManager			( nullptr )
 
 {
 	//最初のシーンをメインにする..
@@ -220,7 +214,10 @@ void CGameMain::Update()
 	m_pGround->Update();
 
 	// 当たり判定
-	Collision();
+	//Collision();
+
+	// 当たり判定の更新
+	m_pCollisionManager->Update();
 
 	//勝敗条件(確認用)..
 	//勝ち..
@@ -466,7 +463,7 @@ void CGameMain::Create()
 
 	//UIObjectのインスタンス生成.
 	m_pSpriteTimerFrame = std::make_shared<CUIObject>();
-	m_pSpriteTimer		= std::make_shared<CUIObject>();
+	m_pSpriteTimer = std::make_shared<CUIObject>();
 	m_pSpriteTimerArrow = std::make_shared<CUIObject>();
 
 	//HPの分だけ生成..
@@ -486,11 +483,11 @@ void CGameMain::Create()
 	}
 
 	//UI系のインスタンス生成..
-	m_pSprite2DTimerFrame	= std::make_shared<CSprite2D>();
-	m_pSprite2DTimer		= std::make_shared<CSprite2D>();
-	m_pSprite2DTimerArrow	= std::make_shared<CSprite2D>();
-	m_pSprite2DKillNomber	= std::make_shared<CSprite2D>();
-	m_pSprite2DHitPoint		= std::make_shared<CSprite2D>();
+	m_pSprite2DTimerFrame = std::make_shared<CSprite2D>();
+	m_pSprite2DTimer = std::make_shared<CSprite2D>();
+	m_pSprite2DTimerArrow = std::make_shared<CSprite2D>();
+	m_pSprite2DKillNomber = std::make_shared<CSprite2D>();
+	m_pSprite2DHitPoint = std::make_shared<CSprite2D>();
 	//プレイヤーの分だけ生成..
 	for (int i = 0; i < PLAYERNUM_MAX; i++)
 	{
@@ -506,45 +503,45 @@ void CGameMain::Create()
 	m_pBackImgObject = std::make_unique<CStaticMeshObject>();
 
 	//スタティックメッシュのインスタンス作成.
-	m_pStaticMeshStage			= std::make_shared<CStaticMesh>();
-	m_pStaticMeshBSphere		= std::make_shared<CStaticMesh>();
-	m_pStaticMeshItemBox		= std::make_shared<CStaticMesh>();
+	m_pStaticMeshStage = std::make_shared<CStaticMesh>();
+	m_pStaticMeshBSphere = std::make_shared<CStaticMesh>();
+	m_pStaticMeshItemBox = std::make_shared<CStaticMesh>();
 
 	// 戦車のメッシュ..
-	m_pStaticMesh_TankBodyRed		= std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankCannonRed		= std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankBodyYellow	= std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankCannonYellow	= std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankBodyBlue		= std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankCannonBlue	= std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankBodyGreen		= std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankCannonGreen	= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankBodyRed = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankCannonRed = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankBodyYellow = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankCannonYellow = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankBodyBlue = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankCannonBlue = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankBodyGreen = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankCannonGreen = std::make_shared<CStaticMesh>();
 
 	// 弾のメッシュ..
-	m_pStaticMesh_BulletRed			= std::make_shared<CStaticMesh>();
-	m_pStaticMesh_BulletYellow		= std::make_shared<CStaticMesh>();
-	m_pStaticMesh_BulletBlue		= std::make_shared<CStaticMesh>();
-	m_pStaticMesh_BulletGreen		= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_BulletRed = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_BulletYellow = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_BulletBlue = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_BulletGreen = std::make_shared<CStaticMesh>();
 
 	//壁のメッシュ.
-	m_pStaticMeshWallW				= std::make_shared<CStaticMesh>();
-	m_pStaticMeshWallH				= std::make_shared<CStaticMesh>();
+	m_pStaticMeshWallW = std::make_shared<CStaticMesh>();
+	m_pStaticMeshWallH = std::make_shared<CStaticMesh>();
 
 	// 地面のメッシュ
-	m_pStaticMeshGround				= std::make_shared<CStaticMesh>();
+	m_pStaticMeshGround = std::make_shared<CStaticMesh>();
 
 	// 木箱のメッシュ
-	m_pStaticMeshWoodBox			= std::make_shared<CStaticMesh>();
+	m_pStaticMeshWoodBox = std::make_shared<CStaticMesh>();
 
 	//背景画像のメッシュ.
-	m_pStaticMeshBackImg			= std::make_shared<CStaticMesh>();
+	m_pStaticMeshBackImg = std::make_shared<CStaticMesh>();
 
 	//デバッグテキストのインスタンス作成.
 	m_pDbgText = std::make_unique<CDebugText>();
 
 	//プレイヤーと砲塔のインスタンス生成.
 	m_pPlayerManager = std::make_shared<CPlayerManager>();
-	
+
 	//マネージャーは一回だけInitialize.
 	m_pPlayerManager->Initialize();
 
@@ -604,33 +601,62 @@ void CGameMain::Create()
 	m_Timer = std::make_shared<CTimer>();
 
 	//壁
-	m_pWallTop		= std::make_shared<CStageObject>();
-	m_pWallBottom	= std::make_shared<CStageObject>();
-	m_pWallLeft		= std::make_shared<CStageObject>();
-	m_pWallRight	= std::make_shared<CStageObject>();
+	m_pWallTop = std::make_shared<CStageObject>();
+	m_pWallBottom = std::make_shared<CStageObject>();
+	m_pWallLeft = std::make_shared<CStageObject>();
+	m_pWallRight = std::make_shared<CStageObject>();
 
 	// 木箱
-	m_pWoodBoxTopLeft		= std::make_shared<CStageObject>();
-	m_pWoodBoxTopRight		= std::make_shared<CStageObject>();
-	m_pWoodBoxCenter		= std::make_shared<CStageObject>();
-	m_pWoodBoxBottomLeft	= std::make_shared<CStageObject>();
-	m_pWoodBoxBottomRight	= std::make_shared<CStageObject>();
+	m_pWoodBoxTopLeft = std::make_shared<CStageObject>();
+	m_pWoodBoxTopRight = std::make_shared<CStageObject>();
+	m_pWoodBoxCenter = std::make_shared<CStageObject>();
+	m_pWoodBoxBottomLeft = std::make_shared<CStageObject>();
+	m_pWoodBoxBottomRight = std::make_shared<CStageObject>();
 
 	// 地面
 	m_pGround = std::make_shared<CStageObject>();
-	
+
 	//爆発クラスのインスタンス生成.
 	m_pBlastManager = std::make_shared<CBlastCollisionManager>();
 
 	//アイテムマネージャークラスのインスタンス生成..
-	m_pWoodBoxTopLeft		= std::make_shared<CStageObject>();
-	m_pWoodBoxTopRight		= std::make_shared<CStageObject>();
-	m_pWoodBoxCenter		= std::make_shared<CStageObject>();
-	m_pWoodBoxBottomLeft	= std::make_shared<CStageObject>();
-	m_pWoodBoxBottomRight	= std::make_shared<CStageObject>();
+	m_pWoodBoxTopLeft = std::make_shared<CStageObject>();
+	m_pWoodBoxTopRight = std::make_shared<CStageObject>();
+	m_pWoodBoxCenter = std::make_shared<CStageObject>();
+	m_pWoodBoxBottomLeft = std::make_shared<CStageObject>();
+	m_pWoodBoxBottomRight = std::make_shared<CStageObject>();
 
 	// アイテムマネージャークラスのインスタンス生成
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
+
+	// 当たり判定マネージャークラスのインスタンス生成
+	m_pCollisionManager = std::make_shared<CCollisionManager>();
+
+	// 当たり判定マネージャーに必要なクラスをセット
+
+	// 爆風用の弾をセット
+	m_pCollisionManager->SetStaticBlast(m_pStaticMesh_BulletRed);
+
+	// 壁をセット
+	m_pCollisionManager->SetCStageWall(m_pWallTop, m_pWallBottom, m_pWallLeft, m_pWallRight);
+	
+	// 地面をセット
+	m_pCollisionManager->SetCStageGround(m_pGround);
+	
+	// 木箱をセット
+	m_pCollisionManager->SetCStageWoodBox(m_pWoodBoxTopLeft, m_pWoodBoxTopRight, m_pWoodBoxCenter, m_pWoodBoxBottomLeft, m_pWoodBoxBottomRight);
+	
+	// 弾をセット
+	m_pCollisionManager->SetCShotManager(m_pShotManager);
+	
+	// プレイヤーマネージャーをセット
+	m_pCollisionManager->SetCPlayerManager(m_pPlayerManager);
+	
+	// 爆風マネージャーをセット
+	m_pCollisionManager->SetCBlastCollisionManager(m_pBlastManager);
+	
+	// アイテムボックスマネージャーをセット
+	m_pCollisionManager->SetCItemBoxManager(m_pItemBoxManager);
 }
 
 HRESULT CGameMain::LoadData()
@@ -764,8 +790,8 @@ HRESULT CGameMain::LoadData()
 	m_pStaticMesh_BulletGreen->Init(_T("Data\\Mesh\\Static\\Bullet\\Green\\Ball.x"));
 	
 	//壁
-	m_pStaticMeshWallW->Init(_T("Data\\Mesh\\Static\\Wall\\Wall1.x"));
-	m_pStaticMeshWallH->Init(_T("Data\\Mesh\\Static\\Wall\\Wall2.x"));
+	m_pStaticMeshWallW->Init(_T("Data\\Collision\\Wall1.x"));
+	m_pStaticMeshWallH->Init(_T("Data\\Collision\\Wall2.x"));
 
 	// 地面
 	m_pStaticMeshGround->Init(_T("Data\\Collision\\Ground.x"));
@@ -940,6 +966,7 @@ void CGameMain::CreateBounding()
 	m_pWoodBoxBottomLeft->CreateBBoxForMesh(*m_pStaticMeshWoodBox);
 	m_pWoodBoxBottomRight->CreateBBoxForMesh(*m_pStaticMeshWoodBox);
 
+
 	// 木箱の当たり判定設定
 	m_pWoodBoxTopLeft->CreateBoxCollider(m_pWoodBoxTopLeft->GetMinPos(), m_pWoodBoxTopLeft->GetMaxPos());
 	m_pWoodBoxTopRight->CreateBoxCollider(m_pWoodBoxTopRight->GetMinPos(), m_pWoodBoxTopRight->GetMaxPos());
@@ -957,469 +984,6 @@ void CGameMain::CreateBounding()
 	////当たり判定設定.
 	//m_pBlastManager->CreateSpehreCollider(m_pBlastManager->GetBlastRadius());
 
-}
-
-void CGameMain::Collision()
-{
-	// 壁とプレイヤーの当たり判定
-	WalltoPlayer();
-
-	// 壁と弾の当たり判定
-	WalltoShot();
-
-	// プレイヤーとプレイヤー
-	PlayertoPlayer();
-
-	// プレイヤーとアイテム
-	PlayertoItemBox();
-
-	// プレイヤーと弾
-	PlayertoShot();
-
-	//// 弾と弾
-	// このコードやばい(重い).
-	//ShottoShot();
-
-	// 箱とプレイヤー
-	WoodBoxtoPlayer();
-
-	// 箱と弾
-	WoodBoxtoShot();
-
-	// 地面と弾
-	GroundtoShot();
-
-	// 地面とアイテムボックス
-	GroundtoItemBox();
-
-	//  プレイヤーと爆風.
-	//PlayertoBlast();
-}
-
-void CGameMain::WalltoPlayer()
-{
-	// 押し返しの強さ
-	const float pushStrength = 0.1f; 
-
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
-		auto Coll = player->GetBody()->GetCollider();
-
-		// 押し返すための変数
-		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
-
-		// 車体が壁と接触したとき
-		if (Coll->CheckCollision(*m_pWallTop->GetCollider()))
-		{
-			push.z -= 0.1f;
-		}
-		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()))
-		{
-			push.z += 0.1f;
-		}
-		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()))
-		{
-			push.x += 0.1f;
-		}
-		if (Coll->CheckCollision(*m_pWallRight->GetCollider()))
-		{
-			push.x -= 0.1f;
-		}
-
-		// 押し返しを正規化
-		if (D3DXVec3Length(&push) > 0.f)
-		{
-			D3DXVec3Normalize(&push, &push);
-			push *= pushStrength;
-		}
-
-		// 壁に当たった時に押し返す
-		player->GetBody()->PushBack(push);
-		player->GetCannon()->PushBack(push);
-	}
-}
-
-void CGameMain::WalltoShot()
-{
-	for (int i = 0; i < ShotMax; i++)
-	{
-		// ショットのコライダー取得
-		auto Shots = m_pShotManager->GetShot();
-		auto ShotsColl = Shots[i]->GetCollider();
-
-		// 壁が弾と接触したとき
-		if (ShotsColl->CheckCollision(*m_pWallTop->GetCollider()))
-		{			
-			//動的に作成.
-			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
-				true,
-				m_pStaticMesh_BulletRed	);
-
-			Shots[i]->HitShot();
-		}
-		if (ShotsColl->CheckCollision(*m_pWallBottom->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
-				true,
-				m_pStaticMesh_BulletRed);
-
-			Shots[i]->HitShot();
-		}
-		if (ShotsColl->CheckCollision(*m_pWallLeft->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
-				true,
-				m_pStaticMesh_BulletRed);
-
-			Shots[i]->HitShot();
-		}
-		if (ShotsColl->CheckCollision(*m_pWallRight->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
-				true,
-				m_pStaticMesh_BulletRed);
-
-			Shots[i]->HitShot();
-		}
-	}
-}
-
-void CGameMain::PlayertoPlayer()
-{
-	const float pushStrength = 0.1f;
-
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		// プレイヤーAのコライダー取得
-		auto playerA = m_pPlayerManager->GetControlPlayer(i);
-		auto CollA = playerA->GetBody()->GetCollider();
-
-		for (int j = 0; j < PLAYER_MAX; j++)
-		{ 
-			// 自分自身との判定をスキップ
-			if (i == j) continue; 
-
-			// プレイヤーBのコライダー取得
-			auto playerB = m_pPlayerManager->GetControlPlayer(j);
-			auto CollB = playerB->GetBody()->GetCollider();
-
-			if (CollA->CheckCollision(*CollB))
-			{
-				// 衝突時の押し返し処理例
-				D3DXVECTOR3 push = playerA->GetBody()->GetPosition() - playerB->GetBody()->GetPosition();
-
-				// pushベクトルを正規化して押し返しの強さをかける
-				float length = D3DXVec3Length(&push);
-				if (length > 0.0001f)
-				{
-					push /= length;
-					push *= pushStrength;
-					playerA->GetBody()->PushBack(push);
-				}
-			}
-		}
-	}
-}
-
-// アイテムボックスの当たり判定
-void CGameMain::PlayertoItemBox()
-{
-	for (int PlayerIndex = 0; PlayerIndex < PLAYER_MAX; ++PlayerIndex)
-	{
-		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(PlayerIndex);
-		auto Coll = player->GetBody()->GetCollider();
-
-		for (int ItemIndex = 0; ItemIndex < ITEM_MAX; ++ItemIndex)
-		{
-			// プレイヤーがアイテムと接触したとき
-			if (Coll->CheckCollision(*m_pItemBoxManager->GetCollider()))
-			{
-				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
-			}
-		}
-	}
-}
-
-void CGameMain::PlayertoShot()
-{
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		// プレイヤーのコライダー取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
-		auto Coll = player->GetBody()->GetCollider();
-
-		for (int i = 0; i < ShotMax; i++)
-		{
-			// ショットのコライダー取得
-			auto Shots = m_pShotManager->GetShot();
-			auto ShotsColl = Shots[i]->GetCollider();
-
-			if (ShotsColl->CheckCollision(*Coll))
-			{
-				//動的に作成.
-				m_pBlastManager->Create(
-					Shots[i]->GetPosition(),
-					true,
-					m_pStaticMesh_BulletRed);
-
-				Shots[i]->HitShot();
-			}
-		}
-	}
-}
-
-void CGameMain::ShottoShot()
-{
-	for (int i = 0; i < ShotMax; i++)
-	{
-		// ショットAのコライダー取得
-		auto ShotsA = m_pShotManager->GetShot();
-		auto ShotsCollA = ShotsA[i]->GetCollider();
-
-		for (int j = 0; j < ShotMax; j++)
-		{
-			// 自分自身との判定をスキップ
-			if (i == j) continue;
-
-			// ショットBのコライダー取得
-			auto ShotsB = m_pShotManager->GetShot();
-			auto ShotsCollB = ShotsB[i]->GetCollider();
-
-			if (ShotsCollA->CheckCollision(*ShotsCollB))
-			{
-				ShotsA[i]->HitShot();
-				ShotsB[i]->HitShot();
-			}
-		}
-	}
-}
-
-//爆風とプレイヤーの当たり判定.
-void CGameMain::PlayertoBlast()
-{
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		//i番目のプレイヤーを取得.
-		auto player = m_pPlayerManager->GetControlPlayer(i);
-		auto Coll = player->GetBody()->GetCollider();
-
-		if (m_pBlastManager->GetBlastFlag() == true)
-		{
-			////車体が爆風と接触したとき.
-			if (Coll->CheckCollision(*m_pBlastManager->GetCollider()))
-			{
-				m_pBlastManager->HitBlast(i);
-			}
-		}
-	}
-}
-
-void CGameMain::WoodBoxtoPlayer()
-{
-	// 押し返しの強さ
-	const float pushStrength = 0.1f;
-
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
-		auto Coll = player->GetBody()->GetCollider();
-
-		// 押し返すための変数
-		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
-
-		// 車体が壁と接触したとき
-		// 左上
-		if (Coll->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopLeft->GetPosition();
-
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 右上
-		if (Coll->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopRight->GetPosition();
-
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 中央
-		if (Coll->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxCenter->GetPosition();
-
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 左下
-		if (Coll->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomLeft->GetPosition();
-
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 右下
-		if (Coll->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomRight->GetPosition();
-
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-
-		// 押し返しを正規化
-		if (D3DXVec3Length(&push) > 0.f)
-		{
-			D3DXVec3Normalize(&push, &push);
-			push *= pushStrength;
-		}
-
-		// 壁に当たった時に押し返す
-		player->GetBody()->PushBack(push);
-		player->GetCannon()->PushBack(push);
-	}
-}
-
-void CGameMain::WoodBoxtoShot()
-{
-	for (int i = 0; i < ShotMax; i++)
-	{
-		// ショットのコライダー取得
-		auto Shots = m_pShotManager->GetShot();
-		auto ShotsColl = Shots[i]->GetCollider();
-
-		// 壁が弾と接触したとき
-		if (ShotsColl->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
-		{
-			// 動的に作成
-			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
-				true,
-				m_pStaticMesh_BulletRed);
-
-			Shots[i]->HitShot();
-		}
-		if (ShotsColl->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
-				true,
-				m_pStaticMesh_BulletRed);
-
-			Shots[i]->HitShot();
-		}
-		if (ShotsColl->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
-				true,
-				m_pStaticMesh_BulletRed);
-
-			Shots[i]->HitShot();
-		}
-		if (ShotsColl->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
-				true,
-				m_pStaticMesh_BulletRed);
-
-			Shots[i]->HitShot();
-		}
-		if (ShotsColl->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
-				true,
-				m_pStaticMesh_BulletRed);
-
-			Shots[i]->HitShot();
-		}
-	}
-}
-
-void CGameMain::GroundtoShot()
-{
-	for (int i = 0; i < ShotMax; i++)
-	{
-		// ショットのコライダー取得
-		auto Shots = m_pShotManager->GetShot();
-		auto ShotsColl = Shots[i]->GetCollider();
-
-		if (ShotsColl->CheckCollision(*m_pGround->GetCollider()))
-		{
-			// 動的に作成
-			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
-				true,
-				m_pStaticMesh_BulletRed);
-			Shots[i]->HitShot();
-		}
-	}
-}
-
-void CGameMain::GroundtoItemBox()
-{
-	for (auto& item : m_pItemBoxManager->GetItem())
-	{
-		if (m_pItemBoxManager->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
-		{
-			// アイテムボックスの処理を入れる
-			item->SetGravity(true);
-		}
-	}
 }
 
 //画面をグリッドに分割したとき、idx番目のマスに対応する.

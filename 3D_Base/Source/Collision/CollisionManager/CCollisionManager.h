@@ -10,6 +10,10 @@
 
 #include "GameObject//StaticMeshObject//StageObject//CStageObject.h"
 #include "GameObject//StaticMeshObject//Character//Player//PlayerManager//CPlayerManager.h"
+
+#include "Collision/BlastCollision/BlastCollisionManager/CBlastCollisionManager.h"
+#include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"
+
 //===================================
 //	コリジョンマネージャークラス
 //===================================
@@ -21,8 +25,7 @@ public:
 
 	//動作関数..
 	void Update();
-	// オブジェクトの生成
-	void Create();
+
 	// データの読み込み
 	HRESULT LoadData();
 
@@ -42,20 +45,23 @@ public:
 	void PlayertoShot();
 	// 弾と弾
 	void ShottoShot();
-	// 箱とプレイヤー
+	// 木箱とプレイヤー
 	void WoodBoxtoPlayer();
-	// 箱と弾
+	// 木箱と弾
 	void WoodBoxtoShot();
 	// 地面と弾
 	void GroundtoShot();
 	// 地面とアイテムボックス
 	void GroundtoItemBox();
-	//爆風とプレイヤーの当たり判定.
+	// 爆風とプレイヤーの当たり判定
 	void PlayertoBlast();
 
 	//-----------------------
 	// 外部から情報をセット
 	//-----------------------
+	// 弾(爆風用)をセット
+	void SetStaticBlast(std::shared_ptr<CStaticMesh> pBlast) { m_pStaticBlast = pBlast; }
+
 	// 壁のセット
 	void SetCStageWall(std::shared_ptr<CStageObject> pWallTop,
 					   std::shared_ptr<CStageObject> pWallBottom,
@@ -90,17 +96,15 @@ public:
 
 	// プレイヤーマネージャーのセット
 	void SetCPlayerManager(std::shared_ptr<CPlayerManager> pPlayer) { m_pPlayerManager = pPlayer; }
-private:
-	// 当たり判定のメッシュ
-	std::shared_ptr<CStaticMesh>		m_pCollisionWallW;		// 横向き壁
-	std::shared_ptr<CStaticMesh>		m_pCollisionWallH;		// 縦向き壁
-	std::shared_ptr<CStaticMesh>		m_pCollisionGround;		// 地面	
-	std::shared_ptr<CStaticMesh>		m_pCollisionWoodBox;	// 木箱
-	std::shared_ptr<CStaticMesh>		m_pCollisionItemBox;	// アイテムボックス
-	std::shared_ptr<CStaticMesh>		m_pCollisionShot;		// 弾
-	std::shared_ptr<CStaticMesh>		m_pCollisionCannon;		// 砲塔
-	std::shared_ptr<CStaticMesh>		m_pCollisionBody;		// 車体
 
+	// 爆風当たり判定マネージャーのセット
+	void SetCBlastCollisionManager(std::shared_ptr<CBlastCollisionManager> pBlast) { m_pBlastManager = pBlast; }
+
+	// アイテムボックスマネージャーのセット
+	void SetCItemBoxManager(std::shared_ptr<CItemBoxManager> pItemBox) { m_pItemBoxManager = pItemBox; }
+private:
+	// 爆風用のメッシュ
+	std::shared_ptr<CStaticMesh>		m_pStaticBlast;			// 爆風のメッシュ
 
 	// 壁
 	std::shared_ptr<CStageObject>		m_pWallTop;
@@ -123,4 +127,10 @@ private:
 
 	// プレイヤーマネージャー
 	std::shared_ptr<CPlayerManager>		m_pPlayerManager;
+
+	// 爆風当たり判定マネージャー
+	std::shared_ptr<CBlastCollisionManager> m_pBlastManager;
+
+	// アイテムボックスマネージャークラス
+	std::shared_ptr<CItemBoxManager>	m_pItemBoxManager;
 };

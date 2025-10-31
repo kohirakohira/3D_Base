@@ -51,6 +51,7 @@
 #include "XInput.h"
 
 #include "Global.h"
+#include "Collision/CollisionManager/CCollisionManager.h"
 
 class CXInput;
 
@@ -79,30 +80,6 @@ public:
 
 	//当たり判定の生成.
 	void CreateBounding();
-	// 当たり判定.
-	void Collision();
-	// 壁とプレイヤーの当たり判定判別.
-	void WalltoPlayer();
-	// 壁と弾の当たり判定
-	void WalltoShot();
-	// プレイヤーとプレイヤー当たり判定判別
-	void PlayertoPlayer();
-	// プレイヤーとアイテムボックス
-	void PlayertoItemBox();
-	// プレイヤーと弾
-	void PlayertoShot();
-	// 弾と弾
-	void ShottoShot();
-	// 箱とプレイヤー
-	void WoodBoxtoPlayer();
-	// 箱と弾
-	void WoodBoxtoShot();
-	// 地面と弾
-	void GroundtoShot();
-	// 地面とアイテムボックス
-	void GroundtoItemBox();
-	//爆風とプレイヤーの当たり判定.
-	void PlayertoBlast();
 
 	//画面をグリッドに分割したとき、idx番目のマスに対応する.
 	//D3D11_VIEWPORTを作成して返す関数.
@@ -228,6 +205,10 @@ public:
 
 	// アイテムボックスマネージャークラス
 	std::shared_ptr<CItemBoxManager>	m_pItemBoxManager;
+
+
+	// 当たり判定マネージャー
+	std::shared_ptr<CCollisionManager> m_pCollisionManager;
 
 	// シーン列挙変数
 	CSceneType		m_SceneType;
