@@ -90,6 +90,9 @@ struct LIGHT
 	D3DXVECTOR3	vDirection;	//•ûŒü.
 	D3DXMATRIX	mRotation;	//‰ñ“]s—ñ.
 	float		fIntensity;	//‹­“x(–¾‚é‚³).
+	float		Range;		//ˆÊ’u,‰e‹¿”¼Œa
+	D3DXVECTOR3	Color;
+	D3DXVECTOR3 Atten;		//Œ¸Š
 };
 
 
