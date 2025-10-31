@@ -39,11 +39,11 @@ private:
 	void KeyInput();
 
 protected:
-	float		m_TurnSpeed;	// 回転速度
+	float		m_TurnSpeed;			// 回転速度
 
-	int			m_ShotCoolTime; // ショットのクールタイム
-	const int	m_ShotInterval; // ショットのインターバル
-	CCamera*	m_pCamera;	
+	int			m_ShotCoolTime;			// ショットのクールタイム
+	const int	m_ShotInterval;			// ショットのインターバル
+	std::shared_ptr<CCamera> m_pCamera;
 
 private:
 	std::shared_ptr<CInputManager>		m_pInput;
