@@ -191,6 +191,9 @@ public:
 	// 木箱メッシュ
 	std::shared_ptr<CStaticMesh>	m_pStaticMeshWoodBox;
 	
+	//カメラがめり込んだ時の背景.
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshBackImg;
+
 	// スタティックメッシュオブジェクトクラス.
 	std::unique_ptr<CStaticMeshObject>			m_pBackImgObject;
 

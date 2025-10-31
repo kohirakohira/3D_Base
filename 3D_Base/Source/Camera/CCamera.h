@@ -12,7 +12,7 @@ public:
 	~CCamera() = default;	//特別な処理はないのでデフォルトにしておく
 
 	void Update();	//アップデートを一旦三人称カメラとして使う
-	void Draw();
+	void Info();
 	void Init();
 	//カメラ関数.
 	void SetCamera();

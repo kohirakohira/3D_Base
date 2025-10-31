@@ -203,8 +203,9 @@ HRESULT CDirectX11::CreateRasterizer()
 	rdc.CullMode = D3D11_CULL_BACK;
 
 	//ポリゴンの表裏を決定するフラグ.
-	//TRUE	:左回りなら前向き。右回りなら後ろ向き。
-	//FALSE	:逆になる.
+	//.FrontCounterClockwise	:左回りなら前向き。右回りなら後ろ向き。
+	//TRUE	:左回りが前面.
+	//FALSE	:右回りが前面.
 	rdc.FrontCounterClockwise = FALSE;
 
 	//距離についてのクリッピング有効.

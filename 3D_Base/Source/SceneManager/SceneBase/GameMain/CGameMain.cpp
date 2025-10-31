@@ -15,6 +15,8 @@ static bool prevA = false;
 
 //定数宣言.
 static constexpr int TIME = 90.0;
+const float deltaTime = 1.0f / FPS;
+const float DIAMETER = 360.0f;
 
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd					( hWnd )
@@ -68,6 +70,8 @@ CGameMain::CGameMain(HWND hWnd)
 
 	// 木箱のメッシュ
 	, m_pStaticMeshWoodBox			( nullptr )
+
+	, m_pStaticMeshBackImg			( nullptr )
 
 	, m_pBackImgObject				( nullptr )
 
@@ -123,7 +127,11 @@ void CGameMain::Update()
 //-----メイン演出用-----..
 	
 	//Iconを回転させる..
-	m_Rot += 0.02f;
+	m_Rot += 1.0f * deltaTime;
+	if (m_Rot >= DIAMETER)
+	{
+		m_Rot = 0.0f;
+	}
 	
 //-----メイン演出用-----..
 
@@ -274,6 +282,12 @@ void CGameMain::Draw()
 		//地面描画.
 		m_pStage->Draw(view, proj, light, paramC);
 
+		//壁の表示.
+		m_pWallTop->Draw(view, proj, light, paramC);
+		m_pWallBottom->Draw(view, proj, light, paramC);
+		m_pWallLeft->Draw(view, proj, light, paramC);
+		m_pWallRight->Draw(view, proj, light, paramC);
+
 		// 木箱の描画
 		m_pWoodBoxTopLeft->Draw(view, proj, light, paramC);
 		m_pWoodBoxTopRight->Draw(view, proj, light, paramC);
@@ -281,11 +295,17 @@ void CGameMain::Draw()
 		m_pWoodBoxBottomLeft->Draw(view, proj, light, paramC);
 		m_pWoodBoxBottomRight->Draw(view, proj, light, paramC);
 
+		// 地面の描画
+		m_pGround->Draw(view, proj, light, paramC);
+
 		//アイテムボックスの描画.
 		m_pItemBoxManager->Draw(view, proj, light, paramC);
 
 		//爆風の表示.
 		m_pBlastManager->Draw(view, proj, light, paramC);
+
+		//背景の表示.
+		m_pBackImgObject->Draw(view, proj, light, paramC);
 
 //4画面に体力を表示.
 		//前後関係無視..
@@ -390,23 +410,23 @@ void CGameMain::Init()
 		m_pCameras[i]->SetLightPos(0.f, 2.f, 5.f);
 	}
 	//地面の大きさ設定..
-	m_pStage->SetRotation(0.f, 0.f, 0.f);
+	m_pStage->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pStage->SetScale(0.4f, 0.4f, 0.4f);
 
 	//アイテムボックスの設定..
 	m_pItemBoxManager->SetPosition(-10.f, 20.f, 0.f);
-	m_pItemBoxManager->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
 	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
 
 //-----UI系統の初期化-----.
 	//時計の枠.
-	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
-	m_pSpriteTimerFrame->SetRotation(0.f, 0.f, 0.f);
+	m_pSpriteTimerFrame->SetPosition(0.0f, 0.0f, 0.0f);
+	m_pSpriteTimerFrame->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
 	//時計本体.
-	m_pSpriteTimer->SetPosition(WND_W / 2.f - 74.f, WND_H / 2 - 32.f, 0.f);
-	m_pSpriteTimer->SetRotation(0.f, 0.f, 0.f);
-	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.f);
+	m_pSpriteTimer->SetPosition(WND_W / 2.0f - 74.0f, WND_H / 2 - 32.f, 0.0f);
+	m_pSpriteTimer->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.0f);
 	//制限時間画像の設定..
 	EachSettingTimer();
 	//プレイヤー番号画像の設定..
@@ -424,7 +444,6 @@ void CGameMain::Init()
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
 
-	m_pPlayerManager->SetShotManager(m_pShotManager);
 	SetPosition();
 }
 
@@ -511,6 +530,9 @@ void CGameMain::Create()
 
 	// 木箱のメッシュ
 	m_pStaticMeshWoodBox			= std::make_shared<CStaticMesh>();
+
+	//背景画像のメッシュ.
+	m_pStaticMeshBackImg			= std::make_shared<CStaticMesh>();
 
 	//デバッグテキストのインスタンス作成.
 	m_pDbgText = std::make_unique<CDebugText>();
@@ -749,6 +771,9 @@ HRESULT CGameMain::LoadData()
 	// 木箱
 	m_pStaticMeshWoodBox->Init(_T("Data\\Mesh\\Static\\Block\\Block.x"));
 
+	//壁の外側の背景画像メッシュ.
+	m_pStaticMeshBackImg->Init(_T("Data\\Mesh\\Static\\OutBackImage\\BackImage.x"));
+
 	// バウンディングスフィア(当たり判定用)
 	m_pStaticMeshBSphere->Init(_T("Data\\Collision\\Sphere.x"));
 
@@ -802,6 +827,9 @@ HRESULT CGameMain::LoadData()
 
 	// 地面にメッシュを設定
 	m_pGround->AttachMesh(m_pStaticMeshGround);
+
+	//背景画像を設定.
+	m_pBackImgObject->AttachMesh(m_pStaticMeshBackImg);
 
 	// バウンディングの作成
 	CreateBounding();
@@ -1444,7 +1472,7 @@ void CGameMain::EachSettingTimer()
 	//時計の針の画像設定..
 	m_pSpriteTimerArrow->SetPosition(WND_W / 2.f - 42.f, WND_H / 2, 0.f);
 	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, 0.f);
-	m_pSpriteTimerArrow->SetScale(0.25f, 0.25f, 0.f);
+	m_pSpriteTimerArrow->SetScale(-0.25f, 0.25f, 0.f);
 
 	//-----中心表示用座標-----..
 	//ゲームで遊べる(クリア画面に遷移する)時間※引数..

@@ -73,7 +73,7 @@ void CGameResult::Draw()
 	}
 
 	//ƒJƒƒ‰‚Ì•`‰æ.
-	m_pCamera->Draw();
+	m_pCamera->Info();
 
 	//ƒvƒŒƒCƒ„[‚Ì•`‰æ.
 	m_pPlayerManager->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);

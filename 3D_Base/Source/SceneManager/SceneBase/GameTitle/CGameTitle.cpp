@@ -8,34 +8,21 @@
 CGameTitle::CGameTitle(HWND hWnd)
 	: m_hWnd(hWnd)
 
-	, m_pSpriteTitle		( nullptr )
-	, m_SpriteChoice		( nullptr )
-	, m_SpritePlaySelect	( nullptr )
-	, m_SpriteEndSelect		( nullptr )
+	, m_pSpriteTitle				( nullptr )
+	, m_SpriteChoice				( nullptr )
+	, m_SpritePlaySelect			( nullptr )
+	, m_SpriteEndSelect				( nullptr )
 
-	, m_pSpriteTitleImg		( nullptr )
-	, m_pSpriteChoiceImg	( nullptr )
-	, m_pSpritePlaySelectImg( nullptr )
-	, m_pSpriteEndSelectImg	( nullptr )
+	, m_pSpriteTitleImg				( nullptr )
+	, m_pSpriteChoiceImg			( nullptr )
+	, m_pSpritePlaySelectImg		( nullptr )
+	, m_pSpriteEndSelectImg			( nullptr )
 
-	, m_KeyInput			( nullptr )
+	, m_KeyInput					( nullptr )
 
-	, m_pCamera				( nullptr )
+	, DrawFlag						( false )
 
-	, DrawFlag				( false )
-
-
-	, m_pGround				( nullptr ) 
-
-	, m_StaticMeshGround	( nullptr )
-
-
-
-
-
-
-
-
+	, m_TitleProduction				( nullptr )
 
 {
 	m_SceneType = CSceneType::Title;
@@ -51,22 +38,6 @@ void CGameTitle::Update()
 	//BGMのループ再生.
 	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
 
-
-
-
-
-
-
-	//カメラの位置を決める用で仮追加.
-	m_pCamera->FreeMove();
-
-
-
-
-
-
-
-
 	//キー入力受付.
 	m_KeyInput->Update();
 
@@ -74,22 +45,8 @@ void CGameTitle::Update()
 	m_pSpriteChoiceImg->Update();
 //↓-----タイトルでの演出-----↓.
 
-	//回転させてみた.
-	rad += 0.5;
-
-	m_pGround->SetRotation(rad, rad, rad);
-
-
-
-
-
-
-
-
-
-
-
-
+	//タイトル演出の動作.
+	m_TitleProduction->Update();
 
 //↑-----タイトルでの演出-----↑.
 
@@ -178,14 +135,10 @@ void CGameTitle::Draw()
 		return;
 	}
 
+	//タイトル演出を表示.
+	m_TitleProduction->Draw();
+
 	//演出用.
-	//カメラの描画.
-	m_pCamera->Draw();
-
-	//地面の描画.
-	m_pGround->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
-
-
 	//前後関係無視.
 	CDirectX11::GetInstance().SetDepth(false);
 	//タイトルの描画.
@@ -194,8 +147,6 @@ void CGameTitle::Draw()
 	m_pSpritePlaySelectImg->Draw();
 	m_pSpriteEndSelectImg->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
-
-
 
 	//選択肢の描画.
 	m_pSpriteChoiceImg->Draw();
@@ -230,23 +181,6 @@ void CGameTitle::Init()
 	m_KeyInput->Init();
 	m_KeyInput->SetKey({'D', 'Z', 'L', 'Y', 'M'});
 
-
-
-
-	//演出用.
-	//カメラの位置設定.
-	m_pCamera->SetCameraPos(0.f, 0.f, 0.f);
-	m_pCamera->SetLightRot(1.f, 5.f, 10.f);
-
-	//地面の設定.
-	m_pGround->SetPosition(0.f,0.f,0.f);
-
-	m_pGround->SetScale (1.f,1.f,1.f);
-
-
-
-
-
 }
 
 void CGameTitle::Destroy()
@@ -270,22 +204,12 @@ void CGameTitle::Create()
 	m_pSpritePlaySelectImg	= std::make_shared<CUIObject>();
 	m_pSpriteEndSelectImg	= std::make_shared<CUIObject>();
 
-	//カメラクラスのインスタンス作成.
-	m_pCamera = std::make_shared<CCamera>();
+	//タイトル演出クラス.
+	m_TitleProduction = std::make_unique <CTitleProduction> ();
+	m_TitleProduction->Create();
 
 	//キー入力.
 	m_KeyInput = std::make_shared<CMultiInputKeyManager>();
-
-
-
-	//演出用.
-	//地面クラスのインスタンス生成.
-	m_pGround = std::make_shared<CGround>();
-	//地面のメッシュのインスタンス生成.
-	m_StaticMeshGround = std::make_shared<CStaticMesh>();
-
-
-
 
 }
 
@@ -310,6 +234,9 @@ HRESULT CGameTitle::LoadData()
 		256,96,		//アニメーションをしないので、0でいい.
 	};
 
+	//演出用のデータを読み込む.
+	m_TitleProduction->LoadData();
+
 	//タイトルスプライトの読み込み.
 	m_pSpriteTitle->Init( _T("Data\\Texture\\Image\\Title.png"), WH_SIZE, false);
 	//選択肢スプライトの読み込み.
@@ -325,25 +252,6 @@ HRESULT CGameTitle::LoadData()
 	//画像の設定.
 	m_pSpritePlaySelectImg->AttachSprite(m_SpritePlaySelect);
 	m_pSpriteEndSelectImg->AttachSprite(m_SpriteEndSelect);
-
-
-
-	//演出用.
-	//地面画像の読み込み.
-	m_StaticMeshGround->Init(_T("Data\\Mesh\\Static\\Stage\\stage.x"));
 	
-	
-	//地面画像の設定.
-	m_pGround->AttachMesh(m_StaticMeshGround);
-
-
-
-
-
-
-
-
-
-
 	return S_OK;
 }

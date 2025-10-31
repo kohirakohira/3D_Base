@@ -212,6 +212,7 @@
     <ClCompile Include="Source\Main\CMain.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\CPlayer.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\CStaticMeshObject.cpp" />
+    <ClCompile Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.cpp" />
     <ClCompile Include="Source\Tameshi\CTameshi.cpp" />
     <ClCompile Include="Source\InputDevice\Input\XInput\CXInput.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.cpp" />
@@ -272,6 +273,7 @@
     <ClInclude Include="Source\Collision\Shape\Ray\CRay.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\CSceneBase.h" />
     <ClInclude Include="Source\SceneManager\CSceneManager.h" />
+    <ClInclude Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.h" />
     <ClInclude Include="Source\SceneManager\SceneType\CSceneType.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Shot\CShot.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Shot\ShotManager\CShotManager.h" />
