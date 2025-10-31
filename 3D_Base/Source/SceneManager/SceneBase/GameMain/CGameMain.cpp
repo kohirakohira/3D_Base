@@ -1140,15 +1140,18 @@ void CGameMain::PlayertoItemBox()
 		auto player = m_pPlayerManager->GetControlPlayer(PlayerIndex);
 		auto Coll = player->GetBody()->GetCollider();
 
-		for (auto& item : m_pItemBoxManager->GetItem())
+		for (size_t ItemIndex = 0; ItemIndex < m_pItemBoxManager->GetItem().size(); ItemIndex++)
 		{
 			// プレイヤーがアイテムと接触したとき
-			if (Coll->CheckCollision(*item->GetCollider()))
+			if (Coll->CheckCollision(*m_pItemBoxManager->GetCollider()))
 			{
 				//当たったので描画を消す.
-				item->HitPlayer();
+				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
 				//アイテムの中身を設定.
-				item->SetItemInfo(m_pItemBoxManager->ItemRandom());
+				m_pItemBoxManager->GetItem()[ItemIndex]->SetItemInfo(m_pItemBoxManager->ItemRandom());
+				//プレイヤーの速度を設定.
+				const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 0.03f, 0.03f, 0.3f };
+				//m_pPlayerManager->Set();
 			}
 		}
 	}
