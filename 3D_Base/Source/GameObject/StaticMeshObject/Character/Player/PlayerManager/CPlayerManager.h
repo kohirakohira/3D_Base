@@ -64,6 +64,10 @@ public:
 	//子オブジェクトに各BodyとCannonを設定してあげる関数.
 	void SetBodyAndCannon(std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon);
 
+	//パラメータ設定用
+	void SetPlayerTuningAll(const TankTuning& t);
+	void SetPlayerTuning(int idx, const TankTuning& t);
+
 private:
 	//↓松岡.
 	std::shared_ptr<CBody>					m_pBody;
@@ -87,11 +91,6 @@ private:
 	void SyncByPadConnection();   //接続状況で割当/COM切替
 	int  FindFirstComPlayer() const;
 	int FindFirstPadReceiver(int StartIndex = 1)const;
-
-	//パラメータ設定用
-	void SetPlayerTuningAll(const TankTuning& t);
-	void SetPlayerTuning(int idx, const TankTuning& t);
-
 };
 
 

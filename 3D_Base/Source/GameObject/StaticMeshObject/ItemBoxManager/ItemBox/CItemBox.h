@@ -1,8 +1,9 @@
 #pragma once
-#include "GameObject//StaticMeshObject//CStaticMeshObject.h" /* 継承クラス || スタティックメッシュオブジェクトクラス */
 #include <iostream>
 
+#include "GameObject//StaticMeshObject//CStaticMeshObject.h" /* 継承クラス || スタティックメッシュオブジェクトクラス */
 #include "GameObject//StaticMeshObject//ItemBoxManager//ItemBoxType//ItemType.h" // アイテムタイプ
+#include "Global.h"
 
 ///------------------------------------------------------
 /// アイテムボックス
@@ -11,18 +12,6 @@
 class CItemBox
 	:public CStaticMeshObject // スタティックメッシュオブジェクトクラスを継承.
 {
-public:
-	//アイテム効果の構造体.
-	struct ItemEffect
-	{
-		bool	m_ShieldFlag = false;		//シールドを張っているかどうか.
-		float	m_Speed;					//プレイヤーの速度変更用.
-		float	m_Power;					//プレイヤーの攻撃変更用.
-		float	m_Blast;					//プレイヤーの爆風増加変更用.
-		bool	m_Reflection = false;		//プレイヤーの反射変更用.
-		float	m_Reload;					//プレイヤーのリロード間隔変更用.
-	}m_Item;
-
 public:
 	CItemBox();
 	~CItemBox()override;
@@ -42,7 +31,7 @@ public:
 	//重力の有無取得.
 	bool GetGravity() { return IsGravity; }
 	//アイテム情報を渡す用.
-	ItemEffect GetItem() const { return m_Item; }
+	ItemInfomation GetItem() const { return m_Item; }
 
 	//アイテムの種類を取得する関数.
 	CItemType GetItemInfo() { return m_ItemType; }
@@ -84,6 +73,9 @@ protected:
 	
 	//	アクティブフラグ(アイテムが取られたかどうか).
 	bool m_Active;
+
+	//アイテムの情報.
+	ItemInfomation m_Item;
 
 	//アイテムの種類.
 	CItemType m_ItemType;

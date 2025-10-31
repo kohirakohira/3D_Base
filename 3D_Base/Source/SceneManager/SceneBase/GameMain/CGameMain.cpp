@@ -124,6 +124,11 @@ void CGameMain::Update()
 	//BGMのループ再生..
 	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
+	//動的に生成.
+	//アイテムボックス.
+	m_pItemBoxManager->Create();
+
+
 //-----メイン演出用-----..
 	
 	//Iconを回転させる..
@@ -178,7 +183,7 @@ void CGameMain::Update()
 	float totle = 90.f;
 	time = (remaining / totle) * 360;
 	float angle = time * (PI / 180);
-	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, -angle);
+	m_pSpriteTimerArrow->SetRotation(0.f, D3DXToRadian(180.0f), -angle);
 
 	const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
 
@@ -631,7 +636,6 @@ void CGameMain::Create()
 
 	// アイテムマネージャークラスのインスタンス生成
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
-	m_pItemBoxManager->Create();
 }
 
 HRESULT CGameMain::LoadData()
@@ -755,6 +759,8 @@ HRESULT CGameMain::LoadData()
 	m_pStaticMesh_TankBodyGreen->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Green\\Body.x"));
 	m_pStaticMesh_TankCannonGreen->Init(	_T("Data\\Mesh\\Static\\Tank_n\\Green\\Cannon.x"));
 	
+#endif
+
 	// 弾(赤)
 	m_pStaticMesh_BulletRed->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));
 	// 弾(黄)
@@ -947,11 +953,6 @@ void CGameMain::CreateBounding()
 	m_pWoodBoxCenter->CreateBoxCollider(m_pWoodBoxCenter->GetMinPos(), m_pWoodBoxCenter->GetMaxPos());
 	m_pWoodBoxBottomLeft->CreateBoxCollider(m_pWoodBoxBottomLeft->GetMinPos(), m_pWoodBoxBottomLeft->GetMaxPos());
 	m_pWoodBoxBottomRight->CreateBoxCollider(m_pWoodBoxBottomRight->GetMinPos(), m_pWoodBoxBottomRight->GetMaxPos());
-
-	// アイテムボックスの当たり判定生成
-	m_pItemBoxManager->CreateBounding(m_pStaticMeshItemBox);
-	// 当たり判定設定
-	m_pItemBoxManager->CreateCollider();	
 
 	// 弾の当たり判定生成
 	m_pShotManager->CreateBounding(m_pStaticMesh_BulletRed);
@@ -1148,11 +1149,8 @@ void CGameMain::PlayertoItemBox()
 
 		for (int ItemIndex = 0; ItemIndex < ITEM_MAX; ++ItemIndex)
 		{
-			auto Item = m_pItemBoxManager->GetItem();
-			auto ItemColl = Item[ItemIndex]->GetCollider();
-
 			// プレイヤーがアイテムと接触したとき
-			if (Coll->CheckCollision(*ItemColl))
+			if (Coll->CheckCollision(*m_pItemBoxManager->GetCollider()))
 			{
 				Item[ItemIndex]->HitPlayer();
 			}
@@ -1424,13 +1422,10 @@ void CGameMain::GroundtoItemBox()
 {
 	for (int ItemIndex = 0; ItemIndex < ITEM_MAX; ++ItemIndex)
 	{
-		auto Item = m_pItemBoxManager->GetItem();
-		auto ItemColl = Item[ItemIndex]->GetCollider();
-
-		if (ItemColl->CheckCollision(*m_pGround->GetCollider()))
+		if (m_pItemBoxManager->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
 		{
 			// アイテムボックスの処理を入れる
-			Item[ItemIndex]->SetGravity(true);
+			m_pItemBoxManager->GetItem()[ItemIndex]->SetGravity(true);
 		}
 	}
 }
