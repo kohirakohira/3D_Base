@@ -282,11 +282,11 @@ void CGameMain::Draw()
 		//地面描画.
 		m_pStage->Draw(view, proj, light, paramC);
 
-		//壁の表示.
-		m_pWallTop->Draw(view, proj, light, paramC);
-		m_pWallBottom->Draw(view, proj, light, paramC);
-		m_pWallLeft->Draw(view, proj, light, paramC);
-		m_pWallRight->Draw(view, proj, light, paramC);
+		////壁の表示.
+		//m_pWallTop->Draw(view, proj, light, paramC);
+		//m_pWallBottom->Draw(view, proj, light, paramC);
+		//m_pWallLeft->Draw(view, proj, light, paramC);
+		//m_pWallRight->Draw(view, proj, light, paramC);
 
 		// 木箱の描画
 		m_pWoodBoxTopLeft->Draw(view, proj, light, paramC);
@@ -295,8 +295,8 @@ void CGameMain::Draw()
 		m_pWoodBoxBottomLeft->Draw(view, proj, light, paramC);
 		m_pWoodBoxBottomRight->Draw(view, proj, light, paramC);
 
-		// 地面の描画
-		m_pGround->Draw(view, proj, light, paramC);
+		//// 地面の描画
+		//m_pGround->Draw(view, proj, light, paramC);
 
 		//アイテムボックスの描画.
 		m_pItemBoxManager->Draw(view, proj, light, paramC);
@@ -443,6 +443,11 @@ void CGameMain::Init()
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
+
+	//カメラがめり込んだ時のオブジェクト設定.
+	m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
+	m_pBackImgObject->SetScale(7.5f, 7.5f, 7.5f);
+	m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
 
 	SetPosition();
 }

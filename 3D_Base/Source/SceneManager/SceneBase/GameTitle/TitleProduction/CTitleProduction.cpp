@@ -19,8 +19,8 @@ void CTitleProduction::Update()
 	//ƒJƒƒ‰‚Ì“®ì.
 	m_Camera->Update();
 
-	//’n–Ê‚ğ“®‚©‚·.
-	m_Ground->Update();
+	////’n–Ê‚ğ“®‚©‚·.
+	//m_Ground->Update();
 }
 
 //•`‰æŠÖ”.
