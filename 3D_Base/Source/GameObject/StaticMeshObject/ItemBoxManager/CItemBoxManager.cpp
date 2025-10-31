@@ -46,6 +46,10 @@ void CItemBoxManager::Create()
 		std::unique_ptr<CItemBox> item = std::make_unique<CItemBox>();
 		//メッシュの設定.
 		item->AttachMesh(m_ItemMesh);
+		//各設定.
+		item->SetPosition(ItemPositionRandom().x, ItemPositionRandom().y, ItemPositionRandom().z);
+		item->SetRotation(0.0f, 0.0f, 0.0f);
+		item->SetScale(0.2f);
 		//当たり判定の設定.
 		item->CreateBBoxForMesh(*m_ItemMesh);
 		item->CreateBoxCollider(item->GetMinPos(), item->GetMaxPos());
@@ -92,11 +96,6 @@ void CItemBoxManager::SetPosition(float x, float y, float z)
 {
 	for (auto& item : m_Item)
 	{
-		//↓お試し配置.
-#if 1
-		//横にずらすだけ.
-		x += 3.f;
-#endif
 		item->SetPosition(x, y, z);
 	}
 }
@@ -178,6 +177,29 @@ CItemType CItemBoxManager::ItemRandom()
 	return static_cast<CItemType>(dist(gen));
 }
 
+//位置をランダム化.
+D3DXVECTOR3 CItemBoxManager::ItemPositionRandom()
+{
+	//staticを付けるのは、毎回作っていると、処理速度が低下するから、一度だけ作成.
+
+	//シード値を作成.
+	//毎回違う値をくれる.
+	static std::random_device rd;
+	//メルセンヌ・ツイスタという乱数エンジン※高速.
+	//genはインスタンス.
+	//rd()は初期値に戻す.
+	static std::mt19937 gen(rd());
+
+	//範囲設定.
+	std::uniform_real_distribution < float > distX(-25.0f, 25.0f);
+	std::uniform_real_distribution < float > distZ(-25.0f, 25.0f);
+
+	//Y軸固定.
+	const float fixedY = 20.0f;
+
+	return D3DXVECTOR3(distX(gen), fixedY, distZ(gen));
+}
+
 //アイテムの情報を取得する.
 ItemInfomation CItemBoxManager::GetItemInfo(int index)
 {
@@ -185,6 +207,11 @@ ItemInfomation CItemBoxManager::GetItemInfo(int index)
 	{
 		return m_Item[index]->GetItem();
 	}
+}
+
+std::vector<std::shared_ptr<CItemBox>> CItemBoxManager::GetItem() const
+{
+	return m_Item;
 }
 
 std::shared_ptr<CCollider> CItemBoxManager::GetCollider() const

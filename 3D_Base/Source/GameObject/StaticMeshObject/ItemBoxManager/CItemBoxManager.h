@@ -46,6 +46,8 @@ public:
 
 	//アイテムの中身をランダム化.
 	CItemType ItemRandom();
+	//位置をランダム化.
+	D3DXVECTOR3 ItemPositionRandom();
 
 	//アイテムの情報を取得する.
 	ItemInfomation GetItemInfo(int index);
@@ -54,7 +56,7 @@ public:
 	void SetCItemBox(std::vector<std::shared_ptr<CItemBox>> pItem) { m_Item = pItem; }
 
 	// 外部のクラスに情報を渡す
-	std::vector<std::shared_ptr<CItemBox>>	GetItem() const { return m_Item; }
+	std::vector<std::shared_ptr<CItemBox>> GetItem() const;
 
 	//当たり判定の取得.
 	std::shared_ptr<CCollider> GetCollider() const;

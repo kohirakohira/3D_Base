@@ -127,7 +127,10 @@ void CGameMain::Update()
 	//動的に生成.
 	//アイテムボックス.
 	m_pItemBoxManager->Create();
-
+	//アイテムボックスの位置設定.
+	//m_pItemBoxManager->;
+	//アイテムの動作..
+	m_pItemBoxManager->Update();
 
 //-----メイン演出用-----..
 	
@@ -172,9 +175,6 @@ void CGameMain::Update()
 		}
 		m_pCameras[i]->Update();
 	}
-
-	//アイテムの動作..
-	m_pItemBoxManager->Update();
 	
 	//定数宣言..
 	const float PI = 3.14159265358979f;
@@ -417,11 +417,6 @@ void CGameMain::Init()
 	//地面の大きさ設定..
 	m_pStage->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pStage->SetScale(0.4f, 0.4f, 0.4f);
-
-	//アイテムボックスの設定..
-	m_pItemBoxManager->SetPosition(-10.f, 20.f, 0.f);
-	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
-	m_pItemBoxManager->SetScale(0.2f, 0.2f, 0.2f);
 
 //-----UI系統の初期化-----.
 	//時計の枠.
@@ -759,8 +754,6 @@ HRESULT CGameMain::LoadData()
 	m_pStaticMesh_TankBodyGreen->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Green\\Body.x"));
 	m_pStaticMesh_TankCannonGreen->Init(	_T("Data\\Mesh\\Static\\Tank_n\\Green\\Cannon.x"));
 	
-#endif
-
 	// 弾(赤)
 	m_pStaticMesh_BulletRed->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));
 	// 弾(黄)
@@ -1152,7 +1145,7 @@ void CGameMain::PlayertoItemBox()
 			// プレイヤーがアイテムと接触したとき
 			if (Coll->CheckCollision(*m_pItemBoxManager->GetCollider()))
 			{
-				Item[ItemIndex]->HitPlayer();
+				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
 			}
 		}
 	}
@@ -1420,12 +1413,12 @@ void CGameMain::GroundtoShot()
 
 void CGameMain::GroundtoItemBox()
 {
-	for (int ItemIndex = 0; ItemIndex < ITEM_MAX; ++ItemIndex)
+	for (auto& item : m_pItemBoxManager->GetItem())
 	{
 		if (m_pItemBoxManager->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
 		{
 			// アイテムボックスの処理を入れる
-			m_pItemBoxManager->GetItem()[ItemIndex]->SetGravity(true);
+			item->SetGravity(true);
 		}
 	}
 }
