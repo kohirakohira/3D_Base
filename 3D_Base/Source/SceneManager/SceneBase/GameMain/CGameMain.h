@@ -37,7 +37,6 @@
 
 #include "Camera//CCamera.h" //カメラクラス.
 
-
 //-----ステージオブジェクトクラス-----
 #include "GameObject//StaticMeshObject//StageObject//CStageObject.h"
 

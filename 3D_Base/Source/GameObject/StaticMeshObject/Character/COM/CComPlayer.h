@@ -11,6 +11,10 @@
 //COM用の追尾クラス
 #include "GameObject/StaticMeshObject/Character/COM/CChase/CChase.h"
 
+//当たり判定.障害物判定用
+#include "Collision/Collider/BoxCollider/CBoxCollider.h"
+
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
@@ -50,11 +54,9 @@ public:
 
 	//マネージャーからアイテムの参照
 	void SetItemBox(std::vector<std::shared_ptr<CItemBox>>* item) { m_pItemBox = item; }
-#if 0
-	void SetObstacleSource(const std::vector<std::shared_ptr<CBoxCollider>>* obstacles) {
-		m_Obstacles = obstacles;
-	}
-#endif
+
+	//当たり判定用
+	void SetObject(const std::vector<std::shared_ptr<CBoxCollider>>* BoxCollider) {};
 
 private:
 	//構造体
@@ -105,9 +107,19 @@ private:
 	static float ToRad(float d) { return d * (D3DX_PI / 180.0f); }
 	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 
-	//前後左右の判定
-	bool SenseObstacle(const D3DXVECTOR3& pos, float yaw,
-		D3DXVECTOR3& outAvoid, float& neareset);
+	//障害物判定用
+	bool SenseObstacleAABB(const CBoxCollider& selfBox,float yaw,D3DXVECTOR3& outAvoid,float& nearest) const;
+
+	//前方に見えない当たり判定を置く
+	bool HasObstacleAheadWithBox(const CBoxCollider& selfBox,
+		const D3DXVECTOR3& forward,
+		float probeDist,
+		float step,
+		float& outHitDist) const;
+
+	//回避側に固定旋回を混ぜる
+	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
+
 
 	// ヘルパ
 	static float Wrap(float rad);                         //[-π,π]に正規化
@@ -137,11 +149,12 @@ private:
 	static std::vector<CComPlayer*>& Instances();
 
 	//外部クラス
-	std::shared_ptr<CPlayer> m_pTarget;							//追尾対象
-	std::weak_ptr<CShotManager> m_pShotManager;					//弾マネージャー.自動発射用のパラメータ
-	const std::vector<std::shared_ptr<CPlayer>>* m_pAllPlayer;	//プレイヤーの一覧取得
-	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;			//アイテムボックス
-	std::weak_ptr<CItemBox> m_pItemTarget;						//弱参照のアイテムボックス
+	std::shared_ptr<CPlayer> m_pTarget;									//追尾対象
+	std::weak_ptr<CShotManager> m_pShotManager;							//弾マネージャー.自動発射用のパラメータ
+	const std::vector<std::shared_ptr<CPlayer>>* m_pAllPlayer;			//プレイヤーの一覧取得
+	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;					//アイテムボックス
+	std::weak_ptr<CItemBox> m_pItemTarget;								//弱参照のアイテムボックス
+	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;	//障害物の一部を外部から差し込む
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
@@ -179,11 +192,13 @@ private:
 	float	m_ItemPickUpRaius;			//以下なら取得.最終的には当たり判定でやる
 	ComShotState m_ShotState;
 
+	const float m_ProdeAngleRad;		
+	float		m_ProdeDist;
+	float		m_AvoidHolde;
+	int			m_AvoidSede;
 };
 
 #if 0
-//障害物の一覧を外から差し込むだけ。管理は外側
-	const std::vector<std::shared_ptr<CBoxCollider>>* m_Obstacles = nullptr;
 
 #endif
 

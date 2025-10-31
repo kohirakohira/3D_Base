@@ -252,11 +252,12 @@ void CGameMain::Draw()
 		//カメラ更新.
 		camera->Update();
 		auto Camera = camera->GetPosition();
-		camera->SetLightPos(0.f, 50.f, 0.f);			//ライトのポジション.高くして白飛びしないよにしている
+		//ライト設定
+		camera->SetLightPos(0.f, 40.f, 0.f);			//ライトのポジション.高くして白飛びしないよにしている
         camera->SetLightColor(1.f, 1.f, 1.f);			//色は通常
-        camera->SetLightIntensity(70.f);				//ライトの明るさ
-        camera->SetLightRange(1e9);                     // 影響半径
-        camera->SetLightAtten(1e9, 1e9, 1e9);			// kc,kl,kq
+        camera->SetLightIntensity(60.f);				//ライトの明るさ
+        camera->SetLightRange(1e9);                    //影響半径
+        camera->SetLightAtten(1e9, 1e9, 1e9);			//kc,kl,kq
 		//スナップショットをconst参照でキャプチャ.
 		D3DXMATRIX& view	= camera->m_mView;
 		D3DXMATRIX& proj	= camera->m_mProj;
@@ -650,16 +651,16 @@ HRESULT CGameMain::LoadData()
 		256, 256		//アニメーションをしないので、0でいい..
 	};
 	//制限時間の枠の読み込み
-	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE, false);
-	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE, false);
-	m_pSprite2DTimerArrow	->Init(_T("Data\\Texture\\UI\\Timer\\TimerArrow.png"), TIMER_SIZE, true);
-	m_pSprite2DKillNomber	->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE, false);
-	m_pSprite2DHitPoint		->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE, true);
+	m_pSprite2DTimerFrame->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE, false);
+	m_pSprite2DTimer->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE, false);
+	m_pSprite2DTimerArrow->Init(_T("Data\\Texture\\UI\\Timer\\TimerArrow.png"), TIMER_SIZE, true);
+	m_pSprite2DKillNomber->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE, false);
+	m_pSprite2DHitPoint->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE, true);
 
 	//画像をアタッチ..
-	m_pSpriteTimerFrame	->AttachSprite(m_pSprite2DTimerFrame);
-	m_pSpriteTimer		->AttachSprite(m_pSprite2DTimer);
-	m_pSpriteTimerArrow	->AttachSprite(m_pSprite2DTimerArrow);
+	m_pSpriteTimerFrame->AttachSprite(m_pSprite2DTimerFrame);
+	m_pSpriteTimer->AttachSprite(m_pSprite2DTimer);
+	m_pSpriteTimerArrow->AttachSprite(m_pSprite2DTimerArrow);
 	//HPの分だけアタッチ..
 	for (int i = 0; i < HP_MAX; i++)
 	{
@@ -675,19 +676,19 @@ HRESULT CGameMain::LoadData()
 	{
 		switch (i)
 		{
-			case 0:
+		case 0:
 			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\OneP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
-			case 1:
+		case 1:
 			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TwoP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
-			case 2:
+		case 2:
 			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TreeP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
-			case 3:
+		case 3:
 			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\FourP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
@@ -744,7 +745,7 @@ HRESULT CGameMain::LoadData()
 	// 戦車(緑)
 	m_pStaticMesh_TankBodyGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Cannon\\Cannon.x"));
-	
+
 	// 弾(赤)
 	m_pStaticMesh_BulletRed->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));
 	// 弾(黄)
@@ -753,7 +754,7 @@ HRESULT CGameMain::LoadData()
 	m_pStaticMesh_BulletBlue->Init(_T("Data\\Mesh\\Static\\Bullet\\Blue\\Ball.x"));
 	// 弾(緑)
 	m_pStaticMesh_BulletGreen->Init(_T("Data\\Mesh\\Static\\Bullet\\Green\\Ball.x"));
-	
+
 	//壁
 	m_pStaticMeshWallW->Init(_T("Data\\Mesh\\Static\\Wall\\Wall1.x"));
 	m_pStaticMeshWallH->Init(_T("Data\\Mesh\\Static\\Wall\\Wall2.x"));
@@ -821,16 +822,16 @@ HRESULT CGameMain::LoadData()
 	// バウンディングの作成
 	CreateBounding();
 
-#if 0
-	// ステージが持つ静的障害物コライダー群
-	std::vector<std::shared_ptr<CBoxCollider>> m_StaticBoxes;
+	//ステージが持つ静的障害物
+	std::vector<std::shared_ptr<CBoxCollider>> m_StaticBox;		
 
-	// 障害物メッシュを作る時に AABB を生成して登録
-	auto wallCol = std::make_shared<CBoxCollider>();
-	wallCol->SetMinPosition({ -1.0f,-0.5f,-3.0f }); // メッシュのローカルAABB半径
-	wallCol->SetMaxPosition({ +1.0f,+0.5f,+3.0f });
-	wallCol->SetPosition(worldPosOfWall);
-	m_StaticBoxes.push_back(wallCol);
+
+	if (auto com = std::make_shared<CComPlayer>())
+	{
+		com->SetObject(&m_StaticBox);
+	}
+
+#if 0
 
 	// 全COMに障害物ソースを渡す
 	for (auto& p : m_pPlayerManager->Players()) {
