@@ -79,7 +79,7 @@ void CItemBox::SpeedUpEffect()
 void CItemBox::PowerUpEffect()
 {
 	//’è”éŒ¾.
-	static constexpr float PLUS_POWER = 3.f;
+	static constexpr float PLUS_POWER = 100.0f;
 
 	//UŒ‚—Í‚ğİ’è.
 	m_Item.m_Power = PLUS_POWER;
@@ -88,7 +88,7 @@ void CItemBox::PowerUpEffect()
 void CItemBox::BlastUpEffect()
 {
 	//’è”éŒ¾.
-	static constexpr float BLAST_RAD = 30.f;
+	static constexpr float BLAST_RAD = 30.0f;
 
 	//”¼Œa‚ğİ’è.
 	m_Item.m_Blast = BLAST_RAD;

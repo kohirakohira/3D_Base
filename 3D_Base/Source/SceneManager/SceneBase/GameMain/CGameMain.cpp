@@ -1152,10 +1152,44 @@ void CGameMain::PlayertoItemBox()
 				m_pItemBoxManager->SetItemInfo(ItemIndex);
 				//画面から消す.
 				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
-				//プレイヤーの速度を設定.
-				const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 0.03f, 0.03f, 0.3f };
-				//プレイヤーの情報を設定.
-				m_pPlayerManager->SetPlayerTuning(PlayerIndex, Info);
+
+				//無敵処理.
+				//プレイヤーに設定.
+				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_ShieldFlag != false)
+				{
+					
+				}
+
+				//速度設定.
+				//プレイヤーに設定.
+				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed > 0.0f)
+				{
+					//プレイヤーの速度を設定.
+					const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 0.03f, 0.03f, 0.3f };
+					//プレイヤーの情報を設定.
+					m_pPlayerManager->SetPlayerTuning(PlayerIndex, Info);
+				}
+
+				//攻撃力設定.
+				//弾に設定.
+				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Power > 0.0f)
+				{
+
+				}
+
+				//爆風の半径設定.
+				//爆風に設定.
+				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
+				{
+
+				}
+
+				//装填時短設定.
+				//弾に設定.
+				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Reload > 0.0f)
+				{
+
+				}
 			}
 		}
 	}
