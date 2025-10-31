@@ -112,10 +112,16 @@ void CPlayer::SetTankPosition(const D3DXVECTOR3& pos)
 	m_pCannon->SetPosition(pos);	// –C“ƒÀ•WŽw’è
 }
 
-void CPlayer::SetTankRotation(const D3DXVECTOR3& pos)
+void CPlayer::SetTankRotation(const D3DXVECTOR3& rot)
 {
-	m_pBody->SetRotation(pos);		// ŽÔ‘Ì‰ñ“]Žw’è
-	m_pCannon->SetRotation(pos);	// –C“ƒ‰ñ“]Žw’è
+	m_pBody->SetRotation(rot);		// ŽÔ‘Ì‰ñ“]Žw’è
+	m_pCannon->SetRotation(rot);	// –C“ƒ‰ñ“]Žw’è
+}
+
+void CPlayer::SetTankScale(const float& sca)
+{
+	m_pBody->SetScale(sca);			// ŽÔ‘Ì‘å‚«‚³Žw’è
+	m_pCannon->SetScale(sca);		// –C“ƒ‘å‚«‚³Žw’è
 }
 
 void CPlayer::SetPushBack(const D3DXVECTOR3& push)
@@ -178,9 +184,9 @@ void CPlayer::UpdateHumanInputAndMove()
 
 	SyncCannonToBody();
 	D3DXVECTOR3 cannonpos = pos;
-	cannonpos.y += tuning.cannonHeight;
+	//cannonpos.y += tuning.cannonHeight;
 
-	m_pCannon->SetPosition(cannonpos);
+	//m_pCannon->SetPosition(cannonpos);
 	m_pCannon->SetRotation(cannonrot);
 	m_pCannon->Update();
 }

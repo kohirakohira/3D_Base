@@ -566,24 +566,28 @@ void CGameMain::Create()
 			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(-offsetX, 0.0f, -offsetZ));
 			//回転を設定..
 			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
+			m_pPlayerManager->SetPlayerScale(i, 1.8f);
 		}
 		else if (i == 1)
 		{
 			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(-offsetX, 0.0f, offsetZ));
 			//回転を設定..
 			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
+			m_pPlayerManager->SetPlayerScale(i, 1.8f);
 		}
 		else if (i == 2)
 		{
 			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(offsetX, 0.0f, offsetZ));
 			//回転を設定..
 			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
+			m_pPlayerManager->SetPlayerScale(i, 1.8f);
 		}
 		else if (i == 3)
 		{
 			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(offsetX, 0.0f, -offsetZ));
 			//回転を設定..
 			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
+			m_pPlayerManager->SetPlayerScale(i, 1.8f);
 		}
 
 		//カメラ生成・セットアップ.
@@ -741,21 +745,15 @@ HRESULT CGameMain::LoadData()
 	m_pStaticMeshStage->Init(_T("Data\\Mesh\\Static\\Stage\\stage.x"));
 	m_pStaticMeshItemBox->Init(_T("Data\\Mesh\\Static\\ItemBox\\ItemBox.x"));
 
-	// 戦車(赤)
-	m_pStaticMesh_TankBodyRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Body\\Body.x"));
-	m_pStaticMesh_TankCannonRed->Init(_T("Data\\Mesh\\Static\\Tank\\Red\\Cannon\\Cannon.x"));
-
-	// 戦車(黄)
-	m_pStaticMesh_TankBodyYellow->Init(_T("Data\\Mesh\\Static\\Tank\\Yellow\\Body\\Body.x"));
-	m_pStaticMesh_TankCannonYellow->Init(_T("Data\\Mesh\\Static\\Tank\\Yellow\\Cannon\\Cannon.x"));
-
-	// 戦車(青)
-	m_pStaticMesh_TankBodyBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Body\\Body.x"));
-	m_pStaticMesh_TankCannonBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Cannon\\Cannon.x"));
-
-	// 戦車(緑)
-	m_pStaticMesh_TankBodyGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Body\\Body.x"));
-	m_pStaticMesh_TankCannonGreen->Init(_T("Data\\Mesh\\Static\\Tank\\Green\\Cannon\\Cannon.x"));
+	// 戦車.
+	m_pStaticMesh_TankBodyRed->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Red\\Body.x"));
+	m_pStaticMesh_TankCannonRed->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Red\\Cannon.x"));
+	m_pStaticMesh_TankBodyYellow->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Yellow\\Body.x"));
+	m_pStaticMesh_TankCannonYellow->Init(	_T("Data\\Mesh\\Static\\Tank_n\\Yellow\\Cannon.x"));
+	m_pStaticMesh_TankBodyBlue->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Blue\\Body.x"));
+	m_pStaticMesh_TankCannonBlue->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Blue\\Cannon.x"));
+	m_pStaticMesh_TankBodyGreen->Init(		_T("Data\\Mesh\\Static\\Tank_n\\Green\\Body.x"));
+	m_pStaticMesh_TankCannonGreen->Init(	_T("Data\\Mesh\\Static\\Tank_n\\Green\\Cannon.x"));
 	
 	// 弾(赤)
 	m_pStaticMesh_BulletRed->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));

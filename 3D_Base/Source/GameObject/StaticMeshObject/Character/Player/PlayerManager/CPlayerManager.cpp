@@ -104,6 +104,14 @@ void CPlayerManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 	}
 }
 
+void CPlayerManager::SetPlayerScale(int index, const float& xyz)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetTankScale(xyz);
+	}
+}
+
 // バウンディングオブジェクトの作成
 void CPlayerManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon)
 {

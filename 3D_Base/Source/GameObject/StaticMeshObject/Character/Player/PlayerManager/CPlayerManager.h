@@ -31,6 +31,7 @@ public:
 	void AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> body, std::shared_ptr<CStaticMesh> cannon);
 	void SetPlayerPosition(int index, const D3DXVECTOR3& pos);
 	void SetPushBackPosision(int index, const D3DXVECTOR3& push);
+	void SetPlayerScale(int index, const float& xyz);
 
 	// バウンディングオブジェクトの作成
 	void CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon);

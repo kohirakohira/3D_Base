@@ -24,7 +24,8 @@ public:
 
 	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon);
 	void SetTankPosition(const D3DXVECTOR3& pos);
-	void SetTankRotation(const D3DXVECTOR3& pos);
+	void SetTankRotation(const D3DXVECTOR3& rot);
+	void SetTankScale(const float& sca);
 
 	//ƒvƒŒƒCƒ„[‚ª•Ç‚É“–‚½‚éˆ—‚ğ‚Ü‚Æ‚ß‚é.
 	void SetPushBack(const D3DXVECTOR3& push);
