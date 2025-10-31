@@ -10,9 +10,9 @@ CPlayerManager::CPlayerManager()
 {
 }
 //PlayerがCComPlayerならそのポインタにキャストして返す.そうでなければnullptr
-static inline bool IsCom(const std::shared_ptr<CPlayer>& player) 
+static inline bool IsCom(const std::shared_ptr<CPlayer>& player)
 {
-	return std::dynamic_pointer_cast< const CComPlayer>(player) != nullptr;
+	return std::dynamic_pointer_cast<const CComPlayer>(player) != nullptr;
 }
 
 //プレイヤーの操作かどうかの判定
@@ -188,7 +188,7 @@ void CPlayerManager::Update()
 		{
 			self->Update();
 		}
-			
+
 	}
 
 }
@@ -291,11 +291,11 @@ void CPlayerManager::SyncByPadConnection()
 {
 	//接続されているかどうかを取得する
 	for (int padIndex = 0; padIndex < (int)m_Pads.size(); ++padIndex) {
-		CXInput* pad = m_Pads[padIndex].get();	
+		CXInput* pad = m_Pads[padIndex].get();
 		pad->Update();
 
 		//今のフレームと前のフレームの状態
-		const bool now = pad->IsConnect();			
+		const bool now = pad->IsConnect();
 		const bool prev = m_PadConnected[padIndex];
 
 		if (now != prev)
