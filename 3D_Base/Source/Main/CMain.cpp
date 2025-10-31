@@ -27,6 +27,21 @@ CMain::CMain()
 	: m_hWnd	( nullptr )
 	, m_pGame	( nullptr )
 {
+	// コンソールを作成・coutを設定
+	AllocConsole();
+	FILE* fp;
+	freopen_s(&fp, "CONOUT$", "w", stdout);
+
+	// コンソール位置の調整 
+	HWND hConsole = GetConsoleWindow();
+
+	if (hConsole != NULL)
+	{
+		SetWindowPos(hConsole, NULL,
+			1280, 0,      // X, Y 座標
+			600, 400,  // 幅, 高さ
+			SWP_NOZORDER);
+	}
 }
 
 
