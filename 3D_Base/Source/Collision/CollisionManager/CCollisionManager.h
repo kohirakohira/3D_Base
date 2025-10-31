@@ -1,22 +1,14 @@
-#if 0
+
 #pragma once
 //-----ライブラリ-----
 #include <vector>
 #include <memory>
 
 //-----外部クラス-----
-#include "Collision//Shape//Volume//BoudingBox//CBoundingBox.h"			// バウンディングボックス
-#include "Collision//Shape//Volume//BoundingSphere//CBoundingSphere.h"	// バウンディングスフィア
-
-#include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX9クラス
-#include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス
-
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
 #include "GameObject//StaticMeshObject//CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス
 
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankBody//CBody.h"		// 戦車：車体
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h"	// 戦車：砲塔
-
+#include "GameObject//StaticMeshObject//StageObject//CStageObject.h"
 //===================================
 //	コリジョンマネージャークラス
 //===================================
@@ -26,27 +18,64 @@ public:
 	CCollisionManager();
 	~CCollisionManager();
 
-	// ワイヤーメッシュ
-	void Draw();
-
+	//動作関数..
+	void Update();
 	// オブジェクトの生成
 	void Create();
-	//データの読み込み.
+	// データの読み込み
 	HRESULT LoadData();
 
-	// バウンディングの座標更新
-	void UpdateBounding();
-	void CheckAllCollisions();
+	//-----------------------
+	// それぞれの判定関数
+	//-----------------------
+	
+	// 壁とプレイヤーの当たり判定判別
+	void WalltoPlayer();
+	// 壁と弾の当たり判定
+	void WalltoShot();
+	// プレイヤーとプレイヤー当たり判定判別
+	void PlayertoPlayer();
+	// プレイヤーとアイテムボックス
+	void PlayertoItemBox();
+	// プレイヤーと弾
+	void PlayertoShot();
+	// 弾と弾
+	void ShottoShot();
+	// 箱とプレイヤー
+	void WoodBoxtoPlayer();
+	// 箱と弾
+	void WoodBoxtoShot();
+	// 地面と弾
+	void GroundtoShot();
+	// 地面とアイテムボックス
+	void GroundtoItemBox();
+	//爆風とプレイヤーの当たり判定.
+	void PlayertoBlast();
 
-	void SetCBody(std::shared_ptr<CBody> pBody) { m_pBody = pBody; }
+	//-----------------------
+
+	//void SetCBody(std::shared_ptr<CBody> pBody) { m_pBody = pBody; }
 private:
-	std::shared_ptr<CStaticMesh>			m_pStaticMeshBSphere;		//バウンディングスフィア(当たり判定用).
+	// 当たり判定のメッシュ
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallW;
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshWallH;
+	std::shared_ptr<CStaticMesh>	m_pStaticMeshGround;
 
-	std::shared_ptr<CBoundingBox>			m_pBBox;
-	std::shared_ptr<CBoundingSphere>		m_pBSphere;
+	// 壁
+	std::shared_ptr<CStageObject>		m_pWallTop;
+	std::shared_ptr<CStageObject>		m_pWallBottom;
+	std::shared_ptr<CStageObject>		m_pWallLeft;
+	std::shared_ptr<CStageObject>		m_pWallRight;
 
-	std::shared_ptr<CBody>					m_pBody;
-	std::shared_ptr<CCannon>				m_pCannon;
+	// 木箱
+	std::shared_ptr<CStageObject>		m_pWoodBoxTopLeft;
+	std::shared_ptr<CStageObject>		m_pWoodBoxTopRight;
+	std::shared_ptr<CStageObject>		m_pWoodBoxCenter;
+	std::shared_ptr<CStageObject>		m_pWoodBoxBottomLeft;
+	std::shared_ptr<CStageObject>		m_pWoodBoxBottomRight;
+
+	// 地面
+	std::shared_ptr<CStageObject>		m_pGround;
+
+	//std::shared_ptr<CBody>	m_pBody;
 };
-
-#endif

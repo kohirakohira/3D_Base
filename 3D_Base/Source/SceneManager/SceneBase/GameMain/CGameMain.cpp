@@ -1025,53 +1025,53 @@ void CGameMain::WalltoShot()
 		// 壁が弾と接触したとき
 		if (ShotsColl->CheckCollision(*m_pWallTop->GetCollider()))
 		{			
-			//動的に作成.
-			m_pBlastManager->Create();
-			//爆風のメッシュを設定.
-			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			//爆風の情報.
-			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->SetBlastFlag(true);
+			////動的に作成.
+			//m_pBlastManager->Create();
+			////爆風のメッシュを設定.
+			//m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
+			////爆風の情報.
+			//m_pBlastManager->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->SetBlastFlag(true);
 			
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
-			//動的に作成.
-			m_pBlastManager->Create();
-			//爆風のメッシュを設定.
-			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			//爆風の情報.
-			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->SetBlastFlag(true);
+			////動的に作成.
+			//m_pBlastManager->Create();
+			////爆風のメッシュを設定.
+			//m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
+			////爆風の情報.
+			//m_pBlastManager->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->SetBlastFlag(true);
 
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
-			//動的に作成.
-			m_pBlastManager->Create();
-			//爆風のメッシュを設定.
-			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			//爆風の情報.
-			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->SetBlastFlag(true);
+			////動的に作成.
+			//m_pBlastManager->Create();
+			////爆風のメッシュを設定.
+			//m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
+			////爆風の情報.
+			//m_pBlastManager->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->SetBlastFlag(true);
 
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWallRight->GetCollider()))
 		{
-			//動的に作成.
-			m_pBlastManager->Create();
-			//爆風のメッシュを設定.
-			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			//爆風の情報.
-			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->SetBlastFlag(true);
+			////動的に作成.
+			//m_pBlastManager->Create();
+			////爆風のメッシュを設定.
+			//m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
+			////爆風の情報.
+			//m_pBlastManager->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->SetBlastFlag(true);
 
 			Shots[i]->HitShot();
 		}
@@ -1154,14 +1154,14 @@ void CGameMain::PlayertoShot()
 
 			if (ShotsColl->CheckCollision(*Coll))
 			{
-				//動的に作成.
-				m_pBlastManager->Create();
-				//爆風のメッシュを設定.
-				m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-				//爆風の情報.
-				m_pBlastManager->SetPosition(Shots[i]->GetPosition());
-				m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
-				m_pBlastManager->SetBlastFlag(true);
+				////動的に作成.
+				//m_pBlastManager->Create();
+				////爆風のメッシュを設定.
+				//m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
+				////爆風の情報.
+				//m_pBlastManager->SetPosition(Shots[i]->GetPosition());
+				//m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
+				//m_pBlastManager->SetBlastFlag(true);
 
 				Shots[i]->HitShot();
 			}
@@ -1204,14 +1204,14 @@ void CGameMain::PlayertoBlast()
 		auto player = m_pPlayerManager->GetControlPlayer(i);
 		auto Coll = player->GetBody()->GetCollider();
 
-		if (m_pBlastManager->GetBlastFlag() == true)
-		{
-			////車体が爆風と接触したとき.
-			if (Coll->CheckCollision(*m_pBlastManager->GetCollider()))
-			{
-				m_pBlastManager->HitBlast();
-			}
-		}
+		//if (m_pBlastManager->GetBlastFlag() == true)
+		//{
+		//	////車体が爆風と接触したとき.
+		//	if (Coll->CheckCollision(*m_pBlastManager->GetCollider()))
+		//	{
+		//		m_pBlastManager->HitBlast();
+		//	}
+		//}
 	}
 }
 
@@ -1330,66 +1330,66 @@ void CGameMain::WoodBoxtoShot()
 		// 壁が弾と接触したとき
 		if (ShotsColl->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
 		{
-			//動的に作成.
-			m_pBlastManager->Create();
-			//爆風のメッシュを設定.
-			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			//爆風の情報.
-			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->SetBlastFlag(true);
+			////動的に作成.
+			//m_pBlastManager->Create();
+			////爆風のメッシュを設定.
+			//m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
+			////爆風の情報.
+			//m_pBlastManager->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->SetBlastFlag(true);
 
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
 		{
-			// 動的に作成
-			m_pBlastManager->Create();
-			// 爆風のメッシュを設定
-			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			// 爆風の情報
-			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->SetBlastFlag(true);
+			//// 動的に作成
+			//m_pBlastManager->Create();
+			//// 爆風のメッシュを設定
+			//m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
+			//// 爆風の情報
+			//m_pBlastManager->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->SetBlastFlag(true);
 
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
 		{
-			//動的に作成.
-			m_pBlastManager->Create();
-			//爆風のメッシュを設定.
-			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			//爆風の情報.
-			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->SetBlastFlag(true);
+			////動的に作成.
+			//m_pBlastManager->Create();
+			////爆風のメッシュを設定.
+			//m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
+			////爆風の情報.
+			//m_pBlastManager->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->SetBlastFlag(true);
 
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
 		{
-			//動的に作成
-			m_pBlastManager->Create();
-			//爆風のメッシュを設定
-			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			//爆風の情報
-			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->SetBlastFlag(true);
+			////動的に作成
+			//m_pBlastManager->Create();
+			////爆風のメッシュを設定
+			//m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
+			////爆風の情報
+			//m_pBlastManager->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->SetBlastFlag(true);
 
 			Shots[i]->HitShot();
 		}
 		if (ShotsColl->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
 		{
-			//動的に作成.
-			m_pBlastManager->Create();
-			//爆風のメッシュを設定.
-			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			//爆風の情報.
-			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->SetBlastFlag(true);
+			////動的に作成.
+			//m_pBlastManager->Create();
+			////爆風のメッシュを設定.
+			//m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
+			////爆風の情報.
+			//m_pBlastManager->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->SetBlastFlag(true);
 
 			Shots[i]->HitShot();
 		}
@@ -1406,14 +1406,14 @@ void CGameMain::GroundtoShot()
 
 		if (ShotsColl->CheckCollision(*m_pGround->GetCollider()))
 		{
-			//動的に作成.
-			m_pBlastManager->Create();
-			//爆風のメッシュを設定.
-			m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
-			//爆風の情報.
-			m_pBlastManager->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
-			m_pBlastManager->SetBlastFlag(true);
+			////動的に作成.
+			//m_pBlastManager->Create();
+			////爆風のメッシュを設定.
+			//m_pBlastManager->AttachMesh(m_pStaticMesh_BulletRed);
+			////爆風の情報.
+			//m_pBlastManager->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->GetCollider()->SetPosition(Shots[i]->GetPosition());
+			//m_pBlastManager->SetBlastFlag(true);
 
 			Shots[i]->HitShot();
 		}
