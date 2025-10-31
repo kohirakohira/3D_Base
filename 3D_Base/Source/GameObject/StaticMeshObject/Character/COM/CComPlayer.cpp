@@ -8,6 +8,7 @@
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h"   // 戦車：砲塔クラス
 
 #undef min
+#undef max
 
 //静的レジストリ.複数をいっきに扱う
 std::vector<CComPlayer*>& CComPlayer::Instances() {
