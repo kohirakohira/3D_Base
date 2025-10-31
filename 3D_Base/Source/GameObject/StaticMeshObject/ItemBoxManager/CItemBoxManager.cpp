@@ -215,7 +215,10 @@ std::vector<std::shared_ptr<CItemBox>> CItemBoxManager::GetItem() const
 	return m_Item;
 }
 
-std::shared_ptr<CCollider> CItemBoxManager::GetCollider(int index) const
+std::shared_ptr<CCollider> CItemBoxManager::GetCollider() const
 {
-	return m_Item[index]->GetCollider();
+	for (auto& item : m_Item)
+	{
+		return item->GetCollider();
+	}
 }

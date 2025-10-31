@@ -1143,14 +1143,13 @@ void CGameMain::PlayertoItemBox()
 		for (size_t ItemIndex = 0; ItemIndex < m_pItemBoxManager->GetItem().size(); ItemIndex++)
 		{
 			// プレイヤーがアイテムと接触したとき
-			if (Coll->CheckCollision(*m_pItemBoxManager->GetCollider(ItemIndex)))
+			if (Coll->CheckCollision(*m_pItemBoxManager->GetItem()[ItemIndex]->GetCollider()))
 			{
-				//当たったので描画を消す.
-				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
-				//アイテムの中身を設定.
-				m_pItemBoxManager->GetItem()[ItemIndex]->SetItemInfo(m_pItemBoxManager->ItemRandom());
+				//アイテムの中を設定してあげる.
+				m_pItemBoxManager->SetItemInfo(ItemIndex);
 				//プレイヤーの速度を設定.
 				const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 0.03f, 0.03f, 0.3f };
+				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
 				//プレイヤーの情報を設定.
 				m_pPlayerManager->SetPlayerTuning(PlayerIndex, Info);
 			}
@@ -1422,7 +1421,7 @@ void CGameMain::GroundtoItemBox()
 {
 	for (size_t ItemIndex = 0; ItemIndex < m_pItemBoxManager->GetItem().size(); ItemIndex++)
 	{
-		if (m_pItemBoxManager->GetCollider(ItemIndex)->CheckCollision(*m_pGround->GetCollider()))
+		if (m_pItemBoxManager->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
 		{
 			// アイテムボックスの処理を入れる
 			m_pItemBoxManager->GetItem()[ItemIndex]->SetGravity(true);
