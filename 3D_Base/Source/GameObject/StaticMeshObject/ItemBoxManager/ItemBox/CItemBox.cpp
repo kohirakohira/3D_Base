@@ -19,40 +19,10 @@ CItemBox::~CItemBox()
 
 void CItemBox::Update()
 {
-
 	//アイテムを落下させるための関数.
 	GravityMath();
 
-	switch (m_ItemType)
-	{
-	case CItemType::Shield:
-		//一回無敵.
-		ShieldEffect();
-		break;
-	case CItemType::SpeedUp:
-		//速度上昇.
-		SpeedUpEffect();
-		break;
-	case CItemType::PowerUp:
-		//攻撃力上昇.
-		PowerUpEffect();
-		break;
-	case CItemType::BlastUp:
-		//爆風範囲増加.
-		BlastUpEffect();
-		break;
-	case CItemType::Reflection:
-		//反射.
-		ReflectionEffect();
-		break;
-	case CItemType::Reload:
-		//リロード短縮.
-		ReloadEffect();
-		break;
-	default:
-		break;
-	}
-
+	//centerpos・rotation・scaleを設定してる.
 	CStaticMeshObject::Update();
 }
 
@@ -100,7 +70,7 @@ void CItemBox::ShieldEffect()
 void CItemBox::SpeedUpEffect()
 {
 	//定数宣言.
-	static constexpr float PLUS_SPEED = 0.18f;
+	static constexpr float PLUS_SPEED = 0.2f;
 
 	//増加する速度設定.
 	m_Item.m_Speed = PLUS_SPEED;
@@ -143,6 +113,37 @@ void CItemBox::HitPlayer()
 {
 	// 消える
 	m_Active = false;
+
+	switch (m_ItemType)
+	{
+	case CItemType::Shield:
+		//一回無敵.
+		ShieldEffect();
+		break;
+	case CItemType::SpeedUp:
+		//速度上昇.
+		SpeedUpEffect();
+		break;
+	case CItemType::PowerUp:
+		//攻撃力上昇.
+		PowerUpEffect();
+		break;
+	case CItemType::BlastUp:
+		//爆風範囲増加.
+		BlastUpEffect();
+		break;
+	case CItemType::Reflection:
+		//反射.
+		ReflectionEffect();
+		break;
+	case CItemType::Reload:
+		//リロード短縮.
+		ReloadEffect();
+		break;
+	default:
+		break;
+	}
+
 }
 
 // バウンディングボックスを作成

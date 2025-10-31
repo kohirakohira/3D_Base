@@ -47,7 +47,8 @@ void CItemBoxManager::Create()
 		//メッシュの設定.
 		item->AttachMesh(m_ItemMesh);
 		//各設定.
-		item->SetPosition(ItemPositionRandom().x, ItemPositionRandom().y, ItemPositionRandom().z);
+		D3DXVECTOR3 pos = ItemPositionRandom();
+		item->SetPosition(pos.x, pos.y, pos.z);
 		item->SetRotation(0.0f, 0.0f, 0.0f);
 		item->SetScale(0.2f);
 		//当たり判定の設定.
@@ -167,8 +168,8 @@ CItemType CItemBoxManager::ItemRandom()
 	//そのうち30枚はシールドで(30/35)、残りはリフレクション(5/35)ということ.
 	std::discrete_distribution<> dist({
 		0,			// Shield      → よく出る.
-		100,		// SpeedUp     → よく出る.
-		0,			// PowerUp     → そこそこ.
+		0,			// SpeedUp     → よく出る.
+		100,		// PowerUp     → そこそこ.
 		0,			// BlastUp     → ちょっと出にくい.
 		0,			// Reflection  → 出にくい.
 		0			// Reload      → 普通.

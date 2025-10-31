@@ -28,5 +28,5 @@ void CCharacter::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& 
 
 void CCharacter::SettingTune()
 {
-	m_Tune = { 0.08f, 0.03f, 0.03f, 0.14f };
+	m_Tune = { 0.08f, 0.03f, 0.03f, 0.3f };
 }
