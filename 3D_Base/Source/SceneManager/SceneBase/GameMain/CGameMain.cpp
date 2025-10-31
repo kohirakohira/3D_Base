@@ -1140,12 +1140,15 @@ void CGameMain::PlayertoItemBox()
 		auto player = m_pPlayerManager->GetControlPlayer(PlayerIndex);
 		auto Coll = player->GetBody()->GetCollider();
 
-		for (int ItemIndex = 0; ItemIndex < ITEM_MAX; ++ItemIndex)
+		for (auto& item : m_pItemBoxManager->GetItem())
 		{
 			// プレイヤーがアイテムと接触したとき
-			if (Coll->CheckCollision(*m_pItemBoxManager->GetCollider()))
+			if (Coll->CheckCollision(*item->GetCollider()))
 			{
-				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
+				//当たったので描画を消す.
+				item->HitPlayer();
+				//アイテムの中身を設定.
+				item->SetItemInfo(m_pItemBoxManager->ItemRandom());
 			}
 		}
 	}

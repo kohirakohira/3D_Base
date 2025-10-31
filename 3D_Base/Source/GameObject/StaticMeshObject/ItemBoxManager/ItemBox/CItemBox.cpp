@@ -19,7 +19,6 @@ CItemBox::~CItemBox()
 
 void CItemBox::Update()
 {
-
 	//アイテムを落下させるための関数.
 	GravityMath();
 
@@ -53,6 +52,7 @@ void CItemBox::Update()
 		break;
 	}
 
+	//centerpos・rotation・scaleを設定してる.
 	CStaticMeshObject::Update();
 }
 

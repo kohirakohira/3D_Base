@@ -47,7 +47,8 @@ void CItemBoxManager::Create()
 		//ƒƒbƒVƒ…‚ÌÝ’è.
 		item->AttachMesh(m_ItemMesh);
 		//ŠeÝ’è.
-		item->SetPosition(ItemPositionRandom().x, ItemPositionRandom().y, ItemPositionRandom().z);
+		D3DXVECTOR3 pos = ItemPositionRandom();
+		item->SetPosition(pos.x, pos.y, pos.z);
 		item->SetRotation(0.0f, 0.0f, 0.0f);
 		item->SetScale(0.2f);
 		//“–‚½‚è”»’è‚ÌÝ’è.
