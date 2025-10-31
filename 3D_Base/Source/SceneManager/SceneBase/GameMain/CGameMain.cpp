@@ -641,11 +641,11 @@ HRESULT CGameMain::LoadData()
 	m_pSprite2DKillNomber	->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE, false);
 	m_pSprite2DHitPoint		->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE, true);
 
-	//画像をアタッチ..
+	//画像をアタッチ
 	m_pSpriteTimerFrame	->AttachSprite(m_pSprite2DTimerFrame);
 	m_pSpriteTimer		->AttachSprite(m_pSprite2DTimer);
 	m_pSpriteTimerArrow	->AttachSprite(m_pSprite2DTimerArrow);
-	//HPの分だけアタッチ..
+	//HPの分だけアタッチ
 	for (int i = 0; i < HP_MAX; i++)
 	{
 		m_pSpriteHitPoint[i]->AttachSprite(m_pSprite2DHitPoint);
@@ -936,7 +936,7 @@ void CGameMain::CreateBounding()
 
 void CGameMain::Collision()
 {
-	// 壁とプレイヤーの当たり判定.
+	// 壁とプレイヤーの当たり判定
 	WalltoPlayer();
 
 	// 壁と弾の当たり判定
@@ -1023,7 +1023,6 @@ void CGameMain::WalltoShot()
 		// ショットのコライダー取得
 		auto Shots = m_pShotManager->GetShot();
 		auto ShotsColl = Shots[i]->GetCollider();
-
 
 		// 壁が弾と接触したとき
 		if (ShotsColl->CheckCollision(*m_pWallTop->GetCollider()))
@@ -1318,7 +1317,7 @@ void CGameMain::WoodBoxtoShot()
 		// 壁が弾と接触したとき
 		if (ShotsColl->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
 		{
-			//動的に作成.
+			// 動的に作成
 			m_pBlastManager->Create(
 				Shots[i]->GetPosition(),
 				true,
@@ -1379,7 +1378,7 @@ void CGameMain::GroundtoShot()
 
 		if (ShotsColl->CheckCollision(*m_pGround->GetCollider()))
 		{
-			//動的に作成.
+			// 動的に作成
 			m_pBlastManager->Create(
 				Shots[i]->GetPosition(),
 				true,
