@@ -1403,12 +1403,12 @@ void CGameMain::GroundtoShot()
 
 void CGameMain::GroundtoItemBox()
 {
-	for (int ItemIndex = 0; ItemIndex < ITEM_MAX; ++ItemIndex)
+	for (auto& item : m_pItemBoxManager->GetItem())
 	{
 		if (m_pItemBoxManager->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
 		{
 			// アイテムボックスの処理を入れる
-			m_pItemBoxManager->GetItem()[ItemIndex]->SetGravity(true);
+			item->SetGravity(true);
 		}
 	}
 }
