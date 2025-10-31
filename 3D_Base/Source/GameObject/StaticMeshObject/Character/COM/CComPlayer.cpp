@@ -29,7 +29,6 @@ CComPlayer::CComPlayer()
     , m_EvadeDuration       ( 60 )
     , m_ComEnabled          ( true )
     , m_EvadeFrames         ( 60 )
-    , m_TargetRadius        ( 20.0f)
     , m_IsTarget            ( false )   //最初はターゲットではない
     , m_LostSightFrames     ()
     , m_pAllPlayer          ( nullptr )
@@ -41,7 +40,7 @@ CComPlayer::CComPlayer()
     , m_LastSeenPos         ( D3DXVECTOR3(0, 0, 0) )
     , m_State               ( State::Seek )
     , m_WanderAngle         ( 0.f )
-    , m_BlackListTime       ( 1200 )
+    , m_BlackListTime       ( 120 )     //3秒くらいだけ
     , m_CurTargetDist2      ( std::numeric_limits<float>::infinity() )
     , m_pItemBox            ( nullptr )
     , m_pItemTarget         ()
@@ -49,6 +48,12 @@ CComPlayer::CComPlayer()
     , m_RetargetItemInterval( 30 )
     , m_ItemGetRadius       ( 20.f )
     , m_ItemPickUpRaius     ( 1.f )
+    , m_pBoxCollider        ( nullptr )
+    , m_ProdeAngleRad       ( 0.f ) 
+    , m_ProdeDist           ( 10.f )
+    , m_AvoidHolde          ( 0.f )
+    , m_AvoidSide           ( 0 )
+    , m_AvoidMax            ( 0.f )
 {
 }
 
@@ -151,6 +156,13 @@ void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
     }
     //正規化は呼び出し側でブレンド時にやる
 }
+
+//COMの状態変更
+void CComPlayer::ChangeState(State state)
+{
+    m_State = state;
+    m_StateFrames = 0;
+} 
 
 // 本体を常にターゲットへ回頭＋前進
 void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
@@ -299,6 +311,8 @@ void CComPlayer::ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const
     outYaw = yaw;
 }
 
+
+
 inline float CComPlayer::DistXZ(const D3DXVECTOR3& targetPos, const D3DXVECTOR3& selfPos)
 {
     const float dx = targetPos.x - selfPos.x;
@@ -331,7 +345,7 @@ void CComPlayer::Update()
         CPlayer::Update(); 
         return;
     }
-
+    
     TickBlacklist();
 
     auto body = Body();
@@ -344,7 +358,6 @@ void CComPlayer::Update()
     //定期リターゲット
     if (--m_RetargetTimer <= 0 || !m_pTarget) {
         MakeFixedTimeTarget();
-        //MakeItemTarget();
         m_RetargetTimer = m_RetargetInterval;
     }
 
@@ -376,6 +389,34 @@ void CComPlayer::Update()
     ++m_StateFrames;
 }
 
+//前方に当たり判定を設置する
+bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
+    const D3DXVECTOR3& forward,
+    float  prodeDist,
+    float  step,
+    float& outHitDist)const
+{
+    if (!m_pBoxCollider || m_pBoxCollider->empty()) return false;
+    CBoxCollider ghost = selfBox;
+    const D3DXVECTOR3 base = selfBox.GetPosition();
+
+    for (float d = step; d <= prodeDist; d += step)
+    {
+        ghost.SetPosition(base + forward * d);
+        for (const auto& object : *m_pBoxCollider)
+        {
+            if (object && ghost.CheckCollisionBox(*object))
+            {
+                outHitDist = d;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+
 //探索処理
 void CComPlayer::StepSeek()
 {
@@ -391,19 +432,42 @@ void CComPlayer::StepSeek()
     }
 }
 
-//追尾    
+
 void CComPlayer::StepChase()
 {
+
+    //パラメータ
     const auto tuning = GetTuning();
     TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);
 
-    if (!m_pTarget)
+    if (m_pTarget)
     {
-        const D3DXVECTOR3 target = m_pTarget->GetPosition();
-        TickChaseTo(target);        // 前へ出る
+        TickAimTo(m_pTarget->GetPosition());
         TryAutoFire();
     }
+#if 0
+    auto body = Body(); if (!body || !m_pTarget) { StepSeek(); return; }
+    const auto t = GetTuning();
+
+    const D3DXVECTOR3 pos = body->GetPosition();
+    const float cur = body->GetRotation().y;
+
+    const D3DXVECTOR3 to = m_pTarget->GetPosition() - pos;
+    const float desired = std::atan2f(to.x, to.z);
+
+    const float nextYaw = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
+
+//  SafeAdvance(*body, nextYaw, t.moveSpeed);
+
+    //砲塔・発砲
+    body->CCharacter::Update();
+    SyncCannonToBody();
+    TickAimTo(m_pTarget->GetPosition());
+    TryAutoFire();
+#endif
 }
+
+
 
 //攻撃、基本的には弾発射処理
 void CComPlayer::StepAttack()
@@ -476,42 +540,6 @@ void CComPlayer::StepEvade()
 //アイテム取得.アイテム認識
 void CComPlayer::StepItemSeek()
 {
-#if 0
-    auto tuning = GetTuning();
-    auto body = Body();
-    if (!body) return;
-
-    //アイテムの取り消し
-    if (m_RetargetItemTimer-- <= 0 || m_pItemTarget.expired())
-    {
-        MakeItemTarget();
-        m_RetargetItemTimer = m_RetargetInterval;
-    }
-    std::shared_ptr<CItemBox> box = m_pItemTarget.lock();
-    if (!box || !box->IsActive())
-    {
-        ChangeState(State::Seek);
-        return;
-    }
-    const D3DXVECTOR3 item = box->GetPosition();
-
-    //近づく
-    TickChaseTo(item);
-    //砲塔に車体を追尾
-    SyncCannonToBody();
-
-    //砲塔は撃つ必要ないが、自然さのため向けておく
-    TickAimTo(item);
-
-    auto self = body->GetPosition();
-    D3DXVECTOR3 d = item - self; d.y = 0.f;
-    const float d2 = d.x * d.x + d.z * d.z;
-
-    if (!box->IsActive() || d2 <= (m_ItemPickUpRaius * m_ItemPickUpRaius)) {
-        m_pItemTarget.reset();
-        ChangeState(State::Seek);
-    }
-#endif
 }
 
 void CComPlayer::EvaluateTransitions(float dist2)
@@ -686,6 +714,7 @@ void CComPlayer::TickWander(float turnStep, float moveStep)
 
     //乱数設定
     int randomBit = std::rand() & 1;
+
     if (randomBit != 0)
     {
         m_WanderAngle += WanderDelta;
@@ -724,12 +753,6 @@ void CComPlayer::TickWander(float turnStep, float moveStep)
     pos.x += dir.x * 0.02f;
     pos.z += dir.z * 0.02f;
 
-#if 0
-    D3DXVECTOR3 Dir = ForwardFromYaw(yawRed);
-    pos += Dir * moveStep;
-    pos.x += dir.x * 0.02f;
-    pos.z += dir.z * 0.02f;
-#endif
     //見た目に反映
     body->SetRotation({ 0.f,yawRed,0.f });
     body->SetPosition(pos);
@@ -822,6 +845,80 @@ void CComPlayer::MakeItemTarget()
         }
     }
 }
+
+bool CComPlayer::SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const
+{
+    const float angs[3] = { 0.f, +m_ProdeAngleRad, -m_ProdeAngleRad };
+    const float step = 0.30;
+    const float prode = m_ProdeDist;
+    
+    bool any = false;
+    outAvoid = { 0,0,0 };
+    nearest = 1e9f;
+
+    for (float a : angs)
+    {
+        D3DXVECTOR3 dir = ForwardFromYaw(yaw + a);
+        dir.y = 0.f;
+        float hitD;
+        if (HasObstacleAheadWithBox(selfBox, dir, prode, step, hitD))
+        {
+            any = true;
+            nearest = std::min(nearest, hitD);
+            //前線ベクトル
+            D3DXVECTOR3 tang = { dir.z, 0.f,-dir.x };
+            outAvoid.x += tang.x;
+            outAvoid.z += tang.z;
+        }
+    }
+    return any;
+}
+
+float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep)
+{
+    auto body = Body();
+    if (!body)
+    {
+        return curYaw;
+    }
+    
+    auto box = std::dynamic_pointer_cast<CBoxCollider>(body->GetCollider());
+    if (!box)
+    {
+
+        return curYaw;
+    }
+    D3DXVECTOR3 avoid;
+    float nearHit;
+    const bool blocke = SenseObstacleAABB(*box, curYaw, avoid, nearHit);
+    
+    if(m_AvoidHolde > 0)
+    { 
+        --m_AvoidHolde;
+        return curYaw + turnStep * (float)m_AvoidSide;
+    }
+    //基本的には左
+    if (blocke)
+    {
+        if (m_AvoidSide  == 0)
+        {
+            m_AvoidSide = (avoid.x + avoid.z >= 0) ? +1 : -1;
+        }
+        m_AvoidHolde = m_AvoidMax;
+        return curYaw + turnStep * m_AvoidSide;
+    }
+    
+    //通常時の動作
+    const float d = Wrap(curYaw - desiredYaw);
+    if (d > turnStep) return curYaw + turnStep;
+    if (d < -turnStep) return curYaw - turnStep;
+    return curYaw + d;
+}
+
+
+
+
+
 
 
 

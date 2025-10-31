@@ -436,12 +436,4 @@ int CPlayerManager::FindFirstPadReceiver(int StartIndex) const
 }
 
 
-void CPlayerManager::SetPlayerTuningAll(const TankTuning& t) {
-	for (auto& p : m_pPlayers) p->SetTuning(t);
-}
-void CPlayerManager::SetPlayerTuning(int idx, const TankTuning& t) {
-	if (idx >= 0 && idx < (int)m_pPlayers.size()) m_pPlayers[idx]->SetTune(t);
-}
-
-
 
