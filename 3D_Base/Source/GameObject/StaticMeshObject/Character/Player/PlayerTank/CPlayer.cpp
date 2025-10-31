@@ -50,12 +50,12 @@ static inline float Deadzone(float v, float z)
 
 
 CPlayer::CPlayer()
-	: m_pBody		( nullptr )
-	, m_pCannon		( nullptr )
-	, m_Hp			( 2 )
-	, m_PlayerID	()
-	, m_pPad		( nullptr )
-	, m_HasControl	( false )
+	: m_pBody(nullptr)
+	, m_pCannon(nullptr)
+	, m_Hp(2)
+	, m_PlayerID()
+	, m_pPad(nullptr)
+	, m_HasControl(false)
 {
 }
 
@@ -73,10 +73,8 @@ void CPlayer::Initialize(int id)
 	m_pCannon->Initialize(id);
 	m_pBody->Initialize(id);
 
-	auto im = std::make_shared<CInputManager>();	
+	auto im = std::make_shared<CInputManager>();
 	SetInputManagerShared(im);
-
-
 }
 
 //‹¤—L
@@ -131,7 +129,7 @@ void CPlayer::SetPushBack(const D3DXVECTOR3& push)
 	m_pBody->PushBack(push);
 	m_pCannon->PushBack(push);
 }
-   
+
 void CPlayer::Update()
 {
 	//‘€ìŒ ‚ª‚È‚¢Žž‚Í“ü—Í‚ð“Ç‚Ü‚È‚¢
@@ -174,7 +172,7 @@ void CPlayer::UpdateHumanInputAndMove()
 	}
 #endif
 
-	const float dt = 1.f;	
+	const float dt = 1.f;
 	//const auto& tuning = GetTuning();
 
 	D3DXVECTOR3 pos = m_pBody->GetPosition();
@@ -200,8 +198,6 @@ void CPlayer::UpdateHumanInputAndMove()
 	}
 	m_pCannon->SetRotation(cannonrot);
 	m_pCannon->Update();
-
-
 }
 
 //–C“ƒ‚ÆŽÔ‘Ì‚ð“¯Šú‚·‚é
