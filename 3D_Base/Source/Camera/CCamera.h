@@ -18,8 +18,6 @@ public:
 	void SetCamera();
 	//カメラの位置設定.
 	void SetCameraPos(float x, float y, float z);
-	//ライトの位置設定.
-	void SetLightPos(float x, float y, float z);
 	//ライトの回転設定.
 	void SetLightRot(float x, float y, float z);
 
@@ -45,7 +43,14 @@ public:
 	//自由移動.
 	void FreeMove();
 
+	const LIGHT& GetLight() const { return m_Light; }
+	void SetLightPos(float x, float y, float z) { m_Light.Position = D3DXVECTOR3(x, y, z); }
+	void SetLightColor(float r, float g, float b) { m_Light.Color = D3DXVECTOR3(r, g, b); }
+	void SetLightIntensity(float I) { m_Light.fIntensity = I; }
+	void SetLightRange(float r) { m_Light.Range = r; }
+	void SetLightAtten(float kc, float kl, float kq) { m_Light.Atten = D3DXVECTOR3(kc, kl, kq); }
 
+	const D3DXVECTOR3& GetPosition() const { return m_Position; }
 
 public:
 	//構造体設定変数.

@@ -35,17 +35,13 @@ void CBody::Initialize(int id)
 
 void CBody::Update()
 {
-	if (m_Input)
-	{
+	if (m_Input) { 
 		m_Input->Update();
 	}
 
 	// YÀ•W‚ğŒÅ’è
 	m_vPosition.y = 0;
 
-	KeyInput();		// “ü—Íˆ—
-	RadioControl();	// ‰ñ“]EˆÚ“®ˆ—
-	CCharacter::Update();
 }
 
 void CBody::Draw(

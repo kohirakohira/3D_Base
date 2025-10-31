@@ -261,7 +261,13 @@ void CGameMain::Draw()
 	{
 		//カメラ更新.
 		camera->Update();
-
+		auto Camera = camera->GetPosition();
+		//ライト設定
+		camera->SetLightPos(0.f, 40.f, 0.f);			//ライトのポジション
+        camera->SetLightColor(1.f, 1.f, 1.f);			//色は通常
+        camera->SetLightIntensity(55.f);				//ライトの明るさ
+        camera->SetLightRange(1e9);						//影響半径
+        camera->SetLightAtten(1e9, 1e9, 1e9);			//kc,kl,kq
 		//スナップショットをconst参照でキャプチャ.
 		D3DXMATRIX& view	= camera->m_mView;
 		D3DXMATRIX& proj	= camera->m_mProj;
@@ -691,11 +697,11 @@ HRESULT CGameMain::LoadData()
 		256, 256		//アニメーションをしないので、0でいい..
 	};
 	//制限時間の枠の読み込み
-	m_pSprite2DTimerFrame	->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE, false);
-	m_pSprite2DTimer		->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE, false);
-	m_pSprite2DTimerArrow	->Init(_T("Data\\Texture\\UI\\Timer\\TimerArrow.png"), TIMER_SIZE, true);
-	m_pSprite2DKillNomber	->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE, false);
-	m_pSprite2DHitPoint		->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE, true);
+	m_pSprite2DTimerFrame->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE, false);
+	m_pSprite2DTimer->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE, false);
+	m_pSprite2DTimerArrow->Init(_T("Data\\Texture\\UI\\Timer\\TimerArrow.png"), TIMER_SIZE, true);
+	m_pSprite2DKillNomber->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE, false);
+	m_pSprite2DHitPoint->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE, true);
 
 	//画像をアタッチ
 	m_pSpriteTimerFrame	->AttachSprite(m_pSprite2DTimerFrame);
@@ -716,19 +722,19 @@ HRESULT CGameMain::LoadData()
 	{
 		switch (i)
 		{
-			case 0:
+		case 0:
 			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\OneP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
-			case 1:
+		case 1:
 			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TwoP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
-			case 2:
+		case 2:
 			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TreeP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
-			case 3:
+		case 3:
 			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\FourP.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
@@ -788,7 +794,7 @@ HRESULT CGameMain::LoadData()
 	m_pStaticMesh_BulletBlue->Init(_T("Data\\Mesh\\Static\\Bullet\\Blue\\Ball.x"));
 	// 弾(緑)
 	m_pStaticMesh_BulletGreen->Init(_T("Data\\Mesh\\Static\\Bullet\\Green\\Ball.x"));
-	
+
 	//壁
 	m_pStaticMeshWallW->Init(_T("Data\\Collision\\Wall1.x"));
 	m_pStaticMeshWallH->Init(_T("Data\\Collision\\Wall2.x"));
@@ -861,6 +867,29 @@ HRESULT CGameMain::LoadData()
 
 	// バウンディングの作成
 	CreateBounding();
+
+
+	//ステージが持つ静的障害物
+	std::vector<std::shared_ptr<CBoxCollider>> m_StaticBox;
+
+
+	if (auto com = std::make_shared<CComPlayer>())
+	{
+		com->SetObject(&m_StaticBox);
+	}
+
+
+
+#if 0
+
+	// 全COMに障害物ソースを渡す
+	for (auto& p : m_pPlayerManager->Players()) {
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(p)) {
+			com->SetObstacleSource(&m_StaticBoxes);
+		}
+	}
+
+#endif
 
 	return S_OK;
 }
