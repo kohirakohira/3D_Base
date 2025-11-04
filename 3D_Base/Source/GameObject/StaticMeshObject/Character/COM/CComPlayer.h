@@ -20,6 +20,45 @@
 #include <unordered_map>
 #include <limits>
 
+#if 0
+#include <random>
+
+enum class ComStyle {
+	Aggressive,   // グイグイ詰める
+	StrafeLeft,   // 左周りで周回
+	StrafeRight,  // 右周りで周回
+	Sniper,       // できるだけ止まって遠距離精度
+	Coward,       // すぐ下がる・回避重視
+	Collector,    // アイテム優先
+	Random        // ランダムに揺らす
+};
+
+enum class MovePolicy {
+	Straight,     // 直進（詰める）
+	OrbitL,       // 左回り周回（目標の周りを円運動）
+	OrbitR,       // 右回り周回
+	KeepAway,     // 離れる（距離を保つ／後退）
+	Hold          // その場維持
+};
+
+struct Personality {
+	float moveSpeedScale = 1.0f;  // 速度倍率
+	float turnSpeedScale = 1.0f;  // 旋回速度倍率
+	float keepDistance = 9.0f;  // 目標の維持距離
+	float avoidRadius = 10.0f; // 分離半径
+	float avoidWeight = 2.0f;  // 分離重み
+	float fireConeDeg = 10.0f; // 許容射角
+	int   retargetInterval = 120;   // リターゲット間隔
+	float stickinessRatio = 0.8f;  // 乗り換えにくさ
+	float wanderDelta = 0.08f; // Wander 角加算幅
+	float wanderClamp = 0.6f;  // Wander 角の上限
+	float strafeRadius = 9.0f;  // 周回するときの半径（=目標距離）
+	float strafeSpeedScale = 1.0f;  // 周回時の速度倍率
+	float keepAwayBias = 1.0f;  // 後退選好の強さ
+	float itemBias = 0.0f;  // アイテム志向（Collectorで大きめ）
+	float forgetDistance = 60.0f; // これ以上離れたら忘れる
+};
+#endif
 
 class CComPlayer
 	: public CPlayer
@@ -57,7 +96,15 @@ public:
 
 	//当たり判定用
 	void SetObject(const std::vector<std::shared_ptr<CBoxCollider>>* BoxCollider) {};
-
+//
+//#if 0
+//	void SetStyle(ComStyle style);     // スタイルを指定
+//	ComStyle GetStyle() const { return m_Style; }
+//
+//	// ちょいランダム化
+//	void RandomizeMinorTraits(unsigned seed);
+//
+//#endif
 private:
 	//構造体
 	//COMのショット関連のパラメータ
@@ -119,6 +166,22 @@ private:
 
 	//回避側に固定旋回を混ぜる
 	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
+
+
+	//// スタイルを性格に落とし込む
+	//void ApplyStyle(ComStyle style);
+
+	//// 距離や状況によって移動ポリシーを切替
+	//void ChooseMovePolicyIfNeeded(float distToTarget);
+
+	//// ポリシーに応じた移動1フレーム分（回頭・前進）を行う
+	//void TickMovePolicy(const D3DXVECTOR3& targetPos);
+
+	//// 目標周回向け：接線方向を返す（左回り/右回り）
+	//D3DXVECTOR3 TangentAroundTarget(const D3DXVECTOR3& self, const D3DXVECTOR3& target, bool left) const;
+
+	//// 乱数ヘルパ
+	//float RandRange(float a, float b);
 
 
 	// ヘルパ
@@ -197,6 +260,17 @@ private:
 	float		m_AvoidHolde;
 	int			m_AvoidSide;
 	float		m_AvoidMax;
+
+#if 0
+	ComStyle     m_Style = ComStyle::Aggressive;
+	Personality  m_Personality{};
+	MovePolicy   m_MovePolicy = MovePolicy::Straight;
+	int          m_MovePolicyFrames = 0;     // いまのポリシー継続フレーム
+	int          m_MovePolicyMin = 45;    // ポリシー最低継続
+	int          m_MovePolicyMax = 120;   // ポリシー最長継続
+
+	std::mt19937 m_Rng{ 12345 };              // 個体ごと RNG
+#endif
 };
 
 
