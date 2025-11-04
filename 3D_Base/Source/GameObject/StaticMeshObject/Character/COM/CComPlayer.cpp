@@ -429,6 +429,8 @@ void CComPlayer::StepSeek()
         //‰ñ“ª‚µ‚Ä‘_‚Á‚Ä‚¤‚Â
         TickAimTo(m_pTarget->GetPosition());
         TryAutoFire();
+        std::cout << "move:\f" << tuning.moveSpeed << std::endl;
+
     }
 }
 
