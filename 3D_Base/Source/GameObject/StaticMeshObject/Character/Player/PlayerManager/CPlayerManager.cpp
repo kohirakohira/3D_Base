@@ -287,6 +287,16 @@ void CPlayerManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::shared_p
 	}
 }
 
+void CPlayerManager::SetPlayerTuningAll(const TankTuning& t)
+{
+	for (auto& player : m_pPlayers)player->SetTuning(t);
+}
+
+void CPlayerManager::SetPlayerTuning(int idx, const TankTuning& t)
+{
+	if (idx >= 0 && idx < (int)m_pPlayers.size())m_pPlayers[idx]->SetTune(t);
+}
+
 void CPlayerManager::SyncByPadConnection()
 {
 	//Ú‘±‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğæ“¾‚·‚é

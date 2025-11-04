@@ -121,10 +121,10 @@ void CGameMain::Update()
 	//動的に生成.
 	//アイテムボックス.
 	m_pItemBoxManager->Create();
-	//アイテムボックスの位置設定.
-	//m_pItemBoxManager->;
 	//アイテムの動作..
 	m_pItemBoxManager->Update();
+	// アイテムボックスマネージャーをセット
+	m_pCollisionManager->SetCItemBoxManager(m_pItemBoxManager);
 
 //-----メイン演出用-----..
 	
@@ -212,9 +212,6 @@ void CGameMain::Update()
 
 	// 地面の更新
 	m_pGround->Update();
-
-	// 当たり判定
-	//Collision();
 
 	// 当たり判定の更新
 	m_pCollisionManager->Update();
@@ -639,7 +636,6 @@ void CGameMain::Create()
 	m_pCollisionManager = std::make_shared<CCollisionManager>();
 
 	// 当たり判定マネージャーに必要なクラスをセット
-
 	// 爆風用の弾をセット
 	m_pCollisionManager->SetStaticBlast(m_pStaticMesh_BulletRed);
 
@@ -660,9 +656,6 @@ void CGameMain::Create()
 	
 	// 爆風マネージャーをセット
 	m_pCollisionManager->SetCBlastCollisionManager(m_pBlastManager);
-	
-	// アイテムボックスマネージャーをセット
-	m_pCollisionManager->SetCItemBoxManager(m_pItemBoxManager);
 }
 
 HRESULT CGameMain::LoadData()
