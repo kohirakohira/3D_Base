@@ -192,6 +192,9 @@ private:
 	float	m_ItemPickUpRaius;			//以下なら取得.最終的には当たり判定でやる
 	ComShotState m_ShotState;
 
+
+
+	//簡易的なレイ.仮実装
 	const float m_ProdeAngleRad;		
 	float		m_ProdeDist;
 	float		m_AvoidHolde;

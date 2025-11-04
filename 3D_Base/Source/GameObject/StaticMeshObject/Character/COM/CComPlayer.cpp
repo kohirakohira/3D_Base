@@ -86,10 +86,12 @@ void CComPlayer::Initialize(int id)
 void CComPlayer::SanitizeParams()
 {
     auto& tuning = GetTuning();
+#if 0
     if (tuning.moveSpeed <= 0.0f)           tuning.moveSpeed;
     if (tuning.bodyTurnSpeed <= 0.0f)       tuning.bodyTurnSpeed;
     if (tuning.cannonHeight <= 0.0f)        tuning.cannonHeight;
     if (tuning.turretTurnSpeed <= 0.0f)     tuning.turretTurnSpeed;
+#endif
     if (m_AvoidRadius < 0.0f)               m_AvoidRadius = 0.0f;
     if (m_AvoidWeight < 0.0f)               m_AvoidWeight = 0.0f;
     if (m_AttacRadius < 0.0f)               m_AttacRadius = 10.0f;
@@ -541,6 +543,9 @@ void CComPlayer::StepEvade()
 //アイテム取得.アイテム認識
 void CComPlayer::StepItemSeek()
 {
+    auto item = std::shared_ptr<CItemBox>();
+    item->SpeedUpEffect();
+    item->PowerUpEffect();
 }
 
 void CComPlayer::EvaluateTransitions(float dist2)

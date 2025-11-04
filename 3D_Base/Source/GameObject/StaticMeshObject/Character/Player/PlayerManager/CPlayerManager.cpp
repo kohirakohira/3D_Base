@@ -435,5 +435,34 @@ int CPlayerManager::FindFirstPadReceiver(int StartIndex) const
 	return -1;
 }
 
+#if 0
+// そのプレイヤーが人間操作か
+bool CPlayerManager::IsHumanPlayer(int index) const
+{
+	if (index < 0 || index >= (int)m_pPlayers.size()) return false;
+	return m_pPlayers[index]->HasControl();
+}
+
+// そのプレイヤーがCOM制御か
+bool CPlayerManager::IsComPlayer(int index) const
+{
+	if (index < 0 || index >= (int)m_pPlayers.size()) return false;
+
+	if (auto com = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[index])) {
+		return com->IsComEnabled();
+	}
+	return false;
+}
+
+// そのプレイヤーにPadが刺さっているか
+bool CPlayerManager::HasPad(int index) const
+{
+	if (index < 0 || index >= (int)m_PlayerPad.size()) return false;
+
+	const int padIdx = m_PlayerPad[index];
+	return (padIdx >= 0 && m_PadConnected[padIdx]);
+}
+
+#endif
 
 

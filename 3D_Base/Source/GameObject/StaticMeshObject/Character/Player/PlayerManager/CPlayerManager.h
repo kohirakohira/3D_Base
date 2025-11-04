@@ -68,6 +68,15 @@ public:
 	void SetPlayerTuningAll(const TankTuning& t);
 	void SetPlayerTuning(int idx, const TankTuning& t);
 
+	//プレイヤーかどうか.外部でコントローラーの判定を取る用
+	bool IsHumanPlayer(int index) const;
+
+	//COMかどうか
+	bool IsComPlayer(int index) const;
+
+	//padが接続されているかどうか
+	bool HasPad(int index) const;
+
 private:
 	//↓松岡.
 	std::shared_ptr<CBody>					m_pBody;
