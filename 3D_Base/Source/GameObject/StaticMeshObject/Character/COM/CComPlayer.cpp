@@ -355,6 +355,10 @@ void CComPlayer::Update()
         return;
     }
 
+    //障害物の乗り込み対策.yを0で固定
+    auto pos = body->GetPosition();
+    body->SetPosition(pos.x, pos.y = 0, pos.z);
+
     //定期リターゲット
     if (--m_RetargetTimer <= 0 || !m_pTarget) {
         MakeFixedTimeTarget();
