@@ -54,6 +54,8 @@ CComPlayer::CComPlayer()
     , m_AvoidHolde          ( 0.f )
     , m_AvoidSide           ( 0 )
     , m_AvoidMax            ( 0.f )
+    , m_MovePolicy          ( MovePolicy::Straight )
+    , m_Style               ( ComStyle::Aggressive )
 {
 }
 
@@ -79,6 +81,8 @@ void CComPlayer::Initialize(int id)
         m_Registered = true;
     }
 
+    m_pData = std::make_shared<ComData>();
+
 }
 
 //不正値を防ぐ
@@ -96,27 +100,6 @@ void CComPlayer::SanitizeParams()
     if (m_FireConeDeg < 0.0f)               m_FireConeDeg = 10.0f;
 }
 
-//[-π,π]に正規化
-float CComPlayer::Wrap(float a)
-{
-    while (a > PI())     a -= TWO_PI();
-    while (a < -PI())     a += TWO_PI();
-    return a;
-}
-
-//一方向にstepだけ近づける
-float CComPlayer::Approach(float cur, float goal, float step)
-{
-    const float d = goal - cur;
-    if (d > step)  return cur + step;
-    if (d < -step) return cur - step;
-    return goal;
-}
-
-D3DXVECTOR3 CComPlayer::ForwardFromYaw(float yaw)
-{
-    return D3DXVECTOR3(std::sinf(yaw), 0.0f, std::cosf(yaw));
-}
 
 //COM同士の分離ベクトルを計算
 void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
@@ -164,124 +147,6 @@ void CComPlayer::ChangeState(State state)
     m_StateFrames = 0;
 } 
 
-// 本体を常にターゲットへ回頭＋前進
-void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
-{
-    //パラメータ取得
-    auto& tuning = GetTuning();
-
-    std::shared_ptr<CBody> body = Body();
-    if (!body) return;
-
-    // 現在姿勢
-    D3DXVECTOR3 pos = body->GetPosition();
-    float yaw = body->GetRotation().y;
-
-    // 水平面の差分
-    D3DXVECTOR3 target = targetPos - pos;
-    target.y = 0.0f;
-    const float d2 = target.x * target.x + target.z * target.z;
-
-    // 目標方位へ最短差で回頭
-    if (d2 > 1e-6f) {
-        const float desiredYaw = std::atan2f(target.x, target.z);               // +Z前 左手座標
-        yaw = Approach(yaw, yaw + Wrap(desiredYaw - yaw), tuning.turretTurnSpeed);
-    }
-
-    D3DXVECTOR3 chaseDir(0, 0, 0);
-    if (d2 > 1e-6f) {
-        const float inv = 1.0f / std::sqrtf(d2);
-        chaseDir.x = target.x * inv;    //正規化
-        chaseDir.z = target.z * inv;
-    }
-
-    //分離ベクトル
-    D3DXVECTOR3 sep(0, 0, 0);
-    float nearest = 1e9f;
-    ComputeSeparation(pos, sep, nearest);
-
-    //ブレンド
-    D3DXVECTOR3 desire = chaseDir;  //目標優先
-    if (m_AvoidWeight > 0.0f && (sep.x != 0.0f || sep.z != 0.0f)) {
-        //sepを正規化して重み付け
-        const float sepLen = std::sqrt(sep.x * sep.x + sep.z * sep.z);
-        if (sepLen > 1e-6f) {
-            sep.x /= sepLen; sep.z /= sepLen;
-            desire.x += sep.x * m_AvoidWeight;
-            desire.z += sep.z * m_AvoidWeight;
-        }
-    }
-
-    //合成方向が有効ならその方位にいく
-    float desiredYaw = yaw;
-    const float desLen2 = desire.x * desire.x + desire.z * desire.z;
-    if (desLen2 > 1e-8f) {
-        desiredYaw = std::atan2f(desire.x, desire.z);
-        yaw = Approach(yaw, yaw + Wrap(desiredYaw - yaw), tuning.turretTurnSpeed);
-    }
- 
-    //前進量の決定
-    float step = tuning.moveSpeed;
-    if (d2 > 0.0f) {
-        const float dist = std::sqrtf(d2);
-        if (m_KeepDistance > 0.0f) {
-            const float remain = dist - m_KeepDistance;
-            if (remain <= 0.0f) {
-                step = 0.0f;    //これ以上は詰めない
-            }
-            else if (step > remain) {
-                step = remain;
-            }
-            else
-            {
-                if (step > dist)step = dist;
-            }
-        }
-    }
-
-    //COMが近すぎるときは減速.完全停止もする
-    if (nearest < 1e9f && m_AvoidRadius > 0.0f) {
-        float scale = nearest / m_AvoidRadius;
-        if (scale < 0.0f) scale = 0.0f;
-        if (scale > 1.0f) scale = 1.0f;
-        step *= scale;
-    }
-
-    // 前進（ヨーに沿って +Z 基準で）
-    if (step > 0.0f) {
-        const D3DXVECTOR3 fwd = ForwardFromYaw(yaw);
-        pos += fwd * step;
-    }
-
-    // 反映
-    body->SetRotation(D3DXVECTOR3(0.0f, yaw, 0.0f));
-    body->SetPosition(pos);
-    body->CCharacter::Update();
-}
-
-// 砲塔があれば常にターゲットを向く
-void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
-{
-    auto& tuning = GetTuning();
-    std::shared_ptr<CCannon> cannon = Cannon();
-    const std::shared_ptr<CBody> body = Body();
-    if (!cannon) return;
-
-    // 砲塔の基準位置
-    D3DXVECTOR3 base = body ? body->GetPosition() : cannon->GetPosition();
-    base.y += tuning.cannonHeight;
-
-    // 目標方位
-    const D3DXVECTOR3 target = targetPos - base;
-    const float desiredYaw = std::atan2f(target.x, target.z);
-
-    float cyaw = cannon->GetRotation().y;
-    cyaw = Approach(cyaw, cyaw + Wrap(desiredYaw - cyaw),tuning.turretTurnSpeed);
-
-    cannon->SetPosition(base);
-    cannon->SetRotation(D3DXVECTOR3(0.0f, cyaw, 0.0f));
-    cannon->CCharacter::Update();
-}
 
 //砲口のワールド座標とヨー角を計算
 void CComPlayer::ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const
@@ -305,7 +170,7 @@ void CComPlayer::ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const
     }
 
     base.y += tunign.cannonHeight; //砲塔の高さオフセット
-    const D3DXVECTOR3 forwared = ForwardFromYaw(yaw);
+    const D3DXVECTOR3 forwared = m_pData->ForwardFromYaw(yaw);
 
     outpos = base + forwared * m_ShotState.MuzzleOffsetZ;   //砲身先端オフセット
     outYaw = yaw;
@@ -321,21 +186,6 @@ inline float CComPlayer::DistXZ(const D3DXVECTOR3& targetPos, const D3DXVECTOR3&
 
 }
 
-inline float CComPlayer::AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos)
-{
-    D3DXVECTOR3 vec = toPos - fromPos;
-    vec.y = 0.f;
-
-    if (vec.x == 0 && vec.z == 0)
-    {
-        return 0.f;
-    }
-
-    const float desired = std::atan2f(vec.x, vec.z);
-    const float error = Wrap(desired - fromYaw);
-    return std::fabs(error);
-
-}
 
 void CComPlayer::Update()
 {
@@ -431,24 +281,21 @@ void CComPlayer::StepSeek()
     if (m_pTarget)
     {
         //回頭して狙ってうつ
-        TickAimTo(m_pTarget->GetPosition());
+        m_pData->TickAimTo(m_pTarget->GetPosition());
         TryAutoFire();
-        //std::cout << "move:\f" << tuning.moveSpeed << std::endl;
-
     }
 }
 
 
 void CComPlayer::StepChase()
 {
-
     //パラメータ
     const auto tuning = GetTuning();
     TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);
 
     if (m_pTarget)
     {
-        TickAimTo(m_pTarget->GetPosition());
+        m_pData->TickAimTo(m_pTarget->GetPosition());
         TryAutoFire();
     }
 #if 0
@@ -482,7 +329,7 @@ void CComPlayer::StepAttack()
     TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);
     if (m_pTarget)
     {
-        TickAimTo(m_pTarget->GetPosition());
+        m_pData->TickAimTo(m_pTarget->GetPosition());
         TryAutoFire();
     }
 }
@@ -517,14 +364,14 @@ void CComPlayer::StepEvade()
         away.z *= invLen;
         
         //少し後退
-        const float step = tuning.moveSpeed * 0.6f;
+        const float step = tuning.moveSpeed;
         const D3DXVECTOR3 pos = selfPos + away * step;
 
         //逃げ方向へ向きを寄せる
         float yaw = body->GetRotation().y;
         const float desired = std::atan2f(away.x, away.z);
-        const float delta = Wrap(desired - yaw);
-        yaw = Approach(yaw, yaw + delta, tuning.turretTurnSpeed);
+        const float delta = m_pData->Wrap(desired - yaw);
+        yaw = m_pData->Approach(yaw, yaw + delta, tuning.turretTurnSpeed);
 
         body->SetPosition(pos);
         body->SetRotation(D3DXVECTOR3(0.0f,yaw, 0.0f));
@@ -641,10 +488,10 @@ void CComPlayer::TryAutoFire()
     auto manager = m_pShotManager.lock();
     if (!manager || !m_pTarget) return;
 
-    if (m_ShotState.m_ShotCD > 0) 
-    { 
+    if (m_ShotState.m_ShotCD > 0)
+    {
         --m_ShotState.m_ShotCD;
-        return; 
+        return;
     }
 
     D3DXVECTOR3 muzzle; float yaw = 0.f;
@@ -656,11 +503,11 @@ void CComPlayer::TryAutoFire()
     if (d2 <= 1e-6f) return;
 
     const float desired = std::atan2f(to.x, to.z);
-    const float err = std::fabs(Wrap(desired - yaw));
+    const float err = std::fabs(m_pData->Wrap(desired - yaw));
 
     //まずは広めに
     if (err <= ToRad(m_ShotState.FireAngleEpsDeg)) {
-        manager->SetReload(BulletKinds::Mesh_2, muzzle, yaw);
+        manager->SetReload(m_PlayerID, muzzle, yaw);
         m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
     }
 }
@@ -706,7 +553,6 @@ D3DXVECTOR3 CComPlayer::GetRotation() const
     return CCharacter::GetRotation();
 }
 
-
 void CComPlayer::TickWander(float turnStep, float moveStep)
 {
     //body取得
@@ -743,7 +589,7 @@ void CComPlayer::TickWander(float turnStep, float moveStep)
 
     //回頭
     float yawRed = body->GetRotation().y;
-    yawRed = Approach(yawRed, yawRed + m_WanderAngle, turnStep);
+    yawRed = m_pData->Approach(yawRed, yawRed + m_WanderAngle, turnStep);
 
     //位置
     D3DXVECTOR3 pos = body->GetPosition();
@@ -754,7 +600,7 @@ void CComPlayer::TickWander(float turnStep, float moveStep)
     ComputeSeparation(pos, dir, Dist);
 
     //後退
-    D3DXVECTOR3 Dir = ForwardFromYaw(yawRed);
+    D3DXVECTOR3 Dir = m_pData->ForwardFromYaw(yawRed);
     pos += Dir * moveStep;
     pos.x += dir.x * 0.02f;
     pos.z += dir.z * 0.02f;
@@ -864,7 +710,7 @@ bool CComPlayer::SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXV
 
     for (float a : angs)
     {
-        D3DXVECTOR3 dir = ForwardFromYaw(yaw + a);
+        D3DXVECTOR3 dir = m_pData->ForwardFromYaw(yaw + a);
         dir.y = 0.f;
         float hitD;
         if (HasObstacleAheadWithBox(selfBox, dir, prode, step, hitD))
@@ -915,7 +761,7 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
     }
     
     //通常時の動作
-    const float d = Wrap(curYaw - desiredYaw);
+    const float d = m_pData->Wrap(curYaw - desiredYaw);
     if (d > turnStep) return curYaw + turnStep;
     if (d < -turnStep) return curYaw - turnStep;
     return curYaw + d;
@@ -940,7 +786,6 @@ void CComPlayer::ApplyStyle(ComStyle style)
         m_AvoidRadius;
         m_AvoidWeight;
         m_FireConeDeg;
-
         break;
     case ComStyle::StrafeLeft:
         break;
@@ -957,7 +802,11 @@ void CComPlayer::ApplyStyle(ComStyle style)
     }
 }
 
-/*
+void CComPlayer::Random(unsigned seed)
+{
+}
+
+#if 0
     // デフォルトをベースにして上書き
     m_Personality = Personality{};
 
@@ -1363,7 +1212,7 @@ D3DXVECTOR3 CComPlayer::TangentAroundTarget(const D3DXVECTOR3& self, const D3DXV
 }
 
 #endif
-*/
+
 
 
 

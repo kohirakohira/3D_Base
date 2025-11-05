@@ -14,6 +14,8 @@
 //当たり判定.障害物判定用
 #include "Collision/Collider/BoxCollider/CBoxCollider.h"
 
+//COMデータ
+#include "GameObject/StaticMeshObject/Character/COM/ComData/ComData.h"
 
 //-----ライブラリ-----
 #include <d3dx9math.h>
@@ -122,18 +124,13 @@ public:
 	//COMのスタイル取得
 	ComStyle GetStyle() const { return  m_Style; }
 
+	//ランダムで変更
+	void Random(unsigned seed);
 
+	//分離COMが重なったりするのを防ぐ計算
+	void ComputeSeparation(const D3DXVECTOR3& selfPos,
+		D3DXVECTOR3& outSep, float& outNearest) const;
 
-
-
-//#if 0
-//	void SetStyle(ComStyle style);     // スタイルを指定
-//	ComStyle GetStyle() const { return m_Style; }
-//
-//	// ちょいランダム化
-//	void RandomizeMinorTraits(unsigned seed);
-//
-//#endif
 private:
 	//構造体
 	//COMのショット関連のパラメータ
@@ -164,10 +161,9 @@ private:
 	void StepEvade();													//離脱処理
 	void StepItemSeek();												//アイテム探索処理
 	void TryAutoFire();													//COMの弾発射処理
+
 	void MakeItemTarget();												
 	void SanitizeParams();												//パラメータ調整
-	void TickChaseTo(const D3DXVECTOR3& targetPos);						//追尾
-	void TickAimTo(const D3DXVECTOR3& targetPos);						//砲塔追尾
 	void TickWander(float turnStep, float moveStep);
 	void Blacklist(int id) { m_TargetBlackList[id] = m_BlackListTime; }	//一定時間ターゲットにしない
 	bool IsBlacklisted(int id) const;									//IDがリストに登録されているか判定.読み取り専用
@@ -178,7 +174,6 @@ private:
 	void MakeFixedTimeTarget();											//一定時間ターゲットにする
 	static float Deg2Red(float d) { return d * (D3DX_PI / 180.0f); }
 	static float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b);
-	static float AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos);
 	float  NearestItemDist2(float& outDist2) const;						//近い箱の距離2乗
 	static float ToRad(float d) { return d * (D3DX_PI / 180.0f); }
 	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
@@ -234,9 +229,6 @@ private:
 	//動作切り替え
 	static float Sqr(float v) { return v * v; }
 
-	//分離COMが重なったりするのを防ぐ計算
-	void ComputeSeparation(const D3DXVECTOR3& selfPos,
-		D3DXVECTOR3& outSep, float& outNearest) const;
 
 	//COMの状態変更
 	void ChangeState(State state);
@@ -251,7 +243,7 @@ private:
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;					//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;								//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;	//障害物の一部を外部から差し込む
-
+	std::shared_ptr<ComData> m_pData;
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
 	float	m_KeepDistance;				//この距離を保つ
