@@ -1,4 +1,5 @@
 #pragma once
+#if 0
 //#include "GameObject/StaticMeshObject/Character/COM/CComPlayer.h"	//COMクラス
 #include "GameObject/StaticMeshObject/Character/Player/PlayerTank/CPlayer.h"    //プレイヤークラス
 
@@ -64,3 +65,4 @@ public:
     void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 
 };
+#endif

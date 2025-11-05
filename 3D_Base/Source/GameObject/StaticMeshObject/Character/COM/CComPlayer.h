@@ -102,8 +102,6 @@ private:
 	void MakeFixedTimeTarget();											//一定時間ターゲットにする
 	static float Deg2Red(float d) { return d * (D3DX_PI / 180.0f); }
 	static float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b);
-	static float AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos);
-	float  NearestItemDist2(float& outDist2) const;						//近い箱の距離2乗
 	static float ToRad(float d) { return d * (D3DX_PI / 180.0f); }
 	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 

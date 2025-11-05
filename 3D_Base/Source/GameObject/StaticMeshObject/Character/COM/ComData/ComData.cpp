@@ -1,3 +1,5 @@
+#if 0
+
 #include "ComData.h"
 #include "GameObject/StaticMeshObject/Character/COM/CComPlayer.h"   
 
@@ -203,5 +205,5 @@ void ComData::ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const
     outYaw = yaw;
 #endif
 }
-
+#endif
 
