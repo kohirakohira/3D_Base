@@ -19,47 +19,66 @@
 #include <d3dx9math.h>
 #include <unordered_map>
 #include <limits>
-
-#if 0
 #include <random>
 
-enum class ComStyle {
-	Aggressive,   // グイグイ詰める
-	StrafeLeft,   // 左周りで周回
-	StrafeRight,  // 右周りで周回
-	Sniper,       // できるだけ止まって遠距離精度
-	Coward,       // すぐ下がる・回避重視
-	Collector,    // アイテム優先
-	Random        // ランダムに揺らす
+//COMごとに別の動きを持たせるための列挙型
+enum class ComStyle
+{
+	Aggressive,		//詰める
+	StrafeLeft,		//左旋回
+	StrafeLight,	//右旋回
+	Sniper,			//遠距離
+	Back,			//下がる
+	forworld,		//前進
+	Coward,			//回避系
+	Collector,		//アイテム優先
 };
 
-enum class MovePolicy {
-	Straight,     // 直進（詰める）
-	OrbitL,       // 左回り周回（目標の周りを円運動）
-	OrbitR,       // 右回り周回
-	KeepAway,     // 離れる（距離を保つ／後退）
-	Hold          // その場維持
+enum class MovePolicy
+{
+	Straight,	//直進
+	Left,		//左.回る
+	light,		//右.回る
+
 };
 
-struct Personality {
-	float moveSpeedScale = 1.0f;  // 速度倍率
-	float turnSpeedScale = 1.0f;  // 旋回速度倍率
-	float keepDistance = 9.0f;  // 目標の維持距離
-	float avoidRadius = 10.0f; // 分離半径
-	float avoidWeight = 2.0f;  // 分離重み
-	float fireConeDeg = 10.0f; // 許容射角
-	int   retargetInterval = 120;   // リターゲット間隔
-	float stickinessRatio = 0.8f;  // 乗り換えにくさ
-	float wanderDelta = 0.08f; // Wander 角加算幅
-	float wanderClamp = 0.6f;  // Wander 角の上限
-	float strafeRadius = 9.0f;  // 周回するときの半径（=目標距離）
-	float strafeSpeedScale = 1.0f;  // 周回時の速度倍率
-	float keepAwayBias = 1.0f;  // 後退選好の強さ
-	float itemBias = 0.0f;  // アイテム志向（Collectorで大きめ）
-	float forgetDistance = 60.0f; // これ以上離れたら忘れる
-};
-#endif
-
+//
+//enum class ComStyle {
+//	Aggressive,   // グイグイ詰める
+//	StrafeLeft,   // 左周りで周回
+//	StrafeRight,  // 右周りで周回
+//	Sniper,       // できるだけ止まって遠距離精度
+//	Coward,       // すぐ下がる・回避重視
+//	Collector,    // アイテム優先
+//	Random        // ランダムに揺らす
+//};
+//
+//enum class MovePolicy {
+//	Straight,     // 直進（詰める）
+//	OrbitL,       // 左回り周回（目標の周りを円運動）
+//	OrbitR,       // 右回り周回
+//	KeepAway,     // 離れる（距離を保つ／後退）
+//	Hold          // その場維持
+//};
+//
+//struct Personality {
+//	float moveSpeedScale = 1.0f;  // 速度倍率
+//	float turnSpeedScale = 1.0f;  // 旋回速度倍率
+//	float keepDistance = 9.0f;  // 目標の維持距離
+//	float avoidRadius = 10.0f; // 分離半径
+//	float avoidWeight = 2.0f;  // 分離重み
+//	float fireConeDeg = 10.0f; // 許容射角
+//	int   retargetInterval = 120;   // リターゲット間隔
+//	float stickinessRatio = 0.8f;  // 乗り換えにくさ
+//	float wanderDelta = 0.08f; // Wander 角加算幅
+//	float wanderClamp = 0.6f;  // Wander 角の上限
+//	float strafeRadius = 9.0f;  // 周回するときの半径（=目標距離）
+//	float strafeSpeedScale = 1.0f;  // 周回時の速度倍率
+//	float keepAwayBias = 1.0f;  // 後退選好の強さ
+//	float itemBias = 0.0f;  // アイテム志向（Collectorで大きめ）
+//	float forgetDistance = 60.0f; // これ以上離れたら忘れる
+//};
+//
 class CComPlayer
 	: public CPlayer
 {
@@ -96,7 +115,17 @@ public:
 
 	//当たり判定用
 	void SetObject(const std::vector<std::shared_ptr<CBoxCollider>>* BoxCollider) {};
-//
+
+	//COMのスタイルを外部で設定.Updateで動かすので基本的に使わない
+	void SetStyle(ComStyle style) { m_Style = style; }
+
+	//COMのスタイル取得
+	ComStyle GetStyle() const { return  m_Style; }
+
+
+
+
+
 //#if 0
 //	void SetStyle(ComStyle style);     // スタイルを指定
 //	ComStyle GetStyle() const { return m_Style; }
@@ -166,6 +195,10 @@ private:
 
 	//回避側に固定旋回を混ぜる
 	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
+
+	//COMのスタイル
+	void ApplyStyle(ComStyle style);
+
 
 
 	//// スタイルを性格に落とし込む
@@ -260,6 +293,11 @@ private:
 	float		m_AvoidHolde;
 	int			m_AvoidSide;
 	float		m_AvoidMax;
+
+	ComStyle		m_Style = ComStyle::Aggressive;			//COMの細かいステータス
+	MovePolicy		m_MovePolicy = MovePolicy::Straight;	
+
+
 
 #if 0
 	ComStyle     m_Style = ComStyle::Aggressive;

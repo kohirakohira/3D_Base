@@ -355,6 +355,10 @@ void CComPlayer::Update()
         return;
     }
 
+    //乗り上げ対策.y軸を0固定にする
+    auto pos = body->GetPosition();
+    body->SetPosition(pos.x, pos.y = 0, pos.z);
+
     //定期リターゲット
     if (--m_RetargetTimer <= 0 || !m_pTarget) {
         MakeFixedTimeTarget();
@@ -429,7 +433,7 @@ void CComPlayer::StepSeek()
         //回頭して狙ってうつ
         TickAimTo(m_pTarget->GetPosition());
         TryAutoFire();
-        std::cout << "move:\f" << tuning.moveSpeed << std::endl;
+        //std::cout << "move:\f" << tuning.moveSpeed << std::endl;
 
     }
 }
@@ -917,13 +921,43 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
     return curYaw + d;
 }
 
-/*
-#if 0
-//スタイル反映
 void CComPlayer::ApplyStyle(ComStyle style)
 {
-    m_Style = style;
+    auto tuning = GetTuning();
 
+    m_Style = style;
+    
+    //デフォルト状態に対して上書きする
+    //m_Personality = Personality{};
+
+    //状態ごとのパラメータ設定
+    switch (style)
+    {
+    case ComStyle::Aggressive:  //詰めはするけど、一定の距離感は保つ
+        tuning.moveSpeed;
+        tuning.turretTurnSpeed;
+        m_KeepDistance;
+        m_AvoidRadius;
+        m_AvoidWeight;
+        m_FireConeDeg;
+
+        break;
+    case ComStyle::StrafeLeft:
+        break;
+    case ComStyle::StrafeLight:
+        break;
+    case ComStyle::Sniper:
+        break;
+    case ComStyle::Coward:
+        break;
+    case ComStyle::Collector:
+        break;
+    default:
+        break;
+    }
+}
+
+/*
     // デフォルトをベースにして上書き
     m_Personality = Personality{};
 

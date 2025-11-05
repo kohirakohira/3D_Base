@@ -18,7 +18,7 @@
 
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	//ショットマネージャー
 
-class CXInput;	//前方宣言
+// CXInput;	//前方宣言
 
 class CPlayerManager
 	: public CCharacter
@@ -67,6 +67,14 @@ public:
 	//パラメータ設定用
 	void SetPlayerTuningAll(const TankTuning& t);
 	void SetPlayerTuning(int idx, const TankTuning& t);
+
+
+	////プレイヤーかどうか
+	//bool IsPlayer(int index) const;
+
+	////COMかどうか
+	//bool IsComPlayer(int index) const;
+
 
 private:
 	//↓松岡.
