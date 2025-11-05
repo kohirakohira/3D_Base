@@ -44,12 +44,12 @@
     <ClCompile Include="Source\SceneManager\SceneBase\GameTitle\CGameTitle.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\CGround.cpp" />
     <ClCompile Include="Source\ImGui\CImguiManager.cpp" />
-    <ClCompile Include="Source\InputDevice\Matuoka\CInputKeyManager.cpp" />
+    <ClCompile Include="Source\InputDevice\Key\InputManager\CInputKeyManager.cpp" />
     <ClCompile Include="Source\InputDevice\Input\CInputManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\ItemBoxManager\ItemBox\CItemBox.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\ItemBoxManager\CItemBoxManager.cpp" />
     <ClCompile Include="Source\InputDevice\Input\KeyInput\CKeyInput.cpp" />
-    <ClCompile Include="Source\InputDevice\Matuoka\CMultiInputKeyManager.cpp" />
+    <ClCompile Include="Source\InputDevice\Key\CMultiInputManager\CMultiInputKeyManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerManager\CPlayerManager.cpp" />
     <ClCompile Include="Source\Collision\Shape\Ray\CRay.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\CSceneBase.cpp" />
@@ -78,6 +78,9 @@
     <ClCompile Include="Source\Collision\BlastCollision\CBlastCollision.cpp" />
     <ClCompile Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CChase\CChase.cpp" />
+    <ClCompile Include="Source\InputDevice\Input\Controller\CController.cpp" />
+    <ClCompile Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -108,12 +111,12 @@
     <ClInclude Include="Source\SceneManager\SceneBase\GameTitle\CGameTitle.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Ground\CGround.h" />
     <ClInclude Include="Source\ImGui\CImguiManager.h" />
-    <ClInclude Include="Source\InputDevice\Matuoka\CInputKeyManager.h" />
+    <ClInclude Include="Source\InputDevice\Key\InputManager\CInputKeyManager.h" />
     <ClInclude Include="Source\InputDevice\Input\CInputManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\ItemBox\CItemBox.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\CItemBoxManager.h" />
     <ClInclude Include="Source\InputDevice\Input\KeyInput\CKeyInput.h" />
-    <ClInclude Include="Source\InputDevice\Matuoka\CMultiInputKeyManager.h" />
+    <ClInclude Include="Source\InputDevice\Key\CMultiInputManager\CMultiInputKeyManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerManager\CPlayerManager.h" />
     <ClInclude Include="Source\Collision\Shape\Ray\CRay.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\CSceneBase.h" />
@@ -144,6 +147,9 @@
     <ClInclude Include="Source\Collision\BlastCollision\CBlastCollision.h" />
     <ClInclude Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CChase\CChase.h" />
+    <ClInclude Include="Source\InputDevice\Input\Controller\CController.h" />
+    <ClInclude Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />

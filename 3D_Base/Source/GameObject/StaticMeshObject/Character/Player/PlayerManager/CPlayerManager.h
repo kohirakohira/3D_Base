@@ -18,7 +18,8 @@
 
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	//ショットマネージャー
 
-class CXInput;	//前方宣言
+//コントローラークラス.
+#include "InputDevice/Input/Controller/CController.h"
 
 class CPlayerManager
 	: public CCharacter
@@ -75,7 +76,7 @@ private:
     std::vector<std::shared_ptr<CPlayer>>	m_pPlayers;
 	std::shared_ptr<CShotManager> m_ShotManager; //弾マネージャー
 
-	std::array<std::unique_ptr<CXInput>, 4>	m_Pads;	//Pad0から3
+	std::unique_ptr<CXInput>				m_Pad;	//Pad0から3
 	std::array<bool, 4> m_PadConnected{};			//前フレーム接続状態
 	std::array<int, 4>m_PadIndex;					//padId->playerIdx (-1=未割当)
 	std::vector<int> m_PlayerPad;					//playerIdx->padId (-1=未割当)

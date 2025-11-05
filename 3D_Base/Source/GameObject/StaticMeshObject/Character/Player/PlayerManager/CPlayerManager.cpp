@@ -69,10 +69,12 @@ void CPlayerManager::Initialize()
 	m_PlayerPad.assign(m_pPlayers.size(), -1);	//サイズ取得と中身を同じ要素で埋める
 
 	//サイズ分回してCXInputを生成する
-	for (DWORD id = 0; id < m_Pads.size(); ++id)	//XInput側がDWORDなのであわせておく
+	for (DWORD id = 0; id < 1; ++id)	//XInput側がDWORDなのであわせておく
 	{
-		m_Pads[id] = std::make_unique<CXInput>(id);
+		m_Pad = std::make_unique<CXInput>(id);
 	}
+
+
 
 	SyncByPadConnection();
 
@@ -300,57 +302,54 @@ void CPlayerManager::SetPlayerTuning(int idx, const TankTuning& t)
 void CPlayerManager::SyncByPadConnection()
 {
 	//接続されているかどうかを取得する
-	for (int padIndex = 0; padIndex < (int)m_Pads.size(); ++padIndex) {
-		CXInput* pad = m_Pads[padIndex].get();	
-		pad->Update();
+	//for (int padIndex = 0; padIndex < (int)m_Pads.size(); ++padIndex) {
+		m_Pad->Update();
 
 		//今のフレームと前のフレームの状態
-		const bool now = pad->IsConnect();			
-		const bool prev = m_PadConnected[padIndex];
+		const bool now = m_Pad->IsConnect();
+		const bool prev = now;
 
-		if (now != prev)
-		{
-			if (now)
-			{
-				//接続
-				int targetIndex;
-				if (padIndex < static_cast<int>(m_pPlayers.size()))
-				{
-					targetIndex = padIndex;
-				}
-				else
-				{
-					targetIndex = -1;	//割り当てなし
-				}
-
-				if (targetIndex >= 0)
-				{
-					//paleyrにすでにpadがついていたら解除
-					if (m_PlayerPad[targetIndex] >= 0)
-					{
-						int oldpadIndex = m_PlayerPad[targetIndex];
-						m_PadIndex[oldpadIndex] = -1;	//古いやつは割り当てなし
-					}
-					//新しい双方向対応を設定
-					m_PadIndex[padIndex] = targetIndex;		//pad->player
-					m_PlayerPad[targetIndex] = padIndex;	//plaeyr->pad
-
-				}
-			}
-			else
-			{
-				//切断
-				const int owner = m_PadIndex[padIndex];
-				if (owner >= 0)
-				{
-					m_PlayerPad[owner] = -1;
-					m_PadIndex[padIndex] = -1;
-				}
-			}
-			//今のフレームのものを前回のものとして記録する
-			m_PadConnected[padIndex] = now;
-		}
-	}
+		//if (now != prev)
+		//{
+		//	if (now)
+		//	{
+		//		//接続
+		//		int targetIndex;
+		//		if (padIndex < static_cast<int>(m_pPlayers.size()))
+		//		{
+		//			targetIndex = padIndex;
+		//		}
+		//		else
+		//		{
+		//			targetIndex = -1;	//割り当てなし
+		//		}
+		//		if (targetIndex >= 0)
+		//		{
+		//			//paleyrにすでにpadがついていたら解除
+		//			if (m_PlayerPad[targetIndex] >= 0)
+		//			{
+		//				int oldpadIndex = m_PlayerPad[targetIndex];
+		//				m_PadIndex[oldpadIndex] = -1;	//古いやつは割り当てなし
+		//			}
+		//			//新しい双方向対応を設定
+		//			m_PadIndex[padIndex] = targetIndex;		//pad->player
+		//			m_PlayerPad[targetIndex] = padIndex;	//plaeyr->pad
+		//		}
+		//	}
+		//	else
+		//	{
+		//		//切断
+		//		const int owner = m_PadIndex[padIndex];
+		//		if (owner >= 0)
+		//		{
+		//			m_PlayerPad[owner] = -1;
+		//			m_PadIndex[padIndex] = -1;
+		//		}
+		//	}
+		//	//今のフレームのものを前回のものとして記録する
+		//	m_PadConnected[padIndex] = now;
+		//}
+	//}
 
 	for (int index = 0; index < static_cast<int>(m_pPlayers.size()); index++)
 	{
@@ -390,7 +389,7 @@ void CPlayerManager::SyncByPadConnection()
 			CXInput* padRef = nullptr;
 			if (padOn)
 			{
-				padRef = m_Pads[padIndex].get();
+				padRef = m_Pad.get();
 			}
 			m_pPlayers[index]->SetPadRef(padRef);
 		}
@@ -403,7 +402,7 @@ void CPlayerManager::SyncByPadConnection()
 			CXInput* padRef = nullptr;
 			if (padOn)
 			{
-				padRef = m_Pads[padIndex].get();
+				padRef = m_Pad.get();
 			}
 			m_pPlayers[index]->SetPadRef(padRef);
 		}

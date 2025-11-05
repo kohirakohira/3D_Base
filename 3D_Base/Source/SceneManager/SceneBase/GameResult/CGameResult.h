@@ -24,7 +24,7 @@
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス
 
 //キーバインド.
-#include "InputDevice//Matuoka//CMultiInputKeyManager.h" // キー入力用.
+#include "InputDevice//Key\\CMultiInputManager//CMultiInputKeyManager.h" // キー入力用.
 
 //--------------------------------
 // UI

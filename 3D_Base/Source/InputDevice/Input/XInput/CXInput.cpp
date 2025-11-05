@@ -150,6 +150,92 @@ bool CXInput::IsRepeat( KEY key )
 	return false;
 }
 
+float CXInput::GetLeftStickXNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.sThumbLX);
+
+	//デッドゾーン処理.
+	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+	if (fabs(value) < DEADZONE)
+	{
+		return 0.0f;
+	}
+	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
+	return value / 32767.0f;
+}
+
+float CXInput::GetLeftStickYNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.sThumbLY);
+
+	//デッドゾーン処理.
+	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+	if (fabs(value) < DEADZONE)
+	{
+		return 0.0f;
+	}
+	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
+	return value / 32767.0f;
+}
+
+float CXInput::GetRightStickXNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.sThumbLY);
+
+	//デッドゾーン処理.
+	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+	if (fabs(value) < DEADZONE)
+	{
+		return 0.0f;
+	}
+	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
+	return value / 32767.0f;
+}
+
+float CXInput::GetRightStickYNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.sThumbLX);
+
+	//デッドゾーン処理.
+	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+	if (fabs(value) < DEADZONE)
+	{
+		return 0.0f;
+	}
+	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
+	return value / 32767.0f;
+}
+
+float CXInput::GetLeftTriggerNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.bLeftTrigger);
+	//微入力を無視.
+	const float DEADZONE = XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+	if (value < DEADZONE)
+	{
+		return 0.0f;
+	}
+	return value / 255.0f;
+}
+
+float CXInput::GetRightTriggerNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.bRightTrigger);
+	//微入力を無視.
+	const float DEADZONE = XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+	if (value < DEADZONE)
+	{
+		return 0.0f;
+	}
+	return value / 255.0f;
+}
+
 //-------------------------------------------------.
 //	振動設定.
 //-------------------------------------------------.	
