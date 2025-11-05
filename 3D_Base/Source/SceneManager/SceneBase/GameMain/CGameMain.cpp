@@ -285,7 +285,7 @@ void CGameMain::Draw()
 		m_pShotManager->Draw(view, proj, light, paramC);
 
 		//地面描画.
-		//m_pStage->Draw(view, proj, light, paramC);
+		m_pStage->Draw(view, proj, light, paramC);
 
 		////壁の表示.
 		//m_pWallTop->Draw(view, proj, light, paramC);
