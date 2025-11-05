@@ -141,18 +141,18 @@ void CGameMain::Update()
 	m_pPlayerManager->Update();
 
 	// 弾の発射.
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		if (auto player = m_pPlayerManager->GetControlPlayer(i))
-		{
-			if (player->GetCannon()->IsShot())
-			{
-				m_pShotManager->SetReload(i,
-					player->GetCannon()->GetPosition(),
-					player->GetCannon()->GetRotation().y);
-			}
-		}
-	}
+	//for (int i = 0; i < PLAYER_MAX; i++)
+	//{
+	//	if (auto player = m_pPlayerManager->GetControlPlayer(i))
+	//	{
+	//		if (player->GetCannon()->IsShot())
+	//		{
+	//			m_pShotManager->SetReload(i,
+	//				player->GetCannon()->GetPosition(),
+	//				player->GetCannon()->GetRotation().y);
+	//		}
+	//	}
+	//}
 	m_pShotManager->Update();
 
 
@@ -285,7 +285,7 @@ void CGameMain::Draw()
 		m_pShotManager->Draw(view, proj, light, paramC);
 
 		//地面描画.
-		m_pStage->Draw(view, proj, light, paramC);
+		//m_pStage->Draw(view, proj, light, paramC);
 
 		////壁の表示.
 		//m_pWallTop->Draw(view, proj, light, paramC);
@@ -550,7 +550,12 @@ void CGameMain::Create()
 
 	//弾クラスのインスタンス作成.
 	m_pShotManager = std::make_shared<CShotManager>();
-	m_pShotManager->Initialize();
+	//m_pShotManager->Initialize();
+
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		m_pPlayerManager->GetControlPlayer(index)->GetCannon()->SetShotManager(m_pShotManager);
+	}
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -973,10 +978,10 @@ void CGameMain::CreateBounding()
 	m_pWoodBoxBottomLeft->CreateBoxCollider(m_pWoodBoxBottomLeft->GetMinPos(), m_pWoodBoxBottomLeft->GetMaxPos());
 	m_pWoodBoxBottomRight->CreateBoxCollider(m_pWoodBoxBottomRight->GetMinPos(), m_pWoodBoxBottomRight->GetMaxPos());
 
-	// 弾の当たり判定生成
-	m_pShotManager->CreateBounding(m_pStaticMesh_BulletRed);
-	// 当たり判定設定
-	m_pShotManager->CreateCollider();
+	//// 弾の当たり判定生成
+	//m_pShotManager->CreateBounding(m_pStaticMesh_BulletRed);
+	//// 当たり判定設定
+	//m_pShotManager->CreateCollider();
 
 	////爆風の当たり判定生成.
 	//m_pBlastManager->CreateBSphereForMesh(m_pStaticMesh_BulletRed);

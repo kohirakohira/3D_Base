@@ -8,9 +8,12 @@ CCannon::CCannon(int inputID)
 	, m_ShotInterval			( 120 )
 	, m_pCamera					( nullptr )
 	, m_pInput					( nullptr )
+	, m_PlayerID				( inputID )
 {
 	// 入力受付インスタンスの生成とセット
 	m_Input = std::make_shared<CInputManager>(inputID);
+
+
 
 #if 0
 	if (m_Input) {
@@ -95,14 +98,15 @@ void CCannon::KeyInput()
 	if (m_ShotCoolTime < m_ShotInterval)
 	{
 		m_ShotCoolTime++;
-		m_Shot = false;
+		//m_Shot = false;
 	}
 	else
 	{
 		if (m_Input->IsKeyboardRepeat('Z') ||
 			m_Input->GetRightTrigger() == CInputManager::Trigger::RightTrigger)
 		{
-			m_Shot = true;		// 弾を発射
+			//m_Shot = true;		// 弾を発射
+			m_pShot->Create(m_vPosition, true, m_PlayerID); // 弾のインスタンス生成
 			m_ShotCoolTime = 0; // クールダウン再スタート
 		}
 	}
