@@ -29,9 +29,6 @@ public:
 	virtual void Update() override;
 	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
-	//弾を飛ばしたいか確認
-	bool IsShot() const { return m_Shot; }
-
 	//Y軸方向へ伸ばしたレイを取得.
 	std::shared_ptr<RAY> GetRayY() const { return m_pRayY; }
 
@@ -54,7 +51,6 @@ public:
 
 protected:
 	TankTuning m_Tune;
-	bool	m_Shot;		//弾を飛ばすフラグ
 
 	std::shared_ptr<RAY>	m_pRayY;	//Y方向へ伸ばしたレイ.
 

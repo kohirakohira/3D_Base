@@ -2,14 +2,15 @@
 
 CShot::CShot()
 {
+
 	//弾情報の初期化.
 	m_Shot = {
-		false,
-		{0.0f, 0.0f, 0.0f},
-		10.0f,
-		0,
-		-9.8f,
-		0.0f
+		false,				// 発射フラグ
+		{0.0f, 0.0f, 1.0f},	// 移動方向
+		10.0f,				// 移動速度
+		10,					// 表示時間
+		-9.8f,				// 重力
+		0.0f				// 加速度
 	};
 }
 
@@ -26,11 +27,8 @@ void CShot::Update()
 	//時間定数宣言.
 	const float TIME = 1.0f / FPS;
 
-	if (m_Shot.m_Display == true)
+	if (m_Shot.m_ShotFlag == true)
 	{
-		// 表示時間を減少させる
-		m_Shot.m_DisplayTime--;
-
 		// 移動方向に移動速度をかけ合わせたものを座標に反映
 		m_vPosition += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed * TIME;
 
@@ -41,12 +39,12 @@ void CShot::Update()
 			// 加速度にYを与える
 			m_vPosition.y += m_Shot.m_Velocity * TIME;
 		}
-
-		m_Shot.m_DisplayTime--;
+		// 表示時間を減少させる
+		m_Shot.m_DisplayTime *= -TIME;
 		if (m_Shot.m_DisplayTime < 0) {
 			//見えない所に置いておく
 			m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
-			m_Shot.m_Display = false;
+			m_Shot.m_ShotFlag = false;
 		}
 	}
 	CStaticMeshObject::Update();
@@ -54,10 +52,7 @@ void CShot::Update()
 
 void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	if (m_Shot.m_Display == true)
-	{
-		CStaticMeshObject::Draw(View, Proj, Light, Camera);
-	}
+	CStaticMeshObject::Draw(View, Proj, Light, Camera);
 }
 
 void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
@@ -91,13 +86,13 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 void CShot::HitShot()
 {
 	m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
-	m_Shot.m_Display = false;
+	m_Shot.m_ShotFlag = false;
 	m_Shot.m_DisplayTime = 0;
 }
 
 bool CShot::IsActive() const
 {
-	if (m_Shot.m_Display)
+	if (m_Shot.m_ShotFlag)
 	{
 		return true;
 	}

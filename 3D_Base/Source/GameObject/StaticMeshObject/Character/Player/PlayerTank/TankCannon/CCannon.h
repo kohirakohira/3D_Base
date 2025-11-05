@@ -4,6 +4,7 @@
 //-----外部クラス-----
 #include "Camera//CCamera.h" //カメラクラス
 #include "InputDevice//Input//CInputManager.h" // 入力受付クラス
+#include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h"
 
 /**************************************************
 *	砲塔クラス.
@@ -34,6 +35,9 @@ public:
 	// バウンディングボックスを作成
 	void CreateBounding(std::shared_ptr<CStaticMesh> pCannon);
 
+	// 弾クラスの設定
+	void SetShotManager(const std::shared_ptr<CShotManager>& shot) { m_pShot = shot; }
+
 private:
 	// キー入力受付
 	void KeyInput();
@@ -46,5 +50,11 @@ protected:
 	std::shared_ptr<CCamera> m_pCamera;
 
 private:
+	// プレイヤーの番号を管理するための変数
+	int 			m_PlayerID;				// 入力ID
+
 	std::shared_ptr<CInputManager>		m_pInput;
+
+	// 弾クラス
+	std::shared_ptr<CShotManager>		m_pShot;
 };

@@ -432,7 +432,7 @@ void CComPlayer::StepSeek()
     {
         //âÒì™ÇµÇƒë_Ç¡ÇƒÇ§Ç¬
         TickAimTo(m_pTarget->GetPosition());
-        TryAutoFire();
+        //TryAutoFire();
     }
 }
 
@@ -447,7 +447,7 @@ void CComPlayer::StepChase()
     if (m_pTarget)
     {
         TickAimTo(m_pTarget->GetPosition());
-        TryAutoFire();
+        //TryAutoFire();
     }
 #if 0
     auto body = Body(); if (!body || !m_pTarget) { StepSeek(); return; }
@@ -481,7 +481,7 @@ void CComPlayer::StepAttack()
     if (m_pTarget)
     {
         TickAimTo(m_pTarget->GetPosition());
-        TryAutoFire();
+        //TryAutoFire();
     }
 }
 
@@ -529,7 +529,7 @@ void CComPlayer::StepEvade()
 
         //à íuÇ∆Ç©âÒì]îΩâfÇÃíºå„Ç…ìØä˙
         SyncCannonToBody();
-        TryAutoFire();  //ì¶Ç∞Ç»Ç™ÇÁî≠éÀ
+        //TryAutoFire();  //ì¶Ç∞Ç»Ç™ÇÁî≠éÀ
 
         body->CCharacter::Update();
 
@@ -658,7 +658,7 @@ void CComPlayer::TryAutoFire()
 
     //Ç‹Ç∏ÇÕçLÇﬂÇ…
     if (err <= ToRad(m_ShotState.FireAngleEpsDeg)) {
-        manager->SetReload(BulletKinds::Mesh_2, muzzle, yaw);
+        //manager->SetReload(BulletKinds::Mesh_2, muzzle, yaw);
         m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
     }
 }

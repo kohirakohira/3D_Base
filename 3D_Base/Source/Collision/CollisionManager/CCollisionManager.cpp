@@ -43,7 +43,7 @@ void CCollisionManager::Update()
 	WalltoPlayer();
 
 	// 壁と弾の当たり判定
-	WalltoShot();
+	//WalltoShot();
 
 	// プレイヤーとプレイヤー当たり判定判別
 	PlayertoPlayer();
@@ -52,7 +52,7 @@ void CCollisionManager::Update()
 	PlayertoItemBox();
 
 	// プレイヤーと弾
-	PlayertoShot();
+	//PlayertoShot();
 
 	// 弾と弾
 	//ShottoShot(); // 激重コード(要改善)
@@ -61,10 +61,10 @@ void CCollisionManager::Update()
 	WoodBoxtoPlayer();
 
 	// 木箱と弾
-	WoodBoxtoShot();
+	//WoodBoxtoShot();
 
 	// 地面と弾
-	GroundtoShot();
+	//GroundtoShot();
 
 	// 地面とアイテムボックス
 	GroundtoItemBox();
@@ -129,6 +129,7 @@ void CCollisionManager::WalltoPlayer()
 	}
 }
 
+#if 0
 // 壁と弾の当たり判定
 void CCollisionManager::WalltoShot()
 {
@@ -181,6 +182,7 @@ void CCollisionManager::WalltoShot()
 		}
 	}
 }
+#endif
 
 // プレイヤーとプレイヤー当たり判別
 void CCollisionManager::PlayertoPlayer()
@@ -281,6 +283,7 @@ void CCollisionManager::PlayertoItemBox()
 	}
 }
 
+#if 0
 // プレイヤーと弾
 void CCollisionManager::PlayertoShot()
 {
@@ -336,6 +339,7 @@ void CCollisionManager::ShottoShot()
 		}
 	}
 }
+#endif
 
 // 木箱とプレイヤー
 void CCollisionManager::WoodBoxtoPlayer()
@@ -442,6 +446,7 @@ void CCollisionManager::WoodBoxtoPlayer()
 	}
 }
 
+#if 0
 // 木箱と弾
 void CCollisionManager::WoodBoxtoShot()
 {
@@ -525,6 +530,7 @@ void CCollisionManager::GroundtoShot()
 		}
 	}
 }
+#endif
 
 // 地面とアイテムボックス
 void CCollisionManager::GroundtoItemBox()
