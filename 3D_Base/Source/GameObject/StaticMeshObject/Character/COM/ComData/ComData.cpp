@@ -2,6 +2,11 @@
 #include "GameObject/StaticMeshObject/Character/COM/CComPlayer.h"   
 
 
+ComData::~ComData()
+{
+}
+
+
 // 本体を常にターゲットへ回頭＋前進
 void ComData::TickChaseTo(const D3DXVECTOR3& targetPos, float AvoidWeight, float KeepDistance, float AvoidRadius)
 {
@@ -127,4 +132,76 @@ void ComData::TickAimTo(const D3DXVECTOR3& targetPos)
 #endif
 
 }
+
+//COM同士の分離ベクトルを計算
+void ComData::ComputeSeparation(const D3DXVECTOR3& selfPos,
+    D3DXVECTOR3& outSep, float& outNearest, float AvoidRadius)const
+{
+    auto com = std::shared_ptr<CComPlayer>();
+
+    outSep = D3DXVECTOR3(0, 0, 0);
+    outNearest = 1e9f;  //大きい値.fをつけてるのはfloat型にするから
+
+    if (AvoidRadius <= 0.0f)return;   //回避半径が0以下なら何もしない
+
+    const float avoidRadius = AvoidRadius;
+    const float avoidRadiusSq = avoidRadius * avoidRadius;
+
+    for (CComPlayer* other : com->Instances()) {
+        std::shared_ptr<CBody> ob = other->GetBody();   
+        if (!ob)continue;   //位置が取れない相手は無視する
+
+        D3DXVECTOR3 offset = selfPos - ob->GetPosition();
+        offset.y = 0.0f; //高さは無視
+
+        const float distSq = offset.x * offset.x + offset.z * offset.z;
+        if (distSq <= 1e-6f) {
+            //ほぼ同一点のため少し押す
+            outSep.x += 0.1f;
+            continue;
+        }
+        //一番近い相手までの距離を更新
+        outNearest = std::min(outNearest, std::sqrtf(distSq));
+
+        if (distSq < avoidRadiusSq) {
+            //近いほど強い反発
+            const float invDistSq = 1.0f / distSq;
+            outSep.x += offset.x * invDistSq;
+            outSep.z += offset.z * invDistSq;
+        }
+    }
+    //正規化は呼び出し側でブレンド時にやる
+}
+
+
+//砲口のワールド座標とヨー角を計算
+void ComData::ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const
+{
+    auto& tunign = GetTuning();
+    auto body = Body();
+    auto cannon = Cannon();
+
+    D3DXVECTOR3 base(0, 0, 0);
+    float yaw = 0.0f;
+
+    if (body) {
+        base = body->GetPosition();
+        yaw = body->GetRotation().y;
+    }
+
+    if (cannon) {
+        //砲塔があれば向きを優先
+        if (!body) base = cannon->GetPosition();
+        yaw = cannon->GetRotation().y;
+    }
+
+#if 0
+    base.y += tunign.cannonHeight; //砲塔の高さオフセット
+    const D3DXVECTOR3 forwared = ForwardFromYaw(yaw);
+
+    outpos = base + forwared * m_ShotState.MuzzleOffsetZ;   //砲身先端オフセット
+    outYaw = yaw;
+#endif
+}
+
 

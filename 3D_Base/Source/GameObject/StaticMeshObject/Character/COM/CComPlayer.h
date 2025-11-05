@@ -44,6 +44,7 @@ enum class MovePolicy
 
 };
 
+
 //
 //enum class ComStyle {
 //	Aggressive,   // グイグイ詰める
@@ -85,6 +86,17 @@ class CComPlayer
 	: public CPlayer
 {
 public:
+	//構造体
+//COMのショット関連のパラメータ
+	struct ComShotState
+	{
+		int m_ShotCD = 0;						//クールダウン
+		int	ShotCooldownFrames = 120;			//クールダウン時間
+		float FireAngleEpsDeg = 30;				//この角度以内なら発射
+		float MuzzleOffsetZ = 1;				//砲口のオフセット
+	};
+
+public:
 	CComPlayer();
 	~CComPlayer() override;
 
@@ -118,11 +130,6 @@ public:
 	//当たり判定用
 	void SetObject(const std::vector<std::shared_ptr<CBoxCollider>>* BoxCollider) {};
 
-	//COMのスタイルを外部で設定.Updateで動かすので基本的に使わない
-	void SetStyle(ComStyle style) { m_Style = style; }
-
-	//COMのスタイル取得
-	ComStyle GetStyle() const { return  m_Style; }
 
 	//ランダムで変更
 	void Random(unsigned seed);
@@ -131,16 +138,11 @@ public:
 	void ComputeSeparation(const D3DXVECTOR3& selfPos,
 		D3DXVECTOR3& outSep, float& outNearest) const;
 
+	//COMインスタンスの静的レジストリ
+	static std::vector<CComPlayer*>& Instances();
+
+
 private:
-	//構造体
-	//COMのショット関連のパラメータ
-	struct ComShotState
-	{
-		int m_ShotCD = 0;						//クールダウン
-		int	ShotCooldownFrames = 120;			//クールダウン時間
-		float FireAngleEpsDeg = 30;				//この角度以内なら発射
-		float MuzzleOffsetZ = 1;				//砲口のオフセット
-	};
 
 	//列挙型
 	//COMの状態
@@ -178,44 +180,41 @@ private:
 	static float ToRad(float d) { return d * (D3DX_PI / 180.0f); }
 	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 
-	//障害物判定用
-	bool SenseObstacleAABB(const CBoxCollider& selfBox,float yaw,D3DXVECTOR3& outAvoid,float& nearest) const;
+	void TickAimTo(const D3DXVECTOR3& targetPos);
+	void TickChaseTo(const D3DXVECTOR3& target);
 
-	//前方に見えない当たり判定を置く
-	bool HasObstacleAheadWithBox(const CBoxCollider& selfBox,
-		const D3DXVECTOR3& forward,
-		float probeDist,
-		float step,
-		float& outHitDist) const;
+	//一方向にstepだけ近づける
+	float Approach(float cur, float goal, float step)
+	{
+		const float d = goal - cur;
+		if (d > step)  return cur + step;
+		if (d < -step) return cur - step;
+		return goal;
+	}
 
-	//回避側に固定旋回を混ぜる
-	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
+	//[-π,π]に正規化
+	float Wrap(float a)
+	{
+		while (a > PI())     a -= TWO_PI();
+		while (a < -PI())     a += TWO_PI();
+		return a;
+	}
+
+#if 0
+	D3DXVECTOR3 ForwardFromYaw(float yaw)
+	{
+		return D3DXVECTOR3(std::sinf(yaw), 0.0f, std::cosf(yaw));
+	}
+#endif
+
 
 	//COMのスタイル
 	void ApplyStyle(ComStyle style);
 
 
 
-	//// スタイルを性格に落とし込む
-	//void ApplyStyle(ComStyle style);
-
-	//// 距離や状況によって移動ポリシーを切替
-	//void ChooseMovePolicyIfNeeded(float distToTarget);
-
-	//// ポリシーに応じた移動1フレーム分（回頭・前進）を行う
-	//void TickMovePolicy(const D3DXVECTOR3& targetPos);
-
-	//// 目標周回向け：接線方向を返す（左回り/右回り）
-	//D3DXVECTOR3 TangentAroundTarget(const D3DXVECTOR3& self, const D3DXVECTOR3& target, bool left) const;
-
-	//// 乱数ヘルパ
-	//float RandRange(float a, float b);
-
-
 	// ヘルパ
-	static float Wrap(float rad);                         //[-π,π]に正規化
-	static float Approach(float cur, float goal, float step);
-	static D3DXVECTOR3 ForwardFromYaw(float yaw);         //(sin(yaw),0,cos(yaw))
+	static D3DXVECTOR3 ForwardFromYaw(float yaw) { return D3DXVECTOR3(std::sinf(yaw), 0.0f, std::cosf(yaw)); }      //(sin(yaw),0,cos(yaw))
 	static float PI() { return D3DX_PI; }
 	static float TWO_PI() { return D3DX_PI * 2.0f; }
 
@@ -232,9 +231,6 @@ private:
 
 	//COMの状態変更
 	void ChangeState(State state);
-
-	//COMインスタンスの静的レジストリ
-	static std::vector<CComPlayer*>& Instances();
 
 	//外部クラス
 	std::shared_ptr<CPlayer> m_pTarget;									//追尾対象
@@ -285,22 +281,6 @@ private:
 	float		m_AvoidHolde;
 	int			m_AvoidSide;
 	float		m_AvoidMax;
-
-	ComStyle		m_Style = ComStyle::Aggressive;			//COMの細かいステータス
-	MovePolicy		m_MovePolicy = MovePolicy::Straight;	
-
-
-
-#if 0
-	ComStyle     m_Style = ComStyle::Aggressive;
-	Personality  m_Personality{};
-	MovePolicy   m_MovePolicy = MovePolicy::Straight;
-	int          m_MovePolicyFrames = 0;     // いまのポリシー継続フレーム
-	int          m_MovePolicyMin = 45;    // ポリシー最低継続
-	int          m_MovePolicyMax = 120;   // ポリシー最長継続
-
-	std::mt19937 m_Rng{ 12345 };              // 個体ごと RNG
-#endif
 };
 
 

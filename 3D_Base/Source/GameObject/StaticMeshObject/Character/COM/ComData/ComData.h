@@ -14,6 +14,18 @@ class CComPlayer;
 class ComData : public CPlayer
 {
 public:
+
+    ~ComData();
+
+#if 0
+    //唯一のインスタンス
+    static ComData& GetInstance()
+    {
+        static ComData s_Instance;
+        return s_Instance;
+    }
+#endif
+
 	//常にターゲットの方向をむく
 	void TickChaseTo(const D3DXVECTOR3& target, float AvoidWeight, float KeepDistance, float AvoidRadius);
 
@@ -44,6 +56,11 @@ public:
     {
         return D3DXVECTOR3(std::sinf(yaw), 0.0f, std::cosf(yaw));
     }
-
+    
+    //分離ベクトルを求める
+    void ComputeSeparation(const D3DXVECTOR3& selfPos,
+        D3DXVECTOR3& outSep, float& outNearest, float AvoidRadiuse)const;
+    
+    void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 
 };
