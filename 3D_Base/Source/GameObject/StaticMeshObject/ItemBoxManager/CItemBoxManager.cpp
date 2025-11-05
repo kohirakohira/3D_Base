@@ -109,6 +109,7 @@ void CItemBoxManager::SetRotation(float x, float y, float z)
 		item->SetRotation(x, y, z);
 	}
 }
+
 void CItemBoxManager::SetRotation(D3DXVECTOR3 xyz)
 {
 	for (auto& item : m_Item)

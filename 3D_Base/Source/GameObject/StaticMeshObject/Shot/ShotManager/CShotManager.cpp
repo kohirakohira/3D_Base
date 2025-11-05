@@ -14,7 +14,7 @@ void CShotManager::Initialize()
 {
 	for (int i = 0; i < ShotMax; ++i)
 	{
-		m_pShots.push_back(std::make_shared<CShot>());
+		m_pShots.push_back(std::make_unique<CShot>());
 	}
 	m_pShots.reserve(ShotMax);
 }
@@ -29,25 +29,28 @@ void CShotManager::AttachMeshToPlayerShot(BulletKinds kind, std::shared_ptr<CSta
 	m_Mesh[kind] = mesh;
 }
 
-void CShotManager::SetReload(int No, const D3DXVECTOR3& pos, float rotY)
-{
-	for (int i = 0; i < ShotMax; ++i)
-	{
-		if (!m_pShots[i]->IsActive())
-		{
-			m_pShots[i]->AttachMesh(m_Mesh[No]);
-			m_pShots[i]->Reload(pos, rotY);
-			break;
-		}
-	}
-}
+//void CShotManager::SetReload(int No, const D3DXVECTOR3& pos, float rotY)
+//{
+//	for (int i = 0; i < ShotMax; ++i)
+//	{
+//		if (!m_pShots[i]->IsActive())
+//		{
+//			m_pShots[i]->AttachMesh(m_Mesh[No]);
+//			m_pShots[i]->Reload(pos, rotY);
+//			break;
+//		}
+//	}
+//}
 
 // 動作処理
 void CShotManager::Update()
 {
-	for (int i = 0; i < m_pShots.size(); ++i)
+	for (auto& shot : m_pShots)
 	{
-		m_pShots[i]->Update();
+		//if (shot == nullptr)
+		{
+			shot->Update();
+		}
 	}
 }
 
@@ -60,21 +63,45 @@ void CShotManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA
 	}
 }
 
-// モデルに合わせたバウンディングスフィア作成のラッパー関数
-void CShotManager::CreateBounding(std::shared_ptr<CStaticMesh>& pShot)
+void CShotManager::Create(const D3DXVECTOR3& pos, bool shotFlg, int No)
 {
-	for (auto& shot : m_pShots)
+	// インスタンス生成
+	auto shot = std::make_unique<CShot>();
+
+	// メッシュのアタッチ
+	shot->AttachMesh(m_Mesh[No]);
+
+	// 位置の設定
+	shot->SetPosition(pos);
+
+	// 発射フラグの設定
+	shot->SetShotFlag(shotFlg);
+
+	// 当たり判定の生成
+	//shot->CreateBSphereForMesh(m_Mesh[No]);
+
+	// 当たり判定の設定
+	shot->CreateSpehreCollider(shot->GetRadius());
+
+	// 情報の保存
+	m_pShots.push_back(std::move(shot));
+}
+
+// モデルに合わせたバウンディングスフィア作成のラッパー関数
+void CShotManager::CreateBSphereForMesh(std::shared_ptr<CStaticMesh>& mesh, int index)
+{
+	if (index >= 0 && index < m_pShots.size())
 	{
-		shot->CreateBSphereForMesh(*pShot);
+		m_pShots[index]->CreateBSphereForMesh(*mesh);
 	}
 }
 
 // スフィアのコライダーの生成
-void CShotManager::CreateCollider()
+void CShotManager::CreateCollider(int index)
 {
-	for (auto& shot : m_pShots)
+	if (index >= 0 && index < m_pShots.size())
 	{
-		shot->CreateSpehreCollider(shot->GetRadius());
+		m_pShots[index]->CreateSpehreCollider(m_pShots[index]->GetRadius());
 	}
 }
 

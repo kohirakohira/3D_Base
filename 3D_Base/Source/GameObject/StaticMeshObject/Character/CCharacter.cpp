@@ -1,9 +1,7 @@
 #include "CCharacter.h"
 
 CCharacter::CCharacter()
-	: m_Shot		(false)
-
-	, m_pRayY		( nullptr )
+	: m_pRayY		( nullptr )
 {
 	//‰Šú’l‚Ìİ’è.
 	SettingTune();
