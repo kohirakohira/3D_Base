@@ -40,7 +40,7 @@ void CShot::Update()
 			m_vPosition.y += m_Shot.m_Velocity * TIME;
 		}
 		// 表示時間を減少させる
-		m_Shot.m_DisplayTime *= -TIME;
+		m_Shot.m_DisplayTime--;
 		if (m_Shot.m_DisplayTime < 0) {
 			//見えない所に置いておく
 			m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
