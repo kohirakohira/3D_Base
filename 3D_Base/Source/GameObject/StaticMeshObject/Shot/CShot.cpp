@@ -8,7 +8,7 @@ CShot::CShot()
 		false,				// 発射フラグ
 		{0.0f, 0.0f, 0.0f},	// 移動方向
 		10.0f,				// 移動速度
-		0,					// 表示時間
+		0.0f,				// 表示時間
 		-9.8f,				// 重力
 		0.0f				// 加速度
 	};
@@ -32,7 +32,7 @@ void CShot::Update()
 		// 移動方向に移動速度をかけ合わせたものを座標に反映
 		m_vPosition += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed * TIME;
 
-		if (m_Shot.m_DisplayTime <= 120)
+		if (m_Shot.m_DisplayTime <= 2.0f)
 		{
 			// 加速度に重力が与えられていく
 			m_Shot.m_Velocity += m_Shot.m_Gravity * TIME;
@@ -40,8 +40,8 @@ void CShot::Update()
 			m_vPosition.y += m_Shot.m_Velocity * TIME;
 		}
 		// 表示時間を減少させる
-		m_Shot.m_DisplayTime--;
-		if (m_Shot.m_DisplayTime < 0) {
+		m_Shot.m_DisplayTime -= TIME;
+		if (m_Shot.m_DisplayTime < 0.0f) {
 			//見えない所に置いておく
 			m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
 			m_Shot.m_ShotFlag = false;
@@ -73,7 +73,7 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 
 	m_Shot.m_ShotFlag = true;
 	m_Shot.m_Velocity = 0.5f;
-	m_Shot.m_DisplayTime = FPS * 3;
+	m_Shot.m_DisplayTime = 3.0f;
 
 	// 弾の進行方向（Z軸を回転させる）
 	m_Shot.m_MoveDirection = D3DXVECTOR3(0.f, 0.f, 1.f);
@@ -84,7 +84,7 @@ void CShot::HitShot()
 {
 	m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
 	m_Shot.m_ShotFlag = false;
-	m_Shot.m_DisplayTime = 0;
+	m_Shot.m_DisplayTime = 0.0f;
 }
 
 bool CShot::IsActive() const

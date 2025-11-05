@@ -58,9 +58,6 @@ void CShotManager::Create(const D3DXVECTOR3& pos, float rotY, bool shotFlg, int 
 	// ’e‚ÌŒü‚«‚ÌÝ’è
 	shot->Reload(pos, rotY);
 
-	// ˆÊ’u‚ÌÝ’è
-	shot->SetPosition(pos);
-
 	// ”­ŽËƒtƒ‰ƒO‚ÌÝ’è
 	shot->SetShotFlag(shotFlg);
 
