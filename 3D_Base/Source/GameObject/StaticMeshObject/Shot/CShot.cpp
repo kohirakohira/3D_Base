@@ -62,33 +62,30 @@ void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camer
 
 void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 {
-	for (int i = 0; i < ShotMax; i++)
-	{
-		//弾が発射されていたら戻す.
-		if (m_Shot.m_Display == true) return;
+	//弾が発射されていたら戻す.
+	if (m_Shot.m_Display == true) return;
 
-		// 回転に応じた発射位置を計算
-		D3DXVECTOR3 offset = { 0.f, 0.3f, 1.5f }; // 砲塔の先端に合わせる
-		D3DXMATRIX mRotationY;
-		D3DXMatrixRotationY(&mRotationY, RotY);
+	// 回転に応じた発射位置を計算
+	D3DXVECTOR3 offset = { 0.f, 0.3f, 1.5f }; // 砲塔の先端に合わせる
+	D3DXMATRIX mRotationY;
+	D3DXMatrixRotationY(&mRotationY, RotY);
 
-		D3DXVECTOR3 rotatedOffset;
-		D3DXVec3TransformCoord(&rotatedOffset, &offset, &mRotationY);
+	D3DXVECTOR3 rotatedOffset;
+	D3DXVec3TransformCoord(&rotatedOffset, &offset, &mRotationY);
 
-		// プレイヤー位置に加算して弾の位置決定
-		m_vPosition = Pos + rotatedOffset;
+	// プレイヤー位置に加算して弾の位置決定
+	m_vPosition = Pos + rotatedOffset;
 
-		// 弾の回転（見た目用）
-		m_vRotation.y = RotY;
+	// 弾の回転（見た目用）
+	m_vRotation.y = RotY;
 
-		m_Shot.m_Display = true;
-		m_Shot.m_Velocity = 0.5f;
-		m_Shot.m_DisplayTime = FPS * 3;
+	m_Shot.m_Display = true;
+	m_Shot.m_Velocity = 0.5f;
+	m_Shot.m_DisplayTime = FPS * 3;
 
-		// 弾の進行方向（Z軸を回転させる）
-		m_Shot.m_MoveDirection = D3DXVECTOR3(0.f, 0.f, 1.f);
-		D3DXVec3TransformCoord(&m_Shot.m_MoveDirection, &m_Shot.m_MoveDirection, &mRotationY);
-	}
+	// 弾の進行方向（Z軸を回転させる）
+	m_Shot.m_MoveDirection = D3DXVECTOR3(0.f, 0.f, 1.f);
+	D3DXVec3TransformCoord(&m_Shot.m_MoveDirection, &m_Shot.m_MoveDirection, &mRotationY);
 }
 
 void CShot::HitShot()
