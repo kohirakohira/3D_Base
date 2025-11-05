@@ -14,88 +14,16 @@
 //当たり判定.障害物判定用
 #include "Collision/Collider/BoxCollider/CBoxCollider.h"
 
-//COMデータ
-#include "GameObject/StaticMeshObject/Character/COM/ComData/ComData.h"
 
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
 #include <limits>
-#include <random>
-
-//COMごとに別の動きを持たせるための列挙型
-enum class ComStyle
-{
-	Aggressive,		//詰める
-	StrafeLeft,		//左旋回
-	StrafeLight,	//右旋回
-	Sniper,			//遠距離
-	Back,			//下がる
-	forworld,		//前進
-	Coward,			//回避系
-	Collector,		//アイテム優先
-};
-
-enum class MovePolicy
-{
-	Straight,	//直進
-	Left,		//左.回る
-	light,		//右.回る
-
-};
 
 
-//
-//enum class ComStyle {
-//	Aggressive,   // グイグイ詰める
-//	StrafeLeft,   // 左周りで周回
-//	StrafeRight,  // 右周りで周回
-//	Sniper,       // できるだけ止まって遠距離精度
-//	Coward,       // すぐ下がる・回避重視
-//	Collector,    // アイテム優先
-//	Random        // ランダムに揺らす
-//};
-//
-//enum class MovePolicy {
-//	Straight,     // 直進（詰める）
-//	OrbitL,       // 左回り周回（目標の周りを円運動）
-//	OrbitR,       // 右回り周回
-//	KeepAway,     // 離れる（距離を保つ／後退）
-//	Hold          // その場維持
-//};
-//
-//struct Personality {
-//	float moveSpeedScale = 1.0f;  // 速度倍率
-//	float turnSpeedScale = 1.0f;  // 旋回速度倍率
-//	float keepDistance = 9.0f;  // 目標の維持距離
-//	float avoidRadius = 10.0f; // 分離半径
-//	float avoidWeight = 2.0f;  // 分離重み
-//	float fireConeDeg = 10.0f; // 許容射角
-//	int   retargetInterval = 120;   // リターゲット間隔
-//	float stickinessRatio = 0.8f;  // 乗り換えにくさ
-//	float wanderDelta = 0.08f; // Wander 角加算幅
-//	float wanderClamp = 0.6f;  // Wander 角の上限
-//	float strafeRadius = 9.0f;  // 周回するときの半径（=目標距離）
-//	float strafeSpeedScale = 1.0f;  // 周回時の速度倍率
-//	float keepAwayBias = 1.0f;  // 後退選好の強さ
-//	float itemBias = 0.0f;  // アイテム志向（Collectorで大きめ）
-//	float forgetDistance = 60.0f; // これ以上離れたら忘れる
-//};
-//
 class CComPlayer
 	: public CPlayer
 {
-public:
-	//構造体
-//COMのショット関連のパラメータ
-	struct ComShotState
-	{
-		int m_ShotCD = 0;						//クールダウン
-		int	ShotCooldownFrames = 120;			//クールダウン時間
-		float FireAngleEpsDeg = 30;				//この角度以内なら発射
-		float MuzzleOffsetZ = 1;				//砲口のオフセット
-	};
-
 public:
 	CComPlayer();
 	~CComPlayer() override;
@@ -105,7 +33,7 @@ public:
 
 	//敵判定
 	//自分以外は全員敵	
-	bool IsEnemy(const CPlayer& other) const {return other.GetPlayerID() != m_PlayerID; };
+	bool IsEnemy(const CPlayer& other) const { return other.GetPlayerID() != m_PlayerID; };
 
 	//追尾対象の設定
 	void SetTarget(std::shared_ptr<CPlayer> player) { m_pTarget = player; }
@@ -130,19 +58,16 @@ public:
 	//当たり判定用
 	void SetObject(const std::vector<std::shared_ptr<CBoxCollider>>* BoxCollider) {};
 
-
-	//ランダムで変更
-	void Random(unsigned seed);
-
-	//分離COMが重なったりするのを防ぐ計算
-	void ComputeSeparation(const D3DXVECTOR3& selfPos,
-		D3DXVECTOR3& outSep, float& outNearest) const;
-
-	//COMインスタンスの静的レジストリ
-	static std::vector<CComPlayer*>& Instances();
-
-
 private:
+	//構造体
+	//COMのショット関連のパラメータ
+	struct ComShotState
+	{
+		int m_ShotCD = 0;						//クールダウン
+		int	ShotCooldownFrames = 120;			//クールダウン時間
+		float FireAngleEpsDeg = 30;				//この角度以内なら発射
+		float MuzzleOffsetZ = 1;				//砲口のオフセット
+	};
 
 	//列挙型
 	//COMの状態
@@ -163,9 +88,10 @@ private:
 	void StepEvade();													//離脱処理
 	void StepItemSeek();												//アイテム探索処理
 	void TryAutoFire();													//COMの弾発射処理
-
-	void MakeItemTarget();												
+	void MakeItemTarget();
 	void SanitizeParams();												//パラメータ調整
+	void TickChaseTo(const D3DXVECTOR3& targetPos);						//追尾
+	void TickAimTo(const D3DXVECTOR3& targetPos);						//砲塔追尾
 	void TickWander(float turnStep, float moveStep);
 	void Blacklist(int id) { m_TargetBlackList[id] = m_BlackListTime; }	//一定時間ターゲットにしない
 	bool IsBlacklisted(int id) const;									//IDがリストに登録されているか判定.読み取り専用
@@ -176,45 +102,29 @@ private:
 	void MakeFixedTimeTarget();											//一定時間ターゲットにする
 	static float Deg2Red(float d) { return d * (D3DX_PI / 180.0f); }
 	static float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b);
+	static float AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos);
 	float  NearestItemDist2(float& outDist2) const;						//近い箱の距離2乗
 	static float ToRad(float d) { return d * (D3DX_PI / 180.0f); }
 	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 
-	void TickAimTo(const D3DXVECTOR3& targetPos);
-	void TickChaseTo(const D3DXVECTOR3& target);
+	//障害物判定用
+	bool SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const;
 
-	//一方向にstepだけ近づける
-	float Approach(float cur, float goal, float step)
-	{
-		const float d = goal - cur;
-		if (d > step)  return cur + step;
-		if (d < -step) return cur - step;
-		return goal;
-	}
+	//前方に見えない当たり判定を置く
+	bool HasObstacleAheadWithBox(const CBoxCollider& selfBox,
+		const D3DXVECTOR3& forward,
+		float probeDist,
+		float step,
+		float& outHitDist) const;
 
-	//[-π,π]に正規化
-	float Wrap(float a)
-	{
-		while (a > PI())     a -= TWO_PI();
-		while (a < -PI())     a += TWO_PI();
-		return a;
-	}
-
-#if 0
-	D3DXVECTOR3 ForwardFromYaw(float yaw)
-	{
-		return D3DXVECTOR3(std::sinf(yaw), 0.0f, std::cosf(yaw));
-	}
-#endif
-
-
-	//COMのスタイル
-	void ApplyStyle(ComStyle style);
-
+	//回避側に固定旋回を混ぜる
+	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
 
 
 	// ヘルパ
-	static D3DXVECTOR3 ForwardFromYaw(float yaw) { return D3DXVECTOR3(std::sinf(yaw), 0.0f, std::cosf(yaw)); }      //(sin(yaw),0,cos(yaw))
+	static float Wrap(float rad);                         //[-π,π]に正規化
+	static float Approach(float cur, float goal, float step);
+	static D3DXVECTOR3 ForwardFromYaw(float yaw);         //(sin(yaw),0,cos(yaw))
 	static float PI() { return D3DX_PI; }
 	static float TWO_PI() { return D3DX_PI * 2.0f; }
 
@@ -228,9 +138,15 @@ private:
 	//動作切り替え
 	static float Sqr(float v) { return v * v; }
 
+	//分離COMが重なったりするのを防ぐ計算
+	void ComputeSeparation(const D3DXVECTOR3& selfPos,
+		D3DXVECTOR3& outSep, float& outNearest) const;
 
 	//COMの状態変更
 	void ChangeState(State state);
+
+	//COMインスタンスの静的レジストリ
+	static std::vector<CComPlayer*>& Instances();
 
 	//外部クラス
 	std::shared_ptr<CPlayer> m_pTarget;									//追尾対象
@@ -239,7 +155,7 @@ private:
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;					//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;								//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;	//障害物の一部を外部から差し込む
-	std::shared_ptr<ComData> m_pData;
+
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
 	float	m_KeepDistance;				//この距離を保つ
@@ -276,7 +192,7 @@ private:
 	float	m_ItemPickUpRaius;			//以下なら取得.最終的には当たり判定でやる
 	ComShotState m_ShotState;
 
-	const float m_ProdeAngleRad;		
+	const float m_ProdeAngleRad;
 	float		m_ProdeDist;
 	float		m_AvoidHolde;
 	int			m_AvoidSide;
