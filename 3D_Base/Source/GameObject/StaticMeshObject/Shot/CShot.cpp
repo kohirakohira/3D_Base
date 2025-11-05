@@ -6,9 +6,9 @@ CShot::CShot()
 	//弾情報の初期化.
 	m_Shot = {
 		false,				// 発射フラグ
-		{0.0f, 0.0f, 1.0f},	// 移動方向
+		{0.0f, 0.0f, 0.0f},	// 移動方向
 		10.0f,				// 移動速度
-		10,					// 表示時間
+		0,					// 表示時間
 		-9.8f,				// 重力
 		0.0f				// 加速度
 	};
@@ -57,9 +57,6 @@ void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camer
 
 void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 {
-	//弾が発射されていたら戻す.
-	if (m_Shot.m_ShotFlag == true) return;
-
 	// 回転に応じた発射位置を計算
 	D3DXVECTOR3 offset = { 0.f, 0.3f, 1.5f }; // 砲塔の先端に合わせる
 	D3DXMATRIX mRotationY;

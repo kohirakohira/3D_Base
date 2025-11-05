@@ -16,7 +16,6 @@ public:
 
 	void Initialize();
 	void AttachMeshToPlayerShot(BulletKinds kind, std::shared_ptr<CStaticMesh> mesh);
-	//void SetReload(int No, const D3DXVECTOR3& pos, float rotY);
 
 	// 動作処理
 	void Update() ;
@@ -24,7 +23,7 @@ public:
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) ;
 
 	// インスタンス生成
-	void Create(const D3DXVECTOR3& pos, bool shotFlg, int No);
+	void Create(const D3DXVECTOR3& pos, float rotY, bool shotFlg, int No);
 
 	// バウンディングオブジェクトの作成
 	void CreateBSphereForMesh(std::shared_ptr<CStaticMesh>& mesh, int index);

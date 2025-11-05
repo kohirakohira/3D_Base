@@ -106,7 +106,7 @@ void CCannon::KeyInput()
 			m_Input->GetRightTrigger() == CInputManager::Trigger::RightTrigger)
 		{
 			//m_Shot = true;		// 弾を発射
-			m_pShot->Create(m_vPosition, true, m_PlayerID); // 弾のインスタンス生成
+			m_pShot->Create(m_vPosition, m_vRotation.y, true, m_PlayerID); // 弾のインスタンス生成
 			m_ShotCoolTime = 0; // クールダウン再スタート
 		}
 	}

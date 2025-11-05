@@ -29,28 +29,12 @@ void CShotManager::AttachMeshToPlayerShot(BulletKinds kind, std::shared_ptr<CSta
 	m_Mesh[kind] = mesh;
 }
 
-//void CShotManager::SetReload(int No, const D3DXVECTOR3& pos, float rotY)
-//{
-//	for (int i = 0; i < ShotMax; ++i)
-//	{
-//		if (!m_pShots[i]->IsActive())
-//		{
-//			m_pShots[i]->AttachMesh(m_Mesh[No]);
-//			m_pShots[i]->Reload(pos, rotY);
-//			break;
-//		}
-//	}
-//}
-
 // 動作処理
 void CShotManager::Update()
 {
 	for (auto& shot : m_pShots)
 	{
-		//if (shot == nullptr)
-		{
-			shot->Update();
-		}
+		shot->Update();
 	}
 }
 
@@ -63,13 +47,16 @@ void CShotManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA
 	}
 }
 
-void CShotManager::Create(const D3DXVECTOR3& pos, bool shotFlg, int No)
+void CShotManager::Create(const D3DXVECTOR3& pos, float rotY, bool shotFlg, int No)
 {
 	// インスタンス生成
 	auto shot = std::make_unique<CShot>();
 
 	// メッシュのアタッチ
 	shot->AttachMesh(m_Mesh[No]);
+
+	// 弾の向きの設定
+	shot->Reload(pos, rotY);
 
 	// 位置の設定
 	shot->SetPosition(pos);

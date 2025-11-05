@@ -14,7 +14,7 @@ public:
 	void Update() override;
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
-	//’e‚ğÄİ’è
+	//’e‚ğİ’è
 	void Reload(const D3DXVECTOR3& Pos, float RotY);
 
 	// ’e‚ª“–‚½‚Á‚½‚Ìˆ—
