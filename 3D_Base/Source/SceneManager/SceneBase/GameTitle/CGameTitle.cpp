@@ -35,6 +35,9 @@ CGameTitle::~CGameTitle()
 
 void CGameTitle::Update()
 {
+	//コントローラーの取得※0番のみ動かせる.
+	CController* controller = CControllerManager::GetInstance().GetController(0);
+
 	//BGMのループ再生.
 	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
 
@@ -43,6 +46,7 @@ void CGameTitle::Update()
 
 	//選択肢の移動※仮.
 	m_pSpriteChoiceImg->Update();
+
 //↓-----タイトルでの演出-----↓.
 
 	//タイトル演出の動作.
@@ -52,81 +56,88 @@ void CGameTitle::Update()
 
 
 
-	//デバッグに遷移.
-	if (m_KeyInput->ReleaseInputKey('D') == true)
-	{
-		//BGMのループ停止.
-		CSoundManager::Stop(CSoundManager::BGM_Title);
-
-		DrawFlag = true;
-
-		m_SceneType = CSceneType::Debug;
-
-	}
-	//メインに遷移.
-	if (m_KeyInput->ReleaseInputKey('M') == true)
-	{
-		//BGMのループ停止.
-		CSoundManager::Stop(CSoundManager::BGM_Title);
-
-		DrawFlag = true;
-
-		m_SceneType = CSceneType::Main;
-
-	}
-	//リザルトDrawに遷移.
-	if (m_KeyInput->ReleaseInputKey('L') == true)
-	{
-		//BGMのループ停止.
-		CSoundManager::Stop(CSoundManager::BGM_Title);
-
-		DrawFlag = true;
-
-		m_SceneType = CSceneType::ResultDraw;
-
-	}
-	//リザルトwinに遷移.
-	if (m_KeyInput->ReleaseInputKey('Y') == true)
-	{
-		//BGMのループ停止.
-		CSoundManager::Stop(CSoundManager::BGM_Title);
-
-		DrawFlag = true;
-
-		m_SceneType = CSceneType::ResultWin;
-
-	}
 
 	//ゲーム設定に遷移.
-	if (m_KeyInput->ReleaseInputKey('Z') == true)
+	//if (controller && controller->CheckConnected())
 	{
-		if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
+		if (m_KeyInput->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 		{
-			//BGMのループ停止.
-			CSoundManager::Stop(CSoundManager::BGM_Title);
+			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
+			{
+				//BGMのループ停止.
+				CSoundManager::Stop(CSoundManager::BGM_Title);
 
-			//SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Click);
+				//SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Click);
 
-			DrawFlag = true;
-			
-			//ゲーム設定に遷移.
-			m_SceneType = CSceneType::Setting;
-		}
-		else
-		{
-			//BGMのループ停止.
-			CSoundManager::Stop(CSoundManager::BGM_Title);
+				DrawFlag = true;
 
-			//SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Click);
+				//ゲーム設定に遷移.
+				m_SceneType = CSceneType::Setting;
+			}
+			else
+			{
+				//BGMのループ停止.
+				CSoundManager::Stop(CSoundManager::BGM_Title);
 
-			DrawFlag = true;
+				//SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Click);
 
-			//ゲームを終了させる.
-			PostMessage(m_hWnd, WM_CLOSE, 0, 0);
+				DrawFlag = true;
+
+				//ゲームを終了させる.
+				PostMessage(m_hWnd, WM_CLOSE, 0, 0);
+			}
 		}
 	}
+
+	{
+		////デバッグに遷移.
+		//if (m_KeyInput->ReleaseInputKey('D') == true)
+		//{
+		//	//BGMのループ停止.
+		//	CSoundManager::Stop(CSoundManager::BGM_Title);
+
+		//	DrawFlag = true;
+
+		//	m_SceneType = CSceneType::Debug;
+
+		//}
+		////メインに遷移.
+		//if (m_KeyInput->ReleaseInputKey('M') == true)
+		//{
+		//	//BGMのループ停止.
+		//	CSoundManager::Stop(CSoundManager::BGM_Title);
+
+		//	DrawFlag = true;
+
+		//	m_SceneType = CSceneType::Main;
+
+		//}
+		////リザルトDrawに遷移.
+		//if (m_KeyInput->ReleaseInputKey('L') == true)
+		//{
+		//	//BGMのループ停止.
+		//	CSoundManager::Stop(CSoundManager::BGM_Title);
+
+		//	DrawFlag = true;
+
+		//	m_SceneType = CSceneType::ResultDraw;
+
+		//}
+		////リザルトwinに遷移.
+		//if (m_KeyInput->ReleaseInputKey('Y') == true)
+		//{
+		//	//BGMのループ停止.
+		//	CSoundManager::Stop(CSoundManager::BGM_Title);
+
+		//	DrawFlag = true;
+
+		//	m_SceneType = CSceneType::ResultWin;
+
+		//}
+	}
+
 }
 
 void CGameTitle::Draw()

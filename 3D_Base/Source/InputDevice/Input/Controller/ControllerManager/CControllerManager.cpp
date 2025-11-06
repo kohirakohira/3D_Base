@@ -18,18 +18,32 @@ CControllerManager::~CControllerManager()
 //全コントローラーの状態を確認する.
 void CControllerManager::Update()
 {
+	//毎回カウントを初期化.
 	m_ConnectedCount = 0;
 	for (auto& controller : m_Controller)
 	{
 		controller->Update();
 
-		if (controller->CheckConnected())
+		if (controller->CheckConnected() == true)
 		{
 			m_ConnectedCount++;
 		}
 		else
 		{
-			//controller->
+			controller->ControllerAmputation();
 		}
 	}
+
+	std::cout << "接続された数->" << m_ConnectedCount << std::endl;
+	std::cout << "切断された数->" << PLAYER_MAX - m_ConnectedCount << std::endl;
+}
+
+//全コントローラーの切断処理.
+void CControllerManager::AllControllerAmputation()
+{
+	for (auto& controller : m_Controller)
+	{
+		controller->ControllerAmputation();
+	}
+	m_ConnectedCount = 0;
 }

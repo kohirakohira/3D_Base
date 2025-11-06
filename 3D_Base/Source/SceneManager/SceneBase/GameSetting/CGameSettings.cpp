@@ -54,7 +54,8 @@ void CGameSettings::Update()
 	//’è”éŒ¾.
 	constexpr float UV_SPEED = 0.001f;
 
-
+	//ƒRƒ“ƒgƒ[ƒ‰[‚ÌŽæ“¾¦0”Ô‚Ì‚Ý“®‚©‚¹‚é.
+	CController* controller = CControllerManager::GetInstance().GetController(0);
 
 	//BGM‚Ìƒ‹[ƒvÄ¶.
 	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
@@ -78,25 +79,28 @@ void CGameSettings::Update()
 	m_pSpriteChoiceImg->Update();
 
 	//ƒV[ƒ“‚Ì‘JˆÚ.
-	if (m_InputKey->ReleaseInputKey('Z') == true)
+	//if (controller && controller->CheckConnected())
 	{
-		if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
+		if (m_InputKey->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 		{
-			//BGM‚Ì’âŽ~.
-			CSoundManager::Stop(CSoundManager::BGM_Title);
+			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
+			{
+				//BGM‚Ì’âŽ~.
+				CSoundManager::Stop(CSoundManager::BGM_Title);
 
-			m_SceneType = CSceneType::Title;
-			
-			return;
-		}
-		else
-		{
-			//BGM‚Ì’âŽ~.
-			CSoundManager::Stop(CSoundManager::BGM_Title);
+				m_SceneType = CSceneType::Title;
 
-			m_SceneType = CSceneType::Main;
+				return;
+			}
+			else
+			{
+				//BGM‚Ì’âŽ~.
+				CSoundManager::Stop(CSoundManager::BGM_Title);
 
-			return;
+				m_SceneType = CSceneType::Main;
+
+				return;
+			}
 		}
 	}
 }
