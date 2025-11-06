@@ -19,8 +19,8 @@ void CTitleProduction::Update()
 	//カメラの動作.
 	m_Camera->Update();
 
-	////地面を動かす.
-	//m_Ground->Update();
+	//地面を動かす.
+	m_Ground->Move(3.0f);
 }
 
 //描画関数.
@@ -45,6 +45,17 @@ void CTitleProduction::Create()
 	//スタティックメッシュの生成.
 	m_GroundMesh = std::make_shared<CStaticMesh>();
 
+}
+
+//初期化.
+void CTitleProduction::Init()
+{
+	//カメラの初期化.
+	m_Camera->Init();
+
+	//地面の初期化.
+	m_Ground->Init();
+	
 }
 
 //読み込み関数.

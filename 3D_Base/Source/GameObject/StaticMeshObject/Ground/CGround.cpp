@@ -2,6 +2,7 @@
 
 CGround::CGround()
 	: m_pPlayerManager	()
+	, m_Speed			( 0.0f )
 {
 }
 
@@ -13,6 +14,14 @@ CGround::~CGround()
 void CGround::Update()
 {
 	RespawnArea();
+}
+
+//初期化.
+void CGround::Init()
+{
+	//初期化.
+	m_pPlayerManager = nullptr;
+	m_Speed = 0.0f;
 }
 
 void CGround::RespawnArea()
@@ -85,4 +94,18 @@ int CGround::GetAreaIndex(float x, float z)
 	if (rx > 0 && rz > 0) return 1; // 右上
 	if (rx < 0 && rz < 0) return 2; // 左下
 	if (rx > 0 && rz < 0) return 3; // 右下
+}
+
+//地面の動き.
+void CGround::Move(float speed)
+{
+	//時間定数.
+	const float dt = 1.0f / FPS;
+
+	//速度設定.
+	m_Speed = speed;
+
+	//Z方向に動かす.
+	m_vPosition.z += m_Speed * dt;
+
 }

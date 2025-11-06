@@ -72,7 +72,9 @@ void CCamera::Info()
 
 void CCamera::Init()
 {
-
+	//èâä˙âª.
+	ZeroMemory(&m_Camera, sizeof(CAMERA));
+	ZeroMemory(&m_Light, sizeof(LIGHT));
 }
 
 void CCamera::SetCamera()

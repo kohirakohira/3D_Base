@@ -189,6 +189,9 @@ void CGameTitle::Init()
 	m_pSpriteEndSelectImg->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteEndSelectImg->SetScale(1.f, 1.f, 0.f);
 		
+	//タイトルの演出.
+	m_TitleProduction->Init();
+
 	//キー入力の初期化.
 	m_KeyInput->Init();
 	m_KeyInput->SetKey({'D', 'Z', 'L', 'Y', 'M'});
