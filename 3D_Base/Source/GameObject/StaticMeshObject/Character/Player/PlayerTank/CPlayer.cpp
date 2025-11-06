@@ -54,7 +54,6 @@ CPlayer::CPlayer()
 	, m_pCannon		( nullptr )
 	, m_Hp			( 2 )
 	, m_PlayerID	()
-	, m_pPad		( nullptr )
 	, m_HasControl	( false )
 {
 }
@@ -159,24 +158,24 @@ void CPlayer::UpdateHumanInputAndMove()
 
 	float move = 0.f, turn = 0.f, aim = 0.f;
 
-	if (m_pPad && m_pPad->IsConnect())
-	{
-		const float lx = ToStick01(m_pPad->GetLThumbX());
-		const float ly = ToStick01(m_pPad->GetLThumbY());
-		const float rx = ToStick01(m_pPad->GetRThumbX());
+	//if (m_pPad && m_pPad->IsConnect())
+	//{
+	//	const float lx = ToStick01(m_pPad->GetLThumbX());
+	//	const float ly = ToStick01(m_pPad->GetLThumbY());
+	//	const float rx = ToStick01(m_pPad->GetRThumbX());
 
-		move = Deadzone(ly, 0.15f);
-		turn = Deadzone(lx, 0.15f);
-		aim = Deadzone(rx, 0.15f);
+	//	move = Deadzone(ly, 0.15f);
+	//	turn = Deadzone(lx, 0.15f);
+	//	aim = Deadzone(rx, 0.15f);
 
-		//数値の表示.
-		std::cout << "move:\f" << move << std::endl;
-		std::cout << "turn:\f" << turn << std::endl;
-		std::cout << "aim:\f" << aim << std::endl;
-	}
-	else
-	{
-	}
+	//	//数値の表示.
+	//	std::cout << "move:\f" << move << std::endl;
+	//	std::cout << "turn:\f" << turn << std::endl;
+	//	std::cout << "aim:\f" << aim << std::endl;
+	//}
+	//else
+	//{
+	//}
 #endif
 
 	const float dt = 1.f / FPS;	

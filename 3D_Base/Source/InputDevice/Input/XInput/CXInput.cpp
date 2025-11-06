@@ -105,17 +105,23 @@ bool CXInput::IsDown( KEY key, bool Just )
 {
 	WORD GamePad = GenerateGamePadValue( key );
 
+	bool ret = false;
+
 	if( IsKeyCore( GamePad, m_state ) == true )
 	{
-		if( Just == true ){
+		ret = true;
+
+		if (Just == true) {
 			//¡‰ñ“ü—Í‚Å‘O‰ñ–¢“ü—Í¨‰Ÿ‚µ‚½uŠÔ.
-			if( IsKeyCore( GamePad, m_stateOld ) == false ){
-				return true;
+			if (IsKeyCore(GamePad, m_stateOld) == false) {
+				ret = true;
+			}
+			else {
+				ret = false;
 			}
 		}
-		return true;
 	}
-	return false;
+	return ret;
 }
 
 //-------------------------------------------------.
