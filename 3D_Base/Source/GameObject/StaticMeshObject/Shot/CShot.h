@@ -18,7 +18,7 @@ public:
 	void Reload(const D3DXVECTOR3& Pos, float RotY);
 
 	// ’e‚ª“–‚½‚Á‚½‚Ìˆ—
-	void HitShot();
+	bool HitShot();
 
 	bool IsActive() const;
 

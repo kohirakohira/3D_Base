@@ -168,11 +168,6 @@ void CPlayer::UpdateHumanInputAndMove()
 		move = Deadzone(ly, 0.15f);
 		turn = Deadzone(lx, 0.15f);
 		aim = Deadzone(rx, 0.15f);
-
-		//”’l‚Ì•\¦.
-		std::cout << "move:\f" << move << std::endl;
-		std::cout << "turn:\f" << turn << std::endl;
-		std::cout << "aim:\f" << aim << std::endl;
 	}
 	else
 	{

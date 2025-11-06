@@ -43,8 +43,6 @@ public:
 	void PlayertoItemBox();
 	// プレイヤーと弾
 	void PlayertoShot();
-	// 弾と弾
-	void ShottoShot();
 	// 木箱とプレイヤー
 	void WoodBoxtoPlayer();
 	// 木箱と弾

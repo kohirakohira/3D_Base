@@ -58,7 +58,7 @@ void CShot::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camer
 void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 {
 	// 回転に応じた発射位置を計算
-	D3DXVECTOR3 offset = { 0.f, 0.3f, 1.5f }; // 砲塔の先端に合わせる
+	D3DXVECTOR3 offset = { 0.f, 0.1f, 1.5f }; // 砲塔の先端に合わせる
 	D3DXMATRIX mRotationY;
 	D3DXMatrixRotationY(&mRotationY, RotY);
 
@@ -80,13 +80,13 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 	D3DXVec3TransformCoord(&m_Shot.m_MoveDirection, &m_Shot.m_MoveDirection, &mRotationY);
 }
 
-void CShot::HitShot()
+bool CShot::HitShot()
 {
 	m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
-	m_Shot.m_ShotFlag = false;
+	m_Shot.m_ShotFlag = true;
 	m_Shot.m_DisplayTime = 0.0f;
+	return m_Shot.m_ShotFlag;
 }
-
 bool CShot::IsActive() const
 {
 	if (m_Shot.m_ShotFlag)
