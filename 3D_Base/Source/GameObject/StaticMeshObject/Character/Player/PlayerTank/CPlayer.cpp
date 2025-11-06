@@ -52,11 +52,21 @@ static inline float Deadzone(float v, float z)
 CPlayer::CPlayer()
 	: m_pBody		( nullptr )
 	, m_pCannon		( nullptr )
-	, m_Hp			( 2 )
 	, m_PlayerID	()
 	, m_pPad		( nullptr )
 	, m_HasControl	( false )
 {
+	m_Player = {
+		0,		// プレイヤーの体力
+		2,		// プレイヤーの最大体力
+		0,		// 無敵カウント
+		0.3f,	// 無敵時間
+		3.0f,	// リスポーン時間
+		true,	// 描画するかどうか
+		false,	// ダメージを受けたか
+		false,	// 死亡しているか
+		false,	// リスポーン
+	};
 }
 
 CPlayer::~CPlayer()
@@ -65,6 +75,7 @@ CPlayer::~CPlayer()
 
 void CPlayer::Initialize(int id)
 {
+	// プレイヤーIDにそれぞれのID番号を入れる
 	m_PlayerID = id;
 
 	//インスタンスを生成
@@ -76,7 +87,16 @@ void CPlayer::Initialize(int id)
 	auto im = std::make_shared<CInputManager>();	
 	SetInputManagerShared(im);
 
-
+	// プレイヤーの体力に最大体力を入れる
+	m_Player.m_Hp = m_Player.m_MaxHp;
+	// プレイヤーの無敵時間を初期化
+	m_Player.m_MutekiCnt = 0;
+	m_Player.m_MutekiTimer = 0.3;
+	// プレイヤーのフラグを初期化
+	m_Player.m_Draw	   = true;
+	m_Player.m_Damage  = false;
+	m_Player.m_Death   = false;
+	m_Player.m_Respawn = false;
 }
 
 //共有
@@ -141,8 +161,15 @@ void CPlayer::Update()
 		if (m_pCannon) m_pCannon->CCharacter::Update();
 		return;
 	}
+
+	// ダメージ処理の更新
+	PlayerDamage();
+	// 死亡処理の更新
+	PlayerDeath();
+
 	//移動とか適用
 	UpdateHumanInputAndMove();
+
 }
 
 void CPlayer::SetTune(const TankTuning& info)
@@ -200,8 +227,6 @@ void CPlayer::UpdateHumanInputAndMove()
 	}
 	m_pCannon->SetRotation(cannonrot);
 	m_pCannon->Update();
-
-
 }
 
 //砲塔と車体を同期する
@@ -211,15 +236,115 @@ void CPlayer::SyncCannonToBody()
 	if (!Body() || !Cannon()) return;
 
 	D3DXVECTOR3 pos = Body()->GetPosition();
-	pos.y += m_Tune.cannonHeight;		//砲塔の高さオフセット
-	Cannon()->SetPosition(pos);			//位置を同期
-
+	pos.y += m_Tune.cannonHeight;		// 砲塔の高さオフセット
+	Cannon()->SetPosition(pos);			// 位置を同期
 }
 
 void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	m_pBody->Draw(View, Proj, Light, Camera);
-	m_pCannon->Draw(View, Proj, Light, Camera);
+	if (m_Player.m_Draw == true)
+	{
+		m_pBody->Draw(View, Proj, Light, Camera);
+		m_pCannon->Draw(View, Proj, Light, Camera);
+	}
+}
+
+// プレイヤーのダメージ処理
+void CPlayer::PlayerDamage()
+{
+	//時間定数宣言.
+	const float TIME = 1.0f / FPS;
+
+	if (m_Player.m_Damage == true)
+	{
+		// 無敵タイマーを減少
+		m_Player.m_MutekiTimer -= TIME;
+
+		if (m_Player.m_MutekiTimer <= 0.0f)
+		{
+			// 描画フラグがtrueの時はfalseに
+			// falseの時はtrueにする
+			if (m_Player.m_Draw == true)
+			{
+				m_Player.m_Draw = false;
+			}
+			else
+			{
+				m_Player.m_Draw = true;
+			}
+
+			// 無敵カウントを1つ増やす
+			m_Player.m_MutekiCnt++;
+
+			// 無敵タイマーを初期化
+			m_Player.m_MutekiTimer = 0.2f;
+		}
+
+		if (m_Player.m_MutekiCnt >= 10)
+		{
+			// 描画フラグ有効化
+			m_Player.m_Draw = true;
+
+			// ダメージフラグを無効化
+			m_Player.m_Damage = false;
+		}
+	}
+	else
+	{
+		// 念のためここでも無敵を初期化する
+		m_Player.m_MutekiCnt = 0;
+		m_Player.m_MutekiTimer = 0.2;
+	}
+}
+
+void CPlayer::PlayerDeath()
+{
+	//時間定数宣言.
+	const float TIME = 1.0f / FPS;
+
+	if (m_Player.m_Death == true)
+	{
+		// リスポーンタイムを減少
+		m_Player.m_RespawnTimer -= TIME;
+		
+		// 描画フラグを無効化
+		m_Player.m_Draw = false;
+
+		if (m_Player.m_RespawnTimer <= 0.0f)
+		{		
+			// Hpを初期化
+			m_Player.m_Hp = m_Player.m_MaxHp;
+
+			// 描画フラグを有効化
+			m_Player.m_Draw = true;
+
+			// リスポーンタイマーを初期化
+			m_Player.m_RespawnTimer = 3.0f;
+
+			// リスポーンフラグ有効化
+			m_Player.m_Respawn = true;
+
+			// 死亡フラグを無効化
+			m_Player.m_Death = false;
+		}
+	}
+}
+
+// プレイヤーが爆風と当たった時の処理
+void CPlayer::HitPlayer()
+{
+	// プレイヤーの体力を引く
+	m_Player.m_Hp--;
+	if (m_Player.m_Hp <= 0)
+	{
+		// 死亡フラグ有効化
+		m_Player.m_Death = true;
+	}
+	else
+	{
+		// ダメージフラグ有効化
+		m_Player.m_Damage = true;
+	}
 }
 
 // バウンディングオブジェクトを設定

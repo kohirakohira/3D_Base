@@ -39,6 +39,18 @@ public:
 	// コライダーの作成
 	void CreateCollider(int index);
 
+	void PlayerRespawn(int index);
+
+	// リスポーン可能エリアに
+	// プレイヤーの座標を指定する
+	void SetRespawnArea(int index);
+
+	// マップの中央を跨がないように計算する
+	int GetAreaIndex(float x, float z);
+
+	// ゲームの開始座標設定
+	void SetStartPosition();
+
 	//↓松岡.
 	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);
 	void Update() override;
