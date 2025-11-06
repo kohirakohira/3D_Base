@@ -4,7 +4,9 @@
 #undef min;
 
 CPlayerManager::CPlayerManager()
-	: m_pPlayers()
+	: offset	(20.f)
+	, AngleY	(45.f)
+	, m_pPlayers()
 	, m_ActivePlayerIndex(0)
 	, m_PadIndex()
 {
@@ -118,6 +120,7 @@ void CPlayerManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh
 		m_pPlayers[index]->SetBounding(body, cannon);
 	}
 }
+
 // コライダーの作成
 void CPlayerManager::CreateCollider(int index)
 {
@@ -141,20 +144,21 @@ void CPlayerManager::PlayerRespawn(int index)
 
 void CPlayerManager::SetRespawnArea(int index)
 {
-	struct Area {
-		bool Taken = false;
-		D3DXVECTOR3 RespawnPos; // リスポーン位置
-	};
-
 	// エリア4つを定義（マップの座標系に合わせて調整）
-	Area areas[4];
-	areas[0].RespawnPos = { -20.f, 0.f,  20.f };	// 左上
-	areas[1].RespawnPos = { 20.f, 0.f,  20.f };		// 右上
-	areas[2].RespawnPos = { -20.f, 0.f, -20.f };	// 左下
-	areas[3].RespawnPos = { 20.f, 0.f, -20.f };		// 右下
+	// リスポーン位置をセット
+	areas[0].RespawnPos = { -offset, 0.f,  offset }; // 左上
+	areas[1].RespawnPos = { offset, 0.f,  offset };	 // 右上
+	areas[2].RespawnPos = { -offset, 0.f, -offset }; // 左下
+	areas[3].RespawnPos = { offset, 0.f, -offset };	 // 右下
+
+	// リスポーン向きをセット
+	areas[0].RespawnRot = { 0.f, D3DXToRadian(AngleY * 3), 0.f }; // 左上
+	areas[1].RespawnRot = { 0.f, D3DXToRadian(AngleY * 5), 0.f }; // 右上
+	areas[2].RespawnRot = { 0.f, D3DXToRadian(AngleY),	   0.f }; // 左下
+	areas[3].RespawnRot = { 0.f, D3DXToRadian(AngleY * 7), 0.f }; // 右下
 
 	// 各プレイヤーがどのエリアにいるか調べる
-	if (index < m_pPlayers.size())
+	for (int index = 0; index < PLAYER_MAX; index++)
 	{
 		auto PPos = m_pPlayers[index]->GetBody()->GetPosition();
 
@@ -183,7 +187,8 @@ void CPlayerManager::SetRespawnArea(int index)
 	// 各プレイヤーがどのエリアにいるか調べる
 	if (index < m_pPlayers.size())
 	{
-		m_pPlayers[index]->SetPosition(areas[freeIndex].RespawnPos);
+		m_pPlayers[index]->SetTankPosition(areas[freeIndex].RespawnPos);
+		m_pPlayers[index]->SetTankRotation(areas[freeIndex].RespawnRot);
 	}
 }
 
@@ -209,17 +214,10 @@ void CPlayerManager::SetStartPosition()
 {
 	for (int index = 0; index < PLAYER_MAX; ++index)
 	{
-		//プレイヤーiの位置を変更
-		float offsetX = 20.0f;
-		float offsetZ = 20.0f;
-
-		// プレイヤーの向き
-		float AngleY = 45.0;
-
-		if (index == 0)
+		if (index == 0)	
 		{
 			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offsetX, 0.0f, -offsetZ));
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, -offset));
 			// 回転を設定
 			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
 			// スケールを設定
@@ -228,7 +226,7 @@ void CPlayerManager::SetStartPosition()
 		else if (index == 1)
 		{
 			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offsetX, 0.0f, offsetZ));
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, offset));
 			// 回転を設定
 			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
 			// スケールを設定
@@ -237,7 +235,7 @@ void CPlayerManager::SetStartPosition()
 		else if (index == 2)
 		{
 			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offsetX, 0.0f, offsetZ));
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, offset));
 			// 回転を設定
 			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
 			// スケールを設定
@@ -246,7 +244,7 @@ void CPlayerManager::SetStartPosition()
 		else if (index == 3)
 		{
 			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offsetX, 0.0f, -offsetZ));
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, -offset));
 			// 回転を設定
 			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
 			// スケールを設定

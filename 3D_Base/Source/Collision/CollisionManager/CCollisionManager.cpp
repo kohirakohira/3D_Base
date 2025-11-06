@@ -68,19 +68,6 @@ void CCollisionManager::Update()
 
 	//爆風とプレイヤーの当たり判定.
 	PlayertoBlast();
-
-
-	// 確認用(後で消す)
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
-		if (GetAsyncKeyState('R') & 0x8000)
-		{
-			player->PlayerDamage();
-		}
-	}
-	
 }
 
 HRESULT CCollisionManager::LoadData()

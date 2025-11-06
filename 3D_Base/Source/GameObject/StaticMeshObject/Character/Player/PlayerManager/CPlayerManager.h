@@ -81,6 +81,22 @@ public:
 	void SetPlayerTuning(int idx, const TankTuning& t);
 
 private:
+
+	struct Area {
+		bool Taken = false;
+		D3DXVECTOR3 RespawnPos; // リスポーン位置
+		D3DXVECTOR3 RespawnRot; // リスポーン向き
+	};
+
+	// プレイヤーのリスポン位置オフセット
+	float offset;
+
+	// プレイヤーの向き
+	float AngleY;
+
+	// エリア4つを定義（マップの座標系に合わせて調整）
+	Area areas[4];
+
 	//↓松岡.
 	std::shared_ptr<CBody>					m_pBody;
 	std::shared_ptr<CCannon>				m_pCannon;
