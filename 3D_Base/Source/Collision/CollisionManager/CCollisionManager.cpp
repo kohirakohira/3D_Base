@@ -70,21 +70,10 @@ void CCollisionManager::Update()
 	PlayertoBlast();
 }
 
-HRESULT CCollisionManager::LoadData()
-{
-//--------------------------------------------------------------------------.
-// 	   メッシュの読み込み
-//--------------------------------------------------------------------------.
-	// 爆風
-	m_pStaticBlast->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));
-
-	return S_OK;
-}
-
 void CCollisionManager::WalltoPlayer()
 {
 	// 押し返しの強さ
-	const float pushStrength = 0.1f;
+	const float pushStrength = m_pPlayerManager->GetTuning().moveSpeed;
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -98,19 +87,19 @@ void CCollisionManager::WalltoPlayer()
 		// 車体が壁と接触したとき
 		if (Coll->CheckCollision(*m_pWallTop->GetCollider()))
 		{
-			push.z -= 0.1f;
+			push.z -= pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
-			push.z += 0.1f;
+			push.z += pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
-			push.x += 0.1f;
+			push.x += pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallRight->GetCollider()))
 		{
-			push.x -= 0.1f;
+			push.x -= pushStrength;
 		}
 
 		// 押し返しを正規化
@@ -178,7 +167,7 @@ void CCollisionManager::WalltoShot()
 // プレイヤーとプレイヤー当たり判別
 void CCollisionManager::PlayertoPlayer()
 {
-	const float pushStrength = 0.1f;
+	const float pushStrength = m_pPlayerManager->GetTuning().moveSpeed;
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -260,7 +249,9 @@ void CCollisionManager::PlayertoItemBox()
 				//爆風に設定.
 				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
 				{
-
+					//半径設定.
+					const float rad = m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast;
+					m_pBlastManager->SetBlastRadiusMax(0, rad);
 				}
 
 				//装填時短設定.
@@ -306,7 +297,7 @@ void CCollisionManager::PlayertoShot()
 void CCollisionManager::WoodBoxtoPlayer()
 {
 	// 押し返しの強さ
-	const float pushStrength = 0.1f;
+	const float pushStrength = m_pPlayerManager->GetTuning().moveSpeed;
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -488,7 +479,7 @@ void CCollisionManager::GroundtoItemBox()
 {
 	for (auto& item : m_pItemBoxManager->GetItem())
 	{
-		if (m_pItemBoxManager->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
+		if (item->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
 		{
 			// アイテムボックスの処理を入れる
 			item->SetGravity(true);

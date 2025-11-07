@@ -198,6 +198,9 @@ void CGameMain::Update()
 		m_pPlayerManager->SwitchActivePlayer();
 	}
 
+	// 当たり判定の更新
+	m_pCollisionManager->Update();
+
 	// 壁の更新
 	m_pWallTop->Update();
 	m_pWallBottom->Update();
@@ -216,9 +219,6 @@ void CGameMain::Update()
 
 	// 地面の更新
 	m_pGround->Update();
-
-	// 当たり判定の更新
-	m_pCollisionManager->Update();
 
 	//勝敗条件(確認用)..
 	//勝ち..
@@ -240,8 +240,6 @@ void CGameMain::Update()
 	}
 
 }
-
-
 
 void CGameMain::Draw()
 {
@@ -284,7 +282,6 @@ void CGameMain::Draw()
 			}
 		}
 
-//オブジェクトの描画..
 		//弾描画..
 		m_pShotManager->Draw(view, proj, light, paramC);
 
@@ -316,17 +313,6 @@ void CGameMain::Draw()
 		//背景の表示.
 		m_pBackImgObject->Draw(view, proj, light, paramC);
 
-//4画面に体力を表示.
-		//前後関係無視..
-		CDirectX11::GetInstance().SetDepth(false);
-		//UI.
-		for (int i = 0; i < HP_MAX; i++)
-		{
-			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, m_Rot);
-			m_pSpriteHitPoint[i]->Draw();
-		}
-		CDirectX11::GetInstance().SetDepth(true);
-
 	};
 	//分割ビューのループ.
 	for (int i = 0; i < VIEWS; ++i)
@@ -351,30 +337,16 @@ void CGameMain::Draw()
 		//////_stprintf_s(dbgText, _T("Float:%f, %f"), 1.f, 2.2f);.
 		//////m_pDbgText->Render(dbgText, 10, 110);.
 
-
-//4画面の時の表示..
 		//前後関係無視..
 		CDirectX11::GetInstance().SetDepth(false);
 		//プレイヤー番号の描画..
-		switch (i)
-		{
-		case 0:
-			m_pSpritePlayerIcon[i]->Draw();
-			break;
-		case 1:
-			m_pSpritePlayerIcon[i]->Draw();
-			break;
-		case 2:
-			m_pSpritePlayerIcon[i]->Draw();
-			break;
-		case 3:
-			m_pSpritePlayerIcon[i]->Draw();
-			break;
-		default:
-			break;
-		}
-		//キル数の描画..
+		m_pSpritePlayerIcon[i]->Draw();
 		m_pSpriteKillNomber[i]->Draw();
+		for (int i = 0; i < HP_MAX; i++)
+		{
+			m_pSpriteHitPoint[i]->SetRotation(0.0f, 0.0f, m_Rot);
+			m_pSpriteHitPoint[i]->Draw();
+		}
 		CDirectX11::GetInstance().SetDepth(true);
 
 	}
@@ -800,6 +772,9 @@ HRESULT CGameMain::LoadData()
 		}
 	}
 
+	//爆風のメッシュ設定.
+	m_pCollisionManager->SetBlastMesh(m_pStaticMesh_BulletRed);
+
 	//弾メッシュ情報を持たせる.
 	m_pShotManager->AttachMeshToPlayerShot(BulletKinds::Mesh_1, m_pStaticMesh_BulletRed);
 	m_pShotManager->AttachMeshToPlayerShot(BulletKinds::Mesh_2, m_pStaticMesh_BulletYellow);
@@ -1051,12 +1026,6 @@ void CGameMain::EachSettingPlayerNumber()
 //倒した数画像の設定..
 void CGameMain::EachSettingKillNumber()
 {
-	////-----中心表示用座標-----..
-	//	//..
-	//	m_pSpriteKillNomber->SetPosition(WND_W / 2.f - 84.f, WND_H / 2.f - 64.f, 0.f);.
-	//	m_pSpriteKillNomber->SetRotation(0.f, 0.f, 0.f);.
-	//	m_pSpriteKillNomber->SetScale(1.f, 1.f, 0.f);.
-
 	//-----中間発表用-----..
 		//プレイヤー番号の画像の設定..
 	for (int i = 0; i < KILLNUM_MAX; i++)
@@ -1083,21 +1052,20 @@ void CGameMain::EachSettingKillNumber()
 //倒した数画像の設定..
 void CGameMain::EachSettingHitPoint()
 {
-	//-----4画面用-----..
-		//HPの画像の設定..
+	//HPの画像の設定..
 	for (int i = 0; i < HP_MAX; i++)
 	{
 		if (i <= 0)
 		{
 			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 64.f, 0.f);
 			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
+			m_pSpriteHitPoint[i]->SetScale(-0.5f, 0.5f, 0.5f);
 		}
 		else
 		{
 			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2, 64.f, 0.f);
 			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
+			m_pSpriteHitPoint[i]->SetScale(-0.5f, 0.5f, 0.5f);
 		}
 	}
 }

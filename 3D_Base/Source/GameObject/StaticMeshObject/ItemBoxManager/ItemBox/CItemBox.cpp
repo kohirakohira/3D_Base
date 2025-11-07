@@ -88,7 +88,7 @@ void CItemBox::PowerUpEffect()
 void CItemBox::BlastUpEffect()
 {
 	//’è”éŒ¾.
-	static constexpr float BLAST_RAD = 30.f;
+	static constexpr float BLAST_RAD = 100.f;
 
 	//”¼Œa‚ğİ’è.
 	m_Item.m_Blast = BLAST_RAD;
