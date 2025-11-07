@@ -36,7 +36,7 @@ public:
 	void SetPosition(const D3DXVECTOR3& Pos) override { m_CenterPos = Pos; }
 	
 	//”¼Œa(’·‚³)‚ğİ’è‚·‚é
-	void SetRadius(float radius);
+	void SetRadius(float radius) override;
 
 	//©g‚ÌŒ^‚ª‰½‚ÌŒ^‚©‚ğ•Ô‚·.
 	ColliderType GetColType()const override { return ColliderType::Sphere; }

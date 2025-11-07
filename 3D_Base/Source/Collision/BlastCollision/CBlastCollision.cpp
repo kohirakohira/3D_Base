@@ -7,7 +7,7 @@ const float MIN_RADIUS = 0.0f;		//半径の最小値.
 CBlastCollision::CBlastCollision()
 	: m_Radius			( 0.0f )
 	, m_Bom				( false )
-	, m_RadiusMax		( MAX_RADIUS )
+	, m_RadiusMax		( 0.0f )
 {
 	//球の当たり判定.
 	m_pCollider = std::make_shared<CSphereCollider>();
@@ -23,9 +23,6 @@ void CBlastCollision::Update()
 	//定数宣言.
 	const float GROWTH_SPEED = 10.0f;	//大きさの上がり幅.
 	const float deltaTime = 1.0f / 60.0f;
-
-	// コライダーの座標を更新
-	m_pCollider->SetPosition(m_vPosition);
 
 #if 1
 	//半径を徐々に大きくする.
@@ -48,13 +45,15 @@ void CBlastCollision::Update()
 #endif
 
 	//当たり判定設定.
-	SetRadius(m_Radius);
+	m_pCollider->SetRadius(m_Radius);
+	m_pCollider->SetPosition(m_vPosition);
+
 	//半径を設定してあげる.
 	std::shared_ptr<CSphereCollider> m_ShereCollider = std::dynamic_pointer_cast<CSphereCollider>(m_pCollider);
 	m_ShereCollider->SetRadius(m_Radius);
 
-	std::cout << "半径" << m_Radius << std::endl;
-	
+	CStaticMeshObject::Update();
+
 }
 
 //描画処理.

@@ -60,8 +60,8 @@ void CBlastCollisionManager::HitBlast(int index)
 	if (index >= 0 && index < m_pBlastCollision.size())
 	{
 		m_pBlastCollision[index]->HitBlast();
-		//æ“ª(ˆê”ÔŒÃ‚¢ƒ‚ƒm)‚ðíœ.
-		m_pBlastCollision.erase(m_pBlastCollision.begin());
+		////æ“ª(ˆê”ÔŒÃ‚¢ƒ‚ƒm)‚ðíœ.
+		//m_pBlastCollision.erase(m_pBlastCollision.begin());
 	}
 }
 
@@ -129,11 +129,11 @@ void CBlastCollisionManager::SetBlastFlag(bool flg, int index)
 }
 
 //”š”­‚ÌÅ‘å”¼ŒaÝ’è.
-void CBlastCollisionManager::SetBlastRadiusMax(int index, float rad)
+void CBlastCollisionManager::SetBlastRadiusMax( float rad)
 {
-	if (index >= 0 && index < m_pBlastCollision.size())
+	for (auto& blast : m_pBlastCollision)
 	{
-		m_pBlastCollision[index]->SetBlastRadius(rad);
+		blast->SetBlastRadius(rad);
 	}
 }
 

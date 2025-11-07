@@ -42,6 +42,9 @@ public:
 	//©g‚ÌŒ^‚ª‰½‚ÌŒ^‚©‚ğ•Ô‚·.
 	ColliderType GetColType()const override { return ColliderType::Box; }
 
+	// ”¼Œa‚Ìİ’è(Box‚Å‚Íg‚í‚È‚¢)
+	void SetRadius(float radius) override {};
+
 private:
 	// OBB“¯m‚Ì”»’è
 	static bool CheckCollisionOBBtoOBB(const OBB* A, const OBB* B);

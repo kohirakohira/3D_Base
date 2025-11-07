@@ -132,4 +132,7 @@ private:
 
 	// アイテムボックスマネージャークラス
 	std::shared_ptr<CItemBoxManager>	m_pItemBoxManager;
+
+	//最大半径.
+	float m_Rad;
 };
