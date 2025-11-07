@@ -147,9 +147,9 @@ void CPlayerManager::SetRespawnArea(int index)
 	// エリア4つを定義（マップの座標系に合わせて調整）
 	// リスポーン位置をセット
 	areas[0].RespawnPos = { -offset, 0.f,  offset }; // 左上
-	areas[1].RespawnPos = { offset, 0.f,  offset };	 // 右上
+	areas[1].RespawnPos = {  offset, 0.f,  offset }; // 右上
 	areas[2].RespawnPos = { -offset, 0.f, -offset }; // 左下
-	areas[3].RespawnPos = { offset, 0.f, -offset };	 // 右下
+	areas[3].RespawnPos = {  offset, 0.f, -offset }; // 右下
 
 	// リスポーン向きをセット
 	areas[0].RespawnRot = { 0.f, D3DXToRadian(AngleY * 3), 0.f }; // 左上
@@ -169,9 +169,9 @@ void CPlayerManager::SetRespawnArea(int index)
 
 	// 空いているエリアを探す
 	int freeIndex = -1;
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		if (!areas[i].Taken)
+		if (areas[i].Taken == false)
 		{
 			freeIndex = i;
 			break;
@@ -189,6 +189,11 @@ void CPlayerManager::SetRespawnArea(int index)
 	{
 		m_pPlayers[index]->SetTankPosition(areas[freeIndex].RespawnPos);
 		m_pPlayers[index]->SetTankRotation(areas[freeIndex].RespawnRot);
+
+		for (int index = 0; index < PLAYER_MAX; index++)
+		{
+			areas[index].Taken = false;
+		}
 	}
 }
 
