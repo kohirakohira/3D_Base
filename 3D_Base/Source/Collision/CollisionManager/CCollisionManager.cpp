@@ -73,17 +73,6 @@ void CCollisionManager::Update()
 	PlayertoBlast();
 }
 
-HRESULT CCollisionManager::LoadData()
-{
-//--------------------------------------------------------------------------.
-// 	   ƒƒbƒVƒ…‚Ì“Ç‚İ‚İ
-//--------------------------------------------------------------------------.
-	// ”š•—
-	m_pStaticBlast->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));
-
-	return S_OK;
-}
-
 void CCollisionManager::WalltoPlayer()
 {
 	// ‰Ÿ‚µ•Ô‚µ‚Ì‹­‚³
@@ -267,7 +256,9 @@ void CCollisionManager::PlayertoItemBox()
 				//”š•—‚Éİ’è.
 				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
 				{
-
+					//”¼Œaİ’è.
+					const float rad = m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast;
+					m_pBlastManager->SetBlastRadiusMax(0, rad);
 				}
 
 				//‘•“U’Zİ’è.

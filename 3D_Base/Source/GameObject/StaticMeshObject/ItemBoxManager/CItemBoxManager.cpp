@@ -168,9 +168,9 @@ CItemType CItemBoxManager::ItemRandom()
 	//そのうち30枚はシールドで(30/35)、残りはリフレクション(5/35)ということ.
 	std::discrete_distribution<> dist({
 		0,			// Shield      → よく出る.
-		100,		// SpeedUp     → よく出る.
+		0,			// SpeedUp     → よく出る.
 		0,			// PowerUp     → そこそこ.
-		0,			// BlastUp     → ちょっと出にくい.
+		100,		// BlastUp     → ちょっと出にくい.
 		0,			// Reflection  → 出にくい.
 		0			// Reload      → 普通.
 		});

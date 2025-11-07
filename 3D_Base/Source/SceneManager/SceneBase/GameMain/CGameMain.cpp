@@ -194,6 +194,9 @@ void CGameMain::Update()
 		m_pPlayerManager->SwitchActivePlayer();
 	}
 
+	// 当たり判定の更新
+	m_pCollisionManager->Update();
+
 	// 壁の更新
 	m_pWallTop->Update();
 	m_pWallBottom->Update();
@@ -212,9 +215,6 @@ void CGameMain::Update()
 
 	// 地面の更新
 	m_pGround->Update();
-
-	// 当たり判定の更新
-	m_pCollisionManager->Update();
 
 	//勝敗条件(確認用)..
 	//勝ち..
@@ -236,8 +236,6 @@ void CGameMain::Update()
 	}
 
 }
-
-
 
 void CGameMain::Draw()
 {
@@ -280,7 +278,6 @@ void CGameMain::Draw()
 			}
 		}
 
-//オブジェクトの描画..
 		//弾描画..
 		m_pShotManager->Draw(view, proj, light, paramC);
 
@@ -312,17 +309,6 @@ void CGameMain::Draw()
 		//背景の表示.
 		m_pBackImgObject->Draw(view, proj, light, paramC);
 
-////4画面に体力を表示.
-//		//前後関係無視..
-//		CDirectX11::GetInstance().SetDepth(false);
-//		//UI.
-//		for (int i = 0; i < HP_MAX; i++)
-//		{
-//			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, m_Rot);
-//			m_pSpriteHitPoint[i]->Draw();
-//		}
-//		CDirectX11::GetInstance().SetDepth(true);
-
 	};
 	//分割ビューのループ.
 	for (int i = 0; i < VIEWS; ++i)
@@ -347,8 +333,6 @@ void CGameMain::Draw()
 		//////_stprintf_s(dbgText, _T("Float:%f, %f"), 1.f, 2.2f);.
 		//////m_pDbgText->Render(dbgText, 10, 110);.
 
-
-//4画面の時の表示..
 		//前後関係無視..
 		CDirectX11::GetInstance().SetDepth(false);
 		//プレイヤー番号の描画..
@@ -815,6 +799,9 @@ HRESULT CGameMain::LoadData()
 		}
 	}
 
+	//爆風のメッシュ設定.
+	m_pCollisionManager->SetBlastMesh(m_pStaticMesh_BulletRed);
+
 	//弾メッシュ情報を持たせる.
 	m_pShotManager->AttachMeshToPlayerShot(BulletKinds::Mesh_1, m_pStaticMesh_BulletRed);
 	m_pShotManager->AttachMeshToPlayerShot(BulletKinds::Mesh_2, m_pStaticMesh_BulletYellow);
@@ -903,6 +890,7 @@ void CGameMain::SetPosition()
 	// 地面
 	m_pGround->SetPosition(0.f, -3.f, 0.f);
 	m_pGround->SetRotation(D3DXToRadian(0.f), D3DXToRadian(0.f), D3DXToRadian(0.f));
+
 }
 
 void CGameMain::CreateBounding()

@@ -26,9 +26,6 @@ public:
 	//動作関数..
 	void Update();
 
-	// データの読み込み
-	HRESULT LoadData();
-
 	//-----------------------
 	// それぞれの判定関数
 	//-----------------------
@@ -102,6 +99,10 @@ public:
 
 	// アイテムボックスマネージャーのセット
 	void SetCItemBoxManager(std::shared_ptr<CItemBoxManager> pItemBox) { m_pItemBoxManager = pItemBox; }
+
+	//メッシュの設定.
+	void SetBlastMesh(std::shared_ptr<CStaticMesh> mesh) { m_pStaticBlast = mesh; }
+
 private:
 	// 爆風用のメッシュ
 	std::shared_ptr<CStaticMesh>		m_pStaticBlast;			// 爆風のメッシュ
