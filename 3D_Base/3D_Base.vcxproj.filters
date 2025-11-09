@@ -78,6 +78,7 @@
     <ClCompile Include="Source\Collision\BlastCollision\CBlastCollision.cpp" />
     <ClCompile Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CChase\CChase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -144,6 +145,7 @@
     <ClInclude Include="Source\Collision\BlastCollision\CBlastCollision.h" />
     <ClInclude Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CChase\CChase.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />

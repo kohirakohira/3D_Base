@@ -59,6 +59,14 @@ public:
 	void SetObject(const std::vector<std::shared_ptr<CBoxCollider>>* BoxCollider) {};
 
 private:
+
+	//レイ構造体
+	struct Ray
+	{
+		D3DXVECTOR3 origin;		//起点
+		D3DXVECTOR3 direction;	//方向
+	};
+
 	//構造体
 	//COMのショット関連のパラメータ
 	struct ComShotState
@@ -115,9 +123,13 @@ private:
 		float step,
 		float& outHitDist) const;
 
-	//回避側に固定旋回を混ぜる
-	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
+	//COMの前方に障害物があるかどうかを調べるためのヘルパ
+	inline bool BoxRaycastAhead(const CBoxCollider& selfBox,
+		const D3DXVECTOR3& dir, float maxDist, float step,
+		float& outHitDist) const;
 
+	//探査3本で回避トルクを算出
+	inline float ComputeAvoidTorque(const CBoxCollider& selfBox, float curYaw)const;
 
 	// ヘルパ
 	static float Wrap(float rad);                         //[-π,π]に正規化
@@ -143,6 +155,13 @@ private:
 	//COMの状態変更
 	void ChangeState(State state);
 
+	//レイとAABBが交差するかを判定し、当たるなら最初に当たる距離と当たった面の法線を返す
+	bool RayVsAABB(
+		const D3DXVECTOR3& origin, const D3DXVECTOR3& direction,
+		const D3DXVECTOR3& bmin, const D3DXVECTOR3& bmax,
+		float& tHit, D3DXVECTOR3* outN
+	);
+
 	//COMインスタンスの静的レジストリ
 	static std::vector<CComPlayer*>& Instances();
 
@@ -152,8 +171,7 @@ private:
 	const std::vector<std::shared_ptr<CPlayer>>* m_pAllPlayer;			//プレイヤーの一覧取得
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;					//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;								//弱参照のアイテムボックス
-	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;	//障害物の一部を外部から差し込む
-
+	//std::shared_ptr<CItemBox> m_pItemTarget;
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
 	float	m_KeepDistance;				//この距離を保つ
@@ -190,11 +208,16 @@ private:
 	float	m_ItemPickUpRaius;			//以下なら取得.最終的には当たり判定でやる
 	ComShotState m_ShotState;
 
-	const float m_ProdeAngleRad;
-	float		m_ProdeDist;
-	float		m_AvoidHolde;
-	int			m_AvoidSide;
-	float		m_AvoidMax;
+
+	//ゴースト
+	float	m_ProdeAngleRad = ToRad(25.f);		//左右の探査角
+	float	m_ProdeDist = 8.f;					//先の探索距離
+	float	m_ProdeStep = 0.25f;				//ゴーストの刻み
+	int		m_AvoidHoldMax = 12;				//何フレーム回避方向を保持するか
+	int		m_AvoidHoldLeft = 0;				//残りホールド
+	int		m_AvoidSide = 0;					//-1右回避.+1左回避
+
+	std::shared_ptr<std::vector<std::shared_ptr<CBoxCollider>>> m_pBoxCollider;
 };
 
 
