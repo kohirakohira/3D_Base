@@ -89,10 +89,6 @@ public:
 	void SetKeyBoadEnble(bool control) { m_HasControl = control; }
 	bool HasControl() const { return m_HasControl; }
 
-	//パッド用の外部関数
-	void SetPadRef(CXInput* pad) { m_pPad = pad; }
-	CXInput* GetPadRef() const { return m_pPad; }
-
 	//マネージャーセット
 	void SetInputManagerShared(const std::shared_ptr<CInputManager>& im);
 	void SetKeyboardEnabled(bool on);
@@ -123,7 +119,6 @@ protected:
 	std::shared_ptr<CCannon>	m_pCannon;
 	int			m_PlayerID;
 	bool m_HasControl;			//操作権があるか
-	CXInput* m_pPad;			//コントローラー
 
 private:
 	//TankTuning m_Tune{};

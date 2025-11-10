@@ -7,7 +7,7 @@
 #include "Game//CGame.h" // ゲームクラス
 
 //ウィンドウを画面中央で起動を有効にする.
-//#define ENABLE_WINDOWS_CENTERING
+#define ENABLE_WINDOWS_CENTERING
 
 //=================================================
 //	定数.

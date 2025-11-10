@@ -2,7 +2,7 @@
 #include <iostream>
 #include <unordered_map>			//unordered_map:連想コンテナ※高速なアクセス.
 
-#include "CInputKeyManager.h"		//キーマネージャー.
+#include "InputDevice\Key\InputManager\CInputKeyManager.h"		//キーマネージャー.
 
 
 //--------------------------------------------------------------

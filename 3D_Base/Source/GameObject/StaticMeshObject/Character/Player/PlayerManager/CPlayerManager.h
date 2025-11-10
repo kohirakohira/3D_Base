@@ -18,7 +18,8 @@
 
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	//ショットマネージャー
 
-class CXInput;	//前方宣言
+//コントローラークラス.
+#include "InputDevice/Input/Controller\ControllerManager/CControllerManager.h"
 
 class CPlayerManager
 	: public CCharacter
@@ -103,10 +104,9 @@ private:
     std::vector<std::shared_ptr<CPlayer>>	m_pPlayers;
 	std::shared_ptr<CShotManager> m_ShotManager; //弾マネージャー
 
-	std::array<std::unique_ptr<CXInput>, 4>	m_Pads;	//Pad0から3
-	std::array<bool, 4> m_PadConnected{};			//前フレーム接続状態
-	std::array<int, 4>m_PadIndex;					//padId->playerIdx (-1=未割当)
-	std::vector<int> m_PlayerPad;					//playerIdx->padId (-1=未割当)
+	//std::array<bool, 4> m_PadConnected{};			//前フレーム接続状態
+	//std::array<int, 4>m_PadIndex;					//padId->playerIdx (-1=未割当)
+	//std::vector<int> m_PlayerPad;					//playerIdx->padId (-1=未割当)
 
 	int m_ActivePlayerIndex;	// 現在操作中のプレイヤー(デバッグ用)
 
@@ -115,10 +115,8 @@ private:
 	bool m_OnePPadEnabled = true; // 1PパッドON/OFF
 	int m_keyboardPlayer = 0;
 private:
-	void InitPads();
-	void SyncByPadConnection();   //接続状況で割当/COM切替
-	int  FindFirstComPlayer() const;
-	int FindFirstPadReceiver(int StartIndex = 1)const;
+//	int  FindFirstComPlayer() const;
+//	int FindFirstPadReceiver(int StartIndex = 1)const;
 };
 
 

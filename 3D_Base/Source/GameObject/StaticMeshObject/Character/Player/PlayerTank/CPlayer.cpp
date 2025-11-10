@@ -53,7 +53,6 @@ CPlayer::CPlayer()
 	: m_pBody		( nullptr )
 	, m_pCannon		( nullptr )
 	, m_PlayerID	()
-	, m_pPad		( nullptr )
 	, m_HasControl	( false )
 {
 	m_Player = {
@@ -186,11 +185,11 @@ void CPlayer::UpdateHumanInputAndMove()
 
 	float move = 0.f, turn = 0.f, aim = 0.f;
 
-	if (m_pPad && m_pPad->IsConnect())
-	{
-		const float lx = ToStick01(m_pPad->GetLThumbX());
-		const float ly = ToStick01(m_pPad->GetLThumbY());
-		const float rx = ToStick01(m_pPad->GetRThumbX());
+	//if (m_pPad && m_pPad->IsConnect())
+	//{
+	//	const float lx = ToStick01(m_pPad->GetLThumbX());
+	//	const float ly = ToStick01(m_pPad->GetLThumbY());
+	//	const float rx = ToStick01(m_pPad->GetRThumbX());
 
 		move = Deadzone(ly, 0.15f);
 		turn = Deadzone(lx, 0.15f);

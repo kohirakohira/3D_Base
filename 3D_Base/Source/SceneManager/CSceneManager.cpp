@@ -26,6 +26,9 @@ CSceneManager::~CSceneManager()
 //動作処理.
 void CSceneManager::Update()
 {
+	//コントローラーの入力を常に受け付ける.
+	CControllerManager::GetInstance().Update();
+
 	//シーン切り替え.
 	m_NextType = m_pScene->GetSceneType();
 	if (m_NextType != m_CurrentSceneType)

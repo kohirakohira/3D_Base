@@ -1007,20 +1007,13 @@ void CGameMain::EachSettingTimer()
 	//時計の針の画像設定..
 	m_pSpriteTimerArrow->SetPosition(WND_W / 2.f - 42.f, WND_H / 2, 0.f);
 	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, 0.f);
-	m_pSpriteTimerArrow->SetScale(-0.25f, 0.25f, 0.f);
+	m_pSpriteTimerArrow->SetScale(0.25f, 0.25f, 0.f);
 
 	//-----中心表示用座標-----..
 	//ゲームで遊べる(クリア画面に遷移する)時間※引数..
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
-
-	////-----中間発表用-----..
-	//	//ゲームで遊べる(クリア画面に遷移する)時間※引数..
-	//	m_Timer->StartTimer(TIME);.
-	//	m_Timer->SetDebugFont(m_pDbgText);.
-	//	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);.
-
 }
 //プレイヤー番号画像の設定..
 void CGameMain::EachSettingPlayerNumber()

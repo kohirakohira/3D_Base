@@ -4,7 +4,9 @@
 
 //-----外部クラス-----
 #include "GameObject//UI//CUIObject//CUIObject.h"		// UIオブジェクトクラス
-#include "SceneManager//SceneType//CSceneType.h" // シーンタイプ
+#include "SceneManager//SceneType//CSceneType.h"		// シーンタイプ
+#include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"	//コントローラー.
+#include "InputDevice/Key/CMultiInputManager/CMultiInputKeyManager.h"			//キー.
 
 //----------------選択肢用クラス.----------------
 //CUIObjectを継承している.
@@ -34,7 +36,8 @@ public:
 	//選択しているものを識別するためのモノ.
 	bool 			m_IsSelected;
 
-
 private:
+	//キークラスの宣言.
+	std::unique_ptr<CMultiInputKeyManager>	m_Key;
 
 };

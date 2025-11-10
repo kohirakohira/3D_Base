@@ -100,6 +100,18 @@ public:
 	//右スティックY軸取得.
 	SHORT GetRThumbY() const {	return m_state.Gamepad.sThumbRY;		}
 
+	//正規化.
+	float GetLeftStickXNormalized() const;
+	float GetLeftStickYNormalized() const;
+	float GetRightStickXNormalized() const;
+	float GetRightStickYNormalized() const;
+	float GetLeftTriggerNormalized() const;
+	float GetRightTriggerNormalized() const;
+
+	//コントローラーの情報取得.
+	XINPUT_STATE GetNowState() const { return m_state; }
+	XINPUT_STATE GetOldState() const { return m_stateOld; }
+
 	//振動設定.
 	bool SetVibration( WORD LMotorSpd, WORD RMotorSpd );
 

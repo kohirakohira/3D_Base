@@ -7,6 +7,10 @@
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス
 
 #include "SceneManager//SceneType//CSceneType.h" // シーンタイプ
+
+//コントローラー.
+#include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
+
 class CSceneBase
 {
 public:
