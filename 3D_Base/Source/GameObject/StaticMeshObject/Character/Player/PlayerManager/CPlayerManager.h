@@ -39,6 +39,18 @@ public:
 	// コライダーの作成
 	void CreateCollider(int index);
 
+	void PlayerRespawn(int index);
+
+	// リスポーン可能エリアに
+	// プレイヤーの座標を指定する
+	void SetRespawnArea(int index);
+
+	// マップの中央を跨がないように計算する
+	int GetAreaIndex(float x, float z);
+
+	// ゲームの開始座標設定
+	void SetStartPosition();
+
 	//↓松岡.
 	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);
 	void Update() override;
@@ -69,6 +81,22 @@ public:
 	void SetPlayerTuning(int idx, const TankTuning& t);
 
 private:
+
+	struct Area {
+		bool Taken = false;
+		D3DXVECTOR3 RespawnPos; // リスポーン位置
+		D3DXVECTOR3 RespawnRot; // リスポーン向き
+	};
+
+	// プレイヤーのリスポン位置オフセット
+	float offset;
+
+	// プレイヤーの向き
+	float AngleY;
+
+	// エリア4つを定義（マップの座標系に合わせて調整）
+	Area areas[4];
+
 	//↓松岡.
 	std::shared_ptr<CBody>					m_pBody;
 	std::shared_ptr<CCannon>				m_pCannon;

@@ -43,7 +43,7 @@ void CCollisionManager::Update()
 	WalltoPlayer();
 
 	// 壁と弾の当たり判定
-	//WalltoShot();
+	WalltoShot();
 
 	// プレイヤーとプレイヤー当たり判定判別
 	PlayertoPlayer();
@@ -52,19 +52,16 @@ void CCollisionManager::Update()
 	PlayertoItemBox();
 
 	// プレイヤーと弾
-	//PlayertoShot();
-
-	// 弾と弾
-	//ShottoShot(); // 激重コード(要改善)
+	PlayertoShot();
 
 	// 箱とプレイヤー
 	WoodBoxtoPlayer();
 
 	// 木箱と弾
-	//WoodBoxtoShot();
+	WoodBoxtoShot();
 
 	// 地面と弾
-	//GroundtoShot();
+	GroundtoShot();
 
 	// 地面とアイテムボックス
 	GroundtoItemBox();
@@ -129,60 +126,54 @@ void CCollisionManager::WalltoPlayer()
 	}
 }
 
-#if 0
 // 壁と弾の当たり判定
 void CCollisionManager::WalltoShot()
 {
-	for (int i = 0; i < ShotMax; i++)
+	for (auto& shot : m_pShotManager->GetShot())
 	{
-		// ショットのコライダー取得
-		auto Shots = m_pShotManager->GetShot();
-		auto ShotsColl = Shots[i]->GetCollider();
-
 		// 壁が弾と接触したとき
-		if (ShotsColl->CheckCollision(*m_pWallTop->GetCollider()))
+		if (shot->GetCollider()->CheckCollision(*m_pWallTop->GetCollider()))
 		{
 			//動的に作成.
 			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
+				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
 
-			Shots[i]->HitShot();
+			m_pShotManager->HitShot();
 		}
-		if (ShotsColl->CheckCollision(*m_pWallBottom->GetCollider()))
+		if (shot->GetCollider()->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
 			//動的に作成.
 			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
+				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
 
-			Shots[i]->HitShot();
+			m_pShotManager->HitShot();
 		}
-		if (ShotsColl->CheckCollision(*m_pWallLeft->GetCollider()))
+		if (shot->GetCollider()->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
 			//動的に作成.
 			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
+				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
 
-			Shots[i]->HitShot();
+			m_pShotManager->HitShot();
 		}
-		if (ShotsColl->CheckCollision(*m_pWallRight->GetCollider()))
+		if (shot->GetCollider()->CheckCollision(*m_pWallRight->GetCollider()))
 		{
 			//動的に作成.
 			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
+				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
 
-			Shots[i]->HitShot();
+			m_pShotManager->HitShot();
 		}
 	}
 }
-#endif
 
 // プレイヤーとプレイヤー当たり判別
 void CCollisionManager::PlayertoPlayer()
@@ -283,7 +274,6 @@ void CCollisionManager::PlayertoItemBox()
 	}
 }
 
-#if 0
 // プレイヤーと弾
 void CCollisionManager::PlayertoShot()
 {
@@ -293,53 +283,24 @@ void CCollisionManager::PlayertoShot()
 		auto player = m_pPlayerManager->GetControlPlayer(i);
 		auto Coll = player->GetBody()->GetCollider();
 
-		for (int i = 0; i < ShotMax; i++)
+		for (auto& shot : m_pShotManager->GetShot())
 		{
-			// ショットのコライダー取得
-			auto Shots = m_pShotManager->GetShot();
-			auto ShotsColl = Shots[i]->GetCollider();
-
-			if (ShotsColl->CheckCollision(*Coll))
+			if (shot->GetCollider()->CheckCollision(*Coll))
 			{
 				//動的に作成.
 				m_pBlastManager->Create(
-					Shots[i]->GetPosition(),
+					shot->GetPosition(),
 					true,
 					m_pStaticBlast);
 
-				Shots[i]->HitShot();
+				shot->HitShot();
+
+				// 仮でここに当たった時の処理を書いている
+				player->HitPlayer();
 			}
 		}
 	}
 }
-
-// 弾と弾
-void CCollisionManager::ShottoShot()
-{
-	for (int i = 0; i < ShotMax; i++)
-	{
-		// ショットAのコライダー取得
-		auto ShotsA = m_pShotManager->GetShot();
-		auto ShotsCollA = ShotsA[i]->GetCollider();
-
-		for (int j = 0; j < ShotMax; j++)
-		{
-			// 自分自身との判定をスキップ
-			if (i == j) continue;
-
-			// ショットBのコライダー取得
-			auto ShotsB = m_pShotManager->GetShot();
-			auto ShotsCollB = ShotsB[i]->GetCollider();
-
-			if (ShotsCollA->CheckCollision(*ShotsCollB))
-			{
-				ShotsA[i]->HitShot();
-				ShotsB[i]->HitShot();
-			}
-		}
-	}
-}
-#endif
 
 // 木箱とプレイヤー
 void CCollisionManager::WoodBoxtoPlayer()
@@ -446,66 +407,61 @@ void CCollisionManager::WoodBoxtoPlayer()
 	}
 }
 
-#if 0
 // 木箱と弾
 void CCollisionManager::WoodBoxtoShot()
 {
-	for (int i = 0; i < ShotMax; i++)
+	for (auto& shot : m_pShotManager->GetShot())
 	{
-		// ショットのコライダー取得
-		auto Shots = m_pShotManager->GetShot();
-		auto ShotsColl = Shots[i]->GetCollider();
-
 		// 壁が弾と接触したとき
-		if (ShotsColl->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
+		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
 		{
 			// 動的に作成
 			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
+				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
 
-			Shots[i]->HitShot();
+			shot->HitShot();
 		}
-		if (ShotsColl->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
+		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
 		{
 			//動的に作成.
 			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
+				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
 
-			Shots[i]->HitShot();
+			shot->HitShot();
 		}
-		if (ShotsColl->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
+		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
 		{
 			//動的に作成.
 			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
+				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
 
-			Shots[i]->HitShot();
+			shot->HitShot();
 		}
-		if (ShotsColl->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
+		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
 		{
 			//動的に作成.
 			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
+				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
 
-			Shots[i]->HitShot();
+			shot->HitShot();
 		}
-		if (ShotsColl->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
+		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
 		{
 			//動的に作成.
 			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
+				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
 
-			Shots[i]->HitShot();
+			shot->HitShot();
 		}
 	}
 }
@@ -513,24 +469,19 @@ void CCollisionManager::WoodBoxtoShot()
 // 地面と弾
 void CCollisionManager::GroundtoShot()
 {
-	for (int i = 0; i < ShotMax; i++)
+	for (auto& shot : m_pShotManager->GetShot())
 	{
-		// ショットのコライダー取得
-		auto Shots = m_pShotManager->GetShot();
-		auto ShotsColl = Shots[i]->GetCollider();
-
-		if (ShotsColl->CheckCollision(*m_pGround->GetCollider()))
+		if (shot->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
 		{
 			// 動的に作成
 			m_pBlastManager->Create(
-				Shots[i]->GetPosition(),
+				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
-			Shots[i]->HitShot();
+			shot->HitShot();
 		}
 	}
 }
-#endif
 
 // 地面とアイテムボックス
 void CCollisionManager::GroundtoItemBox()

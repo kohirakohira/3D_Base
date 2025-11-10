@@ -17,6 +17,26 @@ class CPlayer
 	: public CCharacter
 {
 public:
+
+	// 構造体を作成
+	struct Player
+	{
+		int			m_Hp;			// プレイヤーのHP
+		int			m_MaxHp;		// プレイヤーの最大HP
+
+		int			m_MutekiCnt;	// 無敵カウント
+		float		m_MutekiTimer;	// 無敵時間
+
+		float		m_RespawnTimer;	// リスポーン時間
+		
+		bool		m_Draw;			// 描画するかどうか
+
+		bool		m_Damage;		// ダメージを受けたか
+		bool		m_Death;		// 死亡しているか
+		bool		m_Respawn;		// リスポーン
+	} m_Player;
+
+public:
 	CPlayer();
 	virtual ~CPlayer() override;
 
@@ -37,6 +57,14 @@ public:
 	virtual void Update() override;
 	virtual void Draw(
 		D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+
+	// プレイヤーのダメージ処理
+	void PlayerDamage();
+	// プレイヤーの死亡処理
+	void PlayerDeath();
+
+	// プレイヤーが爆風と当たった時の処理
+	void HitPlayer();
 
 	// バウンディングオブジェクトを設定
 	void SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon);
@@ -76,6 +104,10 @@ public:
 	//プレイヤーのTuneを設定.
 	void SetTune(const TankTuning& info);
 
+	// リスポーンフラグ設定
+	void SetRespawnFlag(bool flg) { m_Player.m_Respawn = flg; }
+	// リスポーンフラグの取得
+	bool GetRespawnFlag() { return m_Player.m_Respawn; }
 
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }
@@ -89,7 +121,6 @@ protected:
 
 	std::shared_ptr<CBody>		m_pBody;
 	std::shared_ptr<CCannon>	m_pCannon;
-	int			m_Hp;
 	int			m_PlayerID;
 	bool m_HasControl;			//操作権があるか
 	CXInput* m_pPad;			//コントローラー

@@ -16,17 +16,4 @@ public:
 	virtual ~CGround();
 
 	virtual void Update() override;
-
-	// リスポーン可能エリアに
-	// プレイヤーの座標を指定する
-	void RespawnArea();
-
-	// マップの中央を跨がないように計算する
-	int GetAreaIndex(float x, float z);
-
-	//プレイヤーを設定.
-	void SetPlayer(std::shared_ptr<CPlayerManager> pPlayer) { m_pPlayerManager = pPlayer; }
-protected:
-
-	std::shared_ptr<CPlayerManager>		m_pPlayerManager;
 };

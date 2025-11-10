@@ -29,28 +29,12 @@ void CShotManager::AttachMeshToPlayerShot(BulletKinds kind, std::shared_ptr<CSta
 	m_Mesh[kind] = mesh;
 }
 
-//void CShotManager::SetReload(int No, const D3DXVECTOR3& pos, float rotY)
-//{
-//	for (int i = 0; i < ShotMax; ++i)
-//	{
-//		if (!m_pShots[i]->IsActive())
-//		{
-//			m_pShots[i]->AttachMesh(m_Mesh[No]);
-//			m_pShots[i]->Reload(pos, rotY);
-//			break;
-//		}
-//	}
-//}
-
 // 動作処理
 void CShotManager::Update()
 {
 	for (auto& shot : m_pShots)
 	{
-		//if (shot == nullptr)
-		{
-			shot->Update();
-		}
+		shot->Update();
 	}
 }
 
@@ -63,7 +47,26 @@ void CShotManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA
 	}
 }
 
-void CShotManager::Create(const D3DXVECTOR3& pos, bool shotFlg, int No)
+void CShotManager::HitShot()
+{
+	std::cout << "削除前の弾数: " << m_pShots.size() << std::endl;
+	// 1. 削除対象の要素を末尾に移動させ、新しい終端イテレータ(it)を取得
+	auto it = std::remove_if(
+		m_pShots.begin(),
+		m_pShots.end(),
+		// ラムダ式: Bulletを引数に取り、削除するならtrueを返す
+		[](const std::shared_ptr<CShot>& b) {
+			return b->HitShot();
+		}
+	);
+
+	// 2. 新しい終端イテレータ(it)から元の終端までを削除
+	m_pShots.erase(it, m_pShots.end());
+
+	 std::cout << "削除後の弾数: " << m_pShots.size() << std::endl;
+}
+
+void CShotManager::Create(const D3DXVECTOR3& pos, float rotY, bool shotFlg, int No)
 {
 	// インスタンス生成
 	auto shot = std::make_unique<CShot>();
@@ -71,14 +74,14 @@ void CShotManager::Create(const D3DXVECTOR3& pos, bool shotFlg, int No)
 	// メッシュのアタッチ
 	shot->AttachMesh(m_Mesh[No]);
 
-	// 位置の設定
-	shot->SetPosition(pos);
+	// 弾の向きの設定
+	shot->Reload(pos, rotY);
 
 	// 発射フラグの設定
 	shot->SetShotFlag(shotFlg);
 
 	// 当たり判定の生成
-	//shot->CreateBSphereForMesh(m_Mesh[No]);
+	shot->CreateBSphereForMesh(*m_Mesh[No]);
 
 	// 当たり判定の設定
 	shot->CreateSpehreCollider(shot->GetRadius());

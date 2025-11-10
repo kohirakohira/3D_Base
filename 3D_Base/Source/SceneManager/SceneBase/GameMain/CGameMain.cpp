@@ -139,6 +139,10 @@ void CGameMain::Update()
 
 	//プレイヤー全員更新.
 	m_pPlayerManager->Update();
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		m_pPlayerManager->PlayerRespawn(i);
+	}
 
 	// 弾の発射.
 	//for (int i = 0; i < PLAYER_MAX; i++)
@@ -510,7 +514,7 @@ void CGameMain::Create()
 	m_pStaticMeshBSphere = std::make_shared<CStaticMesh>();
 	m_pStaticMeshItemBox = std::make_shared<CStaticMesh>();
 
-	// 戦車のメッシュ..
+	// 戦車のメッシュ
 	m_pStaticMesh_TankBodyRed = std::make_shared<CStaticMesh>();
 	m_pStaticMesh_TankCannonRed = std::make_shared<CStaticMesh>();
 	m_pStaticMesh_TankBodyYellow = std::make_shared<CStaticMesh>();
@@ -520,13 +524,13 @@ void CGameMain::Create()
 	m_pStaticMesh_TankBodyGreen = std::make_shared<CStaticMesh>();
 	m_pStaticMesh_TankCannonGreen = std::make_shared<CStaticMesh>();
 
-	// 弾のメッシュ..
+	// 弾のメッシュ
 	m_pStaticMesh_BulletRed = std::make_shared<CStaticMesh>();
 	m_pStaticMesh_BulletYellow = std::make_shared<CStaticMesh>();
 	m_pStaticMesh_BulletBlue = std::make_shared<CStaticMesh>();
 	m_pStaticMesh_BulletGreen = std::make_shared<CStaticMesh>();
 
-	//壁のメッシュ.
+	//壁のメッシュ
 	m_pStaticMeshWallW = std::make_shared<CStaticMesh>();
 	m_pStaticMeshWallH = std::make_shared<CStaticMesh>();
 
@@ -536,10 +540,10 @@ void CGameMain::Create()
 	// 木箱のメッシュ
 	m_pStaticMeshWoodBox = std::make_shared<CStaticMesh>();
 
-	//背景画像のメッシュ.
+	// 背景画像のメッシュ
 	m_pStaticMeshBackImg = std::make_shared<CStaticMesh>();
 
-	//デバッグテキストのインスタンス作成.
+	// デバッグテキストのインスタンス作成
 	m_pDbgText = std::make_unique<CDebugText>();
 
 	//プレイヤーと砲塔のインスタンス生成.
@@ -559,42 +563,6 @@ void CGameMain::Create()
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		//プレイヤーiの位置を変更
-		float offsetX = 20.0f;
-		float offsetZ = 20.0f;
-
-		// プレイヤーの向き
-		float AngleY = 45.0;
-
-		if (i == 0)
-		{
-			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(-offsetX, 0.0f, -offsetZ));
-			//回転を設定..
-			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
-			m_pPlayerManager->SetPlayerScale(i, 1.8f);
-		}
-		else if (i == 1)
-		{
-			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(-offsetX, 0.0f, offsetZ));
-			//回転を設定..
-			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
-			m_pPlayerManager->SetPlayerScale(i, 1.8f);
-		}
-		else if (i == 2)
-		{
-			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(offsetX, 0.0f, offsetZ));
-			//回転を設定..
-			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
-			m_pPlayerManager->SetPlayerScale(i, 1.8f);
-		}
-		else if (i == 3)
-		{
-			m_pPlayerManager->SetPlayerPosition(i, D3DXVECTOR3(offsetX, 0.0f, -offsetZ));
-			//回転を設定..
-			m_pPlayerManager->SetPlayerRotation(i, D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
-			m_pPlayerManager->SetPlayerScale(i, 1.8f);
-		}
-
 		//カメラ生成・セットアップ.
 		auto camera = std::make_unique<CCamera>();
 		camera->SetTargetPos(m_pPlayerManager->GetPosition(i));
@@ -920,6 +888,9 @@ void CGameMain::SetPosition()
 	// 地面
 	m_pGround->SetPosition(0.f, -3.f, 0.f);
 	m_pGround->SetRotation(D3DXToRadian(0.f), D3DXToRadian(0.f), D3DXToRadian(0.f));
+
+	// プレイヤーの初期座標設定
+	m_pPlayerManager->SetStartPosition();
 }
 
 void CGameMain::CreateBounding()

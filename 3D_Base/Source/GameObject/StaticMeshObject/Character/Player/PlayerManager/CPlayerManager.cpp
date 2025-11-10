@@ -4,7 +4,9 @@
 #undef min;
 
 CPlayerManager::CPlayerManager()
-	: m_pPlayers()
+	: offset	(20.f)
+	, AngleY	(45.f)
+	, m_pPlayers()
 	, m_ActivePlayerIndex(0)
 	, m_PadIndex()
 {
@@ -36,10 +38,8 @@ void CPlayerManager::InitPads()
 //インスタンス生成.
 void CPlayerManager::Initialize()
 {
-
 	m_pPlayers.clear();
 	m_pPlayers.reserve(PLAYER_MAX);
-
 
 	for (int i = 0; i < PLAYER_MAX; ++i) {
 		auto com = std::make_shared<CComPlayer>();
@@ -120,12 +120,141 @@ void CPlayerManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh
 		m_pPlayers[index]->SetBounding(body, cannon);
 	}
 }
+
 // コライダーの作成
 void CPlayerManager::CreateCollider(int index)
 {
 	if (index < m_pPlayers.size())
 	{
 		m_pPlayers[index]->CreateCollider();
+	}
+}
+
+void CPlayerManager::PlayerRespawn(int index)
+{
+	if (index < m_pPlayers.size())
+	{
+		if (m_pPlayers[index]->GetRespawnFlag() == true)
+		{
+			SetRespawnArea(index);
+			m_pPlayers[index]->SetRespawnFlag(false);
+		}
+	}
+}
+
+void CPlayerManager::SetRespawnArea(int index)
+{
+	// エリア4つを定義（マップの座標系に合わせて調整）
+	// リスポーン位置をセット
+	areas[0].RespawnPos = { -offset, 0.f,  offset }; // 左上
+	areas[1].RespawnPos = {  offset, 0.f,  offset }; // 右上
+	areas[2].RespawnPos = { -offset, 0.f, -offset }; // 左下
+	areas[3].RespawnPos = {  offset, 0.f, -offset }; // 右下
+
+	// リスポーン向きをセット
+	areas[0].RespawnRot = { 0.f, D3DXToRadian(AngleY * 3), 0.f }; // 左上
+	areas[1].RespawnRot = { 0.f, D3DXToRadian(AngleY * 5), 0.f }; // 右上
+	areas[2].RespawnRot = { 0.f, D3DXToRadian(AngleY),	   0.f }; // 左下
+	areas[3].RespawnRot = { 0.f, D3DXToRadian(AngleY * 7), 0.f }; // 右下
+
+	// 各プレイヤーがどのエリアにいるか調べる
+	for (int index = 0; index < PLAYER_MAX; index++)
+	{
+		auto PPos = m_pPlayers[index]->GetBody()->GetPosition();
+
+		int areaIndex = GetAreaIndex(PPos.x, PPos.z);
+
+		areas[areaIndex].Taken = true;
+	}
+
+	// 空いているエリアを探す
+	int freeIndex = -1;
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (areas[i].Taken == false)
+		{
+			freeIndex = i;
+			break;
+		}
+	}
+
+	if (freeIndex == -1)
+	{
+		// 全て埋まっている場合 → ランダムなどで選ぶ
+		freeIndex = rand() % 4;
+	}
+
+	// 各プレイヤーがどのエリアにいるか調べる
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetTankPosition(areas[freeIndex].RespawnPos);
+		m_pPlayers[index]->SetTankRotation(areas[freeIndex].RespawnRot);
+
+		for (int index = 0; index < PLAYER_MAX; index++)
+		{
+			areas[index].Taken = false;
+		}
+	}
+}
+
+int CPlayerManager::GetAreaIndex(float x, float z)
+{
+	// 四捨五入の座標を使用
+	float rx = std::round(x);
+	float rz = std::round(z);
+
+	// もし四捨五入結果が0なら、適当に片方に寄せる
+	if (rx == 0) rx = (x >= 0) ? 1 : -1;
+	if (rz == 0) rz = (z >= 0) ? 1 : -1;
+
+	// これで確実に x,z は ±1 のどちらかに分類できる
+	if (rx < 0 && rz > 0) return 0; // 左上
+	if (rx > 0 && rz > 0) return 1; // 右上
+	if (rx < 0 && rz < 0) return 2; // 左下
+	if (rx > 0 && rz < 0) return 3; // 右下
+}
+
+// ゲームの開始座標設定
+void CPlayerManager::SetStartPosition()
+{
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		if (index == 0)	
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, -offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(1.8f);
+		}
+		else if (index == 1)
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(1.8f);
+		}
+		else if (index == 2)
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(1.8f);
+		}
+		else if (index == 3)
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, -offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(1.8f);
+		}
 	}
 }
 
@@ -190,7 +319,6 @@ void CPlayerManager::Update()
 		}
 			
 	}
-
 }
 
 void CPlayerManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
