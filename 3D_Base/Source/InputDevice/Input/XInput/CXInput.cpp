@@ -276,14 +276,27 @@ bool CXInput::UpdateStatus()
 	}
 	return false;
 #endif
-	//未接続の時にクリア
-	m_connect = (XInputGetState(m_padId, &m_state) == ERROR_SUCCESS);
-
-	if (!m_connect)
+	DWORD result = XInputGetState(m_padId, &m_state);
+	if (result == ERROR_SUCCESS)
 	{
-		ZeroMemory(&m_state, sizeof(m_state));
+		m_connect = true;
+
+		//確認用.
+		std::cout << "PadID" << m_padId << "Connect" << (m_connect ? "YES" : "NO") << std::endl;
+
+		return true;
 	}
-	return m_connect;
+	else
+	{
+		m_connect = false;
+		//初期化.
+		ZeroMemory(&m_state, sizeof(m_state));
+
+		//確認用.
+		std::cout << "PadID" << m_padId << "Connect" << (m_connect ? "YES" : "NO") << std::endl;
+
+		return false;
+	}
 }
 
 

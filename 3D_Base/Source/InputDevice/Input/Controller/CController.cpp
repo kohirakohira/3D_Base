@@ -6,7 +6,7 @@ CController::CController(int index)
 	, m_Connected		( false )
 {
 	//’†g‚ğ¶¬.
-	m_Pad = std::make_unique<CXInput>(m_Index);
+	m_Pad = std::make_unique<CXInput>(index);
 }
 
 CController::~CController()

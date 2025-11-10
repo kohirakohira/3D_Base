@@ -34,32 +34,45 @@ void CPlayerManager::Initialize()
 	m_pPlayers.clear();
 	m_pPlayers.reserve(PLAYER_MAX);
 
-	for (int i = 0; i < PLAYER_MAX; ++i) {
-		auto com = std::make_shared<CComPlayer>();
-		com->Initialize(i);
+	for(int i = 0; i < PLAYER_MAX; i++)
+	{
+		std::shared_ptr<CPlayer> player;
 
-		//既定はCOM
-		com->SetComEnabled(true);
-		com->SetHasControl(false);
-
-		// 最初の1体だけ人間操作にする
-		if (i == 0) {
-			com->SetComEnabled(false); //COM停止,人間化
-			com->SetHasControl(true);  //入力を読むのはこの個体だけ
-			com->SetKeyBoadEnble(true);
+		//コントローラーが繋がれていれば.
+		if (CControllerManager::GetInstance().GetController(i))
+		{
+			//プレイヤー.
+			player = std::make_shared<CPlayer>();	//インスタンス生成.
+			player->Initialize(i);					//車体・砲塔を生成.
+			player->SetHasControl(true);			//コントローラー操作ON.
+			player->SetKeyBoadEnble(true);			//.
+			player->SetControllerIndex(i);			//コントローラー設定.
+			SetBodyAndCannon(player->GetBody(), player->GetCannon());
 		}
 		else
 		{
-			com->SetKeyBoadEnble(false);
+			//COM.
+			auto com = std::make_shared<CComPlayer>();	//インスタンス生成.
+			com->Initialize(i);							//車体・砲塔を生成.
+			com->SetComEnabled(true);					//COMかプレイヤーか判断.
+			com->SetHasControl(false);					//コントローラー操作ON.
+			com->SetKeyBoadEnble(false);				//.
+			SetBodyAndCannon(com->GetBody(), com->GetCannon());
+			player = com;
 		}
-		m_pPlayers.push_back(std::move(com));
+		//プレイヤーとCOMを生成.
+		m_pPlayers.push_back(player);
 	}
 
-	for (auto& player : m_pPlayers) {
-		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player)) {
+	//COMプレイヤー同士で参照を共有.
+	for (auto& player : m_pPlayers)
+	{
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
+		{
 			com->SetPlayersRef(&m_pPlayers);
 		}
 	}
+
 }
 
 void CPlayerManager::AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
@@ -416,60 +429,79 @@ void CPlayerManager::SwitchControl()
 {
 	for (int No = 0; No < PLAYER_MAX; No++)
 	{
-		//接続されているか判定用.
-		bool Connected = CControllerManager::GetInstance().GetController(No);
-
-		//既にプレイヤーが存在するか？.
-		if (No < m_pPlayers.size() && m_pPlayers[No])
+		//コントローラーの接続状態を確認.
+		CController* ctrl = CControllerManager::GetInstance().GetController(No);
+		//接続出来てる？を判定する用.
+		bool Connected = false;
+		//判定中.
+		if (ctrl != nullptr)
 		{
-			//CComPlayerにキャスト出来ればCOM、できなければプレイヤー.
-			bool IsCom = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[No]) != nullptr;
+			Connected = ctrl->CheckConnected();
+		}
 
-			//コントローラーが刺さっていて、COMである時、プレイヤーに切り替え.
-			if (Connected && IsCom)
+		//現在のプレイヤー情報を取得.
+		std::shared_ptr<CCharacter> current = nullptr;
+		//プレイヤーリストの範囲内なら、その番号のプレイヤーを取得.
+		if (No < static_cast<int>(m_pPlayers.size()))
+		{
+			current = m_pPlayers[No];
+		}
+
+		//COMかどうか判定.
+		bool isCom = false;
+		if (current != nullptr)
+		{
+			isCom = std::dynamic_pointer_cast<CComPlayer>(current) != nullptr;
+		}
+
+		//状態が一致している場合はスキップ.
+		//例：padあり->プレイヤー・padなし->COMの状態があっているとき.
+		if ((Connected == true && isCom != true) || (Connected != true && isCom == true))
+		{
+			//変更する必要なし.
+			continue;
+		}
+
+		//COM->プレイヤーへ切り替え.
+		if (Connected == true && isCom == true)
+		{
+			//新しいプレイヤーを生成.
+			std::shared_ptr<CPlayer> newPlayer = std::make_shared<CPlayer>();
+
+			//コントローラーを設定.
+			newPlayer->SetControllerIndex(No);
+
+			//元のCOMの位置を引き継ぐ.
+			if (current != nullptr)
 			{
-				//COMとプレイヤーの切り替え.
-				std::shared_ptr<CPlayer> newPlayer = std::make_shared<CPlayer>();
-				//コントローラー番号を設定.
-				newPlayer->SetControllerIndex(No);
-				//元COMの位置情報を引き継ぐ(入れ替えても位置は変わらないように).
-				newPlayer->SetPosition(m_pPlayers[No]->GetPosition());
-				//BodyとCannonを再設定.
-				newPlayer->SetCBody(m_pBody);
-				newPlayer->SetCCannon(m_pCannon);
-				//チューニングを再設定.
-				newPlayer->SetTuning(m_pPlayers[No]->GetTuning());
-
-				//新しいplayerに変更.
-				m_pPlayers[No] = newPlayer;
+				newPlayer->SetPosition(current->GetPosition());
 			}
-			else if (Connected != true && IsCom)	//コントローラーが切断され、プレイヤーならCOMに切り替え.
+			//戦車の調整データを引き継ぐ.
+			if (current != nullptr)
 			{
-				//プレイヤーからCOMへ切り替え.
-				std::shared_ptr<CComPlayer> newCom = std::make_shared<CComPlayer>();
-
-				//位置の引き継ぎ.
-				newCom->SetPosition(m_pPlayers[No]->GetPosition());
-
-				//COMに変更.
-				m_pPlayers[No] = newCom;
+				newPlayer->SetTuning(current->GetTuning());
 			}
-			else	//プレイヤーが存在しない.
+
+			//車体と砲塔のインスタンスを設定.
+			newPlayer->SetCBody(m_pBody);
+			newPlayer->SetCCannon(m_pCannon);
+
+			//COMからプレイヤーに入れ替え.
+			m_pPlayers[No] = newPlayer;
+		}
+		//プレイヤー->COMへ切り替え.
+		else if (Connected != true && isCom != true)
+		{
+			//新しCOMを生成.
+			std::shared_ptr<CComPlayer> newCOM = std::make_shared<CComPlayer>();
+
+			//元のプレイヤーの位置を引き継ぐ.
+			if (current != nullptr)
 			{
-				if (Connected == true)
-				{
-					//新しいプレイヤーを生成.
-					std::shared_ptr<CPlayer> player = std::make_shared<CPlayer>();
-					player->SetControllerIndex(No);
-					m_pPlayers.push_back(player);
-				}
-				else
-				{
-					//新しいCOMを生成.
-					std::shared_ptr<CComPlayer>	com = std::make_shared<CComPlayer>();
-					m_pPlayers.push_back(com);
-				}
+				newCOM->SetPosition(current->GetPosition());
 			}
+			//プレイヤーからCOMに入れ替え.
+			m_pPlayers[No] = newCOM;
 		}
 	}
 }

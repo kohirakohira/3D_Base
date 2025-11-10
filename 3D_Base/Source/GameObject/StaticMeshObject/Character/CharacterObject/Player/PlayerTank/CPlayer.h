@@ -8,8 +8,8 @@
 #include <cmath>
 
 //-----外部クラス-----
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankBody//CBody.h"		// 戦車：車体クラス
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h"	// 戦車：砲塔クラス
+#include "GameObject//StaticMeshObject//Character//CharacterObject\\Player//PlayerTank//TankBody//CBody.h"		// 戦車：車体クラス
+#include "GameObject//StaticMeshObject//Character//CharacterObject\\Player//PlayerTank//TankCannon//CCannon.h"	// 戦車：砲塔クラス
 
 //コントローラークラス.
 #include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
@@ -91,11 +91,11 @@ public:
 	//外部のクラスから情報取得.
 	void SetCBody(std::shared_ptr<CBody> pBody) { m_pBody = pBody; }
 	void SetCCannon(std::shared_ptr<CCannon> pCannon) { m_pCannon = pCannon; }
+	virtual bool IsPlayer() const { return true; }
 
 	// 外部のクラスに情報を渡す
-	std::shared_ptr<CCannon> GetCannon() const { return m_pCannon; }
-	std::shared_ptr<CCannon> GetCannon() { return m_pCannon; }
-	std::shared_ptr<CBody>	 GetBody()   const { return m_pBody; }
+	virtual std::shared_ptr<CCannon> const GetCannon() = 0 { return m_pCannon; }
+	virtual std::shared_ptr<CBody> const GetBody() = 0 { return m_pBody; }
 
 	float GetCannonYaw() const;
 	D3DXVECTOR3 GetCannonPosition() const;

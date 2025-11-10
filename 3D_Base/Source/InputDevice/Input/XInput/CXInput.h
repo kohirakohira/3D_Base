@@ -69,6 +69,10 @@ public:
 	CXInput( DWORD padId );
 	//デストラクタ.
 	~CXInput();
+	//コピー・代入禁止.
+	CXInput(const CXInput&) = delete;
+	CXInput& operator = (const CXInput&) = delete;
+
 
 	//キー入力の更新.
 	bool Update();

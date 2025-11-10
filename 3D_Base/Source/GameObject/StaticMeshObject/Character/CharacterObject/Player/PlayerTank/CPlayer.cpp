@@ -50,12 +50,13 @@ static inline float Deadzone(float v, float z)
 
 
 CPlayer::CPlayer()
-	: m_pBody		( nullptr )
-	, m_pCannon		( nullptr )
-	, m_Controller	( nullptr )
+	: m_pBody			( nullptr )
+	, m_pCannon			( nullptr )
+	, m_Controller		( nullptr )
 
-	, m_PlayerID	()
-	, m_HasControl	( false )
+	, m_PlayerID		()
+	, m_HasControl		( false )
+	, m_ControllerIndex	()
 {
 	m_Player = {
 		0,		// ƒvƒŒƒCƒ„[‚Ì‘Ì—Í
