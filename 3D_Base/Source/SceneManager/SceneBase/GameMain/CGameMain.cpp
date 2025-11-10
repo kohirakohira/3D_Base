@@ -656,6 +656,8 @@ void CGameMain::Create()
 	
 	// 爆風マネージャーをセット
 	m_pCollisionManager->SetCBlastCollisionManager(m_pBlastManager);
+
+	m_pPlayerManager->SetShotManager(m_pShotManager);
 }
 
 HRESULT CGameMain::LoadData()

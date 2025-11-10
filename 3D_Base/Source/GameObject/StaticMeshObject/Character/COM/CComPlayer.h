@@ -14,6 +14,8 @@
 //当たり判定.障害物判定用
 #include "Collision/Collider/BoxCollider/CBoxCollider.h"
 
+//ステージオブジェクト反映用
+#include "GameObject/StaticMeshObject/StageObject/CStageObject.h"
 
 //-----ライブラリ-----
 #include <d3dx9math.h>
@@ -128,8 +130,13 @@ private:
 		const D3DXVECTOR3& dir, float maxDist, float step,
 		float& outHitDist) const;
 
-	//探査3本で回避トルクを算出
-	inline float ComputeAvoidTorque(const CBoxCollider& selfBox, float curYaw)const;
+	//探査3本で回避
+	float ComputeAvoidTorque(const CBoxCollider& selfBox, float curYaw)const;
+
+	//回避
+	inline float SteerWithObstacle(float curYaw, float desiredYaw, float turnStep);
+
+	void SafeAdvance(float nextYaw, float moveStep);
 
 	// ヘルパ
 	static float Wrap(float rad);                         //[-π,π]に正規化
@@ -155,12 +162,39 @@ private:
 	//COMの状態変更
 	void ChangeState(State state);
 
+	//レイとAABBが交差するかを判定し、当たった面の法線を返す
+	bool RayVsAABB(
+		const D3DXVECTOR3& player, const D3DXVECTOR3& direction,
+		const D3DXVECTOR3& min, const D3DXVECTOR3& max,
+		float& Hit, D3DXVECTOR3* out
+	);
+#if 0
 	//レイとAABBが交差するかを判定し、当たるなら最初に当たる距離と当たった面の法線を返す
 	bool RayVsAABB(
 		const D3DXVECTOR3& origin, const D3DXVECTOR3& direction,
 		const D3DXVECTOR3& bmin, const D3DXVECTOR3& bmax,
 		float& tHit, D3DXVECTOR3* outN
 	);
+#endif
+
+	//void ExpandAAByHalfExtents(
+	//	const D3DXVECTOR3& obstMin, const D3DXVECTOR3& obstMax,
+	//	const D3DXVECTOR3& agentHalf,
+	//	D3DXVECTOR3& outMin, D3DXVECTOR3& outMax);
+
+	////静止したAABBの判定
+	//bool SweptAABB(const CBoxCollider& agentBox, const D3DXVECTOR3& delta,
+	//	const CBoxCollider& obst, float& toi, D3DXVECTOR3& n);
+
+	//
+	////障害物AABBの半径半サイズ分だけ膨らませる
+	//void ExpandAAByHalfExtents(
+	//	const D3DXVECTOR3& obstMin, const D3DXVECTOR3& obstMax,
+	//	const D3DXVECTOR3& agentHalf,
+	//	D3DXVECTOR3& outMin, D3DXVECTOR3& outMax
+	//);
+	//壁から離れる
+	void WallEvade();
 
 	//COMインスタンスの静的レジストリ
 	static std::vector<CComPlayer*>& Instances();
@@ -170,8 +204,8 @@ private:
 	std::weak_ptr<CShotManager> m_pShotManager;							//弾マネージャー.自動発射用のパラメータ
 	const std::vector<std::shared_ptr<CPlayer>>* m_pAllPlayer;			//プレイヤーの一覧取得
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;					//アイテムボックス
-	std::weak_ptr<CItemBox> m_pItemTarget;								//弱参照のアイテムボックス
-	//std::shared_ptr<CItemBox> m_pItemTarget;
+	//std::shared_ptr<CItemBox>* m_pItemBox;								//逆参照対策
+	std::shared_ptr<CItemBox> m_pItemTarget;							//アイテムクラス
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
 	float	m_KeepDistance;				//この距離を保つ
@@ -218,6 +252,7 @@ private:
 	int		m_AvoidSide = 0;					//-1右回避.+1左回避
 
 	std::shared_ptr<std::vector<std::shared_ptr<CBoxCollider>>> m_pBoxCollider;
+	std::shared_ptr<CStaticMeshObject> m_pWallTop;
 };
 
 

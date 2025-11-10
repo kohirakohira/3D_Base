@@ -68,6 +68,19 @@ void CGameResult::Update()
 
 void CGameResult::Draw()
 {
+	float lightPosX = 0.f;			
+	float lightPosY = 100.f;
+	float lightPosZ = 0.f;
+	float lightIntensity = 300.f;
+	float lightRange = 1e9;
+
+	//一旦仮でライトの設定全般
+	m_pCamera->SetLightPos(lightPosX, lightPosY, lightPosZ);		//ライトのポジション
+	m_pCamera->SetLightIntensity(lightIntensity);					//ライトの強さ
+	m_pCamera->SetLightAtten(100.f, 100.f, 100.f);					//kc,kl,kq
+	m_pCamera->SetLightColor(1.f, 1.f, 1.f);						//ライトの色
+	m_pCamera->SetLightRange(lightRange);							//ライトの距離減衰.遠くなればなるほど暗くなる
+
 	if (DrawFlag == true) {
 		return;
 	}

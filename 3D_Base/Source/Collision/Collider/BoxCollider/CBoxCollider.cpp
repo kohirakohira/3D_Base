@@ -56,7 +56,7 @@ bool CBoxCollider::CheckCollisionOBBtoOBB(const OBB* A, const OBB* B)
 	/* EPSILONは、軸が完全に平行(R[i][j] = 0)または直交(R[i][j] = ± 1)に
 	   近い場合に発生する浮動小数点誤差を吸収するために使用*/
 	const float EPSILON = 1.175494e-37;
-
+	
 	/* R(回転行列):OBB'A'のローカル軸を基準とした
 				  OBB'B'のローカル軸の相対的な向き*/
 	float R[3][3];

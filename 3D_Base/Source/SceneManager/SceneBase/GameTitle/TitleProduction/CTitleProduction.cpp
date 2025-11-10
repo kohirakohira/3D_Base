@@ -26,10 +26,18 @@ void CTitleProduction::Update()
 //描画関数.
 void CTitleProduction::Draw()
 {
+	float lightPosX = 0.f;
+	float lightPosY = 110.f;
+	float lightPosZ = 50.f;
+	float lightIntensity = 350.f;	//ライト強さ
+	float lightRange = 1e9;			//距離減衰.遠くなるほど暗くなる
+
 	//ライトの設定
-	m_Camera->SetLightPos(30.f, 70.f, 0.f);	//ポジション
-	m_Camera->SetLightIntensity(150.f);		//ライトの強さ
-	m_Camera->SetLightRange(1e9);			//影響範囲.距離減衰
+	m_Camera->SetLightPos(lightPosX, lightPosY, lightPosZ);	//ポジション
+	m_Camera->SetLightIntensity(lightIntensity);			//ライトの強さ
+	m_Camera->SetLightRange(lightRange);					//影響範囲.距離減衰
+	m_Camera->SetLightAtten(1e9, 1e9, 1e9);					//kc,kl,kq
+	m_Camera->SetLightColor(1.f, 1.f, 1.f);					//ライトの色
 	//カメラの情報更新.
 	m_Camera->Info();
 
