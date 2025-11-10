@@ -168,14 +168,6 @@ private:
 		const D3DXVECTOR3& min, const D3DXVECTOR3& max,
 		float& Hit, D3DXVECTOR3* out
 	);
-#if 0
-	//レイとAABBが交差するかを判定し、当たるなら最初に当たる距離と当たった面の法線を返す
-	bool RayVsAABB(
-		const D3DXVECTOR3& origin, const D3DXVECTOR3& direction,
-		const D3DXVECTOR3& bmin, const D3DXVECTOR3& bmax,
-		float& tHit, D3DXVECTOR3* outN
-	);
-#endif
 
 	//void ExpandAAByHalfExtents(
 	//	const D3DXVECTOR3& obstMin, const D3DXVECTOR3& obstMax,
@@ -252,7 +244,7 @@ private:
 	int		m_AvoidSide = 0;					//-1右回避.+1左回避
 
 	std::shared_ptr<std::vector<std::shared_ptr<CBoxCollider>>> m_pBoxCollider;
-	std::shared_ptr<CStaticMeshObject> m_pWallTop;
+	std::shared_ptr<CStageObject> m_pWallTop;
 };
 
 

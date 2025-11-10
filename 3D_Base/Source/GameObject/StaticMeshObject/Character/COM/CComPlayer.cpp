@@ -812,7 +812,7 @@ void CComPlayer::StepAttack()
 
     float nextYaw = SteerWithObstacle(curYaw, desiredYaw, tuning.bodyTurnSpeed);
     SafeAdvance(nextYaw, tuning.moveSpeed);
-
+    
     //弾発射と砲塔追尾
     TickAimTo(tp);
     TryAutoFire();
@@ -823,6 +823,7 @@ void CComPlayer::StepAttack()
 //壁に近づきすぎないようにする
 void CComPlayer::WallEvade()
 {
+#if 1
     //チューニング取得
     auto tuning = GetTuning();
 
@@ -843,6 +844,7 @@ void CComPlayer::WallEvade()
         targetPos = m_pWallTop->GetPosition();
         
     }
+#endif
 
     //水平面で壁の反対方向に移動
     D3DXVECTOR3 distance = selfPos - targetPos; //相手から離れる向きのベクトル
@@ -1052,6 +1054,7 @@ void CComPlayer::EvaluateTransitions(float dist2)
         break;
     case State::ItemSeek:
         if (!m_pTarget) { ChangeState(State::Seek); break; }
+        if (dist2 >= ItemEnter) { ChangeState(State::Chase); break; }
 #if 0
         if (!m_pTarget) { ChangeState(State::Seek); break; }
         if (dist2 >= ItemEnter) { ChangeState(State::Chase); break; }
