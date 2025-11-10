@@ -47,12 +47,10 @@
 #include "GameObject//UI//Timer//CTimer.h"		  // タイマークラス.
 
 //コントローラー
-#include "XInput.h"
+#include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
 
 #include "Global.h"
 #include "Collision/CollisionManager/CCollisionManager.h"
-
-class CXInput;
 
 class CGameMain
 	: public CSceneBase
@@ -224,6 +222,4 @@ public:
 
 	//これは何用？
 	D3DXVECTOR3 push;
-
-	std::shared_ptr<CXInput> m_pPad;
 };

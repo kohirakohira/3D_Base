@@ -11,7 +11,8 @@
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankBody//CBody.h"		// 戦車：車体クラス
 #include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h"	// 戦車：砲塔クラス
 
-class CXInput;	//前方宣言
+//コントローラークラス.
+#include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
 
 class CPlayer
 	: public CCharacter
@@ -34,7 +35,22 @@ public:
 		bool		m_Damage;		// ダメージを受けたか
 		bool		m_Death;		// 死亡しているか
 		bool		m_Respawn;		// リスポーン
-	} m_Player;
+	};
+	Player m_Player;
+
+	//入力処理構造体.
+	struct PlayerInput
+	{
+		CController::Direction moveDir;		//左スティック・WASDの方向.
+		CController::Direction turretDir;	//右スティックの方向.
+		bool shot;							//発射ボタン.
+	};
+
+public:
+	//内部でBody・Cannonをまとめる関数.
+	void Move(const PlayerInput& input);
+	void Rotate(const PlayerInput& input);
+	void Reload(const D3DXVECTOR3& pos, float y);
 
 public:
 	CPlayer();
@@ -105,20 +121,28 @@ public:
 	// リスポーンフラグの取得
 	bool GetRespawnFlag() { return m_Player.m_Respawn; }
 
+	//プレイヤーのコントローラー設定・取得.
+	void SetControllerIndex(int index);
+	int GetControllerIndex() const { return m_ControllerIndex; }
+
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }
 	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
-	void UpdateHumanInputAndMove();	//プレイヤー処理をいれておく
+	void UpdateHumanInputAndMove(PlayerInput input);	//プレイヤー処理をいれておく
 
 	//砲塔と車体の同期
 	void SyncCannonToBody();
 
 protected:
 
-	std::shared_ptr<CBody>		m_pBody;
-	std::shared_ptr<CCannon>	m_pCannon;
+	std::shared_ptr<CBody>			m_pBody;
+	std::shared_ptr<CCannon>		m_pCannon;
+	std::shared_ptr<CController>	m_Controller;
 	int			m_PlayerID;
-	bool m_HasControl;			//操作権があるか
+	bool		m_HasControl;	//操作権があるか
+
+	//コントローラーを識別する変数.
+	int			m_ControllerIndex;
 
 private:
 	//TankTuning m_Tune{};

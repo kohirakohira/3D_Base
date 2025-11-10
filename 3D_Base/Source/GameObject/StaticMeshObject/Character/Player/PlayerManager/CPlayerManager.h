@@ -81,6 +81,9 @@ public:
 	void SetPlayerTuningAll(const TankTuning& t);
 	void SetPlayerTuning(int idx, const TankTuning& t);
 
+	//プレイヤーとCOMの切り替え.
+	void SwitchControl();
+
 private:
 
 	struct Area {
@@ -102,11 +105,7 @@ private:
 	std::shared_ptr<CBody>					m_pBody;
 	std::shared_ptr<CCannon>				m_pCannon;
     std::vector<std::shared_ptr<CPlayer>>	m_pPlayers;
-	std::shared_ptr<CShotManager> m_ShotManager; //弾マネージャー
-
-	//std::array<bool, 4> m_PadConnected{};			//前フレーム接続状態
-	//std::array<int, 4>m_PadIndex;					//padId->playerIdx (-1=未割当)
-	//std::vector<int> m_PlayerPad;					//playerIdx->padId (-1=未割当)
+	std::shared_ptr<CShotManager>			m_ShotManager; //弾マネージャー
 
 	int m_ActivePlayerIndex;	// 現在操作中のプレイヤー(デバッグ用)
 
@@ -114,9 +113,4 @@ private:
 
 	bool m_OnePPadEnabled = true; // 1PパッドON/OFF
 	int m_keyboardPlayer = 0;
-private:
-//	int  FindFirstComPlayer() const;
-//	int FindFirstPadReceiver(int StartIndex = 1)const;
 };
-
-

@@ -84,7 +84,7 @@ HRESULT CCollisionManager::LoadData()
 void CCollisionManager::WalltoPlayer()
 {
 	// 押し返しの強さ
-	const float pushStrength = 0.1f;
+	const float pushStrength = m_pPlayerManager->GetTuning().moveSpeed;
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -98,19 +98,19 @@ void CCollisionManager::WalltoPlayer()
 		// 車体が壁と接触したとき
 		if (Coll->CheckCollision(*m_pWallTop->GetCollider()))
 		{
-			push.z -= 0.1f;
+			push.z -= pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
-			push.z += 0.1f;
+			push.z += pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
-			push.x += 0.1f;
+			push.x += pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallRight->GetCollider()))
 		{
-			push.x -= 0.1f;
+			push.x -= pushStrength;
 		}
 
 		// 押し返しを正規化
@@ -488,7 +488,7 @@ void CCollisionManager::GroundtoItemBox()
 {
 	for (auto& item : m_pItemBoxManager->GetItem())
 	{
-		if (m_pItemBoxManager->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
+		if (item->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
 		{
 			// アイテムボックスの処理を入れる
 			item->SetGravity(true);

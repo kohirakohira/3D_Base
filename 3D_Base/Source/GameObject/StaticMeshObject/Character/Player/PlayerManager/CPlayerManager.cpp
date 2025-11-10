@@ -247,53 +247,63 @@ void CPlayerManager::SetPlayerRotation(int index, const D3DXVECTOR3& rad)
 
 void CPlayerManager::Update()
 {
-	const int count = static_cast<int>(m_pPlayers.size());
-	if (count <= 0)return;
+	//コントローラーの接続状態をチェック・切り替え.
+	SwitchControl();
 
-	//基本ターゲットを決める
-	//ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
-	auto pickHumanTargetIndex = [&]()->int {
-		auto isValidHuman = [&](int idx) {
-			return(idx == m_ActivePlayerIndex) && IsHumanControlled(m_pPlayers[idx]);
-			};
-		if (isValidHuman(m_LockTargetIndex)) return m_LockTargetIndex;
-		if (isValidHuman(m_ActivePlayerIndex)) return m_ActivePlayerIndex;
-		return -1;	//プレイヤーがいない
-		};
-
-	const int tgtIdx = pickHumanTargetIndex();
-	std::shared_ptr<CPlayer> target = (tgtIdx >= 0) ? m_pPlayers[tgtIdx] : nullptr;
-
-	for (int i = 0; i < count; ++i)
+	for (auto& player : m_pPlayers)
 	{
-		auto self = m_pPlayers[i];
+		player->Update();
+	}
 
-		if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
-		{
-			if (com->IsComEnabled())
-			{
-				//COM稼働中だけターゲットをあげる
-				if (target && IsHumanControlled(target) && target != self)
-				{
-					//ターゲットがプレイヤー限定なのであとで消す
-					//com->SetTarget(target);
-				}
-				else
-				{
-					com->ClearTarget();
-				}
-				com->Update();
-			}
-			else
-			{
-				self->Update();
-			}
-		}
-		else
-		{
-			self->Update();
-		}
-			
+	{
+		//const int count = static_cast<int>(m_pPlayers.size());
+		//if (count <= 0)return;
+
+		////基本ターゲットを決める
+		////ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
+		//auto pickHumanTargetIndex = [&]()->int {
+		//	auto isValidHuman = [&](int idx) {
+		//		return(idx == m_ActivePlayerIndex) && IsHumanControlled(m_pPlayers[idx]);
+		//		};
+		//	if (isValidHuman(m_LockTargetIndex)) return m_LockTargetIndex;
+		//	if (isValidHuman(m_ActivePlayerIndex)) return m_ActivePlayerIndex;
+		//	return -1;	//プレイヤーがいない
+		//	};
+
+		//const int tgtIdx = pickHumanTargetIndex();
+		//std::shared_ptr<CPlayer> target = (tgtIdx >= 0) ? m_pPlayers[tgtIdx] : nullptr;
+
+		//for (int i = 0; i < count; ++i)
+		//{
+		//	auto self = m_pPlayers[i];
+
+		//	if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
+		//	{
+		//		if (com->IsComEnabled())
+		//		{
+		//			//COM稼働中だけターゲットをあげる
+		//			if (target && IsHumanControlled(target) && target != self)
+		//			{
+		//				//ターゲットがプレイヤー限定なのであとで消す
+		//				//com->SetTarget(target);
+		//			}
+		//			else
+		//			{
+		//				com->ClearTarget();
+		//			}
+		//			com->Update();
+		//		}
+		//		else
+		//		{
+		//			self->Update();
+		//		}
+		//	}
+		//	else
+		//	{
+		//		self->Update();
+		//	}
+		//		
+		//}
 	}
 }
 
@@ -401,27 +411,65 @@ void CPlayerManager::SetPlayerTuning(int idx, const TankTuning& t)
 	if (idx >= 0 && idx < (int)m_pPlayers.size())m_pPlayers[idx]->SetTune(t);
 }
 
-//int CPlayerManager::FindFirstComPlayer() const
-//{
-//	for (int i = 0; i < (int)m_pPlayers.size(); ++i)
-//	{
-//		if (auto com = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[i]))
-//		{
-//			//com有効、操作権は無効
-//			if (com->IsComEnabled() && !m_pPlayers[i]->HasControl())
-//			{
-//				return i;
-//			}
-//		}
-//		return -1;	//未割り当て
-//	}
-//}
-//
-//int CPlayerManager::FindFirstPadReceiver(int StartIndex) const
-//{
-//	for (int i = std::max(0, StartIndex); i < (int)m_pPlayers.size(); ++i)
-//	{
-//		if (i < (int)m_PlayerPad.size() && m_PlayerPad[i] < 0) return i;
-//	}
-//	return -1;
-//}
+//プレイヤーとCOMの自動切り替え.
+void CPlayerManager::SwitchControl()
+{
+	for (int No = 0; No < PLAYER_MAX; No++)
+	{
+		//接続されているか判定用.
+		bool Connected = CControllerManager::GetInstance().GetController(No);
+
+		//既にプレイヤーが存在するか？.
+		if (No < m_pPlayers.size() && m_pPlayers[No])
+		{
+			//CComPlayerにキャスト出来ればCOM、できなければプレイヤー.
+			bool IsCom = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[No]) != nullptr;
+
+			//コントローラーが刺さっていて、COMである時、プレイヤーに切り替え.
+			if (Connected && IsCom)
+			{
+				//COMとプレイヤーの切り替え.
+				std::shared_ptr<CPlayer> newPlayer = std::make_shared<CPlayer>();
+				//コントローラー番号を設定.
+				newPlayer->SetControllerIndex(No);
+				//元COMの位置情報を引き継ぐ(入れ替えても位置は変わらないように).
+				newPlayer->SetPosition(m_pPlayers[No]->GetPosition());
+				//BodyとCannonを再設定.
+				newPlayer->SetCBody(m_pBody);
+				newPlayer->SetCCannon(m_pCannon);
+				//チューニングを再設定.
+				newPlayer->SetTuning(m_pPlayers[No]->GetTuning());
+
+				//新しいplayerに変更.
+				m_pPlayers[No] = newPlayer;
+			}
+			else if (Connected != true && IsCom)	//コントローラーが切断され、プレイヤーならCOMに切り替え.
+			{
+				//プレイヤーからCOMへ切り替え.
+				std::shared_ptr<CComPlayer> newCom = std::make_shared<CComPlayer>();
+
+				//位置の引き継ぎ.
+				newCom->SetPosition(m_pPlayers[No]->GetPosition());
+
+				//COMに変更.
+				m_pPlayers[No] = newCom;
+			}
+			else	//プレイヤーが存在しない.
+			{
+				if (Connected == true)
+				{
+					//新しいプレイヤーを生成.
+					std::shared_ptr<CPlayer> player = std::make_shared<CPlayer>();
+					player->SetControllerIndex(No);
+					m_pPlayers.push_back(player);
+				}
+				else
+				{
+					//新しいCOMを生成.
+					std::shared_ptr<CComPlayer>	com = std::make_shared<CComPlayer>();
+					m_pPlayers.push_back(com);
+				}
+			}
+		}
+	}
+}

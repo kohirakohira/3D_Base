@@ -118,6 +118,9 @@ void CGameMain::Update()
 	//BGMのループ再生..
 	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
+	//コントローラーの更新.
+	CControllerManager::GetInstance().Update();
+
 	//動的に生成.
 	//アイテムボックス.
 	m_pItemBoxManager->Create();
@@ -240,8 +243,6 @@ void CGameMain::Update()
 	}
 
 }
-
-
 
 void CGameMain::Draw()
 {
@@ -548,7 +549,6 @@ void CGameMain::Create()
 
 	//プレイヤーと砲塔のインスタンス生成.
 	m_pPlayerManager = std::make_shared<CPlayerManager>();
-
 	//マネージャーは一回だけInitialize.
 	m_pPlayerManager->Initialize();
 

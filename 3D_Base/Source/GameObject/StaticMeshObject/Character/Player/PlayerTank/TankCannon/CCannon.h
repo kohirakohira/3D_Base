@@ -38,6 +38,9 @@ public:
 	// 弾クラスの設定
 	void SetShotManager(const std::shared_ptr<CShotManager>& shot) { m_pShot = shot; }
 
+	//弾を作成・リロード・発射関数.
+	void Reload(D3DXVECTOR3 pos, float y, bool flag, int index);
+
 private:
 	// キー入力受付
 	void KeyInput();

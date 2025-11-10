@@ -57,6 +57,12 @@ public:
 	// 死亡確認
 	void Death();
 
+	//Bodyの向きを変更できる関数.
+	void AddRotationY(float value);
+
+	//移動列挙型の設定.
+	void SetMoveState(enMoveState state) { m_MoveState = state; }
+
 private:
 	// キー入力受付.
 	void KeyInput();
