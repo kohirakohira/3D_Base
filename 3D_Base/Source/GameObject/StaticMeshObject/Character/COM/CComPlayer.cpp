@@ -165,7 +165,7 @@ void CComPlayer::ChangeState(State state)
     m_StateFrames = 0;
 }
 
-#if 0
+#if 1
 //レイとAABBが交差するかを判定し、当たるなら最初に当たる距離と当たった面の法線を返す
 bool CComPlayer::RayVsAABB(const D3DXVECTOR3& origin, const D3DXVECTOR3& direction, const D3DXVECTOR3& bmin, const D3DXVECTOR3& bmax, float& tHit, D3DXVECTOR3* outN)
 {
@@ -240,36 +240,26 @@ bool CComPlayer::RayVsAABB(const D3DXVECTOR3& origin, const D3DXVECTOR3& directi
     if (outN) *outN = nEnter;
     return true;
 }
+
 #endif
 
 
-////障害物AABBをエージェントの半サイズぶんだけ外側に膨らませる
-//void CComPlayer::ExpandAAByHalfExtents(
-//    const D3DXVECTOR3& obstMin, const D3DXVECTOR3& obstMax,
-//    const D3DXVECTOR3& agentHalf,
-//    D3DXVECTOR3& outMin, D3DXVECTOR3& outMax)
-//{
-//    //エージェントの中心点vs膨らんだ障害物AABBに置き換え
-//    outMin = { obstMin.x - agentHalf.x, obstMin.y - agentHalf.y,obstMin.z - agentHalf.z };
-//    outMax = { obstMax.x + agentHalf.x, obstMax.y + agentHalf.y, obstMax.z + agentHalf.z };
-//}
-
-#if 0
-//動くAABBがフレーム中の移動量で掃引されたとき、静止AABBにいつどこの向きで最初に当たるかを求める
-bool CComPlayer::SweptAABB(const CBoxCollider& agentBox, const D3DXVECTOR3& delta,
-    const CBoxCollider& obst, float& toi, D3DXVECTOR3& n)
+//障害物AABBをエージェントの半サイズぶんだけ外側に膨らませる
+void CComPlayer::ExpandAAByHalfExtents(
+    const D3DXVECTOR3& obstMin, const D3DXVECTOR3& obstMax,
+    const D3DXVECTOR3& agentHalf,
+    D3DXVECTOR3& outMin, D3DXVECTOR3& outMax)
 {
-    //エージェント半径
-    const D3DXVECTOR3 aMin = agentBox.
+    //エージェントの中心点vs膨らんだ障害物AABBに置き換え
+    outMin = { obstMin.x - agentHalf.x, obstMin.y - agentHalf.y,obstMin.z - agentHalf.z };
+    outMax = { obstMax.x + agentHalf.x, obstMax.y + agentHalf.y, obstMax.z + agentHalf.z };
 }
 
-#endif
 
-#if 0
-bool CComPlayer::SweptAABB()
+#if 1
 
 //COMの前方に障害物があるかどうかを調べるためのヘルパ
-inline bool CComPlayer::BoxRaycastAhead(const CBoxCollider& selfBox, 
+bool CComPlayer::BoxRaycastAhead(const CBoxCollider& selfBox, 
     const D3DXVECTOR3& dir, float maxDist, float step, 
     float& outHitDist) const
 {
@@ -343,12 +333,6 @@ float CComPlayer::ComputeAvoidTorque(const CBoxCollider& selfBox, float curYaw) 
         torque = -1.f;
     }
     return torque;
-#if 0
-    //クリップ
-    if (torque > 1.f) torque = 1.f;
-    if (torque < -1.f) torque = -1.f;
-    return torque;
-#endif
 }
 
 inline float CComPlayer::SteerWithObstacle(float curYaw, float desiredYaw, float turnStep)
@@ -386,21 +370,6 @@ inline float CComPlayer::SteerWithObstacle(float curYaw, float desiredYaw, float
     if (d > turnStep) return curYaw + turnStep;
     if (d < turnStep) return curYaw - turnStep;
     return curYaw + d;
-    {
-#if 0
-        //一定フレームは同じ側に回避
-        if (std::fabs(torque) > 0.01f) {
-            m_AvoidSide = (torque >= 0.f) ? +1 : -1;  // +1:左, -1:右
-            m_AvoidHoldLeft = m_AvoidHoldMax;
-            return curYaw + turnStep * float(m_AvoidSide);
-        }
-        // ホールド中は回避継続
-        if (m_AvoidHoldLeft > 0) {
-            --m_AvoidHoldLeft;
-            return curYaw + turnStep * float(m_AvoidSide);
-        }
-#endif
-    }
 }
 
 //フレームごとの進行
@@ -426,23 +395,6 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
     SyncCannonToBody();                     //bodyとcannonの同期
 
 }
-#if 0
-// 1フレームの進行
-inline void SafeAdvance(float nextYaw, float moveStep)
-{
-    auto body = Body(); if (!body) return;
-
-    D3DXVECTOR3 pos = body->GetPosition();
-    pos += ForwardFromYaw(nextYaw) * moveStep;
-    pos.y = 0.f; // ここでY固定
-
-    body->SetRotation({ 0.f, nextYaw, 0.f });
-    body->SetPosition(pos);
-    body->CCharacter::Update();
-    SyncCannonToBody();
-}
-
-#endif
 
 
 
@@ -736,7 +688,7 @@ void CComPlayer::StepSeek()
 
     //障害物の回避.障害物回避を優先的にする
     float nextYaw = SteerWithObstacle(curYaw, desiredYaw, tuning.bodyTurnSpeed);
-    SafeAdvance(curYaw, tuning.moveSpeed);
+    SafeAdvance(nextYaw, tuning.moveSpeed);
 
     D3DXVECTOR3 pos = m_pTarget->GetPosition();
 
@@ -819,72 +771,6 @@ void CComPlayer::StepAttack()
 
 }
 
-
-//壁に近づきすぎないようにする
-void CComPlayer::WallEvade()
-{
-#if 1
-    //チューニング取得
-    auto tuning = GetTuning();
-
-    //壁と反対方向に少し下がる
-    std::shared_ptr<CBody> body = Body();
-    if (!body)
-    {
-        return;
-    }
-
-    const D3DXVECTOR3 selfPos = body->GetPosition();
-
-    D3DXVECTOR3 targetPos = selfPos;
-
-
-    if (m_pTarget)
-    {
-        targetPos = m_pWallTop->GetPosition();
-        
-    }
-#endif
-
-    //水平面で壁の反対方向に移動
-    D3DXVECTOR3 distance = selfPos - targetPos; //相手から離れる向きのベクトル
-    distance.y = 0.f;
-
-    const float len2 = distance.x * distance.x + distance.z * distance.z;
-    if (len2 > 1e-6f)
-    {
-        const float invLen = 1.f / std::sqrt(len2);
-        distance.x *= invLen;
-        distance.z *= invLen;
-
-        //後退
-        const float step = tuning.moveSpeed * 0.1f;
-        const D3DXVECTOR3 pos = selfPos + distance * step;
-
-        //逃げ方向へ向きを寄せる
-        float yaw = body->GetRotation().y;
-        const float desired = std::atan2f(distance.x, distance.z);
-        const float delta = Wrap(desired - yaw);
-        yaw = Approach(yaw, yaw + delta, tuning.turretTurnSpeed);
-
-        body->SetPosition(pos);
-        body->SetRotation(D3DXVECTOR3(0.0f, yaw, 0.0f));
-
-        //位置とか回転反映の直後に同期
-        SyncCannonToBody();
-        TryAutoFire();  //逃げながら発射
-
-        body->CCharacter::Update();
-
-        //砲塔の見た目を更新
-        if (auto cannon = Cannon())
-        {
-            cannon->CCharacter::Update();
-        }
-    }
-}
-
-
 //退避
 void CComPlayer::StepEvade()
 {
@@ -945,80 +831,7 @@ void CComPlayer::StepEvade()
 
 //アイテム取得.アイテム認識
 void CComPlayer::StepItemSeek()
-{
-    auto body = Body();
-    auto cannon = Cannon();
-    auto tuning = GetTuning();
-
-    //bodyまたはcannonがなければスキップ
-    if (!body || !cannon)
-    {
-        return;
-    }
-
-    const D3DXVECTOR3 selfPos = body->GetPosition();
-
-    //アイテムボックスないまたは中身が空またはアクティブでなかった場合
-    if (!m_pItemBox || m_pItemBox->empty() || (m_pItemTarget && !m_pItemTarget->IsActive()))
-    {
-        m_pItemTarget.reset();
-    }
-
-    //追尾するアイテムがない場合
-    if (!m_pItemTarget)
-    {
-        std::shared_ptr<CItemBox> best;
-        float bestD2 = 1e18f;
-        for (auto& box : *m_pItemBox)
-        {
-            if (!box || !box->IsActive()) continue; //boxがないまたはActiveでなければスキップ
-            const D3DXVECTOR3 distance = box->GetPosition() - selfPos;  //自分から相手の距離を求める
-            const float d2 = distance.x * distance.x + distance.z * distance.z;
-            if (d2 < bestD2)
-            {
-                bestD2 = d2;
-                best = box;
-            }
-        }
-        m_pItemTarget = best;
-
-        if (!m_pItemTarget)
-        {
-            StepSeek();
-            return;
-        }
-    }
-    //自分とアイテムの位置を取得
-    const D3DXVECTOR3 to = m_pItemTarget->GetPosition() - selfPos;
-    const float d2 = to.x * to.x + to.z * to.z;
-
-    //角度を求める
-    float yaw = body->GetRotation().y;
-    const float disred = atan2f(to.x, to.z);
-    yaw = Approach(yaw, yaw + Wrap(disred - yaw), tuning.turretTurnSpeed);
-
-    D3DXVECTOR3 delta = ForwardFromYaw(yaw) * tuning.moveSpeed;
-    SafeAdvance(yaw,tuning.moveSpeed);
-
-    //見た目更新
-    body->SetRotation(0.f, yaw, 0.f);
-    body->CCharacter::Update();
-    SyncCannonToBody();    //砲塔とキャノンの同期
-
-    const float pick = m_ItemPickUpRaius;
-    if (d2 <= pick * pick)
-    {
-        //あったときの処理は当たり判定にある
-        m_pItemTarget.reset();
-        ChangeState(State::Seek);   //取得後はSeekに戻る
-        return;
-    }
-    //一応アイテム探し中も弾をうつ
-    if (m_pTarget)
-    {
-        TryAutoFire();
-    }
-   
+{   
 }
 
 
@@ -1053,14 +866,7 @@ void CComPlayer::EvaluateTransitions(float dist2)
         if (m_LostSightFrames > loseFrames) { ChangeState(State::Seek); }
         break;
     case State::ItemSeek:
-        if (!m_pTarget) { ChangeState(State::Seek); break; }
-        if (dist2 >= ItemEnter) { ChangeState(State::Chase); break; }
-#if 0
-        if (!m_pTarget) { ChangeState(State::Seek); break; }
-        if (dist2 >= ItemEnter) { ChangeState(State::Chase); break; }
-        if (dist2 >= ItemExit) { ChangeState(State::Attack); break; }
         break;
-#endif
     }
 }
 

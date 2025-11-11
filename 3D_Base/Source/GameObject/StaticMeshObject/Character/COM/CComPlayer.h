@@ -14,9 +14,6 @@
 //当たり判定.障害物判定用
 #include "Collision/Collider/BoxCollider/CBoxCollider.h"
 
-//ステージオブジェクト反映用
-#include "GameObject/StaticMeshObject/StageObject/CStageObject.h"
-
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
@@ -169,25 +166,19 @@ private:
 		float& Hit, D3DXVECTOR3* out
 	);
 
-	//void ExpandAAByHalfExtents(
-	//	const D3DXVECTOR3& obstMin, const D3DXVECTOR3& obstMax,
-	//	const D3DXVECTOR3& agentHalf,
-	//	D3DXVECTOR3& outMin, D3DXVECTOR3& outMax);
+	void ExpandAAByHalfExtents(
+		const D3DXVECTOR3& obstMin, const D3DXVECTOR3& obstMax,
+		const D3DXVECTOR3& agentHalf,
+		D3DXVECTOR3& outMin, D3DXVECTOR3& outMax);
 
-	////静止したAABBの判定
-	//bool SweptAABB(const CBoxCollider& agentBox, const D3DXVECTOR3& delta,
-	//	const CBoxCollider& obst, float& toi, D3DXVECTOR3& n);
-
-	//
-	////障害物AABBの半径半サイズ分だけ膨らませる
-	//void ExpandAAByHalfExtents(
-	//	const D3DXVECTOR3& obstMin, const D3DXVECTOR3& obstMax,
-	//	const D3DXVECTOR3& agentHalf,
-	//	D3DXVECTOR3& outMin, D3DXVECTOR3& outMax
-	//);
-	//壁から離れる
-	void WallEvade();
-
+	
+	//障害物AABBの半径半サイズ分だけ膨らませる
+	void ExpandAAByHalfExtents(
+		const D3DXVECTOR3& obstMin, const D3DXVECTOR3& obstMax,
+		const D3DXVECTOR3& agentHalf,
+		D3DXVECTOR3& outMin, D3DXVECTOR3& outMax
+	);
+	 
 	//COMインスタンスの静的レジストリ
 	static std::vector<CComPlayer*>& Instances();
 
@@ -244,7 +235,6 @@ private:
 	int		m_AvoidSide = 0;					//-1右回避.+1左回避
 
 	std::shared_ptr<std::vector<std::shared_ptr<CBoxCollider>>> m_pBoxCollider;
-	std::shared_ptr<CStageObject> m_pWallTop;
 };
 
 
