@@ -23,7 +23,7 @@ CCamera::CCamera()
 	m_Light.Range = 12.0f;
 	m_Light.Color = D3DXVECTOR3(1.f, 1.f, 1.f);
 	m_Light.fIntensity = 1.0f;
-	m_Light.Atten = D3DXVECTOR3(0.0f, 0.f, 0.0f);
+	m_Light.Atten = D3DXVECTOR3(1.0f, 0.f, 0.05f);
 
 	//Update();
 }
