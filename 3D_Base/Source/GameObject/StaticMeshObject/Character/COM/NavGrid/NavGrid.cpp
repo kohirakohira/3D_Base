@@ -19,6 +19,15 @@ static inline float Heuristic(Vec2 a, Vec2 b)
 }
 
 
+NavGrid::NavGrid(int w, int h, float cell)
+    : m_H       ()
+    , m_W       ()
+    , m_Cell    ()
+    , m_Block   ()
+
+{
+}
+
 bool NavGrid::FindPath(Vec2 startCell, Vec2 goalCell, std::vector<Vec2>& outPath)
 {
     //前回の計算結果を初期化する
@@ -26,7 +35,7 @@ bool NavGrid::FindPath(Vec2 startCell, Vec2 goalCell, std::vector<Vec2>& outPath
     if (IsBlocked(goalCell.x, goalCell.y)) return false;    //ゴールのセルが通行不可なら経路は存在しない
 
     const int totalCells = m_W * m_H;                           //グリッド全体のセル数を計算して使い回す
-    const float INF = std::numeric_limits<float>::infinity();   //到達していない
+    constexpr float INF = std::numeric_limits<float>::infinity();   //到達していない
 
     //各セルの探索状態
     std::vector<Node> nodes(totalCells, 

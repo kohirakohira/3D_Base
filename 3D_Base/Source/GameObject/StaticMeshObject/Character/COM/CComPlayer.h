@@ -14,6 +14,8 @@
 //当たり判定.障害物判定用
 #include "Collision/Collider/BoxCollider/CBoxCollider.h"
 
+//グリッドクラス.経路探索
+#include "GameObject/StaticMeshObject/Character/COM/NavGrid/NavGrid.h"
 
 //-----ライブラリ-----
 #include <d3dx9math.h>
@@ -57,6 +59,10 @@ public:
 
 	//当たり判定用
 	void SetObject(const std::vector<std::shared_ptr<CBoxCollider>>* BoxCollider) {};
+
+	//グリッドのセット
+	void SetNavGrid(std::shared_ptr<NavGrid> nav) { m_pNavGrid = std::move(nav); }
+
 
 	//void CComPlayer::SetNavGrid(std::shared_ptr<NavGrid> nav){ m_Nav = std::move(nav); }
 private:
@@ -121,6 +127,7 @@ private:
 	//回避側に固定旋回を混ぜる
 	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
 
+	void SafeAdvance(float nextYaw, float moveStep);
 
 	// ヘルパ
 	static float Wrap(float rad);                         //[-π,π]に正規化
@@ -143,6 +150,8 @@ private:
 	void ComputeSeparation(const D3DXVECTOR3& selfPos,
 		D3DXVECTOR3& outSep, float& outNearest) const;
 
+	bool FollorPath(float turnStep, float moveStep);
+
 	//COMの状態変更
 	void ChangeState(State state);
 
@@ -156,6 +165,7 @@ private:
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;					//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;								//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;	//障害物の一部を外部から差し込む
+	std::shared_ptr<NavGrid> m_pNavGrid;								//ナビグリッドクラス.経路探索用
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
@@ -199,7 +209,19 @@ private:
 	int			m_AvoidSide;
 	float		m_AvoidMax;
 
-	//// CComPlayer 追加メンバ
+	//経路探索に必要なもの
+	std::deque<D3DXVECTOR3> m_Path;	//ワールド座標WP列
+	int	m_PathReplanTimer;			//探索した場所をいつまで保存するか	
+	int m_PathReplanInterval;		//再探索までの時間
+	float m_WayPointeReach;			//WPの到達判定
+	float m_LookAheadSkep;			//近いWPは一旦スキップ
+
+
+
+
+
+
+
 	//std::shared_ptr<NavGrid> m_Nav;              // 共有Gridへの参照
 	//std::deque<D3DXVECTOR3>  m_Path;             // ワールド座標のWP列
 	//int   m_PathReplanTimer = 0;

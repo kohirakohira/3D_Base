@@ -54,6 +54,12 @@ CComPlayer::CComPlayer()
     , m_AvoidHolde(0.f)
     , m_AvoidSide(0)
     , m_AvoidMax(0.f)
+    , m_pNavGrid()
+    , m_Path    ()
+    , m_PathReplanTimer( 0 )
+    , m_PathReplanInterval ( 20 )
+    , m_WayPointeReach      ( 0.6f )
+    , m_LookAheadSkep       ( 2.f )
 {
 }
 
@@ -418,11 +424,35 @@ bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
     return false;
 }
 
-//void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
+void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
+{
+    auto body = Body();
+    if (!body) return;  //bodyがなければ早期リターン
+
+    //分離ベクトル
+    D3DXVECTOR3 pos = body->GetPosition();
+    D3DXVECTOR3 sep(0, 0, 0);
+    float nearest = 1e9f;
+
+    ComputeSeparation(pos, sep, nearest);
+
+    //前進
+    pos += ForwardFromYaw(nextYaw) * moveStep; 
+    pos.x += sep.x * 0.02f;
+    pos.z += sep.z * 0.02f;
+
+    //乗り上げ対策
+    pos.y = 0.0f;
+    body->SetPosition({ pos.x , nextYaw, pos.z });
+    body->SetPosition(pos);
+    body->CCharacter::Update();
+    SyncCannonToBody();
+}
+
+
 //{
 //    auto body = Body(); if (!body) return;
 //
-//    // 分離ベクトルで“止まらない微回避”を常時加える
 //    D3DXVECTOR3 pos = body->GetPosition();
 //    D3DXVECTOR3 sep(0, 0, 0); float nearest = 1e9f;
 //    ComputeSeparation(pos, sep, nearest);
@@ -492,26 +522,6 @@ void CComPlayer::StepChase()
         TickAimTo(m_pTarget->GetPosition());
         TryAutoFire();
     }
-#if 0
-    auto body = Body(); if (!body || !m_pTarget) { StepSeek(); return; }
-    const auto t = GetTuning();
-
-    const D3DXVECTOR3 pos = body->GetPosition();
-    const float cur = body->GetRotation().y;
-
-    const D3DXVECTOR3 to = m_pTarget->GetPosition() - pos;
-    const float desired = std::atan2f(to.x, to.z);
-
-    const float nextYaw = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
-
-    //  SafeAdvance(*body, nextYaw, t.moveSpeed);
-
-        //砲塔・発砲
-    body->CCharacter::Update();
-    SyncCannonToBody();
-    TickAimTo(m_pTarget->GetPosition());
-    TryAutoFire();
-#endif
 }
 
 #if 0
@@ -919,6 +929,11 @@ float CComPlayer::NearestItemDist2(float& outDist2) const
         }
         return outDist2;
     }
+}
+
+bool CComPlayer::FollorPath(float turnStep, float moveSte)
+{
+
 }
 
 //bool CComPlayer::FollowPath(float turnStep, float moveStep)
