@@ -56,7 +56,6 @@ void CPlayerManager::Initialize()
 			com->Create(i);								//車体・砲塔を生成.
 			com->SetComEnabled(true);					//COMかプレイヤーか判断.
 			SetBodyAndCannon(com->GetBody(), com->GetCannon());
-			player = com;
 		}
 		//プレイヤーとCOMを生成.
 		m_pPlayers.push_back(player);
@@ -499,8 +498,7 @@ void CPlayerManager::SwitchControl()
 				newCOM->SetPosition(current->GetPosition());
 			}
 			//プレイヤーからCOMに入れ替え.
-			//m_pPlayers[No] = std::move(newCOM);
-			m_pPlayers[No] = newCOM;
+			//m_pPlayers[No] = newCOM;
 		}
 	}
 }
