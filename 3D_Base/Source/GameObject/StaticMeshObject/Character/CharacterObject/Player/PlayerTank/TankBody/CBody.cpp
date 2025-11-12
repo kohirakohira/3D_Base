@@ -57,7 +57,8 @@ void CBody::Draw(
 // ラジオ操作
 void CBody::RadioControl()
 {
-	auto& tunign = GetTuning();
+	auto CharObject = std::shared_ptr<CCharacterObjectBase>();
+	auto& tunign = CharObject->GetTuning();
 	// Z軸ベクトル(Z+方向への単位ベクトル)
 	// ※大きさ(長さ)が1のベクトルを単位ベクトルという
 	D3DXVECTOR3 vecAxisZ(0.f, 0.f, 1.f);
@@ -169,7 +170,8 @@ void CBody::AddRotationY(float value)
 
 void CBody::KeyInput()
 {
-	auto& tunign = GetTuning();
+	auto CharObject = std::shared_ptr<CCharacterObjectBase>();
+	auto& tunign = CharObject->GetTuning();
 	// 入力が無ければ処理しない
 	if (!m_Input) return;
 

@@ -1,6 +1,7 @@
 #pragma once
 //STL.
 #include <iostream>
+#include <memory>
 
 //Œp³‚·‚éƒNƒ‰ƒX.
 #include "GameObject/StaticMeshObject/Character/CCharacter.h"

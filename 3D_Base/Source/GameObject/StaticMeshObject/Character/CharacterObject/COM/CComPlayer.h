@@ -18,6 +18,7 @@
 #include <d3dx9math.h>
 #include <unordered_map>
 #include <limits>
+#include <memory>
 
 
 class CComPlayer
@@ -42,9 +43,25 @@ public:
 	void SetTarget(std::shared_ptr<CPlayer> player) { m_pTarget = player; }
 	void ClearTarget() { m_pTarget = nullptr; }
 
-#if 0
+#if 1
+
 	const D3DXVECTOR3 GetPosition() override;
 	const D3DXVECTOR3 GetRotation() override;
+	const D3DXVECTOR3 GetScale() override;
+
+	//拡縮の設定.
+	void SetScale(D3DXVECTOR3 sca) override {};
+
+	//パラメータの設定.
+	void SetTuning(const TankTuning& tuning)override {};
+	//パラメータの取得.
+	const TankTuning& GetTuning() const override { return GetTuning(); };
+
+	//当たった時の処理.
+	void OnHit(CCharacterObjectBase* other) override {};
+
+
+
 #endif
 
 	//COMの有効無効を決める

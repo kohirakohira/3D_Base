@@ -499,6 +499,7 @@ void CPlayerManager::SwitchControl()
 			}
 			//ƒvƒŒƒCƒ„[‚©‚çCOM‚É“ü‚ê‘Ö‚¦.
 			//m_pPlayers[No] = newCOM;
+			//m_pPlayers[No] = newCOM;
 		}
 	}
 }

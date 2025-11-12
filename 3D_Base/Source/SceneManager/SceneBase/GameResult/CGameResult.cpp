@@ -97,7 +97,7 @@ void CGameResult::Init()
 	m_pCamera->SetCameraPos(-1.5f, 1.5f, 14.f);
 	m_pCamera->SetLightPos(-1.5f, 2.f, 5.f);
 	//ˆÊ’u‚ÌÝ’è.
-	m_pPlayerManager->SetPosition(0.f, 1.f, 6.f);
+	//m_pPlayerManager->SetPosition(0.f, 1.f, 6.f);
 
 	//‘å‚«‚³‚ðÝ’è.
 	m_pSpriteObj->SetPosition(WND_W / 2 - 640, 0.f, 0.f);

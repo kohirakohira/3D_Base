@@ -103,7 +103,8 @@ void CCannon::Reload(D3DXVECTOR3 pos, float y, bool flag, int index)
 // キー入力受付
 void CCannon::KeyInput()
 {
-	auto& tunign = GetTuning();
+	auto CharObject  = std::shared_ptr<CCharacterObjectBase>();
+	auto& tunign = CharObject->GetTuning();
 	// 左方向に入力検知
 	if (m_Input->GetArrowKeyDirection() == CInputManager::Direction::Left ||
 		m_Input->GetRightStickDirection() == CInputManager::Direction::Left)

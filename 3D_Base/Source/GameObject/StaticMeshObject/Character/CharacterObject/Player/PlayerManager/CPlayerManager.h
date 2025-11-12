@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <memory>
 
 //-----外部クラス-----
 #include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/CPlayer.h" // プレイヤークラス

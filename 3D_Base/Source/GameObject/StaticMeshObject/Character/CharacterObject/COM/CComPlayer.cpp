@@ -692,19 +692,23 @@ void CComPlayer::TransitionTo(State state)
     }
 }
 
-#if 0
-D3DXVECTOR3 CComPlayer::GetPosition()
+
+const D3DXVECTOR3 CComPlayer::GetPosition()
 {
-    if (m_pBody)return m_pBody->GetPosition();
+    auto body = GetBody();
+    if (body) return body->GetPosition();
     return CCharacter::GetPosition();
 }
 
-D3DXVECTOR3 CComPlayer::GetRotation() const
+const D3DXVECTOR3 CComPlayer::GetRotation()
 {
-    if (m_pBody) return m_pBody->GetRotation();
-    return CCharacter::GetRotation();
+    return D3DXVECTOR3();
 }
-#endif
+
+const D3DXVECTOR3 CComPlayer::GetScale()
+{
+    return D3DXVECTOR3();
+}
 
 
 void CComPlayer::TickWander(float turnStep, float moveStep)
