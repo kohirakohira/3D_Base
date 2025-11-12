@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObject//StaticMeshObject//Character//CCharacter.h" // 継承 || キャラクタークラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h" // 継承 || キャラクタークラス
 
 //-----ライブラリ-----
 #include <iostream>
@@ -15,7 +15,7 @@
 #include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
 
 class CPlayer
-	: public CCharacter
+	: public CCharacterObjectBase
 {
 public:
 
