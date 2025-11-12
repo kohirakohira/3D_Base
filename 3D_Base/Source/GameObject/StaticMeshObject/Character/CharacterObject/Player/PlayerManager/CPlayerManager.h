@@ -22,7 +22,7 @@
 #include "InputDevice/Input/Controller\ControllerManager/CControllerManager.h"
 
 class CPlayerManager
-	: public CCharacter
+	: public CCharacterObjectBase
 {
 public:
 	CPlayerManager();
@@ -57,7 +57,7 @@ public:
 	void Update() override;
 	void Draw (D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 	
-	D3DXVECTOR3 GetPosition();
+	const D3DXVECTOR3 GetPosition() override;
 	std::shared_ptr<CPlayer> GetControlPlayer(int index);
 
 	void SwitchActivePlayer();

@@ -70,7 +70,7 @@ CComPlayer::~CComPlayer()
 
 void CComPlayer::Create(int id)
 {
-    CPlayer::Initialize(id);
+    CCharacterObjectBase::Create(id);
     SanitizeParams();
 
     //自分がまだ登録されていなければ、全体リストに登録する
@@ -132,7 +132,7 @@ void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
 
     for (CComPlayer* other : Instances()) {
         if (other == this) continue;
-        std::shared_ptr<CBody> ob = other ? other->Body() : nullptr;
+        std::shared_ptr<CBody> ob = other ? other->GetBody() : nullptr;
         if (!ob)continue;   //位置が取れない相手は無視する
 
         D3DXVECTOR3 offset = selfPos - ob->GetPosition();
@@ -170,7 +170,7 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
     //パラメータ取得
     auto& tuning = GetTuning();
 
-    std::shared_ptr<CBody> body = Body();
+    auto body = GetBody();
     if (!body) return;
 
     // 現在姿勢
@@ -263,8 +263,8 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
 void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
 {
     auto& tuning = GetTuning();
-    std::shared_ptr<CCannon> cannon = Cannon();
-    const std::shared_ptr<CBody> body = Body();
+    std::shared_ptr<CCannon> cannon = GetCannon();
+    const std::shared_ptr<CBody> body = GetBody();
     if (!cannon) return;
 
     // 砲塔の基準位置
@@ -284,11 +284,11 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
 }
 
 //砲口のワールド座標とヨー角を計算
-void CComPlayer::ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const
+void CComPlayer::ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) 
 {
     auto& tunign = GetTuning();
-    auto body = Body();
-    auto cannon = Cannon();
+    auto body = GetBody();
+    auto cannon = GetCannon();
 
     D3DXVECTOR3 base(0, 0, 0);
     float yaw = 0.0f;
@@ -340,14 +340,15 @@ void CComPlayer::Update()
     SanitizeParams();
 
     if (!m_ComEnabled) { 
-        CPlayer::Update(); 
+        CCharacter::Update(); 
         return;
     }
     
     TickBlacklist();
 
-    auto body = Body();
-    auto cannon = Cannon();
+    auto body = GetBody();
+    auto cannon = GetCannon();
+
     if (!body) { 
         if (cannon) cannon->CCharacter::Update(); 
         return;
@@ -489,7 +490,7 @@ void CComPlayer::StepEvade()
     auto tuning = GetTuning();
 
    //ターゲットと反対方向に少し下がる
-    std::shared_ptr<CBody> body = Body();
+    auto body = GetBody();
     if (!body) return;
 
     const D3DXVECTOR3 selfPos = body->GetPosition();
@@ -532,7 +533,7 @@ void CComPlayer::StepEvade()
         body->CCharacter::Update();
 
         //砲塔の見た目を更新
-        if (auto cannon = Cannon())
+        if (auto cannon = GetCannon())
         {
             cannon->CCharacter::Update();
         }
@@ -578,16 +579,17 @@ void CComPlayer::EvaluateTransitions(float dist2)
     }
 }
 
+#if 0
 //一番近いターゲットを狙う
 void CComPlayer::MakeFixedTimeTarget()
 { 
     if (!m_pAllPlayer) return;
-    auto body = Body();
+    auto body = GetBody();
     if (!body) return;
 
     const D3DXVECTOR3 self = body->GetPosition();
 
-    std::shared_ptr<CPlayer> best;
+    CCharacter best;
     float bestD2 = 1e9f;
 
     for (auto& p : *m_pAllPlayer) {
@@ -629,7 +631,7 @@ void CComPlayer::MakeFixedTimeTarget()
         m_CurTargetDist2 = 1e9f;
     }
 }
-
+#endif
 
 //COM弾発射処理
 void CComPlayer::TryAutoFire()
@@ -665,8 +667,8 @@ void CComPlayer::TryAutoFire()
 void CComPlayer::SyncCannonToBody()
 {
     auto tuning = GetTuning();
-    auto body = Body();
-    auto cannon = Cannon();
+    auto body = GetBody();
+    auto cannon = GetCannon();
     if (!body || !cannon) return;
 
     D3DXVECTOR3 pos = body->GetPosition();
@@ -690,7 +692,8 @@ void CComPlayer::TransitionTo(State state)
     }
 }
 
-D3DXVECTOR3 CComPlayer::GetPosition() const
+#if 0
+D3DXVECTOR3 CComPlayer::GetPosition()
 {
     if (m_pBody)return m_pBody->GetPosition();
     return CCharacter::GetPosition();
@@ -701,12 +704,13 @@ D3DXVECTOR3 CComPlayer::GetRotation() const
     if (m_pBody) return m_pBody->GetRotation();
     return CCharacter::GetRotation();
 }
+#endif
 
 
 void CComPlayer::TickWander(float turnStep, float moveStep)
 {
     //body取得
-    auto body = Body();
+    auto body = GetBody();
     if (!body) return;
 
     const auto tuning = GetTuning();
@@ -787,13 +791,13 @@ void CComPlayer::TickBlacklist()
 
 }
 
-float CComPlayer::NearestItemDist2(float& outDist2) const
+float CComPlayer::NearestItemDist2(float& outDist2) 
 {
     //大きい値
     outDist2 = 1e18f;
     if (!m_pItemBox) return outDist2;
 
-    auto body = Body();
+    auto body = GetBody();
     if (!body)
     {
         return outDist2;
@@ -823,7 +827,7 @@ void CComPlayer::MakeItemTarget()
         return;
     }
 
-    auto body = Body();
+    auto body = GetBody();
     if (!body)
     {
         m_pItemTarget.reset();
@@ -878,7 +882,7 @@ bool CComPlayer::SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXV
 
 float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep)
 {
-    auto body = Body();
+    auto body = GetBody();
     if (!body)
     {
         return curYaw;

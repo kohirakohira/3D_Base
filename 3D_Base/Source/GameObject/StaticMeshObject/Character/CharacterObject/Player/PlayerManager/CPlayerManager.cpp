@@ -43,7 +43,7 @@ void CPlayerManager::Initialize()
 		{
 			//プレイヤー.
 			player = std::make_shared<CPlayer>();	//インスタンス生成.
-			player->Initialize(i);					//車体・砲塔を生成.
+			player->Create(i);					//車体・砲塔を生成.
 			player->SetHasControl(true);			//コントローラー操作ON.
 			player->SetKeyBoadEnble(true);			//.
 			player->SetControllerIndex(i);			//コントローラー設定.
@@ -53,10 +53,8 @@ void CPlayerManager::Initialize()
 		{
 			//COM.
 			auto com = std::make_shared<CComPlayer>();	//インスタンス生成.
-			com->Initialize(i);							//車体・砲塔を生成.
+			com->Create(i);								//車体・砲塔を生成.
 			com->SetComEnabled(true);					//COMかプレイヤーか判断.
-			com->SetHasControl(false);					//コントローラー操作ON.
-			com->SetKeyBoadEnble(false);				//.
 			SetBodyAndCannon(com->GetBody(), com->GetCannon());
 			player = com;
 		}
@@ -328,7 +326,7 @@ void CPlayerManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAME
 	}
 }
 
-D3DXVECTOR3 CPlayerManager::GetPosition()
+const D3DXVECTOR3 CPlayerManager::GetPosition()
 {
 	if (m_pPlayers.empty()) return D3DXVECTOR3(0, 0, 0);
 	return m_pPlayers[m_ActivePlayerIndex]->GetPosition();
@@ -440,7 +438,7 @@ void CPlayerManager::SwitchControl()
 		}
 
 		//現在のプレイヤー情報を取得.
-		std::shared_ptr<CCharacter> current = nullptr;
+		std::shared_ptr<CCharacterObjectBase> current = nullptr;
 		//プレイヤーリストの範囲内なら、その番号のプレイヤーを取得.
 		if (No < static_cast<int>(m_pPlayers.size()))
 		{
@@ -501,6 +499,7 @@ void CPlayerManager::SwitchControl()
 				newCOM->SetPosition(current->GetPosition());
 			}
 			//プレイヤーからCOMに入れ替え.
+			//m_pPlayers[No] = std::move(newCOM);
 			m_pPlayers[No] = newCOM;
 		}
 	}

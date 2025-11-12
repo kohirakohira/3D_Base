@@ -9,12 +9,10 @@
 //ショットマネージャー
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	
 
-//COM用の追尾クラス
-#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CChase/CChase.h"
-
 //当たり判定.障害物判定用
 #include "Collision/Collider/BoxCollider/CBoxCollider.h"
 
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/CPlayer.h"
 
 //-----ライブラリ-----
 #include <d3dx9math.h>
@@ -44,8 +42,10 @@ public:
 	void SetTarget(std::shared_ptr<CPlayer> player) { m_pTarget = player; }
 	void ClearTarget() { m_pTarget = nullptr; }
 
+#if 0
 	const D3DXVECTOR3 GetPosition() override;
 	const D3DXVECTOR3 GetRotation() override;
+#endif
 
 	//COMの有効無効を決める
 	void SetComEnabled(bool enabled) { m_ComEnabled = enabled; }
@@ -54,7 +54,7 @@ public:
 	//プレイヤーマネージャーで使うよう
 	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
 
-	//プレイヤーを取得する.読み取り専用
+	////プレイヤーを取得する.読み取り専用
 	void SetPlayersRef(const std::vector<std::shared_ptr<CPlayer>>* all) { m_pAllPlayer = all; }
 
 	//マネージャーからアイテムの参照
@@ -108,9 +108,9 @@ private:
 	static float Deg2Red(float d) { return d * (D3DX_PI / 180.0f); }
 	static float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b);
 	static float AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos);
-	float  NearestItemDist2(float& outDist2) const;						//近い箱の距離2乗
+	float  NearestItemDist2(float& outDist2) ;						//近い箱の距離2乗
 	static float ToRad(float d) { return d * (D3DX_PI / 180.0f); }
-	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
+	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) ;
 
 	//障害物判定用
 	bool SenseObstacleAABB(const CBoxCollider& selfBox,float yaw,D3DXVECTOR3& outAvoid,float& nearest) const;
@@ -202,6 +202,8 @@ private:
 	float		m_AvoidHolde;
 	int			m_AvoidSide;
 	float		m_AvoidMax;
+
+	int m_PlayerID;
 };
 
 

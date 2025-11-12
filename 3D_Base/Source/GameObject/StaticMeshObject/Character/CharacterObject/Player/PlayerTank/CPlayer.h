@@ -125,6 +125,8 @@ public:
 	void SetControllerIndex(int index);
 	int GetControllerIndex() const { return m_ControllerIndex; }
 
+	int m_PlayerID;
+
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }
 	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
