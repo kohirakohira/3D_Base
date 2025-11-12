@@ -40,18 +40,12 @@ public:
 	
 	void SetInput(const std::shared_ptr<CInputManager> input) { m_Input = input; }
 
-	//パラメータの外部関数
-	void SetTuning(const TankTuning& tuning) { m_Tune = tuning; }
-	const TankTuning& GetTuning() const { return m_Tune; }
-
 	//初期値設定用関数.
 	void SettingTune();
 
 
 
 protected:
-	TankTuning m_Tune;
-
 	std::shared_ptr<RAY>	m_pRayY;	//Y方向へ伸ばしたレイ.
 
 	std::shared_ptr<CInputManager> m_Input;	// 入力受付クラス.

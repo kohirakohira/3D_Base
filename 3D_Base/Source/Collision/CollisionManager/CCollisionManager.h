@@ -9,7 +9,7 @@
 #include "GameObject//StaticMeshObject//CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス
 
 #include "GameObject//StaticMeshObject//StageObject//CStageObject.h"
-#include "GameObject//StaticMeshObject//Character//Player//PlayerManager//CPlayerManager.h"
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerManager/CPlayerManager.h"
 
 #include "Collision/BlastCollision/BlastCollisionManager/CBlastCollisionManager.h"
 #include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"

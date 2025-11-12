@@ -1,15 +1,16 @@
 //-----継承するクラス-----
-#include "GameObject//StaticMeshObject//Character//CharacterObject\\Player//PlayerTank//CPlayer.h" // プレイヤークラス
-
-#include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	//ショットマネージャー
+#include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"	//基底クラス.
 
 //-----外部のヘッダー-----
 //アイテム
 #include "GameObject/StaticMeshObject/ItemBoxManager/ItemBoxType/ItemType.h"
 #include "GameObject/StaticMeshObject/ItemBoxManager/ItemBox/CItemBox.h"
 
+//ショットマネージャー
+#include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	
+
 //COM用の追尾クラス
-#include "GameObject/StaticMeshObject/Character/CharacterObject\\COM/CChase/CChase.h"
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CChase/CChase.h"
 
 //当たり判定.障害物判定用
 #include "Collision/Collider/BoxCollider/CBoxCollider.h"
@@ -22,19 +23,19 @@
 
 
 class CComPlayer
-	: public CPlayer
+	: public CCharacterObjectBase
 {
 public:
 	CComPlayer();
 	~CComPlayer() override;
 
-	void Initialize(int id)override;
+	void Create(int id)override;
 	void Update() override;
 
 	bool IsPlayer() const override { return false; }
 
-	std::shared_ptr<CCannon> const GetCannon() override { return m_pCannon; }
-	std::shared_ptr<CBody> const GetBody() override { return m_pBody; }
+	std::shared_ptr<CCannon> const GetCannon() override { return m_Cannon; }
+	std::shared_ptr<CBody> const GetBody() override { return m_Body; }
 	//敵判定
 	//自分以外は全員敵	
 	bool IsEnemy(const CPlayer& other) const {return other.GetPlayerID() != m_PlayerID; };
@@ -43,8 +44,8 @@ public:
 	void SetTarget(std::shared_ptr<CPlayer> player) { m_pTarget = player; }
 	void ClearTarget() { m_pTarget = nullptr; }
 
-	D3DXVECTOR3 GetPosition() const override;
-	D3DXVECTOR3 GetRotation() const override;
+	const D3DXVECTOR3 GetPosition() override;
+	const D3DXVECTOR3 GetRotation() override;
 
 	//COMの有効無効を決める
 	void SetComEnabled(bool enabled) { m_ComEnabled = enabled; }

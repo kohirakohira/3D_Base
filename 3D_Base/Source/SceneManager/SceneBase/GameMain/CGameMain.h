@@ -26,10 +26,10 @@
 
 //-----キャラクター-----.
 #include "GameObject//StaticMeshObject//Character//CCharacter.h" // キャラクタークラス.
-#include "GameObject//StaticMeshObject//Character//Player//PlayerManager//CPlayerManager.h" // プレイヤーマネージャークラス.
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerManager/CPlayerManager.h" // プレイヤーマネージャークラス.
 #include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h" // 弾クラスマネージャー.
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス.
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // 戦車：砲塔クラス.
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerManager/CPlayerManager.h" // 戦車：砲塔クラス.
 
 #include "Collision//BlastCollision//BlastCollisionManager//CBlastCollisionManager.h"	//爆風クラス.
 
