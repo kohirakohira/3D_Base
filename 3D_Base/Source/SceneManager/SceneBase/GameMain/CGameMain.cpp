@@ -118,6 +118,9 @@ void CGameMain::Update()
 	//BGMのループ再生..
 	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
+	//コントローラーの更新.
+	CControllerManager::GetInstance().Update();
+
 	//動的に生成.
 	//アイテムボックス.
 	m_pItemBoxManager->Create();
@@ -238,10 +241,7 @@ void CGameMain::Update()
 
 		m_SceneType = CSceneType::Result;
 	}
-
 }
-
-
 
 void CGameMain::Draw()
 {
@@ -288,8 +288,8 @@ void CGameMain::Draw()
 		//弾描画..
 		m_pShotManager->Draw(view, proj, light, paramC);
 
-		//地面描画.
-		m_pStage->Draw(view, proj, light, paramC);
+		////地面描画.
+		//m_pStage->Draw(view, proj, light, paramC);
 
 		////壁の表示.
 		//m_pWallTop->Draw(view, proj, light, paramC);
@@ -548,7 +548,6 @@ void CGameMain::Create()
 
 	//プレイヤーと砲塔のインスタンス生成.
 	m_pPlayerManager = std::make_shared<CPlayerManager>();
-
 	//マネージャーは一回だけInitialize.
 	m_pPlayerManager->Initialize();
 
@@ -1007,20 +1006,13 @@ void CGameMain::EachSettingTimer()
 	//時計の針の画像設定..
 	m_pSpriteTimerArrow->SetPosition(WND_W / 2.f - 42.f, WND_H / 2, 0.f);
 	m_pSpriteTimerArrow->SetRotation(0.f, 0.f, 0.f);
-	m_pSpriteTimerArrow->SetScale(-0.25f, 0.25f, 0.f);
+	m_pSpriteTimerArrow->SetScale(0.25f, 0.25f, 0.f);
 
 	//-----中心表示用座標-----..
 	//ゲームで遊べる(クリア画面に遷移する)時間※引数..
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
-
-	////-----中間発表用-----..
-	//	//ゲームで遊べる(クリア画面に遷移する)時間※引数..
-	//	m_Timer->StartTimer(TIME);.
-	//	m_Timer->SetDebugFont(m_pDbgText);.
-	//	m_Timer->SetTimerPosition(WND_W - 96.f, WND_H - 96.f);.
-
 }
 //プレイヤー番号画像の設定..
 void CGameMain::EachSettingPlayerNumber()

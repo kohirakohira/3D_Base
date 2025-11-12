@@ -8,7 +8,6 @@ CPlayerManager::CPlayerManager()
 	, AngleY	(45.f)
 	, m_pPlayers()
 	, m_ActivePlayerIndex(0)
-	, m_PadIndex()
 {
 }
 //PlayerがCComPlayerならそのポインタにキャストして返す.そうでなければnullptr
@@ -29,58 +28,51 @@ CPlayerManager::~CPlayerManager()
 {
 }
 
-void CPlayerManager::InitPads()
-{
-	//Padの初期化処理
-}
-
-
 //インスタンス生成.
 void CPlayerManager::Initialize()
 {
 	m_pPlayers.clear();
 	m_pPlayers.reserve(PLAYER_MAX);
 
-	for (int i = 0; i < PLAYER_MAX; ++i) {
-		auto com = std::make_shared<CComPlayer>();
-		com->Initialize(i);
+	for(int i = 0; i < PLAYER_MAX; i++)
+	{
+		std::shared_ptr<CPlayer> player;
 
-		//既定はCOM
-		com->SetComEnabled(true);
-		com->SetHasControl(false);
-
-		// 最初の1体だけ人間操作にする
-		if (i == 0) {
-			com->SetComEnabled(false); //COM停止,人間化
-			com->SetHasControl(true);  //入力を読むのはこの個体だけ
-			com->SetKeyBoadEnble(true);
-			com->SetPadRef(nullptr);
+		//コントローラーが繋がれていれば.
+		if (CControllerManager::GetInstance().GetController(i))
+		{
+			//プレイヤー.
+			player = std::make_shared<CPlayer>();	//インスタンス生成.
+			player->Initialize(i);					//車体・砲塔を生成.
+			player->SetHasControl(true);			//コントローラー操作ON.
+			player->SetKeyBoadEnble(true);			//.
+			player->SetControllerIndex(i);			//コントローラー設定.
+			SetBodyAndCannon(player->GetBody(), player->GetCannon());
 		}
 		else
 		{
-			com->SetKeyBoadEnble(false);
-			com->SetPadRef(nullptr);
+			//COM.
+			auto com = std::make_shared<CComPlayer>();	//インスタンス生成.
+			com->Initialize(i);							//車体・砲塔を生成.
+			com->SetComEnabled(true);					//COMかプレイヤーか判断.
+			com->SetHasControl(false);					//コントローラー操作ON.
+			com->SetKeyBoadEnble(false);				//.
+			SetBodyAndCannon(com->GetBody(), com->GetCannon());
+			player = com;
 		}
-		m_pPlayers.push_back(std::move(com));
+		//プレイヤーとCOMを生成.
+		m_pPlayers.push_back(player);
 	}
 
-	m_PadConnected.fill(false);		//最初の接続状態は無効
-	m_PadIndex.fill(-1);			//最初は無効値で埋める
-	m_PlayerPad.assign(m_pPlayers.size(), -1);	//サイズ取得と中身を同じ要素で埋める
-
-	//サイズ分回してCXInputを生成する
-	for (DWORD id = 0; id < m_Pads.size(); ++id)	//XInput側がDWORDなのであわせておく
+	//COMプレイヤー同士で参照を共有.
+	for (auto& player : m_pPlayers)
 	{
-		m_Pads[id] = std::make_unique<CXInput>(id);
-	}
-
-	SyncByPadConnection();
-
-	for (auto& player : m_pPlayers) {
-		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player)) {
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
+		{
 			com->SetPlayersRef(&m_pPlayers);
 		}
 	}
+
 }
 
 void CPlayerManager::AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
@@ -268,56 +260,63 @@ void CPlayerManager::SetPlayerRotation(int index, const D3DXVECTOR3& rad)
 
 void CPlayerManager::Update()
 {
-	const int count = static_cast<int>(m_pPlayers.size());
-	if (count <= 0)return;
+	//コントローラーの接続状態をチェック・切り替え.
+	SwitchControl();
 
-	//コントローラー判定
-	SyncByPadConnection();
-
-	//基本ターゲットを決める
-	//ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
-	auto pickHumanTargetIndex = [&]()->int {
-		auto isValidHuman = [&](int idx) {
-			return(idx == m_ActivePlayerIndex) && IsHumanControlled(m_pPlayers[idx]);
-			};
-		if (isValidHuman(m_LockTargetIndex)) return m_LockTargetIndex;
-		if (isValidHuman(m_ActivePlayerIndex)) return m_ActivePlayerIndex;
-		return -1;	//プレイヤーがいない
-		};
-
-	const int tgtIdx = pickHumanTargetIndex();
-	std::shared_ptr<CPlayer> target = (tgtIdx >= 0) ? m_pPlayers[tgtIdx] : nullptr;
-
-	for (int i = 0; i < count; ++i)
+	for (auto& player : m_pPlayers)
 	{
-		auto self = m_pPlayers[i];
+		player->Update();
+	}
 
-		if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
-		{
-			if (com->IsComEnabled())
-			{
-				//COM稼働中だけターゲットをあげる
-				if (target && IsHumanControlled(target) && target != self)
-				{
-					//ターゲットがプレイヤー限定なのであとで消す
-					//com->SetTarget(target);
-				}
-				else
-				{
-					com->ClearTarget();
-				}
-				com->Update();
-			}
-			else
-			{
-				self->Update();
-			}
-		}
-		else
-		{
-			self->Update();
-		}
-			
+	{
+		//const int count = static_cast<int>(m_pPlayers.size());
+		//if (count <= 0)return;
+
+		////基本ターゲットを決める
+		////ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
+		//auto pickHumanTargetIndex = [&]()->int {
+		//	auto isValidHuman = [&](int idx) {
+		//		return(idx == m_ActivePlayerIndex) && IsHumanControlled(m_pPlayers[idx]);
+		//		};
+		//	if (isValidHuman(m_LockTargetIndex)) return m_LockTargetIndex;
+		//	if (isValidHuman(m_ActivePlayerIndex)) return m_ActivePlayerIndex;
+		//	return -1;	//プレイヤーがいない
+		//	};
+
+		//const int tgtIdx = pickHumanTargetIndex();
+		//std::shared_ptr<CPlayer> target = (tgtIdx >= 0) ? m_pPlayers[tgtIdx] : nullptr;
+
+		//for (int i = 0; i < count; ++i)
+		//{
+		//	auto self = m_pPlayers[i];
+
+		//	if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
+		//	{
+		//		if (com->IsComEnabled())
+		//		{
+		//			//COM稼働中だけターゲットをあげる
+		//			if (target && IsHumanControlled(target) && target != self)
+		//			{
+		//				//ターゲットがプレイヤー限定なのであとで消す
+		//				//com->SetTarget(target);
+		//			}
+		//			else
+		//			{
+		//				com->ClearTarget();
+		//			}
+		//			com->Update();
+		//		}
+		//		else
+		//		{
+		//			self->Update();
+		//		}
+		//	}
+		//	else
+		//	{
+		//		self->Update();
+		//	}
+		//		
+		//}
 	}
 }
 
@@ -425,153 +424,84 @@ void CPlayerManager::SetPlayerTuning(int idx, const TankTuning& t)
 	if (idx >= 0 && idx < (int)m_pPlayers.size())m_pPlayers[idx]->SetTune(t);
 }
 
-void CPlayerManager::SyncByPadConnection()
+//プレイヤーとCOMの自動切り替え.
+void CPlayerManager::SwitchControl()
 {
-	//接続されているかどうかを取得する
-	for (int padIndex = 0; padIndex < (int)m_Pads.size(); ++padIndex) {
-		CXInput* pad = m_Pads[padIndex].get();	
-		pad->Update();
-
-		//今のフレームと前のフレームの状態
-		const bool now = pad->IsConnect();			
-		const bool prev = m_PadConnected[padIndex];
-
-		if (now != prev)
-		{
-			if (now)
-			{
-				//接続
-				int targetIndex;
-				if (padIndex < static_cast<int>(m_pPlayers.size()))
-				{
-					targetIndex = padIndex;
-				}
-				else
-				{
-					targetIndex = -1;	//割り当てなし
-				}
-
-				if (targetIndex >= 0)
-				{
-					//paleyrにすでにpadがついていたら解除
-					if (m_PlayerPad[targetIndex] >= 0)
-					{
-						int oldpadIndex = m_PlayerPad[targetIndex];
-						m_PadIndex[oldpadIndex] = -1;	//古いやつは割り当てなし
-					}
-					//新しい双方向対応を設定
-					m_PadIndex[padIndex] = targetIndex;		//pad->player
-					m_PlayerPad[targetIndex] = padIndex;	//plaeyr->pad
-
-				}
-			}
-			else
-			{
-				//切断
-				const int owner = m_PadIndex[padIndex];
-				if (owner >= 0)
-				{
-					m_PlayerPad[owner] = -1;
-					m_PadIndex[padIndex] = -1;
-				}
-			}
-			//今のフレームのものを前回のものとして記録する
-			m_PadConnected[padIndex] = now;
-		}
-	}
-
-	for (int index = 0; index < static_cast<int>(m_pPlayers.size()); index++)
+	for (int No = 0; No < PLAYER_MAX; No++)
 	{
-		//player->padの逆引き.範囲外なら-1
-		int padIndex;
-		if (index < static_cast<int>(m_PlayerPad.size()))
+		//コントローラーの接続状態を確認.
+		CController* ctrl = CControllerManager::GetInstance().GetController(No);
+		//接続出来てる？を判定する用.
+		bool Connected = false;
+		//判定中.
+		if (ctrl != nullptr)
 		{
-			padIndex = m_PlayerPad[index];
-		}
-		else
-		{
-			padIndex = -1;
+			Connected = ctrl->CheckConnected();
 		}
 
-		//padが有効か判定
-		bool padOn = false;
-		if (padIndex >= 0)
+		//現在のプレイヤー情報を取得.
+		std::shared_ptr<CCharacter> current = nullptr;
+		//プレイヤーリストの範囲内なら、その番号のプレイヤーを取得.
+		if (No < static_cast<int>(m_pPlayers.size()))
 		{
-			if (m_PadConnected[padIndex])
+			current = m_pPlayers[No];
+		}
+
+		//COMかどうか判定.
+		bool isCom = false;
+		if (current != nullptr)
+		{
+			isCom = std::dynamic_pointer_cast<CComPlayer>(current) != nullptr;
+		}
+
+		//状態が一致している場合はスキップ.
+		//例：padあり->プレイヤー・padなし->COMの状態があっているとき.
+		if ((Connected == true && isCom != true) || (Connected != true && isCom == true))
+		{
+			//変更する必要なし.
+			continue;
+		}
+
+		//COM->プレイヤーへ切り替え.
+		if (Connected == true && isCom == true)
+		{
+			//新しいプレイヤーを生成.
+			std::shared_ptr<CPlayer> newPlayer = std::make_shared<CPlayer>();
+
+			//コントローラーを設定.
+			newPlayer->SetControllerIndex(No);
+
+			//元のCOMの位置を引き継ぐ.
+			if (current != nullptr)
 			{
-				padOn = true;
+				newPlayer->SetPosition(current->GetPosition());
 			}
-		}
-
-		const bool isP1 = (index == m_keyboardPlayer);
-
-		bool player = false;
-
-		//1Pとそれ以外
-		if (isP1)
-		{
-			//1Pは常にキーボードがonでpadも併用できる
-			player = true;
-			m_pPlayers[index]->SetKeyBoadEnble(true);
-
-			//padOnが真のときだけpadsを参照
-			CXInput* padRef = nullptr;
-			if (padOn)
+			//戦車の調整データを引き継ぐ.
+			if (current != nullptr)
 			{
-				padRef = m_Pads[padIndex].get();
+				newPlayer->SetTuning(current->GetTuning());
 			}
-			m_pPlayers[index]->SetPadRef(padRef);
-		}
-		else
-		{
-			//2Pから4Pはpadがあればplayer
-			player = padOn;
-			m_pPlayers[index]->SetKeyBoadEnble(false);
 
-			CXInput* padRef = nullptr;
-			if (padOn)
+			//車体と砲塔のインスタンスを設定.
+			newPlayer->SetCBody(m_pBody);
+			newPlayer->SetCCannon(m_pCannon);
+
+			//COMからプレイヤーに入れ替え.
+			m_pPlayers[No] = newPlayer;
+		}
+		//プレイヤー->COMへ切り替え.
+		else if (Connected != true && isCom != true)
+		{
+			//新しCOMを生成.
+			std::shared_ptr<CComPlayer> newCOM = std::make_shared<CComPlayer>();
+
+			//元のプレイヤーの位置を引き継ぐ.
+			if (current != nullptr)
 			{
-				padRef = m_Pads[padIndex].get();
+				newCOM->SetPosition(current->GetPosition());
 			}
-			m_pPlayers[index]->SetPadRef(padRef);
-		}
-
-		//操作権の反映
-		m_pPlayers[index]->SetHasControl(player);
-
-		//comの有無,playerならcomはoff
-		if (auto com = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[index]))
-		{
-			com->SetComEnabled(!player);
+			//プレイヤーからCOMに入れ替え.
+			m_pPlayers[No] = newCOM;
 		}
 	}
 }
-
-
-int CPlayerManager::FindFirstComPlayer() const
-{
-	for (int i = 0; i < (int)m_pPlayers.size(); ++i)
-	{
-		if (auto com = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[i]))
-		{
-			//com有効、操作権は無効
-			if (com->IsComEnabled() && !m_pPlayers[i]->HasControl())
-			{
-				return i;
-			}
-		}
-		return -1;	//未割り当て
-	}
-}
-
-int CPlayerManager::FindFirstPadReceiver(int StartIndex) const
-{
-	for (int i = std::max(0, StartIndex); i < (int)m_pPlayers.size(); ++i)
-	{
-		if (i < (int)m_PlayerPad.size() && m_PlayerPad[i] < 0) return i;
-	}
-	return -1;
-}
-
-
-

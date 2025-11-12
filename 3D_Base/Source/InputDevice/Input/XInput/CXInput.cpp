@@ -105,17 +105,23 @@ bool CXInput::IsDown( KEY key, bool Just )
 {
 	WORD GamePad = GenerateGamePadValue( key );
 
+	bool ret = false;
+
 	if( IsKeyCore( GamePad, m_state ) == true )
 	{
-		if( Just == true ){
+		ret = true;
+
+		if (Just == true) {
 			//今回入力で前回未入力→押した瞬間.
-			if( IsKeyCore( GamePad, m_stateOld ) == false ){
-				return true;
+			if (IsKeyCore(GamePad, m_stateOld) == false) {
+				ret = true;
+			}
+			else {
+				ret = false;
 			}
 		}
-		return true;
 	}
-	return false;
+	return ret;
 }
 
 //-------------------------------------------------.
@@ -148,6 +154,92 @@ bool CXInput::IsRepeat( KEY key )
 		return true;
 	}
 	return false;
+}
+
+float CXInput::GetLeftStickXNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.sThumbLX);
+
+	//デッドゾーン処理.
+	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+	if (fabs(value) < DEADZONE)
+	{
+		return 0.0f;
+	}
+	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
+	return value / 32767.0f;
+}
+
+float CXInput::GetLeftStickYNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.sThumbLY);
+
+	//デッドゾーン処理.
+	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+	if (fabs(value) < DEADZONE)
+	{
+		return 0.0f;
+	}
+	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
+	return value / 32767.0f;
+}
+
+float CXInput::GetRightStickXNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.sThumbLY);
+
+	//デッドゾーン処理.
+	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+	if (fabs(value) < DEADZONE)
+	{
+		return 0.0f;
+	}
+	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
+	return value / 32767.0f;
+}
+
+float CXInput::GetRightStickYNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.sThumbLX);
+
+	//デッドゾーン処理.
+	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+	if (fabs(value) < DEADZONE)
+	{
+		return 0.0f;
+	}
+	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
+	return value / 32767.0f;
+}
+
+float CXInput::GetLeftTriggerNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.bLeftTrigger);
+	//微入力を無視.
+	const float DEADZONE = XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+	if (value < DEADZONE)
+	{
+		return 0.0f;
+	}
+	return value / 255.0f;
+}
+
+float CXInput::GetRightTriggerNormalized() const
+{
+	//値を取得.
+	float value = static_cast<float>(m_state.Gamepad.bRightTrigger);
+	//微入力を無視.
+	const float DEADZONE = XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+	if (value < DEADZONE)
+	{
+		return 0.0f;
+	}
+	return value / 255.0f;
 }
 
 //-------------------------------------------------.
@@ -184,14 +276,27 @@ bool CXInput::UpdateStatus()
 	}
 	return false;
 #endif
-	//未接続の時にクリア
-	m_connect = (XInputGetState(m_padId, &m_state) == ERROR_SUCCESS);
-
-	if (!m_connect)
+	DWORD result = XInputGetState(m_padId, &m_state);
+	if (result == ERROR_SUCCESS)
 	{
-		ZeroMemory(&m_state, sizeof(m_state));
+		m_connect = true;
+
+		//確認用.
+		std::cout << "PadID" << m_padId << "Connect" << (m_connect ? "YES" : "NO") << std::endl;
+
+		return true;
 	}
-	return m_connect;
+	else
+	{
+		m_connect = false;
+		//初期化.
+		ZeroMemory(&m_state, sizeof(m_state));
+
+		//確認用.
+		std::cout << "PadID" << m_padId << "Connect" << (m_connect ? "YES" : "NO") << std::endl;
+
+		return false;
+	}
 }
 
 

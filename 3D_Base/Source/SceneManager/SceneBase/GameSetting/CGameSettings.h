@@ -25,7 +25,7 @@
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
 
 //キー入力用.
-#include "InputDevice//Matuoka//CMultiInputKeyManager.h" // キー入力用
+#include "InputDevice//Key\\CMultiInputManager//CMultiInputKeyManager.h" // キー入力用
 
 
 //前方宣言.

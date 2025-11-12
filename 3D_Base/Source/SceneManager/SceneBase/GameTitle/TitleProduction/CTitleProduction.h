@@ -25,6 +25,8 @@ public:
 	void Draw();
 	//¶¬ŠÖ”.
 	void Create();
+	//‰Šú‰».
+	void Init();
 	//“Ç‚İ‚İŠÖ”.
 	HRESULT LoadData();
 

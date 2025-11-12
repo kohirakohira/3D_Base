@@ -12,6 +12,9 @@
 							   
 #include "SceneManager//SceneBase//GameDebug//GameDebug.h"		// デバッグ用クラス.
 
+//コントローラー.
+#include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
+
 #include "ImGui//CImguiManager.h"
 
 class CSceneManager

@@ -84,12 +84,13 @@ HRESULT CCollisionManager::LoadData()
 void CCollisionManager::WalltoPlayer()
 {
 	// 押し返しの強さ
-	const float pushStrength = 0.1f;
+	const float pushStrength = m_pPlayerManager->GetTuning().moveSpeed;
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		// i 番のプレイヤーを取得
 		auto player = m_pPlayerManager->GetControlPlayer(i);
+		if (!player->IsPlayer())continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		// 押し返すための変数
@@ -98,19 +99,19 @@ void CCollisionManager::WalltoPlayer()
 		// 車体が壁と接触したとき
 		if (Coll->CheckCollision(*m_pWallTop->GetCollider()))
 		{
-			push.z -= 0.1f;
+			push.z -= pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
-			push.z += 0.1f;
+			push.z += pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
-			push.x += 0.1f;
+			push.x += pushStrength;
 		}
 		if (Coll->CheckCollision(*m_pWallRight->GetCollider()))
 		{
-			push.x -= 0.1f;
+			push.x -= pushStrength;
 		}
 
 		// 押し返しを正規化
@@ -184,6 +185,7 @@ void CCollisionManager::PlayertoPlayer()
 	{
 		// プレイヤーAのコライダー取得
 		auto playerA = m_pPlayerManager->GetControlPlayer(i);
+		if (!playerA->IsPlayer())continue;
 		auto CollA = playerA->GetBody()->GetCollider();
 
 		for (int j = 0; j < PLAYER_MAX; j++)
@@ -193,6 +195,7 @@ void CCollisionManager::PlayertoPlayer()
 
 			// プレイヤーBのコライダー取得
 			auto playerB = m_pPlayerManager->GetControlPlayer(j);
+			if (!playerB->IsPlayer())continue;
 			auto CollB = playerB->GetBody()->GetCollider();
 
 			if (CollA->CheckCollision(*CollB))
@@ -220,6 +223,7 @@ void CCollisionManager::PlayertoItemBox()
 	{
 		// i 番のプレイヤーを取得
 		auto player = m_pPlayerManager->GetControlPlayer(PlayerIndex);
+		if (!player->IsPlayer())continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		for (size_t ItemIndex = 0; ItemIndex < m_pItemBoxManager->GetItem().size(); ItemIndex++)
@@ -281,6 +285,7 @@ void CCollisionManager::PlayertoShot()
 	{
 		// プレイヤーのコライダー取得
 		auto player = m_pPlayerManager->GetControlPlayer(i);
+		if (!player->IsPlayer())continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		for (auto& shot : m_pShotManager->GetShot())
@@ -312,6 +317,7 @@ void CCollisionManager::WoodBoxtoPlayer()
 	{
 		// i 番のプレイヤーを取得
 		auto player = m_pPlayerManager->GetControlPlayer(i);
+		if (!player->IsPlayer())continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		// 押し返すための変数
@@ -488,7 +494,7 @@ void CCollisionManager::GroundtoItemBox()
 {
 	for (auto& item : m_pItemBoxManager->GetItem())
 	{
-		if (m_pItemBoxManager->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
+		if (item->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
 		{
 			// アイテムボックスの処理を入れる
 			item->SetGravity(true);
@@ -503,6 +509,7 @@ void CCollisionManager::PlayertoBlast()
 	{
 		//i番目のプレイヤーを取得.
 		auto player = m_pPlayerManager->GetControlPlayer(i);
+		if (!player->IsPlayer())continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		if (m_pBlastManager->GetBlastFlag() == true)

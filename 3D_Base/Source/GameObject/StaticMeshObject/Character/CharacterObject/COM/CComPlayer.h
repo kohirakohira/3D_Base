@@ -1,5 +1,5 @@
 //-----継承するクラス-----
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//CPlayer.h" // プレイヤークラス
+#include "GameObject//StaticMeshObject//Character//CharacterObject\\Player//PlayerTank//CPlayer.h" // プレイヤークラス
 
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	//ショットマネージャー
 
@@ -9,7 +9,7 @@
 #include "GameObject/StaticMeshObject/ItemBoxManager/ItemBox/CItemBox.h"
 
 //COM用の追尾クラス
-#include "GameObject/StaticMeshObject/Character/COM/CChase/CChase.h"
+#include "GameObject/StaticMeshObject/Character/CharacterObject\\COM/CChase/CChase.h"
 
 //当たり判定.障害物判定用
 #include "Collision/Collider/BoxCollider/CBoxCollider.h"
@@ -31,6 +31,10 @@ public:
 	void Initialize(int id)override;
 	void Update() override;
 
+	bool IsPlayer() const override { return false; }
+
+	std::shared_ptr<CCannon> const GetCannon() override { return m_pCannon; }
+	std::shared_ptr<CBody> const GetBody() override { return m_pBody; }
 	//敵判定
 	//自分以外は全員敵	
 	bool IsEnemy(const CPlayer& other) const {return other.GetPlayerID() != m_PlayerID; };

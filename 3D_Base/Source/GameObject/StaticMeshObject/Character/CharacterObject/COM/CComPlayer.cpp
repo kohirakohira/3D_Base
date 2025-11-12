@@ -4,8 +4,8 @@
 #include <cmath>
 
 //-----外部クラス-----
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankBody//CBody.h"       // 戦車：車体クラス
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h"   // 戦車：砲塔クラス
+#include "GameObject//StaticMeshObject//Character//CCharacterObject\\Player//PlayerTank//TankBody//CBody.h"       // 戦車：車体クラス
+#include "GameObject//StaticMeshObject//Character//CCharacterObject\\Player//PlayerTank//TankCannon//CCannon.h"   // 戦車：砲塔クラス
 
 #undef min
 

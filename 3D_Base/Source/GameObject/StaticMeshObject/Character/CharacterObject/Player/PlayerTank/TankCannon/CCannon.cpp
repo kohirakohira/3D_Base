@@ -42,7 +42,13 @@ void CCannon::Update()
 	}
 	m_pCollider->SetPosition(m_vPosition);
 
-	KeyInput();
+	// クールタイマー更新
+	if (m_ShotCoolTime < m_ShotInterval)
+	{
+		m_ShotCoolTime++;
+	}
+
+	//KeyInput();
 
 	CCharacter::Update();
 
@@ -76,6 +82,24 @@ void CCannon::CreateBounding(std::shared_ptr<CStaticMesh> pCannon)
 	CreateBBoxForMesh(*pCannon);
 }
 
+void CCannon::Reload(D3DXVECTOR3 pos, float y, bool flag, int index)
+{
+	//クールタイムがインターバルより小さいとき.
+	if (m_ShotCoolTime < m_ShotInterval)
+	{
+		return;
+	}
+
+	//弾生成.
+	if (m_pShot == nullptr)
+	{
+		m_pShot->Create(pos, y, flag, index);
+	}
+
+	//クールタイムのリセット.
+	m_ShotCoolTime = 0;
+}
+
 // キー入力受付
 void CCannon::KeyInput()
 {
@@ -105,10 +129,7 @@ void CCannon::KeyInput()
 		if (m_Input->IsKeyboardRepeat('Z') ||
 			m_Input->GetRightTrigger() == CInputManager::Trigger::RightTrigger)
 		{
-			//m_Shot = true;		// 弾を発射
-			m_pShot->Create(m_vPosition, m_vRotation.y, true, m_PlayerID); // 弾のインスタンス生成
-			m_ShotCoolTime = 0; // クールダウン再スタート
+			Reload(m_vPosition, m_vRotation.y, true, m_PlayerID);
 		}
 	}
 }
-

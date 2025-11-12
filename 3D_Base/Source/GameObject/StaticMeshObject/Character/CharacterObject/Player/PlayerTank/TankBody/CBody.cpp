@@ -43,8 +43,8 @@ void CBody::Update()
 	// YÀ•W‚ğŒÅ’è
 	m_vPosition.y = 0;
 
-	KeyInput();		// “ü—Íˆ—
-	RadioControl();	// ‰ñ“]EˆÚ“®ˆ—
+	//KeyInput();		// “ü—Íˆ—
+	//RadioControl();	// ‰ñ“]EˆÚ“®ˆ—
 	CCharacter::Update();
 }
 
@@ -160,6 +160,11 @@ void CBody::Respawn()
 
 void CBody::Death()
 {
+}
+
+void CBody::AddRotationY(float value)
+{
+	m_vRotation.y += value;
 }
 
 void CBody::KeyInput()
