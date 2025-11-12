@@ -3,7 +3,7 @@
 #include "GameObject//StaticMeshObject//CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス 
 
 //-----外部クラス-----
-#include "GameObject/StaticMeshObject/Character/Player/PlayerManager/CPlayerManager.h"
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerManager/CPlayerManager.h"
 
 //==================================
 //	グラウンドクラス

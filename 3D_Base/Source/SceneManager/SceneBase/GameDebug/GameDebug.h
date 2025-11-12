@@ -17,7 +17,7 @@
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス
 //検証用.
-#include "GameObject//StaticMeshObject//Character//Player//PlayerManager//CPlayerManager.h" // プレイヤーマネージャークラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerManager/CPlayerManager.h" // プレイヤーマネージャークラス
 
 //アイテム.
 #include "GameObject//StaticMeshObject//ItemBoxManager//CItemBoxManager.h" // アイテムボックスマネージャークラス

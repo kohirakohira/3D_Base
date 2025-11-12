@@ -3,7 +3,7 @@
 #include "GameObject//StaticMeshObject//Character//CCharacter.h" // キャラクタークラス
 
 //-----外部クラス-----
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // 戦車：砲塔クラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankCannon/CCannon.h" // 戦車：砲塔クラス
 #include "InputDevice//Input//CInputManager.h" // 入力受付クラス
 
 /**************************************************

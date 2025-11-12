@@ -7,14 +7,14 @@
 #include <array>
 
 //-----外部クラス-----
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//CPlayer.h" // プレイヤークラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/CPlayer.h" // プレイヤークラス
 #include "GameObject//StaticMeshObject//Shot//CShot.h" // ショットクラス
-#include "gameObject//StaticMeshObject//Character//COM//CComPlayer.h" // COMプレイヤークラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComPlayer.h" // COMプレイヤークラス
 #include "Global.h"
 
 //↓松岡.
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankBody//CBody.h" // 戦車ボディクラス
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // 戦車キャノンクラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankBody/CBody.h" // 戦車ボディクラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankCannon/CCannon.h" // 戦車キャノンクラス
 
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	//ショットマネージャー
 
