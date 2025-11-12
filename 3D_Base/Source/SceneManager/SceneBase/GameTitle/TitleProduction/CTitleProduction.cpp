@@ -26,6 +26,10 @@ void CTitleProduction::Update()
 //描画関数.
 void CTitleProduction::Draw()
 {
+	//ライトの設定
+	m_Camera->SetLightPos(30.f, 70.f, 0.f);	//ポジション
+	m_Camera->SetLightIntensity(150.f);		//ライトの強さ
+	m_Camera->SetLightRange(1e9);			//影響範囲.距離減衰
 	//カメラの情報更新.
 	m_Camera->Info();
 
