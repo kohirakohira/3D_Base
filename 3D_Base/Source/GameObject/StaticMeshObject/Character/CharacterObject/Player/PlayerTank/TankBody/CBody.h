@@ -28,13 +28,19 @@ public:
 	};
 public:
 	CBody(int inputID);
-	virtual ~CBody() override;
+	~CBody();
 
-	virtual void Initialize(int id);
+	// 更新関数
+	void Update() override;
+	// 描画関数
+	void Draw( D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+	// 初期化関数
+	void Init();
 
-	virtual void Update() override;
-	virtual void Draw(
-		D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+	// パラメータの設定
+	void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; };
+	// パラメータの取得
+	const TankTuning& GetTuning() const override { return m_Tuning; }
 
 	// ラジコン操作
 	void RadioControl();

@@ -30,10 +30,6 @@ CCannon::~CCannon()
 {
 }
 
-void CCannon::Initialize(int id)
-{
-}
-
 void CCannon::Update()
 {
 	if (m_Input)
@@ -59,6 +55,10 @@ void CCannon::Draw(
 	D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
 	CCharacter::Draw(View, Proj, Light, Camera);
+}
+
+void CCannon::Init()
+{
 }
 
 void CCannon::SetCannonPosition(const D3DXVECTOR3& Pos)

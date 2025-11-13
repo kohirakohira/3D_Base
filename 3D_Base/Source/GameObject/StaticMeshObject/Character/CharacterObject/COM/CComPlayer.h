@@ -1,3 +1,4 @@
+#if 0
 //-----継承するクラス-----
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"	//基底クラス.
 
@@ -203,7 +204,7 @@ private:
 	int			m_AvoidSide;
 	float		m_AvoidMax;
 };
-
+#endif
 
 
 

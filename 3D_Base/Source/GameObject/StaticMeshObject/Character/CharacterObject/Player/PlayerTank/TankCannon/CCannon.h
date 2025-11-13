@@ -14,16 +14,24 @@ class CCannon
 {
 public:
 	CCannon(int inputID);
-	virtual ~CCannon() override;
+	~CCannon();
 
-	virtual void Initialize(int id);
+	// 更新関数
+	void Update() override;
+	// 描画関数
+	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+	// 初期化関数
+	void Init();
 
-	virtual void Update() override;
-	virtual void Draw(
-		D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+	// パラメータの設定
+	void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; };
+	// パラメータの取得
+	const TankTuning& GetTuning() const override { return m_Tuning; }
 
+	// 砲塔座標設定
 	void SetCannonPosition(const D3DXVECTOR3& Pos);
 
+	// 砲塔の情報を渡す
 	D3DXVECTOR3 GetCannonPosition() const { return m_vPosition; }
 
 	// 入力クラスを設定

@@ -1,5 +1,6 @@
 #pragma once
-#include "GameObject//StaticMeshObject//Character//CCharacter.h" /* 継承クラス || キャラクタークラス */
+//----継承するクラス-----
+#include "GameObject//StaticMeshObject//Character//CharacterObject//CCharacterObject.h" // プレイヤークラス
 
 //-----ライブラリ-----
 #include <iostream>
@@ -22,11 +23,11 @@
 #include "InputDevice/Input/Controller\ControllerManager/CControllerManager.h"
 
 class CPlayerManager
-	: public CCharacter
+	: public CCharacterObjectBase
 {
 public:
 	CPlayerManager();
-	~CPlayerManager();
+	~CPlayerManager() override;
 
 	void Initialize();
 	void AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> body, std::shared_ptr<CStaticMesh> cannon);
@@ -54,10 +55,35 @@ public:
 
 	//↓松岡.
 	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);
+	// 更新関数
 	void Update() override;
+	// 描画関数
 	void Draw (D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+	// インスタンスの生成
+	void Create(int index) override;
 	
-	D3DXVECTOR3 GetPosition();
+	//位置の設定.
+	void SetPosition(D3DXVECTOR3 pos) override;
+	//位置を取得.
+	const D3DXVECTOR3 GetPosition() override;
+
+	//回転の設定.
+	void SetRotation(D3DXVECTOR3 rot) override;
+	//回転を取得.
+	const D3DXVECTOR3 GetRotation() override;
+
+	//拡縮の設定.
+	void SetScale(D3DXVECTOR3 sca) override;
+	//拡縮を取得.
+	const D3DXVECTOR3 GetScale() override;
+
+	//プレイヤーかCOMを識別.
+	bool IsPlayer() const;
+
+	//当たった時の処理.
+	void OnHit(CCharacterObjectBase* other);
+
+	//D3DXVECTOR3 GetPosition();
 	std::shared_ptr<CPlayer> GetControlPlayer(int index);
 
 	void SwitchActivePlayer();

@@ -75,7 +75,7 @@ CPlayer::~CPlayer()
 {
 }
 
-void CPlayer::Initialize(int id)
+void CPlayer::Init(int id)
 {
 	// プレイヤーIDにそれぞれのID番号を入れる
 	m_PlayerID = id;
@@ -83,8 +83,8 @@ void CPlayer::Initialize(int id)
 	//インスタンスを生成
 	m_pBody = std::make_shared<CBody>(id);
 	m_pCannon = std::make_shared<CCannon>(id);
-	m_pCannon->Initialize(id);
-	m_pBody->Initialize(id);
+	m_pCannon->Init();
+	m_pBody->Init();
 
 	auto im = std::make_shared<CInputManager>();	
 	SetInputManagerShared(im);
@@ -153,7 +153,7 @@ void CPlayer::SetPushBack(const D3DXVECTOR3& push)
 	m_pBody->PushBack(push);
 	m_pCannon->PushBack(push);
 }
-   
+
 void CPlayer::Update()
 {
 	//プレイヤー入力.
@@ -182,6 +182,50 @@ void CPlayer::Update()
 	//移動とか適用
 	UpdateHumanInputAndMove(m_CurrentInput);
 
+}
+
+void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
+{
+	if (m_Player.m_Draw == true)
+	{
+		m_pBody->Draw(View, Proj, Light, Camera);
+		m_pCannon->Draw(View, Proj, Light, Camera);
+	}
+}
+
+void CPlayer::Create(int index)
+{
+}
+
+void CPlayer::SetPosition(D3DXVECTOR3 pos)
+{
+}
+
+const D3DXVECTOR3 CPlayer::GetPosition()
+{
+	return D3DXVECTOR3();
+}
+
+void CPlayer::SetRotation(D3DXVECTOR3 rot)
+{
+}
+
+const D3DXVECTOR3 CPlayer::GetRotation()
+{
+	return D3DXVECTOR3();
+}
+
+void CPlayer::SetScale(D3DXVECTOR3 sca)
+{
+}
+
+const D3DXVECTOR3 CPlayer::GetScale()
+{
+	return D3DXVECTOR3();
+}
+
+void CPlayer::OnHit(CCharacterObjectBase* other)
+{
 }
 
 //移動.
@@ -314,6 +358,10 @@ void CPlayer::SetControllerIndex(int index)
 	m_ControllerIndex = index;
 }
 
+void CPlayer::SetTuning(const TankTuning& tuning)
+{
+}
+
 void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 {
 	//松岡.
@@ -410,17 +458,8 @@ void CPlayer::SyncCannonToBody()
 	if (!Body() || !Cannon()) return;
 
 	D3DXVECTOR3 pos = Body()->GetPosition();
-	pos.y += m_Tune.cannonHeight;		// 砲塔の高さオフセット
+	//pos.y += m_Tune.cannonHeight;		// 砲塔の高さオフセット
 	Cannon()->SetPosition(pos);			// 位置を同期
-}
-
-void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
-{
-	if (m_Player.m_Draw == true)
-	{
-		m_pBody->Draw(View, Proj, Light, Camera);
-		m_pCannon->Draw(View, Proj, Light, Camera);
-	}
 }
 
 // プレイヤーのダメージ処理

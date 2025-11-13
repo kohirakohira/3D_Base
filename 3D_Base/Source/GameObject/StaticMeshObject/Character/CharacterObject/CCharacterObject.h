@@ -22,12 +22,12 @@ public:
 		std::shared_ptr<CBody> body = nullptr, 
 		std::shared_ptr<CCannon> cannon = nullptr
 	);
-	virtual ~CCharacterObjectBase() = 0;
+	virtual ~CCharacterObjectBase();
 
 	//動作関数.
 	virtual void Update() = 0;
 	//描画関数.
-	virtual void Draw() = 0;
+	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) = 0;
 	//インスタンス生成関数.
 	virtual void Create(int index) = 0;
 
@@ -46,11 +46,6 @@ public:
 	//拡縮を取得.
 	virtual const D3DXVECTOR3 GetScale() = 0;
 
-	//パラメータの設定.
-	virtual void SetTuning(const TankTuning& tuning) = 0;
-	//パラメータの取得.
-	virtual const TankTuning& GetTuning() const = 0;
-
 	//プレイヤーかCOMを識別.
 	virtual bool IsPlayer() const = 0;
 
@@ -58,23 +53,25 @@ public:
 	virtual void OnHit(CCharacterObjectBase* other) = 0;
 
 	//車体・砲塔を取得.
-	virtual std::shared_ptr<CBody> const GetBody() = 0;
-	virtual std::shared_ptr<CCannon> const GetCannon() = 0;
+	virtual std::shared_ptr<CBody> const GetBody() { return m_pBody; }
+	virtual std::shared_ptr<CCannon> const GetCannon() { return m_pCannon; }
+
+	//パラメータの設定.
+	virtual void SetTuning(const TankTuning& tuning) override;
+	//パラメータの取得.
+	virtual const TankTuning& GetTuning() const override { return m_Tuning; }
 
 protected:
 	//車体クラス.
-	std::shared_ptr<CBody>		m_Body;
+	std::shared_ptr<CBody>		m_pBody;
 	//砲塔クラス.
-	std::shared_ptr<CCannon>	m_Cannon;
+	std::shared_ptr<CCannon>	m_pCannon;
 
 	//キャラクターの状態.
 	bool m_IsActive;
 
 	//キャラクターの生存フラグ.
 	bool m_IsAlive;
-
-	//戦車の情報.
-	TankTuning m_Tuning;
 
 	//キャラクターの体力.
 	int m_HP;

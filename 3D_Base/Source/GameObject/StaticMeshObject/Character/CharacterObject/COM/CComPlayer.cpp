@@ -1,3 +1,4 @@
+#if 0
 #include "CComPlayer.h"
 
 //-----ƒ‰ƒCƒuƒ‰ƒŠ-----
@@ -916,6 +917,7 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
     if (d < -turnStep) return curYaw - turnStep;
     return curYaw + d;
 }
+#endif
 
 
 

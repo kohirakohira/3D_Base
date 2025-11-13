@@ -29,7 +29,7 @@ CBody::~CBody()
 {
 }
 
-void CBody::Initialize(int id)
+void CBody::Init()
 {
 }
 

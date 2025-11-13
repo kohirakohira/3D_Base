@@ -43,11 +43,18 @@ public:
 	//初期値設定用関数.
 	void SettingTune();
 
+	//パラメータの設定.
+	virtual void SetTuning(const TankTuning& tuning) = 0;
+	//パラメータの取得.
+	virtual const TankTuning& GetTuning() const = 0;
 
 
 protected:
 	std::shared_ptr<RAY>	m_pRayY;	//Y方向へ伸ばしたレイ.
 
 	std::shared_ptr<CInputManager> m_Input;	// 入力受付クラス.
+
+	//戦車の情報.
+	TankTuning m_Tuning;
 
 };
