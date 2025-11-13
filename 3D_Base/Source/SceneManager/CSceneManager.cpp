@@ -78,6 +78,8 @@ void CSceneManager::Draw()
 		////ImGuiの描画.
 		//m_ImguiManager.Render();
 	}
+
+	
 }
 
 //データのロード処理.

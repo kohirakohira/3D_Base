@@ -77,6 +77,7 @@ void CGameDebug::Draw()
 	if (DrawFlag == true) {
 		return;
 	}
+	
 
 	//ƒJƒƒ‰‚Ì•`‰æ.
 	m_pCamera->Info();

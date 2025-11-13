@@ -290,17 +290,7 @@ void CGameMain::Draw()
 				p->Draw(view, proj, light, paramC);
 			}
 		}
-
-#if 0
-		for (int character = 0; character < PLAYER_MAX; ++character)
-		{
-			if (auto c = )
-			{
-				c->Draw
-			}
-		}
-#endif
-
+		m_pPlayerManager->Draw(view, proj, light, paramC);
 
 //オブジェクトの描画..
 		//弾描画..
@@ -357,6 +347,7 @@ void CGameMain::Draw()
 		std::shared_ptr<CCamera> camera = m_pCameras[i];
 
 		std::shared_ptr<CCharacterObjectBase> owner = m_pPlayerManager->GetControlPlayer(i);
+
 		////////デバッグテキストの描画.
 		//////m_pDbgText->SetColor(0.9f, 0.6f, 0.f);	//色の設定.
 		//////m_pDbgText->Render(_T("ABCD"), 10, 100);.
