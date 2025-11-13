@@ -30,7 +30,7 @@ CCannon::~CCannon()
 {
 }
 
-void CCannon::Initialize(int id)
+void CCannon::Init()
 {
 }
 

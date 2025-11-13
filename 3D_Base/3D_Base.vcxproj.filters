@@ -35,6 +35,7 @@
     <ClCompile Include="Source\Camera\CCamera.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CCharacter.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CCharacter\CCharacterObject.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.cpp" />
     <ClCompile Include="Source\Assets\Effect\CEffect.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\StageObject\CStageObject.cpp" />
@@ -102,6 +103,7 @@
     <ClInclude Include="Source\Camera\CCamera.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CCharacter.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CCharacterObject\CCharacterObject.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.h" />
     <ClInclude Include="Source\Assets\Effect\CEffect.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\StageObject\CStageObject.h" />

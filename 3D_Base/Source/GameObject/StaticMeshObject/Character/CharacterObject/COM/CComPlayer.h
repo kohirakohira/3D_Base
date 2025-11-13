@@ -23,7 +23,7 @@
 
 
 class CComPlayer
-	: public CCharacterObjectBase
+	: public CCharacterObject
 {
 public:
 	CComPlayer();

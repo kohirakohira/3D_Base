@@ -12,22 +12,24 @@
 //================================================================
 //	キャラクターオブジェクト※基底クラス(キャラクターを継承).
 //================================================================
-class CCharacterObjectBase
+class CCharacterObject
 	: public CCharacter
 {
 public:
-	CCharacterObjectBase(
+	CCharacterObject(
 		int hp = 2,
-		const TankTuning& tuning = {},
-		std::shared_ptr<CBody> body = nullptr, 
-		std::shared_ptr<CCannon> cannon = nullptr
+		const TankTuning& tuning = {}/*,*/
+		//std::shared_ptr<CBody> body = nullptr, 
+		//std::shared_ptr<CCannon> cannon = nullptr
 	);
-	virtual ~CCharacterObjectBase() = 0;
+	virtual ~CCharacterObject() override = 0;
 
-	//動作関数.
-	virtual void Update() = 0;
+	//更新関数.
+	virtual void Update() override = 0;
 	//描画関数.
-	virtual void Draw() = 0;
+	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override = 0;
+	//初期化関数.
+	virtual void Init() = 0;
 	//インスタンス生成関数.
 	virtual void Create(int index) = 0;
 
@@ -55,17 +57,17 @@ public:
 	virtual bool IsPlayer() const = 0;
 
 	//当たった時の処理.
-	virtual void OnHit(CCharacterObjectBase* other) = 0;
+	virtual void OnHit(CCharacterObject* other) = 0;
 
 	//車体・砲塔を取得.
-	virtual std::shared_ptr<CBody> const GetBody() = 0;
-	virtual std::shared_ptr<CCannon> const GetCannon() = 0;
+	//virtual std::shared_ptr<CBody> const GetBody() = 0;
+	//virtual std::shared_ptr<CCannon> const GetCannon() = 0;
 
 protected:
-	//車体クラス.
-	std::shared_ptr<CBody>		m_Body;
-	//砲塔クラス.
-	std::shared_ptr<CCannon>	m_Cannon;
+	////車体クラス.
+	//std::shared_ptr<CBody>		m_Body;
+	////砲塔クラス.
+	//std::shared_ptr<CCannon>	m_Cannon;
 
 	//キャラクターの状態.
 	bool m_IsActive;

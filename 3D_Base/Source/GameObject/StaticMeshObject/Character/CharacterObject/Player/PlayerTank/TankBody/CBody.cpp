@@ -29,7 +29,7 @@ CBody::~CBody()
 {
 }
 
-void CBody::Initialize(int id)
+void CBody::Init()
 {
 }
 
@@ -52,6 +52,10 @@ void CBody::Draw(
 	D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
 	CCharacter::Draw(View, Proj, Light, Camera);
+}
+
+void CBody::Init()
+{
 }
 
 // ÉâÉWÉIëÄçÏ

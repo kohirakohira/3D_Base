@@ -83,8 +83,8 @@ void CPlayer::Initialize(int id)
 	//インスタンスを生成
 	m_pBody = std::make_shared<CBody>(id);
 	m_pCannon = std::make_shared<CCannon>(id);
-	m_pCannon->Initialize(id);
-	m_pBody->Initialize(id);
+	m_pCannon->Init();
+	m_pBody->Init();
 
 	auto im = std::make_shared<CInputManager>();	
 	SetInputManagerShared(im);
@@ -142,7 +142,7 @@ void CPlayer::SetTankRotation(const D3DXVECTOR3& rot)
 	m_pCannon->SetRotation(rot);	// 砲塔回転指定
 }
 
-void CPlayer::SetTankScale(const float& sca)
+void CPlayer::SetTankScale(const D3DXVECTOR3& sca)
 {
 	m_pBody->SetScale(sca);			// 車体大きさ指定
 	m_pCannon->SetScale(sca);		// 砲塔大きさ指定
