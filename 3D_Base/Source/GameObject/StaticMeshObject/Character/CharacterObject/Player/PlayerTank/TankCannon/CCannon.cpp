@@ -30,9 +30,9 @@ CCannon::~CCannon()
 {
 }
 
-void CCannon::Init()
-{
-}
+//void CCannon::Init()
+//{
+//}
 
 void CCannon::Update()
 {

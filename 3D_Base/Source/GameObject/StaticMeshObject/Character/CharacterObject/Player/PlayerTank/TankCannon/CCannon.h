@@ -11,7 +11,7 @@
 //	–C“ƒƒNƒ‰ƒX
 //================================================================
 class CCannon
-	: public CCharacterObject
+	: public CCharacter
 {
 public:
 	CCannon(int inputID);
@@ -21,6 +21,7 @@ public:
 	void Update() override;
 	// •`‰æŠÖ”
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+#if 0
 	// ‰Šú‰»ŠÖ”
 	void Init() override;
 
@@ -50,7 +51,7 @@ public:
 	virtual bool IsPlayer() const override = 0;
 	// “–‚½‚Á‚½‚Ìˆ—
 	void OnHit(CCharacterObject* other) override = 0;
-
+#endif
 	void SetCannonPosition(const D3DXVECTOR3& Pos);
 
 	D3DXVECTOR3 GetCannonPosition() const { return m_vPosition; }
