@@ -15,6 +15,22 @@
 //================================================================
 class CCharacterObjectBase
 	: public CCharacter
+#if 0
+	void CPlayer::Create(int id)
+{
+	m_Body = std::make_shared<CBody>();
+	m_Cannon = std::make_shared<CCannon>();
+
+	//マネージャーセットキャノンボディ
+	actor = player;
+	m_pPlayers.push_back(actor);
+
+	// Body / Cannon を渡すのは「push したあと」に行う
+	SetBodyAndCannon(player->GetBody(), player->GetCannon());
+
+}
+
+#endif
 {
 public:
 	CCharacterObjectBase(

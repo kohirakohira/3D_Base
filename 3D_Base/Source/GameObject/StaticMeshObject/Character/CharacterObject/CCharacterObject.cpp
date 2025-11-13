@@ -28,7 +28,10 @@ CCharacterObjectBase::~CCharacterObjectBase() = default;
 
 void CCharacterObjectBase::Create(int index)
 {
-	//Šî’ê‚Å‚Í‚È‚É‚à‚µ‚È‚¢.‹ïÛ‚Å¶¬Ó–±‚ğ‚½‚¹‚é
+
+		m_Body = std::make_shared<CBody>();
+		m_Cannon = std::make_shared<CCannon>();
+
 }
 
 void CCharacterObjectBase::Update()
