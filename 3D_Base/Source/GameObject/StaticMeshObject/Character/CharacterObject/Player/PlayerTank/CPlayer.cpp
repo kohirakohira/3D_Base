@@ -464,22 +464,7 @@ void CPlayer::SyncCannonToBody()
 
 void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-#if 0
-	if (m_Player.m_Draw == true)
-	{
-		m_Body->Draw(View, Proj, Light, Camera);
-		m_pCannon->Draw(View, Proj, Light, Camera);
-	}
-#endif
-
-	auto body = GetBody();
-	auto cannon = GetCannon();
-
-	if (!m_Drawflag)
-	{
-		body->Draw(View, Proj, Light, Camera);
-		cannon->Draw(View, Proj, Light, Camera);
-	}
+	CCharacterObjectBase::Draw(View, Proj, Light, Camera);
 }
 
 // プレイヤーのダメージ処理

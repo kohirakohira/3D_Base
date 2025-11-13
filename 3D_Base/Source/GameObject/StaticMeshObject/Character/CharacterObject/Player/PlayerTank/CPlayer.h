@@ -101,8 +101,8 @@ public:
 	void CreateCollider();
 
 	//ŠO•”‚ÌƒNƒ‰ƒX‚©‚çî•ñæ“¾.
-	void SetCBody(std::shared_ptr<CBody> pBody) override{ m_pBody = pBody; }
-	void SetCannon(std::shared_ptr<CCannon> pCannon) override{ m_pCannon = pCannon; }
+	void SetCBody(std::shared_ptr<CBody> pBody) override{ m_Body = pBody; }
+	void SetCannon(std::shared_ptr<CCannon> pCannon) override{ m_Cannon = pCannon; }
 
 	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) override;
 
