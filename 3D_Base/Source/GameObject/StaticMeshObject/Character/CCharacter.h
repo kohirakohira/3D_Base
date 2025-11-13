@@ -40,8 +40,9 @@ public:
 	
 	void SetInput(const std::shared_ptr<CInputManager> input) { m_Input = input; }
 
-	//初期値設定用関数.
-	void SettingTune();
+
+	////初期値設定用関数.
+	//void SettingTune();
 
 
 

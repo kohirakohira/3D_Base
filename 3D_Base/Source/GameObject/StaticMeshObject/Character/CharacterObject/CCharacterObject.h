@@ -22,17 +22,16 @@ public:
 		//std::shared_ptr<CBody> body = nullptr, 
 		//std::shared_ptr<CCannon> cannon = nullptr
 	);
-	virtual ~CCharacterObject() override = 0;
+	virtual ~CCharacterObjectBase();
 
-	//更新関数.
-	virtual void Update() override = 0;
+	//動作関数.
+	virtual void Update() override;
 	//描画関数.
-	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override = 0;
-	//初期化関数.
-	virtual void Init() = 0;
+	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 	//インスタンス生成関数.
-	virtual void Create(int index) = 0;
+	virtual void Create(int index);
 
+#if 0
 	//位置の設定.
 	virtual void SetPosition(D3DXVECTOR3 pos) = 0;
 	//位置を取得.
@@ -47,21 +46,34 @@ public:
 	virtual void SetScale(D3DXVECTOR3 sca) = 0;
 	//拡縮を取得.
 	virtual const D3DXVECTOR3 GetScale() = 0;
+#endif
 
 	//パラメータの設定.
-	virtual void SetTuning(const TankTuning& tuning) = 0;
+	virtual void SetTuning(const TankTuning& tuning) { m_Tuning = tuning; }
 	//パラメータの取得.
-	virtual const TankTuning& GetTuning() const = 0;
+	virtual const TankTuning& GetTuning() const { return m_Tuning; }
 
 	//プレイヤーかCOMを識別.
 	virtual bool IsPlayer() const = 0;
 
 	//当たった時の処理.
-	virtual void OnHit(CCharacterObject* other) = 0;
+	virtual void OnHit(CCharacterObjectBase* other) {};
 
 	//車体・砲塔を取得.
-	//virtual std::shared_ptr<CBody> const GetBody() = 0;
-	//virtual std::shared_ptr<CCannon> const GetCannon() = 0;
+	virtual std::shared_ptr<CBody> const GetBody();
+	virtual std::shared_ptr<CCannon> const GetCannon();
+
+	//Body.Cannonのオーバロード
+	virtual std::shared_ptr<CBody> GetBody() const;
+	virtual std::shared_ptr<CCannon> GetCannon() const;
+
+	//戦車のTransform
+	void SetTankPosition(const D3DXVECTOR3& pos) {};
+	void SetTankRotation(const D3DXVECTOR3& rot) {};
+	void SetTankScale(float sca) {};
+
+	virtual const D3DXVECTOR3 GetPosition() = 0;
+	virtual const D3DXVECTOR3 GetRotation() = 0;
 
 protected:
 	////車体クラス.

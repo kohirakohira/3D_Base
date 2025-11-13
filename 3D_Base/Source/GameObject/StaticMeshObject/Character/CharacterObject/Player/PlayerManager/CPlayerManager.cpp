@@ -36,32 +36,33 @@ void CPlayerManager::Initialize()
 
 	for(int i = 0; i < PLAYER_MAX; i++)
 	{
-		std::shared_ptr<CPlayer> player;
+		std::shared_ptr<CCharacterObjectBase> actor;
 
 		//コントローラーが繋がれていれば.
 		if (CControllerManager::GetInstance().GetController(i))
 		{
 			//プレイヤー.
-			player = std::make_shared<CPlayer>();	//インスタンス生成.
-			player->Initialize(i);					//車体・砲塔を生成.
-			player->SetHasControl(true);			//コントローラー操作ON.
-			player->SetKeyBoadEnble(true);			//.
-			player->SetControllerIndex(i);			//コントローラー設定.
+			auto player = std::make_shared<CPlayer>();	//インスタンス生成.
+			player->Create(i);					//車体・砲塔を生成.
+			//player->SetHasControl(true);			//コントローラー操作ON.
+			//player->SetKeyBoadEnble(true);			//.
+			//player->SetControllerIndex(i);			//コントローラー設定.
 			SetBodyAndCannon(player->GetBody(), player->GetCannon());
+			actor = player;	//基底で受けるのでそのまま代入
 		}
 		else
 		{
 			//COM.
 			auto com = std::make_shared<CComPlayer>();	//インスタンス生成.
-			com->Initialize(i);							//車体・砲塔を生成.
+			com->Create(i);								//車体・砲塔を生成.
 			com->SetComEnabled(true);					//COMかプレイヤーか判断.
-			com->SetHasControl(false);					//コントローラー操作ON.
-			com->SetKeyBoadEnble(false);				//.
+			//com->SetHasControl(false);					//コントローラー操作ON.
+			//com->SetKeyBoadEnble(false);				//.
 			SetBodyAndCannon(com->GetBody(), com->GetCannon());
-			player = com;
+			actor = com;
 		}
 		//プレイヤーとCOMを生成.
-		m_pPlayers.push_back(player);
+		m_pPlayers.push_back(actor);
 	}
 
 	//COMプレイヤー同士で参照を共有.
@@ -334,7 +335,7 @@ D3DXVECTOR3 CPlayerManager::GetPosition()
 	return m_pPlayers[m_ActivePlayerIndex]->GetPosition();
 }
 
-std::shared_ptr<CPlayer> CPlayerManager::GetControlPlayer(int index)
+std::shared_ptr<CCharacterObjectBase> CPlayerManager::GetControlPlayer(int index)
 {
 	if (index >= 0 && index < (int)m_pPlayers.size()) {
 		return m_pPlayers[index];
@@ -479,7 +480,7 @@ void CPlayerManager::SwitchControl()
 			//戦車の調整データを引き継ぐ.
 			if (current != nullptr)
 			{
-				newPlayer->SetTuning(current->GetTuning());
+		//		newPlayer->SetTuning(current->GetTuning());
 			}
 
 			//車体と砲塔のインスタンスを設定.
@@ -501,7 +502,7 @@ void CPlayerManager::SwitchControl()
 				newCOM->SetPosition(current->GetPosition());
 			}
 			//プレイヤーからCOMに入れ替え.
-			m_pPlayers[No] = newCOM;
+		//	m_pPlayers[No] = newCOM;
 		}
 	}
 }
