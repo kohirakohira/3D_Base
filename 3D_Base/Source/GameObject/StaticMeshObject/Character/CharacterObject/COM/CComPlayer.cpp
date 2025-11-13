@@ -402,6 +402,10 @@ void CComPlayer::Update()
     ++m_StateFrames;
 }
 
+void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
+{
+}
+
 const D3DXVECTOR3 CComPlayer::GetPosition()
 {
     if (m_Body) return m_Body->GetPosition();

@@ -38,6 +38,7 @@ public:
 	void Create(int id)override;
 	void Update() override;
 	bool IsPlayer() const override { return false; }
+	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
 	const D3DXVECTOR3 GetPosition() override;
 	const D3DXVECTOR3 GetRotation() override;

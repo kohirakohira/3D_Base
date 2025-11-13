@@ -49,17 +49,19 @@ void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light
 {
 	if (!m_Drawflag) return;
 
+	m_Body->Draw(View, Proj, Light, Camera);
+	m_Cannon->Draw(View, Proj, Light, Camera);
+#if 0
 	if (m_Body)
 	{
 		m_Body->Draw(View, Proj, Light, Camera);
-		CCharacter::Update();
 	}
 
 	if (m_Cannon)
 	{
 		m_Cannon->Draw(View, Proj, Light, Camera);
 	}
-
+#endif
 }
 
 void CCharacterObjectBase::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
