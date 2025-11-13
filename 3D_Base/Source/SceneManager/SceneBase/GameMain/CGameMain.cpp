@@ -160,6 +160,13 @@ void CGameMain::Update()
 	//		}
 	//	}
 	//}
+
+#if 0
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		m_pPlayerManager->GetControlPlayer(index)->GetCannon()->SetShotManager(m_pShotManager);
+	}
+#endif
 	m_pShotManager->Update();
 
 
@@ -258,7 +265,7 @@ void CGameMain::Draw()
 	const int VIEWS = std::min(PLAYER_MAX, MAX_VIEWS);	//minで小さいほうに合わせる.
 
 	//1ビューポート分を描画する処理をラムダにまとめる.
-	auto DrawOneViewport = [&](std::shared_ptr<CCamera> camera, std::shared_ptr<CPlayer> owner)
+	auto DrawOneViewport = [&](std::shared_ptr<CCamera> camera, std::shared_ptr<CCharacterObjectBase> owner)
 	{
 		//カメラ更新.
 		camera->Update();
@@ -284,18 +291,29 @@ void CGameMain::Draw()
 			}
 		}
 
+#if 0
+		for (int character = 0; character < PLAYER_MAX; ++character)
+		{
+			if (auto c = )
+			{
+				c->Draw
+			}
+		}
+#endif
+
+
 //オブジェクトの描画..
 		//弾描画..
 		m_pShotManager->Draw(view, proj, light, paramC);
 
-		////地面描画.
-		//m_pStage->Draw(view, proj, light, paramC);
+		//地面描画.
+		m_pStage->Draw(view, proj, light, paramC);
 
-		////壁の表示.
-		//m_pWallTop->Draw(view, proj, light, paramC);
-		//m_pWallBottom->Draw(view, proj, light, paramC);
-		//m_pWallLeft->Draw(view, proj, light, paramC);
-		//m_pWallRight->Draw(view, proj, light, paramC);
+		//壁の表示.
+		m_pWallTop->Draw(view, proj, light, paramC);
+		m_pWallBottom->Draw(view, proj, light, paramC);
+		m_pWallLeft->Draw(view, proj, light, paramC);
+		m_pWallRight->Draw(view, proj, light, paramC);
 
 		// 木箱の描画
 		m_pWoodBoxTopLeft->Draw(view, proj, light, paramC);
@@ -338,7 +356,7 @@ void CGameMain::Draw()
 		//カメラ参照を取得.参照外しで実体を直接扱う.
 		std::shared_ptr<CCamera> camera = m_pCameras[i];
 
-		std::shared_ptr<CPlayer> owner = m_pPlayerManager->GetControlPlayer(i);
+		std::shared_ptr<CCharacterObjectBase> owner = m_pPlayerManager->GetControlPlayer(i);
 		////////デバッグテキストの描画.
 		//////m_pDbgText->SetColor(0.9f, 0.6f, 0.f);	//色の設定.
 		//////m_pDbgText->Render(_T("ABCD"), 10, 100);.
@@ -555,11 +573,6 @@ void CGameMain::Create()
 	m_pShotManager = std::make_shared<CShotManager>();
 	//m_pShotManager->Initialize();
 
-	for (int index = 0; index < PLAYER_MAX; ++index)
-	{
-		m_pPlayerManager->GetControlPlayer(index)->GetCannon()->SetShotManager(m_pShotManager);
-	}
-
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		//カメラ生成・セットアップ.
@@ -628,6 +641,9 @@ void CGameMain::Create()
 	
 	// 爆風マネージャーをセット
 	m_pCollisionManager->SetCBlastCollisionManager(m_pBlastManager);
+
+	// ショットマネージャーセット
+	m_pPlayerManager->SetShotManager(m_pShotManager);
 }
 
 HRESULT CGameMain::LoadData()

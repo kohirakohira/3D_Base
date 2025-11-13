@@ -43,8 +43,8 @@ void CPlayerManager::Initialize()
 		{
 			//プレイヤー.
 			auto player = std::make_shared<CPlayer>();	//インスタンス生成.
-			player->Create(i);					//車体・砲塔を生成.
-			//player->SetHasControl(true);			//コントローラー操作ON.
+			player->Initialize(i);						//車体・砲塔を生成.
+			//player->SetHasControl(true);				//コントローラー操作ON.
 			//player->SetKeyBoadEnble(true);			//.
 			//player->SetControllerIndex(i);			//コントローラー設定.
 			SetBodyAndCannon(player->GetBody(), player->GetCannon());
@@ -56,7 +56,7 @@ void CPlayerManager::Initialize()
 			auto com = std::make_shared<CComPlayer>();	//インスタンス生成.
 			com->Create(i);								//車体・砲塔を生成.
 			com->SetComEnabled(true);					//COMかプレイヤーか判断.
-			//com->SetHasControl(false);					//コントローラー操作ON.
+			com->SetHasControl(false);					//コントローラー操作ON.
 			//com->SetKeyBoadEnble(false);				//.
 			SetBodyAndCannon(com->GetBody(), com->GetCannon());
 			actor = com;
@@ -411,7 +411,7 @@ void CPlayerManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::shared_p
 	for (auto player : m_pPlayers)
 	{
 		player->SetCBody(body);
-		player->SetCCannon(cannon);
+		player->SetCannon(cannon);
 	}
 }
 
@@ -422,7 +422,7 @@ void CPlayerManager::SetPlayerTuningAll(const TankTuning& t)
 
 void CPlayerManager::SetPlayerTuning(int idx, const TankTuning& t)
 {
-	if (idx >= 0 && idx < (int)m_pPlayers.size())m_pPlayers[idx]->SetTune(t);
+	if (idx >= 0 && idx < (int)m_pPlayers.size())m_pPlayers[idx]->SetTuning(t);
 }
 
 //プレイヤーとCOMの自動切り替え.
@@ -441,7 +441,7 @@ void CPlayerManager::SwitchControl()
 		}
 
 		//現在のプレイヤー情報を取得.
-		std::shared_ptr<CCharacter> current = nullptr;
+		std::shared_ptr<CCharacter> current = nullptr;	//CCharacterObjectBase
 		//プレイヤーリストの範囲内なら、その番号のプレイヤーを取得.
 		if (No < static_cast<int>(m_pPlayers.size()))
 		{
@@ -485,7 +485,7 @@ void CPlayerManager::SwitchControl()
 
 			//車体と砲塔のインスタンスを設定.
 			newPlayer->SetCBody(m_pBody);
-			newPlayer->SetCCannon(m_pCannon);
+			newPlayer->SetCannon(m_pCannon);
 
 			//COMからプレイヤーに入れ替え.
 			m_pPlayers[No] = newPlayer;
@@ -502,7 +502,7 @@ void CPlayerManager::SwitchControl()
 				newCOM->SetPosition(current->GetPosition());
 			}
 			//プレイヤーからCOMに入れ替え.
-		//	m_pPlayers[No] = newCOM;
+			m_pPlayers[No] = newCOM;
 		}
 	}
 }

@@ -76,6 +76,9 @@ void CComPlayer::Create(int id)
     m_Body = std::make_shared<CBody>(id);
     m_Cannon = std::make_shared<CCannon>(id);
 
+    m_Body->Initialize(id);
+    m_Cannon->Initialize(id);
+
     //生存.描画フラグ
     m_IsAlive = true;
     m_IsActive = true;
@@ -370,7 +373,7 @@ void CComPlayer::Update()
 
     //定期リターゲット
     if (--m_RetargetTimer <= 0 || !m_pTarget) {
-        MakeFixedTimeTarget();
+        //MakeFixedTimeTarget();
         m_RetargetTimer = m_RetargetInterval;
     }
 
@@ -410,6 +413,7 @@ const D3DXVECTOR3 CComPlayer::GetRotation()
     if (m_Body) return m_Body->GetRotation();
     return CCharacter::GetRotation();
 }
+
 
 //前方に当たり判定を設置する
 bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,

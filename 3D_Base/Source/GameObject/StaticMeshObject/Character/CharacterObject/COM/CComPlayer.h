@@ -25,6 +25,7 @@
 #include <unordered_map>
 #include <limits>
 #include <unordered_set>
+#include <memory>
 
 
 class CComPlayer
@@ -48,9 +49,6 @@ public:
 	std::shared_ptr<CBody> const GetBody() override { return m_Body; }
 	std::shared_ptr<CBody> GetBody() const override { return m_Body; }
 	
-
-
-
 	//’Ç”ö‘ÎÛ‚Ìİ’è
 	void SetTarget(std::shared_ptr<CCharacterObjectBase> actor) { m_pTarget = std::move(actor); }
 	void ClearTarget() { m_pTarget = nullptr; }

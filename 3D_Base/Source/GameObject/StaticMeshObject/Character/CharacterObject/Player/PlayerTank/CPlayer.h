@@ -58,10 +58,22 @@ public:
 
 	virtual void Initialize(int id);
 
-	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon);
-	void SetTankPosition(const D3DXVECTOR3& pos);
-	void SetTankRotation(const D3DXVECTOR3& rot);
-	void SetTankScale(const float& sca);
+	//オーバライド
+	const D3DXVECTOR3 GetPosition() override;
+	const D3DXVECTOR3 GetRotation() override;
+
+	std::shared_ptr<CCannon> const GetCannon() override { return m_Cannon; }
+	std::shared_ptr<CBody> const GetBody() override { return m_Body; }
+
+	std::shared_ptr<CCannon> GetCannon() const override { return m_Cannon; }
+	std::shared_ptr<CBody> GetBody() const override { return m_Body; }
+
+	bool IsPlayer() const override { return true; }
+
+	//void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) ;
+	void SetTankPosition(const D3DXVECTOR3& pos) override;
+	void SetTankRotation(const D3DXVECTOR3& rot) override;
+	void SetTankScale(const float sca) override;
 
 	//プレイヤーが壁に当たる処理をまとめる.
 	void SetPushBack(const D3DXVECTOR3& push);
@@ -71,7 +83,7 @@ public:
 	virtual D3DXVECTOR3 GetRotation() const;
 
 	virtual void Update() override;
-	virtual void Draw(
+	void Draw(
 		D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
 	// プレイヤーのダメージ処理
@@ -80,28 +92,32 @@ public:
 	void PlayerDeath();
 
 	// プレイヤーが爆風と当たった時の処理
-	void HitPlayer();
+	void HitPlayer() override;
 
 	// バウンディングオブジェクトを設定
-	void SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon);
+	void SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)override;
 
 	// コライダーの作成
 	void CreateCollider();
 
 	//外部のクラスから情報取得.
-	void SetCBody(std::shared_ptr<CBody> pBody) { m_pBody = pBody; }
-	void SetCCannon(std::shared_ptr<CCannon> pCannon) { m_pCannon = pCannon; }
-	virtual bool IsPlayer() const { return true; }
+	void SetCBody(std::shared_ptr<CBody> pBody) override{ m_pBody = pBody; }
+	void SetCannon(std::shared_ptr<CCannon> pCannon) override{ m_pCannon = pCannon; }
 
-	// 外部のクラスに情報を渡す
+	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) override;
+
+	//void AttactMesh(std::shared_ptr<CBody> pBody, std::shared_ptr<CCannon> pCannon) override;
+#if 0
+	//// 外部のクラスに情報を渡す
 	virtual std::shared_ptr<CCannon> const GetCannon() = 0 { return m_pCannon; }
 	virtual std::shared_ptr<CBody> const GetBody() = 0 { return m_pBody; }
+#endif
 
-	float GetCannonYaw() const;
-	D3DXVECTOR3 GetCannonPosition() const;
+	float GetCannonYaw() const override;
+	D3DXVECTOR3 GetCannonPosition() const override;
 
 	//操作権関連の外部関数
-	void SetHasControl(bool control) { m_HasControl = control; }
+	void SetHasControl(bool control)override { m_HasControl = control; }
 	void SetKeyBoadEnble(bool control) { m_HasControl = control; }
 	bool HasControl() const { return m_HasControl; }
 
@@ -117,10 +133,17 @@ public:
 	void SetTune(const TankTuning& info);
 
 	// リスポーンフラグ設定
-	void SetRespawnFlag(bool flg) { m_Player.m_Respawn = flg; }
-	// リスポーンフラグの取得
-	bool GetRespawnFlag() { return m_Player.m_Respawn; }
+	//void SetRespawnFlag(bool flg) { m_Player.m_Respawn = flg; }
 
+	//リスポーンフラグの設定継承版
+	void SetRespawnFlag(bool flg) override { m_Respawn = flg; } 
+
+	// リスポーンフラグの取得
+	//bool GetRespawnFlag() { return m_Player.m_Respawn; }
+
+	//リスポーンフラグの取得継承版
+	bool GetRespawnFlag() override { return m_Respawn ; }  
+	
 	//プレイヤーのコントローラー設定・取得.
 	void SetControllerIndex(int index);
 	int GetControllerIndex() const { return m_ControllerIndex; }

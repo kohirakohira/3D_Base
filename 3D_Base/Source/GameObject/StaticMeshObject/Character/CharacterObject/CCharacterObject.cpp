@@ -2,18 +2,24 @@
 
 CCharacterObjectBase::CCharacterObjectBase(
 	int							hp,
-	const TankTuning&			tuning,
+	//const TankTuning&			tuning,
 	std::shared_ptr<CBody>		body,
 	std::shared_ptr<CCannon>	cannon
 )
+
 	: m_HP					( hp )
 	, m_MaxHP				( hp )
-	, m_Tuning				( tuning )
+	//, m_Tuning			( tuning )
 	, m_Body				(std::move(body))
 	, m_Cannon				(std::move(cannon))
 	, m_IsActive			( false )
 	, m_IsAlive				( false )
 	, m_Drawflag			( false )
+	, m_Respawn				( false )
+	, m_HasControl			( false )
+	, m_Death				( false )
+	, m_Damage				( false )
+	, m_Tuning				()
 {
 }
 
@@ -36,6 +42,7 @@ void CCharacterObjectBase::Update()
 	{
 		m_Cannon->Update();
 	}
+
 }
 
 void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
@@ -50,6 +57,56 @@ void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light
 	if (m_Cannon)
 	{
 		m_Cannon->Draw(View, Proj, Light, Camera);
+	}
+
+	CCharacter::Update();
+}
+
+void CCharacterObjectBase::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
+{
+	m_Body->AttachMesh(pBody);
+	m_Cannon->AttachMesh(pCannon);
+}
+
+void CCharacterObjectBase::SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
+{
+	m_Body->CreateBounding(pBody);
+	m_Cannon->CreateBounding(pCannon);
+}
+
+void CCharacterObjectBase::CreateCollider()
+{
+	m_Body->CreateBoxCollider(m_Body->GetMinPos(), m_Body->GetMaxPos());
+	m_Cannon->CreateBoxCollider(m_Cannon->GetMinPos(), m_Cannon->GetMaxPos());
+}
+
+D3DXVECTOR3 CCharacterObjectBase::GetCannonPosition() const
+{
+	if (m_Cannon)
+	{
+		return m_Cannon->GetPosition();
+	}
+}
+
+float CCharacterObjectBase::GetCannonYaw() const
+{
+	if (m_Cannon)
+	{
+		return m_Cannon->GetRotation().y;
+	}
+}
+
+void CCharacterObjectBase::HitPlayer()
+{
+	m_HP--;
+	if (m_HP <= 0)
+	{
+		//Ž€–Sƒtƒ‰ƒO
+		m_Death = true;
+	}
+	else
+	{
+		m_Damage = true;
 	}
 }
 

@@ -4,6 +4,7 @@
 
 //-----ライブラリ-----
 #include <iostream>
+#include <memory>
 
 //-----外部クラス-----
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
@@ -44,10 +45,12 @@ public:
 	HRESULT CreateBSphereForMesh(const CStaticMesh& pMesh) {
 		return m_pBSphere->CreateSphereForMesh(pMesh);
 	}
+#if 1
 	//バウンディングボックス作成のラッパー関数.
 	HRESULT CreateBBoxForMesh(const CStaticMesh& pMesh) {
 		return m_pBBox->CreateBoxForMesh(pMesh);
 	}
+#endif
 
 	std::shared_ptr<CStaticMesh> GetStaticMesh() { return m_pMesh; }
 
