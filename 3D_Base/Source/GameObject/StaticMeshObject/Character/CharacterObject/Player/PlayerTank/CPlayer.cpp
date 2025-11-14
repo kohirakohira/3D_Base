@@ -79,8 +79,6 @@ void CPlayer::Initialize(int id)
 
 	m_Body = std::make_shared<CBody>(id);
 	m_Cannon = std::make_shared<CCannon>(id);
-	m_Body->Initialize(id);
-	m_Cannon->Initialize(id);
 
 	auto im = std::make_shared<CInputManager>();	
 	SetInputManagerShared(im);

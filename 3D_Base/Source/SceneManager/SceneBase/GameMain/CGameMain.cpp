@@ -290,7 +290,7 @@ void CGameMain::Draw()
 				p->Draw(view, proj, light, paramC);
 			}
 		}
-		m_pPlayerManager->Draw(view, proj, light, paramC);
+		//m_pPlayerManager->Draw(view, proj, light, paramC);
 
 //オブジェクトの描画..
 		//弾描画..
