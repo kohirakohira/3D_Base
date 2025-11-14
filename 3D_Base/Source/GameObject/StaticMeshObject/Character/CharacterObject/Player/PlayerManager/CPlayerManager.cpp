@@ -328,46 +328,6 @@ void CPlayerManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAME
 	}
 }
 
-void CPlayerManager::Create(int index)
-{
-}
-
-void CPlayerManager::SetPosition(D3DXVECTOR3 pos)
-{
-}
-
-const D3DXVECTOR3 CPlayerManager::GetPosition()
-{
-	return D3DXVECTOR3();
-}
-
-void CPlayerManager::SetRotation(D3DXVECTOR3 rot)
-{
-}
-
-const D3DXVECTOR3 CPlayerManager::GetRotation()
-{
-	return D3DXVECTOR3();
-}
-
-void CPlayerManager::SetScale(D3DXVECTOR3 sca)
-{
-}
-
-const D3DXVECTOR3 CPlayerManager::GetScale()
-{
-	return D3DXVECTOR3();
-}
-
-bool CPlayerManager::IsPlayer() const
-{
-	return false;
-}
-
-void CPlayerManager::OnHit(CCharacterObjectBase* other)
-{
-}
-
 //D3DXVECTOR3 CPlayerManager::GetPosition()
 //{
 //	if (m_pPlayers.empty()) return D3DXVECTOR3(0, 0, 0);
