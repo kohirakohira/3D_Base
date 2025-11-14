@@ -92,6 +92,12 @@ void CComPlayer::Create(int id)
 
 }
 
+void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
+{
+    CCharacterObjectBase::Draw(View, Proj, Light, Camera);
+}
+
+
 //ХsР│ТlВЁЦhВо
 void CComPlayer::SanitizeParams()
 {
@@ -402,9 +408,6 @@ void CComPlayer::Update()
     ++m_StateFrames;
 }
 
-void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
-{
-}
 
 const D3DXVECTOR3 CComPlayer::GetPosition()
 {

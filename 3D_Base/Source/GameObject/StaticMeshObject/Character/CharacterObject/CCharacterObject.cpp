@@ -28,6 +28,8 @@ CCharacterObjectBase::~CCharacterObjectBase() = default;
 
 void CCharacterObjectBase::Create(int index)
 {
+	m_Body->Initialize(index);
+	m_Cannon->Initialize(index);
 }
 
 void CCharacterObjectBase::Update()
