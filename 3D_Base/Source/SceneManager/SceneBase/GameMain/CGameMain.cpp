@@ -299,11 +299,11 @@ void CGameMain::Draw()
 		//地面描画.
 		m_pStage->Draw(view, proj, light, paramC);
 
-		//壁の表示.
-		m_pWallTop->Draw(view, proj, light, paramC);
-		m_pWallBottom->Draw(view, proj, light, paramC);
-		m_pWallLeft->Draw(view, proj, light, paramC);
-		m_pWallRight->Draw(view, proj, light, paramC);
+		////壁の表示.
+		//m_pWallTop->Draw(view, proj, light, paramC);
+		//m_pWallBottom->Draw(view, proj, light, paramC);
+		//m_pWallLeft->Draw(view, proj, light, paramC);
+		//m_pWallRight->Draw(view, proj, light, paramC);
 
 		// 木箱の描画
 		m_pWoodBoxTopLeft->Draw(view, proj, light, paramC);

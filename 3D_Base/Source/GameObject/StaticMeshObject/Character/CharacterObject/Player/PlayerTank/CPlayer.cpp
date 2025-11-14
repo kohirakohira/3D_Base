@@ -77,18 +77,10 @@ void CPlayer::Initialize(int id)
 	// プレイヤーIDにそれぞれのID番号を入れる
 	m_PlayerID = id;
 
-#if 0
-	//インスタンスを生成
-	m_Body = std::make_shared<CBody>(id);
-	m_pCannon = std::make_shared<CCannon>(id);
-	m_pCannon->Initialize(id);
-	m_Body->Initialize(id);
-#endif
-
 	m_Body = std::make_shared<CBody>(id);
 	m_Cannon = std::make_shared<CCannon>(id);
-	m_Body->Initialize(id);
-	m_Cannon->Initialize(id);
+	//m_Body->Initialize(id);
+	//m_Cannon->Initialize(id);
 
 	auto im = std::make_shared<CInputManager>();	
 	SetInputManagerShared(im);
@@ -133,9 +125,9 @@ void CPlayer::SetInputManagerShared(const std::shared_ptr<CInputManager>& im)
 	{
 		m_Body->SetInputManager(m_Input);
 	}
-	if (m_pCannon)
+	if (m_Cannon)
 	{
-		m_pCannon->SetInputManager(m_Input);
+		m_Cannon->SetInputManager(m_Input);
 	}
 }
 
@@ -189,7 +181,7 @@ void CPlayer::Update()
 	if (!m_HasControl)
 	{
 		if (m_Body)   m_Body->CCharacter::Update();
-		if (m_pCannon) m_pCannon->CCharacter::Update();
+		if (m_Cannon) m_Cannon->CCharacter::Update();
 		return;
 	}
 
@@ -365,25 +357,20 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 			if (m_Controller->Down(CXInput::RB, true))
 			{
 				//リロード.
-				Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
+				Reload(m_Cannon->GetCannonPosition(), m_Cannon->GetRotation().y);
 			}
 		}
 
 		m_Body->Update();
 		m_Cannon->Update();
 
-#if 0
-		//各自更新.
-		m_Body->Update();
-		m_pCannon->Update();
-#endif
 	}
 
 	//↓濵口・小平.
 //	{
 //#if 1
 //		//pad入力
-//		if (!m_Body || !m_pCannon) return;
+//		if (!m_Body || !m_Cannon) return;
 //
 //		float move = 0.f, turn = 0.f, aim = 0.f;
 //
@@ -403,7 +390,7 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 //
 //		D3DXVECTOR3 pos = m_Body->GetPosition();
 //		D3DXVECTOR3 bodyrot = m_Body->GetRotation();
-//		D3DXVECTOR3 cannonrot = m_pCannon->GetRotation();
+//		D3DXVECTOR3 cannonrot = m_Cannon->GetRotation();
 //
 //		bodyrot.y += turn * (m_Tune.bodyTurnSpeed * dt);
 //		D3DXVECTOR3 fwd(std::sinf(bodyrot.y), 0.f, std::cosf(bodyrot.y));
@@ -420,10 +407,10 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 //			//この下のコメントを外したら、車体と砲塔が別々に動く.
 //			//D3DXVECTOR3 cannonpos = pos;
 //			//cannonpos.y += tuning.cannonHeight;
-//			//m_pCannon->SetPosition(cannonpos);
+//			//m_Cannon->SetPosition(cannonpos);
 //		}
-//		m_pCannon->SetRotation(cannonrot);
-//		m_pCannon->Update();
+//		m_Cannon->SetRotation(cannonrot);
+//		m_Cannon->Update();
 //	}
 }
 

@@ -109,6 +109,7 @@ private:
 
 	//CPlayerとCComPlayerを同一コンテナで管理するための基底に統一
 	std::vector<std::shared_ptr<CCharacterObjectBase>> m_pPlayers;
+	std::vector<std::shared_ptr<CPlayer>> m_pPlayer;
 
 	int m_ActivePlayerIndex;	// 現在操作中のプレイヤー(デバッグ用)
 

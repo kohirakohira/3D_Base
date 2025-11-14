@@ -14,7 +14,7 @@ CCharacterObjectBase::CCharacterObjectBase(
 	, m_Cannon				(std::move(cannon))
 	, m_IsActive			( false )
 	, m_IsAlive				( false )
-	, m_Drawflag			( false )
+	, m_Drawflag			( true  )
 	, m_Respawn				( false )
 	, m_HasControl			( false )
 	, m_Death				( false )
@@ -50,6 +50,9 @@ void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light
 	if (!m_IsAlive || !m_Drawflag) {
 		return;
 	}
+
+	CCharacter::Draw(View, Proj, Light, Camera);
+
 #if 1
 	// ŽÔ‘Ì‚Æ–C“ƒ‚ð‚Ü‚Æ‚ß‚Ä•`‰æ
 	if (m_Body) {
@@ -63,8 +66,8 @@ void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light
 
 void CCharacterObjectBase::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
 {
-	m_Body->AttachMesh(pBody);
-	m_Cannon->AttachMesh(pCannon);
+	//m_Body->AttachMesh(pBody);
+	//m_Cannon->AttachMesh(pCannon);
 }
 
 void CCharacterObjectBase::SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
