@@ -49,6 +49,8 @@ void CCharacterObjectBase::Update()
 void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
 	CCharacter::Draw(View, Proj, Light, Camera);
+	m_Body->Draw(View, Proj, Light, Camera);
+	m_Cannon->Draw(View, Proj, Light, Camera);
 }
 
 void CCharacterObjectBase::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)

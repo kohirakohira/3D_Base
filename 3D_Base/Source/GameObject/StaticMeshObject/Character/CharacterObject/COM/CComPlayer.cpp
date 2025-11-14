@@ -94,7 +94,7 @@ void CComPlayer::Create(int id)
 
 void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-    CCharacterObjectBase::Draw(View, Proj, Light, Camera);
+    //CCharacterObjectBase::Draw(View, Proj, Light, Camera);
 }
 
 
