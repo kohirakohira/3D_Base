@@ -63,7 +63,8 @@ public:
 	//グリッドのセット
 	void SetNavGrid(std::shared_ptr<NavGrid> nav) { m_pNavGrid = std::move(nav); }
 
-	//void CComPlayer::SetNavGrid(std::shared_ptr<NavGrid> nav){ m_Nav = std::move(nav); }
+	void RequestPathTo(const D3DXVECTOR3& goal);
+
 private:
 	//構造体
 	//COMのショット関連のパラメータ
@@ -129,6 +130,8 @@ private:
 	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
 
 	void SafeAdvance(float nextYaw, float moveStep);
+
+	bool FollowPath(float turnStep, float moveStep);
 
 	// ヘルパ
 	static float Wrap(float rad);                         //[-π,π]に正規化

@@ -352,6 +352,10 @@ void CComPlayer::Update()
         return;
     }
 
+    auto tuning = GetTuning();
+
+    FollowPath(tuning.turretTurnSpeed, tuning.moveSpeed);
+
     TickBlacklist();
 
     auto body = Body();
@@ -392,7 +396,7 @@ void CComPlayer::Update()
     case State::Seek:     StepSeek();     break;
     case State::Chase:    StepChase();    break;
     case State::Attack:   StepAttack();   break;
-    case State::Evade:    StepEvade();    break;
+    //case State::Evade:  StepEvade();    break; 
     case State::ItemSeek: StepItemSeek(); break;
     }
     ++m_StateFrames;
@@ -474,6 +478,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
 //    SyncCannonToBody();
 //}
 
+#if 0
 //探索処理
 void CComPlayer::StepSeek()
 {
@@ -492,45 +497,62 @@ void CComPlayer::StepSeek()
         TryAutoFire();
     }
 }
-
-
-#if 0
+#endif
+#if 1
+void CComPlayer::StepSeek()
 {
-    auto body = Body(); if (!body) return;
-    const auto t = GetTuning();
+    auto body = Body();
+    if (!body) return;
+    const auto tuning = GetTuning();
 
     const float cur = body->GetRotation().y;
 
-    // “うろつき”角度を Desired に足して探索
+    // desired加算
     const float desired = cur + m_WanderAngle;
 
     // 障害物優先でステア
-    const float next = SteerWithObstacle(cur, desired, t.bodyTurnSpeed);
+    const float next = SteerWithAvoidAABB(cur, desired, tuning.bodyTurnSpeed);
 
-    // 避障つき前進（止まらない）
-    SafeAdvance(next, t.moveSpeed);
+    // 避障つき前進
+    SafeAdvance(next, tuning.moveSpeed);
 
     // 敵が見えているなら、移動しながら狙い撃ち
-    if (m_pTarget) { TickAimTo(m_pTarget->GetPosition()); TryAutoFire(); }
+    if (m_pTarget) 
+    {
+        TickAimTo(m_pTarget->GetPosition()); 
+        TryAutoFire();
+    }
 }
 
 #endif
 
+#if 0
 void CComPlayer::StepChase()
 {
+    auto body = Body();
+    if (body) return;
 
     //パラメータ
     const auto tuning = GetTuning();
-    TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);
+    const float cur = body->GetRotation().y;
+    const float desired = cur + m_WanderAngle;
 
+    TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);
+    
+    //こっちでも障害物ステア
+    const float Object = SteerWithAvoidAABB(cur, desired, tuning.bodyTurnSpeed);
+    SafeAdvance(Object, tuning.moveSpeed);
+
+    //追尾処理
     if (m_pTarget)
     {
         TickAimTo(m_pTarget->GetPosition());
         TryAutoFire();
     }
 }
+#endif
 
-#if 0
+#if 1
 void CComPlayer::StepChase()
 {
     auto body = Body(); if (!body || !m_pTarget) { StepSeek(); return; }
@@ -540,16 +562,16 @@ void CComPlayer::StepChase()
     const D3DXVECTOR3 tp = m_pTarget->GetPosition();
     const float cur = body->GetRotation().y;
 
-    // 目標へ向く角度
+    //目標へ向く角度
     float desired = std::atan2f((tp - self).x, (tp - self).z);
 
-    // 近づき過ぎないよう KeepDistance 付近では少し横移動（ストレイフ）を入れる
+    // 近づき過ぎないようKeepDistance 付近では少し横移動を入れる
     const float dist = DistXZ(self, tp);
     if (dist < m_KeepDistance * 0.9f) {
         desired = Wrap(desired + (D3DX_PI * 0.5f) * ((m_StateFrames / 60) % 2 ? +1.f : -1.f));
     }
 
-    const float next = SteerWithObstacle(cur, desired, t.bodyTurnSpeed);
+    const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
     SafeAdvance(next, t.moveSpeed);
 
     TickAimTo(tp);
@@ -557,20 +579,7 @@ void CComPlayer::StepChase()
 }
 #endif
 
-
-//攻撃、基本的には弾発射処理
-void CComPlayer::StepAttack()
-{
-    auto tuning = GetTuning();
-    TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);
-    if (m_pTarget)
-    {
-        TickAimTo(m_pTarget->GetPosition());
-        TryAutoFire();
-    }
-}
-
-#if 0
+#if 1
 void CComPlayer::StepAttack()
 {
     auto body = Body(); if (!body || !m_pTarget) { StepSeek(); return; }
@@ -581,7 +590,7 @@ void CComPlayer::StepAttack()
     const float cur = body->GetRotation().y;
 
     // 基本は周回
-    const int   period = 180; // 3秒
+    const int   period = 60; 
     const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
     const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
 
@@ -597,7 +606,7 @@ void CComPlayer::StepAttack()
         desired = Wrap(toYaw + D3DX_PI); // 近すぎたら離れる
     }
 
-    const float next = SteerWithObstacle(cur, desired, t.bodyTurnSpeed);
+    const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
     SafeAdvance(next, t.moveSpeed);
 
     TickAimTo(tp);
@@ -673,7 +682,13 @@ void CComPlayer::StepItemSeek()
     {
         const D3DXVECTOR3 ItemPos = item->GetPosition();
 
-        float ItemRadius = 30.0f;
+        if (pos < ItemPos)
+        {
+            if (item->IsActive())
+            {
+                item->GetItem();
+            }
+        }
     }
 }
 
@@ -768,11 +783,7 @@ void CComPlayer::MakeFixedTimeTarget()
 void CComPlayer::TryAutoFire()
 {
     auto manager = m_pShotManager.lock();
-
-    if (!manager || !m_pTarget)
-    {
-        return;
-    }
+    if (!manager || !m_pTarget) return;
 
     if (m_ShotState.m_ShotCD > 0)
     {
@@ -780,48 +791,7 @@ void CComPlayer::TryAutoFire()
         return;
     }
 
-    if (manager)
-    {
-        if (m_ShotState.m_ShotCD > 0)
-        {
-            --m_ShotState.m_ShotCD;
-            m_ShotState.m_IsShot = true;
-            return;
-        }
-    }
-    else if (m_pTarget)
-    {
-        if (m_ShotState.m_IsShot == true)
-        {
-            --m_ShotState.m_ShotCD;
-            if (m_ShotState.m_ShotCD >= 0)
-            {
-                m_ShotState.m_IsShot = false;
-                m_ShotState.FireAngleEpsDeg = 10.f;
-            }
-        }
-    }
-
-    auto body = GetBody();
-
-    for (auto& p : *m_pAllPlayer)
-    {
-        if (!p || this)  return;    //自分はスキップ
-       
-        if (p->GetPlayerID() == m_PlayerID) continue;
-
-        D3DXVECTOR3 pos = body->GetPosition();
-        D3DXVECTOR3 target = p->GetPosition();
-        
-        float dist2 = DistXZ(pos, target);
-        float yaw = 0.f;
-
-       ComputeMuzzle(pos, yaw);
-        
-    }
-
-    D3DXVECTOR3 muzzle; 
-    float yaw = 0.f;
+    D3DXVECTOR3 muzzle; float yaw = 0.f;
     ComputeMuzzle(muzzle, yaw);
 
     D3DXVECTOR3 to = m_pTarget->GetPosition() - muzzle;
@@ -883,6 +853,7 @@ D3DXVECTOR3 CComPlayer::GetRotation() const
 
 void CComPlayer::TickWander(float turnStep, float moveStep)
 {
+#if 0
     //body取得
     auto body = Body();
     if (!body) return;
@@ -940,8 +911,8 @@ void CComPlayer::TickWander(float turnStep, float moveStep)
 
     //砲塔を車体に追尾
     SyncCannonToBody();
+#endif
 }
-
 //IDがリストに登録されているか判定
 //読み取り専用
 bool CComPlayer::IsBlacklisted(int id) const
@@ -993,53 +964,52 @@ float CComPlayer::NearestItemDist2(float& outDist2) const
     }
 }
 
-bool CComPlayer::FollorPath(float turnStep, float moveSte)
+bool CComPlayer::FollowPath(float turnStep, float moveSte)
 {
-    return false;
-}
+    auto body = Body();
+    if (!body) return false;
 
-//bool CComPlayer::FollowPath(float turnStep, float moveStep)
-//{
-//    auto body = Body(); if (!body) return false;
-//    if (m_Path.empty()) return false;
-//
-//    // 近いWPは先に捨てる
-//    const D3DXVECTOR3 p = body->GetPosition();
-//    while (!m_Path.empty()) {
-//        D3DXVECTOR3 w = m_Path.front();
-//        float dx = w.x - p.x, dz = w.z - p.z;
-//        if (dx * dx + dz * dz < m_LookAheadSkip * m_LookAheadSkip) {
-//            m_Path.pop_front();
-//        }
-//        else break;
-//    }
-//    if (m_Path.empty()) return false;
-//
-//    // 先頭WPへ舵
-//    const D3DXVECTOR3 w = m_Path.front();
-//    float curYaw = body->GetRotation().y;
-//    float desired = std::atan2f(w.x - p.x, w.z - p.z);
-//
-//    // 既存の分離はYawにブレンド（詰まり回避）
-//    desired = BlendYawBySeparation(desired, p);
-//
-//    float nextYaw = Approach(curYaw, curYaw + Wrap(desired - curYaw), turnStep);
-//
-//    // いったん“単純前進”でOK（衝突は経路側で回避されている前提）
-//    D3DXVECTOR3 pos = p + ForwardFromYaw(nextYaw) * moveStep;
-//    pos.y = 0.f;
-//    body->SetRotation({ 0, nextYaw, 0 });
-//    body->SetPosition(pos);
-//    SyncCannonToBody();
-//    body->CCharacter::Update();
-//
-//    // 到達判定
-//    float dx = w.x - pos.x, dz = w.z - pos.z;
-//    if (dx * dx + dz * dz < m_WaypointReach * m_WaypointReach) {
-//        m_Path.pop_front();
-//    }
-//    return true;
-//}
+    const D3DXVECTOR3 pos = body->GetPosition();
+    //常に見続ける
+    while (!m_Path.empty())
+    {
+        D3DXVECTOR3 w = m_Path.front(); //先頭要素
+        float dx = w.x - pos.x;
+        float dz = w.z - pos.z;
+
+        if (dx * dx + pos.z * pos.z > m_LookAheadSkep * m_LookAheadSkep)
+        {
+            m_Path.pop_front();
+        }
+        else break;
+    }
+    if (m_Path.empty()) return false;
+
+    const D3DXVECTOR3 w = m_Path.front();
+    float cur = body->GetRotation().y;
+    float d = std::atan2f(w.x - pos.x, w.z - pos.z);
+
+    // 既存の分離はYawにブレンド（詰まり回避）
+    //desired = BlendYawBySeparation(desired, p);
+
+    //float nextYaw = Approach(curYaw, curYaw + Wrap(desired - curYaw), turnStep);
+
+#if 0
+    D3DXVECTOR3 pos = p + ForwardFromYaw(nextYaw) * tuning.moveStep;
+    pos.y = 0.f;
+    body->SetRotation({ 0, nextYaw, 0 });
+    body->SetPosition(pos);
+    SyncCannonToBody();
+    body->CCharacter::Update();
+
+    // 到達判定
+    float dx = w.x - pos.x, dz = w.z - pos.z;
+    if (dx * dx + dz * dz < m_WayPointeReach * m_WayPointeReach) {
+        m_Path.pop_front();
+    }
+    return true;
+#endif
+}
 
 
 void CComPlayer::MakeItemTarget()
@@ -1075,41 +1045,41 @@ void CComPlayer::MakeItemTarget()
     }
 }
 
-//void CComPlayer::RequestPathTo(const D3DXVECTOR3& goal)
-//{
-//    if (!m_Nav) return;
-//    auto body = Body(); if (!body) return;
-//
-//    Vec2i s = m_Nav->ToCell(body->GetPosition().x, body->GetPosition().z);
-//    Vec2i g = m_Nav->ToCell(goal.x, goal.z);
-//
-//    std::vector<Vec2i> cells;
-//    if (!m_Nav->FindPath(s, g, cells)) { m_Path.clear(); return; }
-//
-//    // セル列→ワールドの中心へ
-//    std::deque<D3DXVECTOR3> wp;
-//    wp.clear();
-//    for (auto& c : cells) {
-//        float wx, wz; m_Nav->ToWorldCenter(c, wx, wz);
-//        wp.push_back({ wx, 0.f, wz });
-//    }
-//
-//    // 簡易スムージング（直線で繋がる中間を間引き）
-//    std::deque<D3DXVECTOR3> smooth;
-//    if (!wp.empty()) {
-//        smooth.push_back(wp.front());
-//        D3DXVECTOR3 lastDir = { 0,0,0 };
-//        for (size_t i = 1; i < wp.size(); ++i) {
-//            D3DXVECTOR3 v = { wp[i].x - smooth.back().x, 0.f, wp[i].z - smooth.back().z };
-//            float len = std::sqrt(v.x * v.x + v.z * v.z); if (len > 1e-6f) { v.x /= len; v.z /= len; }
-//            if (i == 1 || std::fabs(v.x - lastDir.x) + std::fabs(v.z - lastDir.z) > 0.2f) {
-//                smooth.push_back(wp[i]);
-//                lastDir = v;
-//            }
-//        }
-//    }
-//    m_Path = std::move(smooth);
-//}
+void CComPlayer::RequestPathTo(const D3DXVECTOR3& goal)
+{
+    if (!m_pNavGrid) return;
+    auto body = Body(); if (!body) return;
+
+    Vec2 s = m_pNavGrid->ToCell(body->GetPosition().x, body->GetPosition().z);
+    Vec2 g = m_pNavGrid->ToCell(goal.x, goal.z);
+
+    std::vector<Vec2> cells;
+    if (!m_pNavGrid->FindPath(s, g, cells)) { m_Path.clear(); return; }
+
+    //セル列からワールドの中心
+    std::deque<D3DXVECTOR3> wp;
+    wp.clear();
+    for (auto& c : cells) {
+        float wx, wz; m_pNavGrid->ToWorldCenter(c, wx, wz);
+        wp.push_back({ wx, 0.f, wz });
+    }
+
+    // 簡易スムージング）
+    std::deque<D3DXVECTOR3> smooth;
+    if (!wp.empty()) {
+        smooth.push_back(wp.front());
+        D3DXVECTOR3 lastDir = { 0,0,0 };
+        for (size_t i = 1; i < wp.size(); ++i) {
+            D3DXVECTOR3 v = { wp[i].x - smooth.back().x, 0.f, wp[i].z - smooth.back().z };
+            float len = std::sqrt(v.x * v.x + v.z * v.z); if (len > 1e-6f) { v.x /= len; v.z /= len; }
+            if (i == 1 || std::fabs(v.x - lastDir.x) + std::fabs(v.z - lastDir.z) > 0.2f) {
+                smooth.push_back(wp[i]);
+                lastDir = v;
+            }
+        }
+    }
+    m_Path = std::move(smooth);
+}
 
 
 bool CComPlayer::SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const
