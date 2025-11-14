@@ -30,6 +30,8 @@ void CTitleProduction::Draw()
 	m_Camera->SetLightPos(30.f, 70.f, 0.f);	//ポジション
 	m_Camera->SetLightIntensity(150.f);		//ライトの強さ
 	m_Camera->SetLightRange(1e9);			//影響範囲.距離減衰
+	m_Camera->SetLightColor(1.f, 1.f, 1.f);	//色
+	m_Camera->SetLightAtten(1e9, 1e9, 1e9);	//kc,kl,kq
 	//カメラの情報更新.
 	m_Camera->Info();
 
