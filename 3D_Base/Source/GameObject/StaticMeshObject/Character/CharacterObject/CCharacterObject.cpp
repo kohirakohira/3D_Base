@@ -48,19 +48,7 @@ void CCharacterObjectBase::Update()
 
 void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	// ¶‘¶ƒtƒ‰ƒO‚â•`‰æƒtƒ‰ƒO‚Å‘Šú return
-	if (!m_IsAlive || !m_Drawflag) {
-		return;
-	}
-#if 1
-	// ŽÔ‘Ì‚Æ–C“ƒ‚ð‚Ü‚Æ‚ß‚Ä•`‰æ
-	if (m_Body) {
-		m_Body->Draw(View, Proj, Light, Camera);
-	}
-	if (m_Cannon) {
-		m_Cannon->Draw(View, Proj, Light, Camera);
-	}
-#endif
+	CCharacter::Draw(View, Proj, Light, Camera);
 }
 
 void CCharacterObjectBase::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
