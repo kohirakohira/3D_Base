@@ -2,7 +2,7 @@
 
 CCharacterObjectBase::CCharacterObjectBase(
 	int							hp,
-	//const TankTuning&			tuning,
+//	const TankTuning&			tuning,
 	std::shared_ptr<CBody>		body,
 	std::shared_ptr<CCannon>	cannon
 )
@@ -28,10 +28,6 @@ CCharacterObjectBase::~CCharacterObjectBase() = default;
 
 void CCharacterObjectBase::Create(int index)
 {
-
-		m_Body = std::make_shared<CBody>();
-		m_Cannon = std::make_shared<CCannon>();
-
 }
 
 void CCharacterObjectBase::Update()
@@ -54,7 +50,7 @@ void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light
 	if (!m_IsAlive || !m_Drawflag) {
 		return;
 	}
-
+#if 1
 	// ŽÔ‘Ì‚Æ–C“ƒ‚ð‚Ü‚Æ‚ß‚Ä•`‰æ
 	if (m_Body) {
 		m_Body->Draw(View, Proj, Light, Camera);
@@ -62,6 +58,7 @@ void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light
 	if (m_Cannon) {
 		m_Cannon->Draw(View, Proj, Light, Camera);
 	}
+#endif
 }
 
 void CCharacterObjectBase::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
