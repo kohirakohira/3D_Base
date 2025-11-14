@@ -40,7 +40,7 @@ public:
 	
 	void SetInput(const std::shared_ptr<CInputManager> input) { m_Input = input; }
 
-
+	//g‚Á‚Ä‚¢‚È‚¢‚İ‚½‚¢‚È‚Ì‚ÅÁ‚µ‚½
 	////‰Šú’lİ’è—pŠÖ”.
 	//void SettingTune();
 

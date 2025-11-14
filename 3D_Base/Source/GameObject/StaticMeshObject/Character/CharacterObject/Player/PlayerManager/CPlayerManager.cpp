@@ -48,7 +48,7 @@ void CPlayerManager::Initialize()
 			//player->SetKeyBoadEnble(true);			//.
 			//player->SetControllerIndex(i);			//コントローラー設定.
 			SetBodyAndCannon(player->GetBody(), player->GetCannon());
-			actor = player;	//基底で受けるのでそのまま代入
+			actor = std::move(player);	//基底で受けるのでそのまま代入
 		}
 		else
 		{
@@ -59,7 +59,7 @@ void CPlayerManager::Initialize()
 			com->SetHasControl(false);					//コントローラー操作ON.
 			//com->SetKeyBoadEnble(false);				//.
 			SetBodyAndCannon(com->GetBody(), com->GetCannon());
-			actor = com;
+			actor = std::move(com);
 		}
 		//プレイヤーとCOMを生成.
 		m_pPlayers.push_back(actor);

@@ -2,6 +2,7 @@
 
 CCharacter::CCharacter()
 	: m_pRayY		( nullptr )
+	, m_Tuning		()
 {
 	//èâä˙ílÇÃê›íË.
 	//SettingTune();
@@ -24,7 +25,9 @@ void CCharacter::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& 
 	CStaticMeshObject::Draw(View, Proj, Light, Camera);
 }
 
-//void CCharacter::SettingTune()
-//{
-//	m_Tune = { 0.08f, 0.03f, 0.03f, 0.3f };
-//}
+#if 0
+void CCharacter::SettingTune()
+{
+	m_Tuning = { 0.08f, 0.03f, 0.03f, 0.3f };
+}
+#endif
