@@ -149,8 +149,8 @@ public:
 	int GetControllerIndex() const { return m_ControllerIndex; }
 
 protected:
-	std::shared_ptr<CBody> Body() const { return m_pBody; }
-	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
+	std::shared_ptr<CBody> Body() const { return m_Body; }
+	std::shared_ptr<CCannon> Cannon() const { return m_Cannon; }
 	void UpdateHumanInputAndMove(PlayerInput input);	//ƒvƒŒƒCƒ„[ˆ—‚ğ‚¢‚ê‚Ä‚¨‚­
 
 	//–C“ƒ‚ÆÔ‘Ì‚Ì“¯Šú

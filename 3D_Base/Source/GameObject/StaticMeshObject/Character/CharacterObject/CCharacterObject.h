@@ -108,6 +108,8 @@ public:
 	virtual void HitPlayer();
 
 protected:
+
+	
 	//車体クラス.
 	std::shared_ptr<CBody>		m_Body;
 	//砲塔クラス.
@@ -122,6 +124,7 @@ protected:
 	//戦車の情報.
 	TankTuning m_Tuning;
 
+	//ここから下はいらなかったら消してください
 	//キャラクターの体力.
 	int m_HP;
 	//最大体力.

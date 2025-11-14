@@ -149,49 +149,28 @@ void CPlayer::SetKeyboardEnabled(bool on)
 
 
 void CPlayer::SetTankPosition(const D3DXVECTOR3& pos)
-{
-	auto body = GetBody();
-	auto cannon = GetCannon();
-	body->SetPosition(pos);
-	cannon->SetPosition(pos);
-#if 0
+{	
+
 	m_Body->SetPosition(pos);		// 車体座標指定
-	m_pCannon->SetPosition(pos);	// 砲塔座標指定
-#endif
+	m_Cannon->SetPosition(pos);	// 砲塔座標指定
 }
 
 void CPlayer::SetTankRotation(const D3DXVECTOR3& rot)
 {
-	auto body = GetBody();
-	auto cannon = GetCannon();
-	body->SetRotation(rot);
-	cannon->SetRotation(rot);
-#if 0
 	m_Body->SetRotation(rot);		// 車体回転指定
-	m_pCannon->SetRotation(rot);	// 砲塔回転指定
-#endif
+	m_Cannon->SetRotation(rot);	// 砲塔回転指定
 }
 
 void CPlayer::SetTankScale(const float sca)
 {
-	auto body = GetBody();
-	auto cannon = GetCannon();
-	body->SetScale(sca);
-	cannon->SetScale(sca);
-#if 0
 	m_Body->SetScale(sca);			// 車体大きさ指定
-	m_pCannon->SetScale(sca);		// 砲塔大きさ指定
-#endif
+	m_Cannon->SetScale(sca);		// 砲塔大きさ指定
 }
 
 void CPlayer::SetPushBack(const D3DXVECTOR3& push)
 {
 	m_Body->PushBack(push);
 	m_Cannon->PushBack(push);
-#if 0
-	m_Body->PushBack(push);
-	m_pCannon->PushBack(push);
-#endif
 }
    
 void CPlayer::Update()
@@ -339,7 +318,7 @@ void CPlayer::Reload(const D3DXVECTOR3& pos, float y)
 	//弾の発射.
 	input.shot = true;
 
-	m_pCannon->Reload(pos, y, input.shot, m_PlayerID);
+	m_Cannon->Reload(pos, y, input.shot, m_PlayerID);
 }
 
 void CPlayer::SetTune(const TankTuning& info)
@@ -390,11 +369,8 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 			}
 		}
 
-		auto body = GetBody();
-		auto cannon = GetCannon();
-
-		body->Update();
-		cannon->Update();
+		m_Body->Update();
+		m_Cannon->Update();
 
 #if 0
 		//各自更新.
@@ -570,17 +546,13 @@ void CPlayer::SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CS
 {
 	m_Body->CreateBounding(pBody);
 	m_Cannon->CreateBounding(pCannon);
-#if 0
-	m_Body->CreateBounding(pBody);
-	m_pCannon->CreateBounding(pCannon);
-#endif
 }
 
 // コライダーの作成
 void CPlayer::CreateCollider()
 {
 	m_Body->CreateBoxCollider(m_Body->GetMinPos(), m_Body->GetMaxPos());
-	m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
+	m_Cannon->CreateBoxCollider(m_Cannon->GetMinPos(), m_Cannon->GetMaxPos());
 }
 
 //アタッチメッシュ
@@ -593,16 +565,6 @@ void CPlayer::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<C
 
 D3DXVECTOR3 CPlayer::GetCannonPosition() const
 {
-#if 0
-	if (m_pCannon)
-	{
-		return m_pCannon->GetPosition();
-	}
-	else
-	{
-		return GetPosition();
-	}
-#endif
 
 	if (m_Cannon)
 	{
@@ -616,16 +578,6 @@ D3DXVECTOR3 CPlayer::GetCannonPosition() const
 
 float CPlayer::GetCannonYaw() const
 {
-#if 0
-	if (m_pCannon)
-	{
-		return m_pCannon->GetRotation().y;
-	}
-	else
-	{
-		return GetRotation().y;
-	}
-#endif
 
 	if (m_Cannon)
 	{
