@@ -63,17 +63,18 @@ public:
 	//グリッドのセット
 	void SetNavGrid(std::shared_ptr<NavGrid> nav) { m_pNavGrid = std::move(nav); }
 
-
 	//void CComPlayer::SetNavGrid(std::shared_ptr<NavGrid> nav){ m_Nav = std::move(nav); }
 private:
 	//構造体
 	//COMのショット関連のパラメータ
 	struct ComShotState
 	{
-		int m_ShotCD = 0;						//クールダウン
-		int	ShotCooldownFrames = 120;			//クールダウン時間
-		float FireAngleEpsDeg = 30;				//この角度以内なら発射
-		float MuzzleOffsetZ = 1;				//砲口のオフセット
+		int		m_ShotCD = 0;						//クールダウン
+		int		ShotCooldownFrames = 120;			//クールダウン時間
+		float	FireAngleEpsDeg = 30;				//この角度以内なら発射
+		float	MuzzleOffsetZ = 1;					//砲口のオフセット
+		int		m_ShotIntaval = 3;					//ショットインターバル	
+		bool	m_IsShot = false;					//弾をうったかどうか.
 	};
 
 	//列挙型

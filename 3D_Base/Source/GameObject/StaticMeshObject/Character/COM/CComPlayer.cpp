@@ -434,7 +434,10 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
     D3DXVECTOR3 sep(0, 0, 0);
     float nearest = 1e9f;
 
+
     ComputeSeparation(pos, sep, nearest);
+    
+    body->SetPosition(pos.x, pos.y = 0, pos.z);
 
     //前進
     pos += ForwardFromYaw(nextYaw) * moveStep; 
@@ -474,10 +477,14 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
 //探索処理
 void CComPlayer::StepSeek()
 {
+    auto body = Body();
+    if (!body) return;
     //パラメータ取得
     const auto tuning = GetTuning();
-    TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);     //動作
+    const auto cur = body->GetRotation().y;
+    const float desired = cur + m_WanderAngle;  //探索角度
 
+    TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);     //動作
     if (m_pTarget)
     {
         //回頭して狙ってうつ
@@ -488,7 +495,6 @@ void CComPlayer::StepSeek()
 
 
 #if 0
-void CComPlayer::StepSeek()
 {
     auto body = Body(); if (!body) return;
     const auto t = GetTuning();
@@ -658,6 +664,17 @@ void CComPlayer::StepEvade()
 //アイテム取得.アイテム認識
 void CComPlayer::StepItemSeek()
 {
+    auto body = Body();
+    if (!body) return;
+
+    const D3DXVECTOR3 pos = body->GetPosition();
+
+    for (auto& item : *m_pItemBox)
+    {
+        const D3DXVECTOR3 ItemPos = item->GetPosition();
+
+        float ItemRadius = 30.0f;
+    }
 }
 
 void CComPlayer::EvaluateTransitions(float dist2)
@@ -751,7 +768,11 @@ void CComPlayer::MakeFixedTimeTarget()
 void CComPlayer::TryAutoFire()
 {
     auto manager = m_pShotManager.lock();
-    if (!manager || !m_pTarget) return;
+
+    if (!manager || !m_pTarget)
+    {
+        return;
+    }
 
     if (m_ShotState.m_ShotCD > 0)
     {
@@ -759,7 +780,48 @@ void CComPlayer::TryAutoFire()
         return;
     }
 
-    D3DXVECTOR3 muzzle; float yaw = 0.f;
+    if (manager)
+    {
+        if (m_ShotState.m_ShotCD > 0)
+        {
+            --m_ShotState.m_ShotCD;
+            m_ShotState.m_IsShot = true;
+            return;
+        }
+    }
+    else if (m_pTarget)
+    {
+        if (m_ShotState.m_IsShot == true)
+        {
+            --m_ShotState.m_ShotCD;
+            if (m_ShotState.m_ShotCD >= 0)
+            {
+                m_ShotState.m_IsShot = false;
+                m_ShotState.FireAngleEpsDeg = 10.f;
+            }
+        }
+    }
+
+    auto body = GetBody();
+
+    for (auto& p : *m_pAllPlayer)
+    {
+        if (!p || this)  return;    //自分はスキップ
+       
+        if (p->GetPlayerID() == m_PlayerID) continue;
+
+        D3DXVECTOR3 pos = body->GetPosition();
+        D3DXVECTOR3 target = p->GetPosition();
+        
+        float dist2 = DistXZ(pos, target);
+        float yaw = 0.f;
+
+       ComputeMuzzle(pos, yaw);
+        
+    }
+
+    D3DXVECTOR3 muzzle; 
+    float yaw = 0.f;
     ComputeMuzzle(muzzle, yaw);
 
     D3DXVECTOR3 to = m_pTarget->GetPosition() - muzzle;

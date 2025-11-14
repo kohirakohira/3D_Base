@@ -43,7 +43,9 @@ void CPlayerManager::Initialize()
 
 	for (int i = 0; i < PLAYER_MAX; ++i) {
 		auto com = std::make_shared<CComPlayer>();
+		//auto player = std::make_shared<CPlayer>();
 		com->Initialize(i);
+		//player->Initialize(i);
 
 		//Šù’è‚ÍCOM
 		com->SetComEnabled(true);
