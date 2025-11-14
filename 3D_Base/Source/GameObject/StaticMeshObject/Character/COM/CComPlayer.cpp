@@ -933,7 +933,7 @@ float CComPlayer::NearestItemDist2(float& outDist2) const
 
 bool CComPlayer::FollorPath(float turnStep, float moveSte)
 {
-
+    return false;
 }
 
 //bool CComPlayer::FollowPath(float turnStep, float moveStep)
