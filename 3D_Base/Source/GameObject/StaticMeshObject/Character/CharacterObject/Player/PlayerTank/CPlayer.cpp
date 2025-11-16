@@ -50,9 +50,7 @@ static inline float Deadzone(float v, float z)
 
 
 CPlayer::CPlayer()
-	: m_pBody			( nullptr )
-	, m_pCannon			( nullptr )
-	, m_Controller		( nullptr )
+	: m_Controller		( nullptr )
 
 	, m_PlayerID		()
 	, m_HasControl		( false )
@@ -222,10 +220,6 @@ void CPlayer::SetScale(D3DXVECTOR3 sca)
 const D3DXVECTOR3 CPlayer::GetScale()
 {
 	return D3DXVECTOR3();
-}
-
-void CPlayer::OnHit(CCharacterObjectBase* other)
-{
 }
 
 //ˆÚ“®.

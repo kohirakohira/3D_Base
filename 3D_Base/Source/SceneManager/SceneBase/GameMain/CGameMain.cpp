@@ -548,8 +548,8 @@ void CGameMain::Create()
 
 	//プレイヤーと砲塔のインスタンス生成.
 	m_pPlayerManager = std::make_shared<CPlayerManager>();
-	//マネージャーは一回だけInitialize.
-	m_pPlayerManager->Initialize();
+	//マネージャーは一回だけ初期化
+	m_pPlayerManager->Init();
 
 	//弾クラスのインスタンス作成.
 	m_pShotManager = std::make_shared<CShotManager>();

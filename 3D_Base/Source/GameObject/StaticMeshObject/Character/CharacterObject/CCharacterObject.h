@@ -49,9 +49,6 @@ public:
 	//プレイヤーかCOMを識別.
 	virtual bool IsPlayer() const = 0;
 
-	//当たった時の処理.
-	virtual void OnHit(CCharacterObjectBase* other) = 0;
-
 	//車体・砲塔を取得.
 	virtual std::shared_ptr<CBody> const GetBody() { return m_pBody; }
 	virtual std::shared_ptr<CCannon> const GetCannon() { return m_pCannon; }

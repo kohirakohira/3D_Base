@@ -29,7 +29,7 @@ CPlayerManager::~CPlayerManager()
 }
 
 //インスタンス生成.
-void CPlayerManager::Initialize()
+void CPlayerManager::Init()
 {
 	m_pPlayers.clear();
 	m_pPlayers.reserve(PLAYER_MAX);

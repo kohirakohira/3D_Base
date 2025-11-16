@@ -29,7 +29,13 @@ public:
 	CPlayerManager();
 	~CPlayerManager() override;
 
-	void Initialize();
+
+	void Init();
+	// 更新関数
+	void Update() override;
+	// 描画関数
+	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+
 	void AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> body, std::shared_ptr<CStaticMesh> cannon);
 	void SetPlayerPosition(int index, const D3DXVECTOR3& pos);
 	void SetPushBackPosision(int index, const D3DXVECTOR3& push);
@@ -53,12 +59,8 @@ public:
 	// ゲームの開始座標設定
 	void SetStartPosition();
 
-	//↓松岡.
 	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);
-	// 更新関数
-	void Update() override;
-	// 描画関数
-	void Draw (D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+
 
 	//D3DXVECTOR3 GetPosition();
 	std::shared_ptr<CPlayer> GetControlPlayer(int index);

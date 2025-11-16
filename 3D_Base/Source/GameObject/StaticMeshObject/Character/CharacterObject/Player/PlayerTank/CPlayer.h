@@ -95,9 +95,6 @@ public:
 	// プレイヤーかCOMを識別
 	virtual bool IsPlayer() const override { return true; }
 
-	// 当たった時の処理
-	virtual void OnHit(CCharacterObjectBase* other) override;
-
 	// プレイヤーのダメージ処理
 	void PlayerDamage();
 	// プレイヤーの死亡処理
@@ -163,8 +160,6 @@ protected:
 
 protected:
 
-	std::shared_ptr<CBody>			m_pBody;
-	std::shared_ptr<CCannon>		m_pCannon;
 	std::shared_ptr<CController>	m_Controller;
 	int			m_PlayerID;
 	bool		m_HasControl;	//操作権があるか
