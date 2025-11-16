@@ -16,11 +16,17 @@
 //当たり判定.障害物判定用
 #include "Collision/Collider/BoxCollider/CBoxCollider.h"
 
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankBody/CBody.h"
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankCannon/CCannon.h"
+
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/CPlayer.h"
 
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
 #include <limits>
+#include <unordered_set>
+#include <memory>
 
 
 class CComPlayer
@@ -32,21 +38,23 @@ public:
 
 	void Create(int id)override;
 	void Update() override;
-
 	bool IsPlayer() const override { return false; }
-
-	std::shared_ptr<CCannon> const GetCannon() override { return m_Cannon; }
-	std::shared_ptr<CBody> const GetBody() override { return m_Body; }
-	//敵判定
-	//自分以外は全員敵	
-	bool IsEnemy(const CPlayer& other) const {return other.GetPlayerID() != m_PlayerID; };
-
-	//追尾対象の設定
-	void SetTarget(std::shared_ptr<CPlayer> player) { m_pTarget = player; }
-	void ClearTarget() { m_pTarget = nullptr; }
+	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
 	const D3DXVECTOR3 GetPosition() override;
 	const D3DXVECTOR3 GetRotation() override;
+
+	static std::vector<CComPlayer*>& Instances();
+
+	std::shared_ptr<CCannon> const GetCannon() override { return m_Cannon; }
+	std::shared_ptr<CCannon> GetCannon() const override { return m_Cannon; }
+	std::shared_ptr<CBody> const GetBody() override { return m_Body; }
+	std::shared_ptr<CBody> GetBody() const override { return m_Body; }
+	
+	//追尾対象の設定
+	void SetTarget(std::shared_ptr<CCharacterObjectBase> actor) { m_pTarget = std::move(actor); }
+	void ClearTarget() { m_pTarget = nullptr; }
+
 
 	//COMの有効無効を決める
 	void SetComEnabled(bool enabled) { m_ComEnabled = enabled; }
@@ -56,13 +64,15 @@ public:
 	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
 
 	//プレイヤーを取得する.読み取り専用
-	void SetPlayersRef(const std::vector<std::shared_ptr<CPlayer>>* all) { m_pAllPlayer = all; }
+	void SetPlayersRef(const std::vector<std::shared_ptr<CCharacterObjectBase>>* all) { m_pAllPlayer = all; }
 
 	//マネージャーからアイテムの参照
 	void SetItemBox(std::vector<std::shared_ptr<CItemBox>>* item) { m_pItemBox = item; }
 
 	//当たり判定用
 	void SetObject(const std::vector<std::shared_ptr<CBoxCollider>>* BoxCollider) {};
+
+	int GetPlayerID() const { return m_PlayerID; }
 
 private:
 	//構造体
@@ -109,7 +119,6 @@ private:
 	static float Deg2Red(float d) { return d * (D3DX_PI / 180.0f); }
 	static float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b);
 	static float AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos);
-	float  NearestItemDist2(float& outDist2) const;						//近い箱の距離2乗
 	static float ToRad(float d) { return d * (D3DX_PI / 180.0f); }
 	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 
@@ -151,16 +160,14 @@ private:
 	//COMの状態変更
 	void ChangeState(State state);
 
-	//COMインスタンスの静的レジストリ
-	static std::vector<CComPlayer*>& Instances();
-
 	//外部クラス
-	std::shared_ptr<CPlayer> m_pTarget;									//追尾対象
+	std::shared_ptr<CCharacterObjectBase> m_pTarget;									//追尾対象
 	std::weak_ptr<CShotManager> m_pShotManager;							//弾マネージャー.自動発射用のパラメータ
-	const std::vector<std::shared_ptr<CPlayer>>* m_pAllPlayer;			//プレイヤーの一覧取得
+	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;			//プレイヤーの一覧取得
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;					//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;								//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;	//障害物の一部を外部から差し込む
+	std::unordered_set<const CCharacterObjectBase*> m_Black;
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
@@ -203,6 +210,8 @@ private:
 	float		m_AvoidHolde;
 	int			m_AvoidSide;
 	float		m_AvoidMax;
+
+	int m_PlayerID = -1;
 };
 #endif
 

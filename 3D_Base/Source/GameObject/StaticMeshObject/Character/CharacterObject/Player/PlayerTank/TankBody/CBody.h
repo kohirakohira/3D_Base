@@ -6,6 +6,8 @@
 #include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankCannon/CCannon.h" // 戦車：砲塔クラス
 #include "InputDevice//Input//CInputManager.h" // 入力受付クラス
 
+#include <memory>
+
 /**************************************************
 *	車体クラス.
 **/

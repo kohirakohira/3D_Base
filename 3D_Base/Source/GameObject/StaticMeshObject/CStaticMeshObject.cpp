@@ -63,7 +63,7 @@ void CStaticMeshObject::CreateBoxCollider(D3DXVECTOR3 min, D3DXVECTOR3 max)
 	box->SetBaseHalfExtents(min, max);
 	
 	//最小、最大座標が入ったBoxColliderをCColliderのユニークポインタm_pColliderに入れる.
-	m_pCollider = std::move(box);
+	m_pCollider =  std::move(box);
 }
 
 //レイとメッシュの当たり判定

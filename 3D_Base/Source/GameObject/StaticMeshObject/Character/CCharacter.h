@@ -40,21 +40,25 @@ public:
 	
 	void SetInput(const std::shared_ptr<CInputManager> input) { m_Input = input; }
 
-	//初期値設定用関数.
-	void SettingTune();
+	//使っていないみたいなので消した
+	////初期値設定用関数.
+	//void SettingTune();
 
 	//パラメータの設定.
 	virtual void SetTuning(const TankTuning& tuning) = 0;
 	//パラメータの取得.
 	virtual const TankTuning& GetTuning() const = 0;
+	//パラメータの設定
+	virtual void SetTuning(const TankTuning& tuning) { m_Tuning = tuning; }
 
+	//パラメータの取得
+	virtual const TankTuning& GetTuning() const { return m_Tuning; }
 
 protected:
 	std::shared_ptr<RAY>	m_pRayY;	//Y方向へ伸ばしたレイ.
 
 	std::shared_ptr<CInputManager> m_Input;	// 入力受付クラス.
 
-	//戦車の情報.
-	TankTuning m_Tuning;
-
+	TankTuning m_Tuning;	//戦車の情報
+	
 };

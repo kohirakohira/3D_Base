@@ -149,5 +149,5 @@ void CItemBox::HitPlayer()
 // バウンディングボックスを作成
 void CItemBox::CreateBounding(std::shared_ptr<CStaticMesh> pItemBox)
 {
-	CreateBBoxForMesh(*pItemBox);
+	//CreateBBoxForMesh(*pItemBox);
 }

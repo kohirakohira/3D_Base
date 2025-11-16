@@ -104,7 +104,7 @@ void CBody::PushBack(const D3DXVECTOR3& push)
 
 void CBody::CreateBounding(std::shared_ptr<CStaticMesh> pBody)
 {
-	CreateBBoxForMesh(*pBody);
+	//CreateBBoxForMesh(*pBody);
 }
 
 void CBody::SetRespawnArea(int Area)

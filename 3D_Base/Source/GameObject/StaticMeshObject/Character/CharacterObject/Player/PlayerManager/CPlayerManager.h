@@ -60,10 +60,11 @@ public:
 	void SetStartPosition();
 
 	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);
-
-
-	//D3DXVECTOR3 GetPosition();
-	std::shared_ptr<CPlayer> GetControlPlayer(int index);
+	void Update() override;
+	void Draw (D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+	
+	D3DXVECTOR3 GetPosition();
+	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(int index);
 
 	void SwitchActivePlayer();
 
@@ -114,8 +115,12 @@ private:
 	//↓松岡.
 	std::shared_ptr<CBody>					m_pBody;
 	std::shared_ptr<CCannon>				m_pCannon;
-    std::vector<std::shared_ptr<CPlayer>>	m_pPlayers;
+    //std::vector<std::shared_ptr<CPlayer>>	m_pPlayers;
 	std::shared_ptr<CShotManager>			m_ShotManager; //弾マネージャー
+
+	//CPlayerとCComPlayerを同一コンテナで管理するための基底に統一
+	std::vector<std::shared_ptr<CCharacterObjectBase>> m_pPlayers;
+	std::vector<std::shared_ptr<CPlayer>> m_pPlayer;
 
 	int m_ActivePlayerIndex;	// 現在操作中のプレイヤー(デバッグ用)
 
