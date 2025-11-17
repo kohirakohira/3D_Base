@@ -1,4 +1,3 @@
-#if 0
 #include "CComPlayer.h"
 
 //-----ライブラリ-----
@@ -74,11 +73,11 @@ void CComPlayer::Create(int id)
     m_PlayerID = id;
 
     //それぞれのIDを渡して既存のBody,Cannonの設計に準拠する
-    m_Body = std::make_shared<CBody>(id);
-    m_Cannon = std::make_shared<CCannon>(id);
+    m_pBody = std::make_shared<CBody>(id);
+    m_pCannon = std::make_shared<CCannon>(id);
 
-    m_Body->Initialize(id);
-    m_Cannon->Initialize(id);
+    m_pBody->Init();
+    m_pCannon->Init();
 
     //生存.描画フラグ
     m_IsAlive = true;
@@ -409,15 +408,22 @@ void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& 
 
 const D3DXVECTOR3 CComPlayer::GetPosition()
 {
-    if (m_Body) return m_Body->GetPosition();
+    if (m_pBody) return m_pBody->GetPosition();
     return CCharacter::GetPosition();
 }
 
 const D3DXVECTOR3 CComPlayer::GetRotation()
 {
-    if (m_Body) return m_Body->GetRotation();
+    if (m_pBody) return m_pBody->GetRotation();
     return CCharacter::GetRotation();
 }
+
+const D3DXVECTOR3 CComPlayer::GetScale()
+{
+    if (m_pBody) return m_pBody->GetRotation();
+    return CCharacter::GetRotation();
+}
+
 
 
 //前方に当たり判定を設置する
@@ -909,7 +915,6 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
     if (d < -turnStep) return curYaw - turnStep;
     return curYaw + d;
 }
-#endif
 
 
 

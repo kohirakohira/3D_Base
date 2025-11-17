@@ -11,9 +11,9 @@ CPlayerManager::CPlayerManager()
 {
 }
 //PlayerがCComPlayerならそのポインタにキャストして返す.そうでなければnullptr
-static inline bool IsCom(const std::shared_ptr<CPlayer>& player) 
+static inline bool IsCom(const std::shared_ptr<CPlayer>& player)
 {
-	return std::dynamic_pointer_cast< const CComPlayer>(player) != nullptr;
+	return std::dynamic_pointer_cast<const CComPlayer>(player) != nullptr;
 }
 
 //プレイヤーの操作かどうかの判定

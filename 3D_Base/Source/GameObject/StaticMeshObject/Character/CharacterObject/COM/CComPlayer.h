@@ -1,4 +1,3 @@
-#if 0
 //-----Œp³‚·‚éƒNƒ‰ƒX-----
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"	//Šî’êƒNƒ‰ƒX.
 
@@ -41,15 +40,27 @@ public:
 	bool IsPlayer() const override { return false; }
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
-	const D3DXVECTOR3 GetPosition() override;
-	const D3DXVECTOR3 GetRotation() override;
+	// ˆÊ’u‚Ìİ’è
+	virtual void SetPosition(D3DXVECTOR3 pos) override {};
+	// ˆÊ’u‚ğæ“¾
+	virtual const D3DXVECTOR3 GetPosition() override;
+
+	// ‰ñ“]‚Ìİ’è
+	virtual void SetRotation(D3DXVECTOR3 rot) override {};
+	// ‰ñ“]‚ğæ“¾
+	virtual const D3DXVECTOR3 GetRotation() override;
+
+	// Šgk‚Ìİ’è
+	virtual void SetScale(D3DXVECTOR3 sca) override {};
+	// Šgk‚ğæ“¾
+	virtual const D3DXVECTOR3 GetScale() override;
 
 	static std::vector<CComPlayer*>& Instances();
 
-	std::shared_ptr<CCannon> const GetCannon() override { return m_Cannon; }
-	std::shared_ptr<CCannon> GetCannon() const override { return m_Cannon; }
-	std::shared_ptr<CBody> const GetBody() override { return m_Body; }
-	std::shared_ptr<CBody> GetBody() const override { return m_Body; }
+	std::shared_ptr<CCannon> const GetCannon() override { return m_pCannon; }
+	std::shared_ptr<CCannon> GetCannon() const override { return m_pCannon; }
+	std::shared_ptr<CBody> const GetBody() override { return m_pBody; }
+	std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
 	
 	//’Ç”ö‘ÎÛ‚Ìİ’è
 	void SetTarget(std::shared_ptr<CCharacterObjectBase> actor) { m_pTarget = std::move(actor); }
@@ -213,7 +224,6 @@ private:
 
 	int m_PlayerID = -1;
 };
-#endif
 
 
 
