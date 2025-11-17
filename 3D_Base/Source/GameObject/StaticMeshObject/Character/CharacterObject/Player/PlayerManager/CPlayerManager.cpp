@@ -36,7 +36,7 @@ void CPlayerManager::Init()
 
 	for(int i = 0; i < PLAYER_MAX; i++)
 	{
-		//コントローラーが繋がれていれば.
+		// コントローラーが繋がれていれば
 		if (CControllerManager::GetInstance().GetController(i) != nullptr)
 		{
 			//プレイヤー.
