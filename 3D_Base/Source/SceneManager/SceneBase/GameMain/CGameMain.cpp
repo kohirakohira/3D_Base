@@ -68,7 +68,7 @@ CGameMain::CGameMain(HWND hWnd)
 
 	, m_pBackImgObject				( nullptr )
 
-	, m_pPlayerManager				()
+	, m_pCharacterManager				()
 	, m_pShotManager				()
 
 	, m_pStage						( nullptr )
@@ -141,16 +141,16 @@ void CGameMain::Update()
 //-----メイン演出用-----..
 
 	//プレイヤー全員更新.
-	m_pPlayerManager->Update();
+	m_pCharacterManager->Update();
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		m_pPlayerManager->PlayerRespawn(i);
+		m_pCharacterManager->PlayerRespawn(i);
 	}
 
 	// 弾の発射.
 	//for (int i = 0; i < PLAYER_MAX; i++)
 	//{
-	//	if (auto player = m_pPlayerManager->GetControlPlayer(i))
+	//	if (auto player = m_pCharacterManager->GetControlPlayer(i))
 	//	{
 	//		if (player->GetCannon()->IsShot())
 	//		{
@@ -164,7 +164,7 @@ void CGameMain::Update()
 #if 0
 	for (int index = 0; index < PLAYER_MAX; ++index)
 	{
-		m_pPlayerManager->GetControlPlayer(index)->GetCannon()->SetShotManager(m_pShotManager);
+		m_pCharacterManager->GetControlPlayer(index)->GetCannon()->SetShotManager(m_pShotManager);
 	}
 #endif
 	m_pShotManager->Update();
@@ -173,7 +173,7 @@ void CGameMain::Update()
 	//カメラ追従＆更新.砲塔基準
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		if (auto player = m_pPlayerManager->GetControlPlayer(i))
+		if (auto player = m_pCharacterManager->GetControlPlayer(i))
 		{
 			const D3DXVECTOR3 camPos = player->GetCannonPosition();	//砲塔の位置.
 			float yaw = player->GetCannonYaw();	//砲塔の向きY.
@@ -197,7 +197,7 @@ void CGameMain::Update()
 
 	if (nowC && !prevC)
 	{
-		m_pPlayerManager->SwitchActivePlayer();
+		m_pCharacterManager->SwitchActivePlayer();
 	}
 	prevC = nowC;
 
@@ -205,7 +205,7 @@ void CGameMain::Update()
 	// Cキー押されたら操作プレイヤー切り替え
 	if (GetAsyncKeyState('C') & 0x0001)
 	{
-		m_pPlayerManager->SwitchActivePlayer();
+		m_pCharacterManager->SwitchActivePlayer();
 	}
 
 	// 壁の更新
@@ -285,12 +285,12 @@ void CGameMain::Draw()
 		//プレイヤーを描画.ここで全員描く.
 		for (int players = 0; players < PLAYER_MAX; ++players)
 		{
-			if (auto p = m_pPlayerManager->GetControlPlayer(players))
+			if (auto p = m_pCharacterManager->GetControlPlayer(players))
 			{
 				p->Draw(view, proj, light, paramC);
 			}
 		}
-		m_pPlayerManager->Draw(view, proj, light, paramC);
+		m_pCharacterManager->Draw(view, proj, light, paramC);
 
 //オブジェクトの描画..
 		//弾描画..
@@ -346,7 +346,7 @@ void CGameMain::Draw()
 		//カメラ参照を取得.参照外しで実体を直接扱う.
 		std::shared_ptr<CCamera> camera = m_pCameras[i];
 
-		std::shared_ptr<CCharacterObjectBase> owner = m_pPlayerManager->GetControlPlayer(i);
+		std::shared_ptr<CCharacterObjectBase> owner = m_pCharacterManager->GetControlPlayer(i);
 
 		////////デバッグテキストの描画.
 		//////m_pDbgText->SetColor(0.9f, 0.6f, 0.f);	//色の設定.
@@ -421,8 +421,8 @@ void CGameMain::Init()
 	//カメラ位置設定..
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		//プレイヤーマネージャーから各プレイヤーの位置を取得.
-		D3DXVECTOR3 pos = m_pPlayerManager->GetPosition(i);
+		//キャラクターマネージャーから各プレイヤーの位置を取得.
+		D3DXVECTOR3 pos = m_pCharacterManager->GetPosition(i);
 
 		m_pCameras[i]->SetCameraPos(pos.x, pos.y, pos.z);
 		m_pCameras[i]->SetLightPos(0.f, 2.f, 5.f);
@@ -556,20 +556,20 @@ void CGameMain::Create()
 	m_pDbgText = std::make_unique<CDebugText>();
 
 	//プレイヤーと砲塔のインスタンス生成.
-	m_pPlayerManager = std::make_shared<CPlayerManager>();
+	m_pCharacterManager = std::make_shared<CCharacterManager>();
 	//マネージャーは一回だけ初期化
-	m_pPlayerManager->Init();
+	m_pCharacterManager->Init();
 
 	//弾クラスのインスタンス作成.
 	m_pShotManager = std::make_shared<CShotManager>();
 	//m_pShotManager->Initialize();
 
-	for (int i = 0; i < PLAYER_MAX; i++)
+	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		//カメラ生成・セットアップ.
 		auto camera = std::make_unique<CCamera>();
-		camera->SetTargetPos(m_pPlayerManager->GetPosition(i));
-		camera->SetTargetRotY(m_pPlayerManager->GetRotation(i).y);
+		camera->SetTargetPos(m_pCharacterManager->GetPosition(i));
+		camera->SetTargetRotY(m_pCharacterManager->GetRotation(i).y);
 		m_pCameras[i] = std::move(camera);
 	}
 
@@ -627,14 +627,14 @@ void CGameMain::Create()
 	// 弾をセット
 	m_pCollisionManager->SetCShotManager(m_pShotManager);
 	
-	// プレイヤーマネージャーをセット
-	m_pCollisionManager->SetCPlayerManager(m_pPlayerManager);
+	// キャラクターマネージャーをセット
+	m_pCollisionManager->SetCPlayerManager(m_pCharacterManager);
 	
 	// 爆風マネージャーをセット
 	m_pCollisionManager->SetCBlastCollisionManager(m_pBlastManager);
 
 	// ショットマネージャーセット
-	m_pPlayerManager->SetShotManager(m_pShotManager);
+	m_pCharacterManager->SetShotManager(m_pShotManager);
 }
 
 HRESULT CGameMain::LoadData()
@@ -790,16 +790,16 @@ HRESULT CGameMain::LoadData()
 		switch (i)
 		{
 		case 0:
-			m_pPlayerManager->AttachMeshesToPlayer(i, m_pStaticMesh_TankBodyRed, m_pStaticMesh_TankCannonRed);
+			m_pCharacterManager->AttachMeshesToPlayer(i, m_pStaticMesh_TankBodyRed, m_pStaticMesh_TankCannonRed);
 			break;
 		case 1:
-			m_pPlayerManager->AttachMeshesToPlayer(i, m_pStaticMesh_TankBodyYellow, m_pStaticMesh_TankCannonYellow);
+			m_pCharacterManager->AttachMeshesToPlayer(i, m_pStaticMesh_TankBodyYellow, m_pStaticMesh_TankCannonYellow);
 			break;
 		case 2:
-			m_pPlayerManager->AttachMeshesToPlayer(i, m_pStaticMesh_TankBodyGreen, m_pStaticMesh_TankCannonGreen);
+			m_pCharacterManager->AttachMeshesToPlayer(i, m_pStaticMesh_TankBodyGreen, m_pStaticMesh_TankCannonGreen);
 			break;
 		case 3:
-			m_pPlayerManager->AttachMeshesToPlayer(i, m_pStaticMesh_TankBodyBlue, m_pStaticMesh_TankCannonBlue);
+			m_pCharacterManager->AttachMeshesToPlayer(i, m_pStaticMesh_TankBodyBlue, m_pStaticMesh_TankCannonBlue);
 			break;
 		default:
 			break;
@@ -896,7 +896,7 @@ void CGameMain::SetPosition()
 	m_pGround->SetRotation(D3DXToRadian(0.f), D3DXToRadian(0.f), D3DXToRadian(0.f));
 
 	// プレイヤーの初期座標設定
-	m_pPlayerManager->SetStartPosition();
+	m_pCharacterManager->SetStartPosition();
 }
 
 void CGameMain::CreateBounding()
@@ -907,20 +907,20 @@ void CGameMain::CreateBounding()
 		switch (i)
 		{
 		case 0:
-			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyRed, m_pStaticMesh_TankCannonRed);
+			m_pCharacterManager->CreateBounding(i, m_pStaticMesh_TankBodyRed, m_pStaticMesh_TankCannonRed);
 			break;
 		case 1:
-			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyYellow, m_pStaticMesh_TankCannonYellow);
+			m_pCharacterManager->CreateBounding(i, m_pStaticMesh_TankBodyYellow, m_pStaticMesh_TankCannonYellow);
 			break;
 		case 2:
-			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyBlue, m_pStaticMesh_TankCannonBlue);
+			m_pCharacterManager->CreateBounding(i, m_pStaticMesh_TankBodyBlue, m_pStaticMesh_TankCannonBlue);
 			break;
 		case 3:
-			m_pPlayerManager->CreateBounding(i, m_pStaticMesh_TankBodyGreen, m_pStaticMesh_TankCannonGreen);
+			m_pCharacterManager->CreateBounding(i, m_pStaticMesh_TankBodyGreen, m_pStaticMesh_TankCannonGreen);
 			break;
 		}
 		//各プレイヤーの当たり判定作成.
-		m_pPlayerManager->CreateCollider(i);
+		m_pCharacterManager->CreateCollider(i);
 	}
 	
 	// 壁の当たり判定生成

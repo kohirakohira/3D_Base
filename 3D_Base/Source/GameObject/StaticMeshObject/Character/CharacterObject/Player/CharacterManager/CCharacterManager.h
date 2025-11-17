@@ -22,12 +22,12 @@
 //コントローラークラス.
 #include "InputDevice/Input/Controller\ControllerManager/CControllerManager.h"
 
-class CPlayerManager
+class CCharacterManager
 	: public CCharacter
 {
 public:
-	CPlayerManager();
-	~CPlayerManager() override;
+	CCharacterManager();
+	~CCharacterManager() override;
 
 
 	void Init();

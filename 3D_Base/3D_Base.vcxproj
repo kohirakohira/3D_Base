@@ -209,7 +209,7 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\ItemBoxManager\CItemBoxManager.cpp" />
     <ClCompile Include="Source\InputDevice\Input\KeyInput\CKeyInput.cpp" />
     <ClCompile Include="Source\InputDevice\Key\CMultiInputManager\CMultiInputKeyManager.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerManager\CPlayerManager.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.cpp" />
     <ClCompile Include="Source\Collision\Shape\Ray\CRay.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\CSceneBase.cpp" />
     <ClCompile Include="Source\SceneManager\CSceneManager.cpp" />
@@ -282,7 +282,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\CItemBoxManager.h" />
     <ClInclude Include="Source\InputDevice\Input\KeyInput\CKeyInput.h" />
     <ClInclude Include="Source\InputDevice\Key\CMultiInputManager\CMultiInputKeyManager.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerManager\CPlayerManager.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.h" />
     <ClInclude Include="Source\Collision\Shape\Ray\CRay.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\CSceneBase.h" />
     <ClInclude Include="Source\SceneManager\CSceneManager.h" />

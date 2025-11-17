@@ -288,7 +288,7 @@ void CPlayer::Rotate(const PlayerInput& input)
 	//現在の情報を取得・保存.
 	auto& tuning = GetTuning();
 
-	//市ティックをある程度倒していなければ回転しない.
+	//スティックをある程度倒していなければ回転しない.
 	if (dir == CController::Direction::None)
 	{
 		return;
@@ -347,7 +347,6 @@ void CPlayer::Reload(const D3DXVECTOR3& pos, float y)
 void CPlayer::SetTune(const TankTuning& info)
 {
 	SetTuning(info);
-	SetTuning(info);
 }
 
 //プレイヤーのコントローラー設定.
@@ -398,7 +397,6 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 
 		m_pBody->Update();
 		m_pCannon->Update();
-
 	}
 
 	//↓濵口・小平.
@@ -452,11 +450,11 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 //砲塔と車体を同期する
 void CPlayer::SyncCannonToBody()
 {
-	//auto tuning = GetTuning();
+	auto tuning = GetTuning();
 	if (!Body() || !Cannon()) return;
 
 	D3DXVECTOR3 pos = Body()->GetPosition();
-	//pos.y += m_Tune.cannonHeight;		// 砲塔の高さオフセット
+	pos.y += tuning.cannonHeight;		// 砲塔の高さオフセット
 	Cannon()->SetPosition(pos);			// 位置を同期
 }
 

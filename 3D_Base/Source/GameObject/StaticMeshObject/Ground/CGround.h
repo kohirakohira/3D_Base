@@ -3,7 +3,7 @@
 #include "GameObject//StaticMeshObject//CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス 
 
 //-----外部クラス-----
-#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerManager/CPlayerManager.h"
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/CharacterManager/CCharacterManager.h"
 
 //==================================
 //	グラウンドクラス
@@ -28,11 +28,11 @@ public:
 	int GetAreaIndex(float x, float z);
 
 	//プレイヤーを設定.
-	void SetPlayer(std::shared_ptr<CPlayerManager> pPlayer) { m_pPlayerManager = pPlayer; }
+	void SetPlayer(std::shared_ptr<CCharacterManager> pPlayer) { m_pCharacterManager = pPlayer; }
 
 protected:
-	//プレイヤーマネージャー.
-	std::shared_ptr<CPlayerManager>		m_pPlayerManager;
+	// キャラクターマネージャークラス
+	std::shared_ptr<CCharacterManager>		m_pCharacterManager;
 
 public:
 //=============================================================
