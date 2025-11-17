@@ -39,11 +39,11 @@ void CChoiceImage::MoveChoiceImg()
 {
 	//コントローラーの取得※0番しか動かせない.
 	CController* controller = CControllerManager::GetInstance().GetController(0);
-	//中身が無いときは通らないようにする.
-	if (!controller || !controller->CheckConnected()) return;
+	////中身が無いときは通らないようにする.
+	//if (!controller || !controller->CheckConnected()) return;
 
-	//スティックの入力方向取得.
-	CController::Direction dirlef = controller->GetLeftStickDirection(0.2f);
+	////スティックの入力方向取得.
+	//CController::Direction dirlef = controller->GetLeftStickDirection(0.2f);
 
 	//定数宣言.
 	//位置の調整用.
@@ -56,7 +56,7 @@ void CChoiceImage::MoveChoiceImg()
 	{
 	case CSceneType::Title:
 		//上移動(プレイ).
-		if (m_Key->NowInputKey('W') || dirlef == CController::Direction::Up)
+		if (m_Key->NowInputKey('W') == true /*|| dirlef == CController::Direction::Up*/)
 		{
 			//戻る処理.
 			m_vPosition.y = WND_H / posAdjustment_1;
@@ -64,7 +64,7 @@ void CChoiceImage::MoveChoiceImg()
 			m_IsSelected = false;
 		}
 		//下移動(エンド).
-		if (m_Key->NowInputKey('S') || dirlef == CController::Direction::Down)
+		if (m_Key->NowInputKey('S') == true /*|| dirlef == CController::Direction::Down*/)
 		{
 			//ゲームスタート処理.
 			m_vPosition.y = WND_H / posAdjustment_2;
@@ -77,7 +77,7 @@ void CChoiceImage::MoveChoiceImg()
 		break;
 	case CSceneType::Setting:
 		//右移動(スタート).
-		if (m_Key->NowInputKey('D') || dirlef == CController::Direction::Right)
+		if (m_Key->NowInputKey('D') == true /*|| dirlef == CController::Direction::Right*/)
 		{
 			//タイトルに戻る処理.
 			m_vPosition.x = WND_W / posAdjustment_3;
@@ -85,7 +85,7 @@ void CChoiceImage::MoveChoiceImg()
 			m_IsSelected = false;
 		}
 		//左移動(戻る).
-		if (m_Key->NowInputKey('A') || dirlef == CController::Direction::Left)
+		if (m_Key->NowInputKey('A') == true /*|| dirlef == CController::Direction::Left*/)
 		{
 			//ゲームメイン処理.
 			m_vPosition.x = WND_W / posAdjustment_4;
