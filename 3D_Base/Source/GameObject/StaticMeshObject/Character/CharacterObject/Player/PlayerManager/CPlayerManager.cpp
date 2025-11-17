@@ -13,15 +13,15 @@ CPlayerManager::CPlayerManager()
 //PlayerがCComPlayerならそのポインタにキャストして返す.そうでなければnullptr
 static inline bool IsCom(const std::shared_ptr<CPlayer>& player) 
 {
-	//return std::dynamic_pointer_cast< const CComPlayer>(player) != nullptr;
+	return std::dynamic_pointer_cast< const CComPlayer>(player) != nullptr;
 }
 
 //プレイヤーの操作かどうかの判定
 static inline bool IsHumanControlled(const std::shared_ptr<CPlayer>& player)
 {
-	//if (auto com = std::dynamic_pointer_cast<CComPlayer>(player)) {
-	//	return player->HasControl();   //COMでも無効ならプレイヤー操作
-	//}
+	if (auto com = std::dynamic_pointer_cast<CComPlayer>(player)) {
+		return player->HasControl();   //COMでも無効ならプレイヤー操作
+	}
 }
 
 CPlayerManager::~CPlayerManager()
