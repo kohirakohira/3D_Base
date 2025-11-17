@@ -42,7 +42,7 @@ void CPlayerManager::Init()
 		if (CControllerManager::GetInstance().GetController(i))
 		{
 			//プレイヤー.
-			player = std::make_shared<CPlayer>();	// インスタンス生成.
+			auto player = std::make_shared<CPlayer>();	// インスタンス生成.
 			player->Init(i);						// 車体・砲塔を生成.
 			player->SetHasControl(true);			// コントローラー操作ON.
 			player->SetKeyBoadEnble(true);			// .
