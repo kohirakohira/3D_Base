@@ -347,7 +347,6 @@ void CPlayer::Reload(const D3DXVECTOR3& pos, float y)
 void CPlayer::SetTune(const TankTuning& info)
 {
 	SetTuning(info);
-	SetTuning(info);
 }
 
 //プレイヤーのコントローラー設定.
