@@ -20,6 +20,7 @@ public:
 		static CControllerManager instance;
 		return instance;
 	}
+
 	//コピー・ムーブ禁止※安全対策.
 	//必要性：所有権・リソース管理の安全.
 	CControllerManager(const CControllerManager&) = delete;					//コンストラクタのコピー禁止.

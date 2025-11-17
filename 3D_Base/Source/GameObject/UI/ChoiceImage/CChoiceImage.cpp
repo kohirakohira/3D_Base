@@ -39,8 +39,8 @@ void CChoiceImage::MoveChoiceImg()
 {
 	//コントローラーの取得※0番しか動かせない.
 	CController* controller = CControllerManager::GetInstance().GetController(0);
-	////中身が無いときは通らないようにする.
-	//if (!controller || !controller->CheckConnected()) return;
+	//中身が無いときは通らないようにする.
+	if (!controller || !controller->CheckConnected()) return;
 
 	//スティックの入力方向取得.
 	CController::Direction dirlef = controller->GetLeftStickDirection(0.2f);
