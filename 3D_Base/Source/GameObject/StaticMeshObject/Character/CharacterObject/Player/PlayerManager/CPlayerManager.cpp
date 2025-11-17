@@ -68,10 +68,10 @@ void CPlayerManager::Init()
 	//COMプレイヤー同士で参照を共有.
 	for (auto& player : m_pPlayers)
 	{
-		//if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
-		//{
-		//	com->SetPlayersRef(&m_pPlayers);
-		//}
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
+		{
+			com->SetPlayersRef(&m_pPlayers);
+		}
 	}
 
 }
@@ -270,54 +270,54 @@ void CPlayerManager::Update()
 	}
 
 	{
-		//const int count = static_cast<int>(m_pPlayers.size());
-		//if (count <= 0)return;
+		const int count = static_cast<int>(m_pPlayers.size());
+		if (count <= 0)return;
 
-		////基本ターゲットを決める
-		////ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
-		//auto pickHumanTargetIndex = [&]()->int {
-		//	auto isValidHuman = [&](int idx) {
-		//		return(idx == m_ActivePlayerIndex) && IsHumanControlled(m_pPlayers[idx]);
-		//		};
-		//	if (isValidHuman(m_LockTargetIndex)) return m_LockTargetIndex;
-		//	if (isValidHuman(m_ActivePlayerIndex)) return m_ActivePlayerIndex;
-		//	return -1;	//プレイヤーがいない
-		//	};
+		//基本ターゲットを決める
+		//ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
+		auto pickHumanTargetIndex = [&]()->int {
+			auto isValidHuman = [&](int idx) {
+				return(idx == m_ActivePlayerIndex) && IsHumanControlled(m_pPlayers[idx]);
+				};
+			if (isValidHuman(m_LockTargetIndex)) return m_LockTargetIndex;
+			if (isValidHuman(m_ActivePlayerIndex)) return m_ActivePlayerIndex;
+			return -1;	//プレイヤーがいない
+			};
 
-		//const int tgtIdx = pickHumanTargetIndex();
-		//std::shared_ptr<CPlayer> target = (tgtIdx >= 0) ? m_pPlayers[tgtIdx] : nullptr;
+		const int tgtIdx = pickHumanTargetIndex();
+		std::shared_ptr<CPlayer> target = (tgtIdx >= 0) ? m_pPlayers[tgtIdx] : nullptr;
 
-		//for (int i = 0; i < count; ++i)
-		//{
-		//	auto self = m_pPlayers[i];
+		for (int i = 0; i < count; ++i)
+		{
+			auto self = m_pPlayers[i];
 
-		//	if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
-		//	{
-		//		if (com->IsComEnabled())
-		//		{
-		//			//COM稼働中だけターゲットをあげる
-		//			if (target && IsHumanControlled(target) && target != self)
-		//			{
-		//				//ターゲットがプレイヤー限定なのであとで消す
-		//				//com->SetTarget(target);
-		//			}
-		//			else
-		//			{
-		//				com->ClearTarget();
-		//			}
-		//			com->Update();
-		//		}
-		//		else
-		//		{
-		//			self->Update();
-		//		}
-		//	}
-		//	else
-		//	{
-		//		self->Update();
-		//	}
-		//		
-		//}
+			if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
+			{
+				if (com->IsComEnabled())
+				{
+					//COM稼働中だけターゲットをあげる
+					if (target && IsHumanControlled(target) && target != self)
+					{
+						//ターゲットがプレイヤー限定なのであとで消す
+						com->SetTarget(target);
+					}
+					else
+					{
+						com->ClearTarget();
+					}
+					com->Update();
+				}
+				else
+				{
+					self->Update();
+				}
+			}
+			else
+			{
+				self->Update();
+			}
+				
+		}
 	}
 }
 
@@ -354,18 +354,18 @@ void CPlayerManager::SwitchActivePlayer()
 	//全員の操作権を落とす
 	for (auto& p : m_pPlayers) p->SetHasControl(false);
 
-	////前のアクティブがCOMなら戻す
-	//if (prev >= 0)
-	//{
-	//	if (auto prevCom = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[prev]))
-	//	{
-	//		prevCom->SetComEnabled(true);	//COM操作
-	//	}
-	//}
-	////次のアクティブがCOMならプレイヤー操作に切り替える
-	//if (auto nextCom = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[next])) {
-	//	nextCom->SetComEnabled(false);	//プレイヤー操作
-	//}
+	//前のアクティブがCOMなら戻す
+	if (prev >= 0)
+	{
+		if (auto prevCom = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[prev]))
+		{
+			prevCom->SetComEnabled(true);	//COM操作
+		}
+	}
+	//次のアクティブがCOMならプレイヤー操作に切り替える
+	if (auto nextCom = std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[next])) {
+		nextCom->SetComEnabled(false);	//プレイヤー操作
+	}
 	//次のやつに操作権を渡す
 	m_pPlayers[next]->SetHasControl(true);
 	m_ActivePlayerIndex = next;
@@ -394,11 +394,11 @@ void CPlayerManager::SetShotManager(std::shared_ptr<CShotManager>& mgr)
 	m_ShotManager = mgr;
 
 	//すでにいる前COMに渡す　
-	//for (auto& up : m_pPlayers) {
-	//	if (auto* com = dynamic_cast<CComPlayer*>(up.get())) {	//CComPlayerなら生のポインタにして渡す.所有権は渡さない
-	//		com->AttachShotManager(m_ShotManager);	//weak_ptrに渡す
-	//	}
-	//}
+	for (auto& up : m_pPlayers) {
+		if (auto* com = dynamic_cast<CComPlayer*>(up.get())) {	//CComPlayerなら生のポインタにして渡す.所有権は渡さない
+			com->AttachShotManager(m_ShotManager);	//weak_ptrに渡す
+		}
+	}
 
 }
 
@@ -480,7 +480,7 @@ void CPlayerManager::SwitchControl()
 			//戦車の調整データを引き継ぐ.
 			if (current != nullptr)
 			{
-		//		newPlayer->SetTuning(current->GetTuning());
+				newPlayer->SetTuning(current->GetTuning());
 			}
 
 			//車体と砲塔のインスタンスを設定.
@@ -490,19 +490,19 @@ void CPlayerManager::SwitchControl()
 			//COMからプレイヤーに入れ替え.
 			m_pPlayers[No] = newPlayer;
 		}
-		////プレイヤー->COMへ切り替え.
-		//else if (Connected != true && isCom != true)
-		//{
-		//	//新しCOMを生成.
-		//	std::shared_ptr<CComPlayer> newCOM = std::make_shared<CComPlayer>();
+		//プレイヤー->COMへ切り替え.
+		else if (Connected != true && isCom != true)
+		{
+			//新しCOMを生成.
+			std::shared_ptr<CComPlayer> newCOM = std::make_shared<CComPlayer>();
 
-		//	//元のプレイヤーの位置を引き継ぐ.
-		//	if (current != nullptr)
-		//	{
-		//		newCOM->SetPosition(current->GetPosition());
-		//	}
-		//	//プレイヤーからCOMに入れ替え.
-		//	m_pPlayers[No] = newCOM;
-		//}
+			//元のプレイヤーの位置を引き継ぐ.
+			if (current != nullptr)
+			{
+				newCOM->SetPosition(current->GetPosition());
+			}
+			//プレイヤーからCOMに入れ替え.
+			m_pPlayers[No] = newCOM;
+		}
 	}
 }
