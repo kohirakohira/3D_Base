@@ -4,7 +4,7 @@
 //-----外部クラス-----
 #include "Camera//CCamera.h" //カメラクラス.
 #include "GameObject//StaticMeshObject//Ground//CGround.h" //地面クラス.
-#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerManager/CPlayerManager.h"	//プレイヤーマネージャークラス.
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/CharacterManager/CCharacterManager.h"	// キャラクターマネージャー
 
 //-----メッシュクラス-----
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" //スタティックメッシュクラス.
@@ -40,6 +40,6 @@ public:
 	//地面クラス変数.
 	std::unique_ptr<CGround>		m_Ground;
 	//プレイヤークラス変数.
-	std::unique_ptr<CPlayerManager> m_Player;
+	std::unique_ptr<CCharacterManager> m_Player;
 
 };

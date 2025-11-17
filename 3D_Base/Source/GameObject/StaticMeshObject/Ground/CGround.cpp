@@ -1,7 +1,7 @@
 #include "CGround.h"
 
 CGround::CGround()
-	: m_pPlayerManager	()
+	: m_pCharacterManager	()
 	, m_Speed			( 0.0f )
 {
 }
@@ -19,7 +19,7 @@ void CGround::Update()
 void CGround::Init()
 {
 	//初期化.
-	m_pPlayerManager = nullptr;
+	m_pCharacterManager = nullptr;
 	m_Speed = 0.0f;
 }
 
@@ -41,7 +41,7 @@ void CGround::RespawnArea()
 	for (int i = 0; i < 4; ++i)
 	{
 		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto player = m_pCharacterManager->GetControlPlayer(i);
 		auto PPos = player->GetBody()->GetPosition();
 
 		int areaIndex = GetAreaIndex(PPos.x, PPos.z);
@@ -70,7 +70,7 @@ void CGround::RespawnArea()
 	for (int i = 0; i < 4; ++i)
 	{
 		// リスポーンしたいプレイヤーを取得
-		auto respawnPlayer = m_pPlayerManager->GetControlPlayer(i);
+		auto respawnPlayer = m_pCharacterManager->GetControlPlayer(i);
 		if (respawnPlayer)
 		{
 			respawnPlayer->SetPosition(areas[freeIndex].RespawnPos);

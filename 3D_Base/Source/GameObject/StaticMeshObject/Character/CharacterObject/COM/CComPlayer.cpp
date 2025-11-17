@@ -393,7 +393,7 @@ void CComPlayer::Update()
 
     //é¿çs
     switch (m_State) {
-    case State::Seek:     StepSeek();     break;
+    //case State::Seek:     StepSeek();     break;
     case State::Chase:    StepChase();    break;
     case State::Attack:   StepAttack();   break;
     case State::Evade:    StepEvade();    break;

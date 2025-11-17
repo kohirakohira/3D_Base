@@ -20,7 +20,7 @@
 
 #include "Camera//CCamera.h" //カメラクラス
 
-#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerManager/CPlayerManager.h" // プレイヤーマネージャークラス
+#include "GameObject//StaticMeshObject//Character//CharacterObject//Player//CharacterManager//CCharacterManager.h" // キャラクターマネージャークラス
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス
 
 //キーバインド.
@@ -91,7 +91,7 @@ public:
 
 
 	//演出.
-	std::shared_ptr<CPlayerManager>		m_pPlayerManager;
+	std::shared_ptr<CCharacterManager>		m_pCharacterManager;
 	std::shared_ptr<CGround>			m_pGround;
 	//カメラ.
 	std::shared_ptr<CCamera>			m_pCamera;

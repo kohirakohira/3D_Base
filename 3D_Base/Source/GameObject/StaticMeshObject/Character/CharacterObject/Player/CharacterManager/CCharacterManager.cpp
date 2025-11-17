@@ -1,15 +1,16 @@
-#include "CPlayerManager.h"
+#include "CCharacterManager.h"
 
 #undef max;
 #undef min;
 
-CPlayerManager::CPlayerManager()
+CCharacterManager::CCharacterManager()
 	: offset	(20.f)
 	, AngleY	(45.f)
 	, m_pPlayers()
 	, m_ActivePlayerIndex(0)
 {
 }
+
 //PlayerがCComPlayerならそのポインタにキャストして返す.そうでなければnullptr
 static inline bool IsCom(const std::shared_ptr<CPlayer>& player)
 {
@@ -24,12 +25,12 @@ static inline bool IsHumanControlled(const std::shared_ptr<CPlayer>& player)
 	}
 }
 
-CPlayerManager::~CPlayerManager()
+CCharacterManager::~CCharacterManager()
 {
 }
 
 //インスタンス生成.
-void CPlayerManager::Init()
+void CCharacterManager::Init()
 {
 	m_pPlayers.clear();
 	m_pPlayers.reserve(PLAYER_MAX);
@@ -71,15 +72,14 @@ void CPlayerManager::Init()
 			com->SetPlayersRef(&m_pPlayers);
 		}
 	}
-
 }
 
-void CPlayerManager::AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
+void CCharacterManager::AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
 {
 	m_pPlayers[index]->AttachMeshse(pBody, pCannon);
 }
 
-void CPlayerManager::SetPlayerPosition(int index, const D3DXVECTOR3& pos)
+void CCharacterManager::SetPlayerPosition(int index, const D3DXVECTOR3& pos)
 {
 	if (index < m_pPlayers.size())
 	{
@@ -87,7 +87,7 @@ void CPlayerManager::SetPlayerPosition(int index, const D3DXVECTOR3& pos)
 	}
 }
 
-void CPlayerManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
+void CCharacterManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 {
 	if (index < m_pPlayers.size())
 	{
@@ -95,7 +95,7 @@ void CPlayerManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 	}
 }
 
-void CPlayerManager::SetPlayerScale(int index, const float& xyz)
+void CCharacterManager::SetPlayerScale(int index, const float& xyz)
 {
 	if (index < m_pPlayers.size())
 	{
@@ -104,7 +104,7 @@ void CPlayerManager::SetPlayerScale(int index, const float& xyz)
 }
 
 // バウンディングオブジェクトの作成
-void CPlayerManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon)
+void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon)
 {
 	if (index < m_pPlayers.size())
 	{
@@ -113,7 +113,7 @@ void CPlayerManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh
 }
 
 // コライダーの作成
-void CPlayerManager::CreateCollider(int index)
+void CCharacterManager::CreateCollider(int index)
 {
 	if (index < m_pPlayers.size())
 	{
@@ -121,7 +121,7 @@ void CPlayerManager::CreateCollider(int index)
 	}
 }
 
-void CPlayerManager::PlayerRespawn(int index)
+void CCharacterManager::PlayerRespawn(int index)
 {
 	if (index < m_pPlayers.size())
 	{
@@ -133,7 +133,7 @@ void CPlayerManager::PlayerRespawn(int index)
 	}
 }
 
-void CPlayerManager::SetRespawnArea(int index)
+void CCharacterManager::SetRespawnArea(int index)
 {
 	// エリア4つを定義（マップの座標系に合わせて調整）
 	// リスポーン位置をセット
@@ -188,7 +188,7 @@ void CPlayerManager::SetRespawnArea(int index)
 	}
 }
 
-int CPlayerManager::GetAreaIndex(float x, float z)
+int CCharacterManager::GetAreaIndex(float x, float z)
 {
 	// 四捨五入の座標を使用
 	float rx = std::round(x);
@@ -206,7 +206,7 @@ int CPlayerManager::GetAreaIndex(float x, float z)
 }
 
 // ゲームの開始座標設定
-void CPlayerManager::SetStartPosition()
+void CCharacterManager::SetStartPosition()
 {
 	for (int index = 0; index < PLAYER_MAX; ++index)
 	{
@@ -249,7 +249,7 @@ void CPlayerManager::SetStartPosition()
 	}
 }
 
-void CPlayerManager::SetPlayerRotation(int index, const D3DXVECTOR3& rad)
+void CCharacterManager::SetPlayerRotation(int index, const D3DXVECTOR3& rad)
 {
 	if (index < m_pPlayers.size())
 	{
@@ -257,7 +257,7 @@ void CPlayerManager::SetPlayerRotation(int index, const D3DXVECTOR3& rad)
 	}
 }
 
-void CPlayerManager::Update()
+void CCharacterManager::Update()
 {
 	//コントローラーの接続状態をチェック・切り替え.
 	SwitchControl();
@@ -267,9 +267,9 @@ void CPlayerManager::Update()
 		player->Update();
 	}
 
-	{
-		const int count = static_cast<int>(m_pPlayers.size());
-		if (count <= 0)return;
+	//{
+	//	const int count = static_cast<int>(m_pPlayers.size());
+	//	if (count <= 0)return;
 
 		////基本ターゲットを決める
 		////ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
@@ -285,40 +285,40 @@ void CPlayerManager::Update()
 		//const int tgtIdx = pickHumanTargetIndex();
 		//std::shared_ptr<CPlayer> target = (tgtIdx >= 0) ? m_pPlayers[tgtIdx] : nullptr;
 
-		for (int i = 0; i < count; ++i)
-		{
-			auto self = m_pPlayers[i];
+		//for (int i = 0; i < count; ++i)
+		//{
+		//	auto self = m_pPlayers[i];
 
-			if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
-			{
-				if (com->IsComEnabled())
-				{
-					////COM稼働中だけターゲットをあげる
-					//if (target && IsHumanControlled(target) && target != self)
-					//{
-					//	//ターゲットがプレイヤー限定なのであとで消す
-					//	com->SetTarget(target);
-					//}
-					//else
-					//{
-					//	com->ClearTarget();
-					//}
-					com->Update();
-				}
-				else
-				{
-					self->Update();
-				}
-			}
-			else
-			{
-				self->Update();
-			}				
-		}
-	}
+		//	if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
+		//	{
+		//		if (com->IsComEnabled())
+		//		{
+		//			////COM稼働中だけターゲットをあげる
+		//			//if (target && IsHumanControlled(target) && target != self)
+		//			//{
+		//			//	//ターゲットがプレイヤー限定なのであとで消す
+		//			//	com->SetTarget(target);
+		//			//}
+		//			//else
+		//			//{
+		//			//	com->ClearTarget();
+		//			//}
+		//			com->Update();
+		//		}
+		//		else
+		//		{
+		//			self->Update();
+		//		}
+		//	}
+		//	else
+		//	{
+		//		self->Update();
+		//	}				
+		//}
+	//}
 }
 
-void CPlayerManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
+void CCharacterManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
 	for (auto& player : m_pPlayers)
 	{
@@ -332,7 +332,7 @@ void CPlayerManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAME
 //	return m_pPlayers[m_ActivePlayerIndex]->GetPosition();
 //}
 
-std::shared_ptr<CCharacterObjectBase> CPlayerManager::GetControlPlayer(int index)
+std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int index)
 {
 	if (index >= 0 && index < (int)m_pPlayers.size()) {
 		return m_pPlayers[index];
@@ -340,9 +340,8 @@ std::shared_ptr<CCharacterObjectBase> CPlayerManager::GetControlPlayer(int index
 	return nullptr;
 }
 
-void CPlayerManager::SwitchActivePlayer()
+void CCharacterManager::SwitchActivePlayer()
 {
-
 	if (m_pPlayers.empty()) return;	//0人ならなにもしない
 
 	const int prev = m_ActivePlayerIndex;	//直前に操作してたやつ
@@ -368,7 +367,7 @@ void CPlayerManager::SwitchActivePlayer()
 	m_ActivePlayerIndex = next;
 }
 
-D3DXVECTOR3 CPlayerManager::GetPosition(int index) const
+D3DXVECTOR3 CCharacterManager::GetPosition(int index) const
 {
 	if (index >= 0 && index < static_cast<int>(m_pPlayers.size()))
 	{
@@ -377,7 +376,7 @@ D3DXVECTOR3 CPlayerManager::GetPosition(int index) const
 	return D3DXVECTOR3(0, 0, 0);
 }
 
-D3DXVECTOR3 CPlayerManager::GetRotation(int idx) const
+D3DXVECTOR3 CCharacterManager::GetRotation(int idx) const
 {
 	if (idx >= 0 && idx < static_cast<int>(m_pPlayers.size()))
 	{
@@ -386,7 +385,7 @@ D3DXVECTOR3 CPlayerManager::GetRotation(int idx) const
 	return D3DXVECTOR3(0, 0, 0);
 }
 
-void CPlayerManager::SetShotManager(std::shared_ptr<CShotManager>& mgr)
+void CCharacterManager::SetShotManager(std::shared_ptr<CShotManager>& mgr)
 {
 	m_ShotManager = mgr;
 
@@ -396,34 +395,33 @@ void CPlayerManager::SetShotManager(std::shared_ptr<CShotManager>& mgr)
 			com->AttachShotManager(m_ShotManager);	//weak_ptrに渡す
 		}
 	}
-
 }
 
-void CPlayerManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon)
+void CCharacterManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon)
 {
 	//このクラス内で使えるようにする.
 	m_pBody = body;
 	m_pCannon = cannon;
 
-	for (auto player : m_pPlayers)
+	for (auto& player : m_pPlayers)
 	{
 		player->SetCBody(body);
 		player->SetCannon(cannon);
 	}
 }
 
-void CPlayerManager::SetPlayerTuningAll(const TankTuning& t)
+void CCharacterManager::SetPlayerTuningAll(const TankTuning& t)
 {
 	for (auto& player : m_pPlayers)player->SetTuning(t);
 }
 
-void CPlayerManager::SetPlayerTuning(int idx, const TankTuning& t)
+void CCharacterManager::SetPlayerTuning(int idx, const TankTuning& t)
 {
 	if (idx >= 0 && idx < (int)m_pPlayers.size())m_pPlayers[idx]->SetTuning(t);
 }
 
 //プレイヤーとCOMの自動切り替え.
-void CPlayerManager::SwitchControl()
+void CCharacterManager::SwitchControl()
 {
 	for (int No = 0; No < PLAYER_MAX; No++)
 	{

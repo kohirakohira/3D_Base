@@ -22,8 +22,8 @@ CCollisionManager::CCollisionManager()
 	// 弾マネージャー
 	, m_pShotManager		()
 
-	// プレイヤーマネージャー
-	, m_pPlayerManager		()
+	// キャラクターマネージャー
+	, m_pCharacterManager		()
 
 	// 爆風当たり判定マネージャー
 	, m_pBlastManager		()
@@ -84,12 +84,12 @@ HRESULT CCollisionManager::LoadData()
 void CCollisionManager::WalltoPlayer()
 {
 	// 押し返しの強さ
-	const float pushStrength = m_pPlayerManager->GetTuning().moveSpeed;
+	const float pushStrength = m_pCharacterManager->GetTuning().moveSpeed;
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto player = m_pCharacterManager->GetControlPlayer(i);
 		if (!player->IsPlayer())continue;
 		auto Coll = player->GetBody()->GetCollider();
 
@@ -184,7 +184,7 @@ void CCollisionManager::PlayertoPlayer()
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		// プレイヤーAのコライダー取得
-		auto playerA = m_pPlayerManager->GetControlPlayer(i);
+		auto playerA = m_pCharacterManager->GetControlPlayer(i);
 		if (!playerA->IsPlayer())continue;
 		auto CollA = playerA->GetBody()->GetCollider();
 
@@ -194,7 +194,7 @@ void CCollisionManager::PlayertoPlayer()
 			if (i == j) continue;
 
 			// プレイヤーBのコライダー取得
-			auto playerB = m_pPlayerManager->GetControlPlayer(j);
+			auto playerB = m_pCharacterManager->GetControlPlayer(j);
 			if (!playerB->IsPlayer())continue;
 			auto CollB = playerB->GetBody()->GetCollider();
 
@@ -222,7 +222,7 @@ void CCollisionManager::PlayertoItemBox()
 	for (int PlayerIndex = 0; PlayerIndex < PLAYER_MAX; ++PlayerIndex)
 	{
 		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(PlayerIndex);
+		auto player = m_pCharacterManager->GetControlPlayer(PlayerIndex);
 		if (!player->IsPlayer())continue;
 		auto Coll = player->GetBody()->GetCollider();
 
@@ -250,7 +250,7 @@ void CCollisionManager::PlayertoItemBox()
 					//プレイヤーの速度を設定.
 					const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 0.03f, 0.03f, 0.3f };
 					//プレイヤーの情報を設定.
-					m_pPlayerManager->SetPlayerTuning(PlayerIndex, Info);
+					m_pCharacterManager->SetPlayerTuning(PlayerIndex, Info);
 				}
 
 				//攻撃力設定.
@@ -284,7 +284,7 @@ void CCollisionManager::PlayertoShot()
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		// プレイヤーのコライダー取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto player = m_pCharacterManager->GetControlPlayer(i);
 		if (!player->IsPlayer())continue;
 		auto Coll = player->GetBody()->GetCollider();
 
@@ -316,7 +316,7 @@ void CCollisionManager::WoodBoxtoPlayer()
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto player = m_pCharacterManager->GetControlPlayer(i);
 		if (!player->IsPlayer())continue;
 		auto Coll = player->GetBody()->GetCollider();
 
@@ -508,7 +508,7 @@ void CCollisionManager::PlayertoBlast()
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		//i番目のプレイヤーを取得.
-		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto player = m_pCharacterManager->GetControlPlayer(i);
 		if (!player->IsPlayer())continue;
 		auto Coll = player->GetBody()->GetCollider();
 

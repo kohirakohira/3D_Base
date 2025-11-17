@@ -9,7 +9,7 @@
 #include "GameObject//StaticMeshObject//CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス
 
 #include "GameObject//StaticMeshObject//StageObject//CStageObject.h"
-#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerManager/CPlayerManager.h"
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/CharacterManager/CCharacterManager.h"
 
 #include "Collision/BlastCollision/BlastCollisionManager/CBlastCollisionManager.h"
 #include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"
@@ -92,8 +92,8 @@ public:
 	// 弾マネージャーのセット
 	void SetCShotManager(std::shared_ptr<CShotManager> pShot) { m_pShotManager = pShot; }
 
-	// プレイヤーマネージャーのセット
-	void SetCPlayerManager(std::shared_ptr<CPlayerManager> pPlayer) { m_pPlayerManager = pPlayer; }
+	// キャラクターマネージャーのセット
+	void SetCPlayerManager(std::shared_ptr<CCharacterManager> pPlayer) { m_pCharacterManager = pPlayer; }
 
 	// 爆風当たり判定マネージャーのセット
 	void SetCBlastCollisionManager(std::shared_ptr<CBlastCollisionManager> pBlast) { m_pBlastManager = pBlast; }
@@ -123,8 +123,8 @@ private:
 	// 弾クラスマネージャー
 	std::shared_ptr<CShotManager>		m_pShotManager;
 
-	// プレイヤーマネージャー
-	std::shared_ptr<CPlayerManager>		m_pPlayerManager;
+	// キャラクターマネージャー
+	std::shared_ptr<CCharacterManager>		m_pCharacterManager;
 
 	// 爆風当たり判定マネージャー
 	std::shared_ptr<CBlastCollisionManager> m_pBlastManager;
