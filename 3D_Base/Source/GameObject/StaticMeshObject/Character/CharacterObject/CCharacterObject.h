@@ -32,7 +32,6 @@ public:
 	//インスタンス生成関数.
 	virtual void Create(int index);
 
-#if 0
 	//位置の設定.
 	virtual void SetPosition(D3DXVECTOR3 pos) = 0;
 	//位置を取得.
@@ -47,7 +46,6 @@ public:
 	virtual void SetScale(D3DXVECTOR3 sca) = 0;
 	//拡縮を取得.
 	virtual const D3DXVECTOR3 GetScale() = 0;
-#endif
 
 	//パラメータの設定.
 	virtual void SetTuning(const TankTuning& tuning) override{ m_Tuning = tuning; }
@@ -63,21 +61,14 @@ public:
 	virtual std::shared_ptr<CBody> const GetBody() { return m_pBody; }
 	virtual std::shared_ptr<CCannon> const GetCannon() { return m_pCannon; }
 
-	//車体・砲塔を取得.
-	virtual std::shared_ptr<CBody> const GetBody() { return m_Body; }
-	virtual std::shared_ptr<CCannon> const GetCannon() { return m_Cannon; }
-
 	//Body.Cannonのオーバロード
-	virtual std::shared_ptr<CBody> GetBody() const { return m_Body; }
-	virtual std::shared_ptr<CCannon> GetCannon() const { return m_Cannon; }
+	virtual std::shared_ptr<CBody> GetBody() const { return m_pBody; }
+	virtual std::shared_ptr<CCannon> GetCannon() const { return m_pCannon; }
 
 	//戦車のTransform
 	virtual void SetTankPosition(const D3DXVECTOR3& pos) {};
 	virtual void SetTankRotation(const D3DXVECTOR3& rot) {};
 	virtual void SetTankScale(float sca) {};
-
-	virtual const D3DXVECTOR3 GetPosition() = 0;
-	virtual const D3DXVECTOR3 GetRotation() = 0;
 
 	//メッシュアタッチ.CPlayerManagerで使う用
 	virtual void AttachMeshse(std::shared_ptr<CStaticMesh>pBody, std::shared_ptr<CStaticMesh>pCannon) ;
@@ -98,10 +89,10 @@ public:
 	virtual void SetHasControl(bool control) { m_HasControl = control; }
 
 	//ボディの設定
-	virtual void SetCBody(std::shared_ptr<CBody> pBody) { m_Body = pBody; }
+	virtual void SetCBody(std::shared_ptr<CBody> pBody) { m_pBody = pBody; }
 
 	//キャノンの設定
-	virtual void SetCannon(std::shared_ptr<CCannon> pCannon) { m_Cannon = pCannon; }
+	virtual void SetCannon(std::shared_ptr<CCannon> pCannon) { m_pCannon = pCannon; }
 
 	//キャノンポジション
 	virtual D3DXVECTOR3 GetCannonPosition() const;

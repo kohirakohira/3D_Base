@@ -59,11 +59,10 @@ public:
 	// ゲームの開始座標設定
 	void SetStartPosition();
 
+	// ゲーム開始時のプレイヤーの向き設定
 	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);
-	void Update() override;
-	void Draw (D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+
 	
-	D3DXVECTOR3 GetPosition();
 	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(int index);
 
 	void SwitchActivePlayer();

@@ -58,18 +58,6 @@ public:
 
 	void Init(int id);
 
-	//オーバライド
-	const D3DXVECTOR3 GetPosition() override;
-	const D3DXVECTOR3 GetRotation() override;
-
-	std::shared_ptr<CCannon> const GetCannon() override { return m_Cannon; }
-	std::shared_ptr<CBody> const GetBody() override { return m_Body; }
-
-	std::shared_ptr<CCannon> GetCannon() const override { return m_Cannon; }
-	std::shared_ptr<CBody> GetBody() const override { return m_Body; }
-
-	bool IsPlayer() const override { return true; }
-
 	//void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) ;
 	void SetTankPosition(const D3DXVECTOR3& pos) override;
 	void SetTankRotation(const D3DXVECTOR3& rot) override;
@@ -78,9 +66,6 @@ public:
 	//プレイヤーが壁に当たる処理をまとめる.
 	void SetPushBack(const D3DXVECTOR3& push);
 
-	//Body優先でワールド座標と回転を返す
-	virtual D3DXVECTOR3 GetPosition() const;
-	virtual D3DXVECTOR3 GetRotation() const;
 
 	// 更新関数
 	virtual void Update() override;
@@ -122,8 +107,8 @@ public:
 	void CreateCollider();
 
 	//外部のクラスから情報取得.
-	void SetCBody(std::shared_ptr<CBody> pBody) override{ m_Body = pBody; }
-	void SetCannon(std::shared_ptr<CCannon> pCannon) override{ m_Cannon = pCannon; }
+	void SetCBody(std::shared_ptr<CBody> pBody) override{ m_pBody = pBody; }
+	void SetCannon(std::shared_ptr<CCannon> pCannon) override{ m_pCannon = pCannon; }
 
 	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) override;
 
@@ -169,8 +154,8 @@ public:
 	virtual const TankTuning& GetTuning() const override { return m_Tuning; }
 
 protected:
-	std::shared_ptr<CBody> Body() const { return m_Body; }
-	std::shared_ptr<CCannon> Cannon() const { return m_Cannon; }
+	std::shared_ptr<CBody> Body() const { return m_pBody; }
+	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
 	void UpdateHumanInputAndMove(PlayerInput input);	//プレイヤー処理をいれておく
 
 	// 砲塔と車体の同期

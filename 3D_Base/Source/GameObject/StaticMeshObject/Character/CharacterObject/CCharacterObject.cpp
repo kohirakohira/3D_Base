@@ -10,8 +10,8 @@ CCharacterObjectBase::CCharacterObjectBase(
 	: m_HP					( hp )
 	, m_MaxHP				( hp )
 	//, m_Tuning			( tuning )
-	, m_Body				(std::move(body))
-	, m_Cannon				(std::move(cannon))
+	, m_pBody				(std::move(body))
+	, m_pCannon				(std::move(cannon))
 	, m_IsActive			( false )
 	, m_IsAlive				( false )
 	, m_Drawflag			( true  )
@@ -32,14 +32,14 @@ void CCharacterObjectBase::Create(int index)
 
 void CCharacterObjectBase::Update()
 {
-	if (m_Body)
+	if (m_pBody)
 	{
-		m_Body->Update();
+		m_pBody->Update();
 	}
 
-	if (m_Cannon)
+	if (m_pCannon)
 	{
-		m_Cannon->Update();
+		m_pCannon->Update();
 	}
 
 }
@@ -55,11 +55,11 @@ void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light
 
 #if 1
 	// ŽÔ‘Ì‚Æ–C“ƒ‚ð‚Ü‚Æ‚ß‚Ä•`‰æ
-	if (m_Body) {
-		m_Body->Draw(View, Proj, Light, Camera);
+	if (m_pBody) {
+		m_pBody->Draw(View, Proj, Light, Camera);
 	}
-	if (m_Cannon) {
-		m_Cannon->Draw(View, Proj, Light, Camera);
+	if (m_pCannon) {
+		m_pCannon->Draw(View, Proj, Light, Camera);
 	}
 #endif
 }
@@ -72,29 +72,29 @@ void CCharacterObjectBase::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std:
 
 void CCharacterObjectBase::SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
 {
-	m_Body->CreateBounding(pBody);
-	m_Cannon->CreateBounding(pCannon);
+	m_pBody->CreateBounding(pBody);
+	m_pCannon->CreateBounding(pCannon);
 }
 
 void CCharacterObjectBase::CreateCollider()
 {
-	m_Body->CreateBoxCollider(m_Body->GetMinPos(), m_Body->GetMaxPos());
-	m_Cannon->CreateBoxCollider(m_Cannon->GetMinPos(), m_Cannon->GetMaxPos());
+	m_pBody->CreateBoxCollider(m_pBody->GetMinPos(), m_pBody->GetMaxPos());
+	m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
 }
 
 D3DXVECTOR3 CCharacterObjectBase::GetCannonPosition() const
 {
-	if (m_Cannon)
+	if (m_pCannon)
 	{
-		return m_Cannon->GetPosition();
+		return m_pCannon->GetPosition();
 	}
 }
 
 float CCharacterObjectBase::GetCannonYaw() const
 {
-	if (m_Cannon)
+	if (m_pCannon)
 	{
-		return m_Cannon->GetRotation().y;
+		return m_pCannon->GetRotation().y;
 	}
 }
 

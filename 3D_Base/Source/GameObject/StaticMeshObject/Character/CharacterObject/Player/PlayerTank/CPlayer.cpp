@@ -50,8 +50,7 @@ static inline float Deadzone(float v, float z)
 
 
 CPlayer::CPlayer()
-	: m_pCannon			( nullptr )
-	, m_Controller		( nullptr )
+	: m_Controller		( nullptr )
 
 	, m_PlayerID		()
 	, m_HasControl		( false )
@@ -106,29 +105,17 @@ void CPlayer::Init(int id)
 	m_IsAlive = true;
 }
 
-const D3DXVECTOR3 CPlayer::GetPosition()
-{
-	if (m_Body) return m_Body->GetPosition();
-	return CCharacter::GetPosition();
-}
-
-const D3DXVECTOR3 CPlayer::GetRotation()
-{
-	if (m_Body) return m_Body->GetRotation();;
-	return CCharacter::GetRotation();
-}
-
 //共有
 void CPlayer::SetInputManagerShared(const std::shared_ptr<CInputManager>& im)
 {
 	m_Input = im;
-	if (m_Body)
+	if (m_pBody)
 	{
-		m_Body->SetInputManager(m_Input);
+		m_pBody->SetInputManager(m_Input);
 	}
-	if (m_Cannon)
+	if (m_pCannon)
 	{
-		m_Cannon->SetInputManager(m_Input);
+		m_pCannon->SetInputManager(m_Input);
 	}
 }
 
@@ -144,26 +131,26 @@ void CPlayer::SetKeyboardEnabled(bool on)
 void CPlayer::SetTankPosition(const D3DXVECTOR3& pos)
 {	
 
-	m_Body->SetPosition(pos);		// 車体座標指定
-	m_Cannon->SetPosition(pos);	// 砲塔座標指定
+	m_pBody->SetPosition(pos);		// 車体座標指定
+	m_pCannon->SetPosition(pos);	// 砲塔座標指定
 }
 
 void CPlayer::SetTankRotation(const D3DXVECTOR3& rot)
 {
-	m_Body->SetRotation(rot);		// 車体回転指定
-	m_Cannon->SetRotation(rot);	// 砲塔回転指定
+	m_pBody->SetRotation(rot);		// 車体回転指定
+	m_pCannon->SetRotation(rot);	// 砲塔回転指定
 }
 
 void CPlayer::SetTankScale(const float sca)
 {
-	m_Body->SetScale(sca);			// 車体大きさ指定
-	m_Cannon->SetScale(sca);		// 砲塔大きさ指定
+	m_pBody->SetScale(sca);			// 車体大きさ指定
+	m_pCannon->SetScale(sca);		// 砲塔大きさ指定
 }
 
 void CPlayer::SetPushBack(const D3DXVECTOR3& push)
 {
-	m_Body->PushBack(push);
-	m_Cannon->PushBack(push);
+	m_pBody->PushBack(push);
+	m_pCannon->PushBack(push);
 }
 
 void CPlayer::Update()
@@ -181,8 +168,8 @@ void CPlayer::Update()
 	//操作権がない時は入力を読まない
 	if (!m_HasControl)
 	{
-		if (m_Body)   m_Body->CCharacter::Update();
-		if (m_Cannon) m_Cannon->CCharacter::Update();
+		if (m_pBody)   m_pBody->CCharacter::Update();
+		if (m_pCannon) m_pCannon->CCharacter::Update();
 		return;
 	}
 
@@ -215,8 +202,10 @@ void CPlayer::SetPosition(D3DXVECTOR3 pos)
 
 const D3DXVECTOR3 CPlayer::GetPosition()
 {
-	return D3DXVECTOR3();
+	if (m_pBody) return m_pBody->GetPosition(); //常にbodyの実位置を返す
+	return CCharacter::GetPosition();
 }
+
 
 void CPlayer::SetRotation(D3DXVECTOR3 rot)
 {
@@ -224,7 +213,8 @@ void CPlayer::SetRotation(D3DXVECTOR3 rot)
 
 const D3DXVECTOR3 CPlayer::GetRotation()
 {
-	return D3DXVECTOR3();
+	if (m_pBody) return m_pBody->GetRotation();;
+	return CCharacter::GetRotation();
 }
 
 void CPlayer::SetScale(D3DXVECTOR3 sca)
@@ -244,50 +234,50 @@ void CPlayer::Move(const PlayerInput& input)
 	//現在の情報を取得・保存.
 	auto& tuning = GetTuning();
 	//デフォは停止.
-	m_Body->SetMoveState(CBody::Stop);
+	m_pBody->SetMoveState(CBody::Stop);
 
 	switch (dir)
 	{
 	case CController::Direction::Up:
 		//前進.
-		m_Body->SetMoveState(CBody::Forward);
+		m_pBody->SetMoveState(CBody::Forward);
 		break;
 	case CController::Direction::Down:
 		//後退.
-		m_Body->SetMoveState(CBody::Backward);
+		m_pBody->SetMoveState(CBody::Backward);
 		break;
 	case CController::Direction::Left:
-		m_Body->AddRotationY(-tuning.turretTurnSpeed);
+		m_pBody->AddRotationY(-tuning.turretTurnSpeed);
 		break;
 	case CController::Direction::Right:
-		m_Body->AddRotationY(tuning.turretTurnSpeed);
+		m_pBody->AddRotationY(tuning.turretTurnSpeed);
 		break;
 	case CController::Direction::UpLeft:
-		m_Body->AddRotationY(-tuning.turretTurnSpeed);
-		m_Body->SetMoveState(CBody::Forward);
+		m_pBody->AddRotationY(-tuning.turretTurnSpeed);
+		m_pBody->SetMoveState(CBody::Forward);
 		break;
 	case CController::Direction::UpRight:
-		m_Body->AddRotationY(tuning.turretTurnSpeed);
-		m_Body->SetMoveState(CBody::Forward);
+		m_pBody->AddRotationY(tuning.turretTurnSpeed);
+		m_pBody->SetMoveState(CBody::Forward);
 		break;
 	case CController::Direction::DownLeft:
-		m_Body->AddRotationY(-tuning.turretTurnSpeed);
-		m_Body->SetMoveState(CBody::Backward);
+		m_pBody->AddRotationY(-tuning.turretTurnSpeed);
+		m_pBody->SetMoveState(CBody::Backward);
 		break;
 	case CController::Direction::DownRight:
-		m_Body->AddRotationY(tuning.turretTurnSpeed);
-		m_Body->SetMoveState(CBody::Backward);
+		m_pBody->AddRotationY(tuning.turretTurnSpeed);
+		m_pBody->SetMoveState(CBody::Backward);
 		break;
 	case CController::Direction::None:
 		//何も入力が無いので停止しておく.
-		m_Body->SetMoveState(CBody::Stop);
+		m_pBody->SetMoveState(CBody::Stop);
 		break;
 	default:
 		break;
 	}
 
 	//移動.
-	m_Body->RadioControl();
+	m_pBody->RadioControl();
 
 }
 
@@ -351,7 +341,7 @@ void CPlayer::Reload(const D3DXVECTOR3& pos, float y)
 	//弾の発射.
 	input.shot = true;
 
-	m_Cannon->Reload(pos, y, input.shot, m_PlayerID);
+	m_pCannon->Reload(pos, y, input.shot, m_PlayerID);
 }
 
 void CPlayer::SetTune(const TankTuning& info)
@@ -402,12 +392,12 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 			if (m_Controller->Down(CXInput::RB, true))
 			{
 				//リロード.
-				Reload(m_Cannon->GetCannonPosition(), m_Cannon->GetRotation().y);
+				Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
 			}
 		}
 
-		m_Body->Update();
-		m_Cannon->Update();
+		m_pBody->Update();
+		m_pCannon->Update();
 
 	}
 
@@ -415,7 +405,7 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 //	{
 //#if 1
 //		//pad入力
-//		if (!m_Body || !m_Cannon) return;
+//		if (!m_pBody || !m_pCannon) return;
 //
 //		float move = 0.f, turn = 0.f, aim = 0.f;
 //
@@ -433,18 +423,18 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 //		const float dt = 1.f / FPS;
 //		//const auto& tuning = GetTuning();
 //
-//		D3DXVECTOR3 pos = m_Body->GetPosition();
-//		D3DXVECTOR3 bodyrot = m_Body->GetRotation();
-//		D3DXVECTOR3 cannonrot = m_Cannon->GetRotation();
+//		D3DXVECTOR3 pos = m_pBody->GetPosition();
+//		D3DXVECTOR3 bodyrot = m_pBody->GetRotation();
+//		D3DXVECTOR3 cannonrot = m_pCannon->GetRotation();
 //
 //		bodyrot.y += turn * (m_Tune.bodyTurnSpeed * dt);
 //		D3DXVECTOR3 fwd(std::sinf(bodyrot.y), 0.f, std::cosf(bodyrot.y));
 //		pos += fwd * (move * m_Tune.moveSpeed * dt);
 //		cannonrot.y += aim * (m_Tune.turretTurnSpeed * dt);
 //
-//		m_Body->SetRotation(bodyrot);
-//		m_Body->SetPosition(pos.x, pos.y = 0, pos.z);
-//		m_Body->Update();
+//		m_pBody->SetRotation(bodyrot);
+//		m_pBody->SetPosition(pos.x, pos.y = 0, pos.z);
+//		m_pBody->Update();
 //
 //		//砲塔と車体を同期する.
 //		SyncCannonToBody();
@@ -452,10 +442,10 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 //			//この下のコメントを外したら、車体と砲塔が別々に動く.
 //			//D3DXVECTOR3 cannonpos = pos;
 //			//cannonpos.y += tuning.cannonHeight;
-//			//m_Cannon->SetPosition(cannonpos);
+//			//m_pCannon->SetPosition(cannonpos);
 //		}
-//		m_Cannon->SetRotation(cannonrot);
-//		m_Cannon->Update();
+//		m_pCannon->SetRotation(cannonrot);
+//		m_pCannon->Update();
 //	}
 }
 
@@ -468,11 +458,6 @@ void CPlayer::SyncCannonToBody()
 	D3DXVECTOR3 pos = Body()->GetPosition();
 	//pos.y += m_Tune.cannonHeight;		// 砲塔の高さオフセット
 	Cannon()->SetPosition(pos);			// 位置を同期
-}
-
-void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
-{
-	CCharacterObjectBase::Draw(View, Proj, Light, Camera);
 }
 
 // プレイヤーのダメージ処理
@@ -576,61 +561,47 @@ void CPlayer::HitPlayer()
 // バウンディングオブジェクトを設定
 void CPlayer::SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
 {
-	m_Body->CreateBounding(pBody);
-	m_Cannon->CreateBounding(pCannon);
+	m_pBody->CreateBounding(pBody);
+	m_pCannon->CreateBounding(pCannon);
 }
 
 // コライダーの作成
 void CPlayer::CreateCollider()
 {
-	m_Body->CreateBoxCollider(m_Body->GetMinPos(), m_Body->GetMaxPos());
-	m_Cannon->CreateBoxCollider(m_Cannon->GetMinPos(), m_Cannon->GetMaxPos());
+	m_pBody->CreateBoxCollider(m_pBody->GetMinPos(), m_pBody->GetMaxPos());
+	m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
 }
 
 //アタッチメッシュ
 void CPlayer::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
 {
-	m_Body->AttachMesh(pBody);
-	m_Cannon->AttachMesh(pCannon);
+	m_pBody->AttachMesh(pBody);
+	m_pCannon->AttachMesh(pCannon);
 }
 
 
 D3DXVECTOR3 CPlayer::GetCannonPosition() const
 {
 
-	if (m_Cannon)
+	if (m_pCannon)
 	{
-		return m_Cannon->GetPosition();
+		return m_pCannon->GetPosition();
 	}
-	else
-	{
-		return GetPosition();
-	}
+	//else
+	//{
+	//	return GetPosition();
+	//}
 }
 
 float CPlayer::GetCannonYaw() const
 {
 
-	if (m_Cannon)
+	if (m_pCannon)
 	{
-		return m_Cannon->GetRotation().y;
+		return m_pCannon->GetRotation().y;
 	}
-	else
-	{
-		return GetRotation().y;
-	}
+	//else
+	//{
+	//	return GetRotation().y;
+	//}
 }
-
-D3DXVECTOR3 CPlayer::GetPosition() const
-{
-	if (m_Body)return m_Body->GetPosition();	//常にbodyの実位置を返す
-	return CCharacter::GetPosition();
-}
-
-D3DXVECTOR3 CPlayer::GetRotation() const
-{
-	if (m_Body)return m_Body->GetRotation();
-	return CCharacter::GetRotation();
-}
-
-
