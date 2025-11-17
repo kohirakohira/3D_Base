@@ -170,6 +170,7 @@
     <ClCompile Include="Source\Assets\DirectX\DirectX11\CDirectX11.cpp" />
     <ClCompile Include="Source\Assets\DirectX\DirectX9\CDirectX9.cpp" />
     <ClCompile Include="Source\Assets\Mesh\StaticMesh\CStaticMesh.cpp" />
+    <ClCompile Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.cpp" />
     <ClCompile Include="Source\Assets\Sound\CSound.cpp" />
     <ClCompile Include="Source\Assets\Sound\CSoundManager.cpp" />
     <ClCompile Include="Source\Assets\Sprite\Sprite2D\CSprite2D.cpp" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameMain\CGameMain.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameResult\CGameResult.cpp" />
+    <ClCompile Include="Source\SceneManager\SceneBase\GameResult\ResultProduction\CResultProduction.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameTitle\CGameTitle.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\CGround.cpp" />
@@ -216,7 +218,6 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\CPlayer.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\CStaticMeshObject.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.cpp" />
-    <ClCompile Include="Source\Tameshi\CTameshi.cpp" />
     <ClCompile Include="Source\InputDevice\Input\XInput\CXInput.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.cpp" />
     <ClCompile Include="Source\GameObject\CGameObject.cpp" />
@@ -231,15 +232,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\Tameshi\test.cpp" />
     <ClCompile Include="Source\Vector3.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Assets\Data\Singleton\CSingleton.h" />
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX11\CDirectX11.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX9\CDirectX9.h" />
     <ClInclude Include="Source\Assets\Mesh\StaticMesh\CStaticMesh.h" />
+    <ClInclude Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.h" />
     <ClInclude Include="Source\Assets\Sound\CSound.h" />
     <ClInclude Include="Source\Assets\Sound\CSoundManager.h" />
     <ClInclude Include="Source\Assets\Sprite\Sprite2D\CSprite2D.h" />
@@ -265,6 +267,7 @@
     <ClInclude Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameMain\CGameMain.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameResult\CGameResult.h" />
+    <ClInclude Include="Source\SceneManager\SceneBase\GameResult\ResultProduction\CResultProduction.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameSetting\CGameSettings.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameTitle\CGameTitle.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Ground\CGround.h" />
@@ -287,7 +290,6 @@
     <ClInclude Include="Source\Main\CMain.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\CPlayer.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\CStaticMeshObject.h" />
-    <ClInclude Include="Source\Tameshi\CTameshi.h" />
     <ClInclude Include="Source\InputDevice\Input\XInput\CXInput.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.h" />
     <ClInclude Include="Source\GameObject\CGameObject.h" />

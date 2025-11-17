@@ -11,13 +11,13 @@
 
 
 //======================================================
-//	タイトルの演出.
+//	リザルトの演出.
 //======================================================
-class CTitleProduction
+class CResultProduction
 {
 public:
-	CTitleProduction();
-	~CTitleProduction();
+	CResultProduction();
+	~CResultProduction();
 
 	//動作関数.
 	void Update();
@@ -31,6 +31,13 @@ public:
 	HRESULT LoadData();
 
 public:
+	//勝ち抜け.
+	void WinUpdate();
+
+	//引き分け.
+	void DrawUpdate();
+
+private:
 	//スタティックメッシュクラス.
 	std::shared_ptr<CStaticMesh>	m_GroundMesh;		//地面メッシュ.
 

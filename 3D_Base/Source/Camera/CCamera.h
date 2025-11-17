@@ -20,7 +20,6 @@ public:
 	void SetCameraPos(float x, float y, float z);
 	//ライトの回転設定.
 	void SetLightRot(float x, float y, float z);
-
 	//プロジェクション関数.
 	void Projection();
 
@@ -35,14 +34,15 @@ public:
 	void SetTargetPos(const D3DXVECTOR3& pos);
 	void SetTargetRotY(float rotY);
 
+	//位置の取得.
 	D3DXVECTOR3& GetCameraPosition() { return m_Camera.vPosition; }
-	
+	//注視点の位置取得.
 	D3DXVECTOR3& GetLookPosition() { return m_Camera.vLook; }
-
-public:
 	//自由移動.
 	void FreeMove();
 
+public:
+	//ライト情報.
 	const LIGHT& GetLight() const { return m_Light; }
 	void SetLightPos(float x, float y, float z) { m_Light.Position = D3DXVECTOR3(x, y, z); }
 	void SetLightColor(float r, float g, float b) { m_Light.Color = D3DXVECTOR3(r, g, b); }
