@@ -46,6 +46,13 @@ public:
 		{
 			return nullptr;
 		}
+
+		//接続チェック.
+		if (m_Controller[index] == nullptr || m_Controller[index]->CheckConnected() != true)
+		{
+			return nullptr;
+		}
+
 		//生ポインタを返す.
 		return m_Controller[index].get();
 	}
