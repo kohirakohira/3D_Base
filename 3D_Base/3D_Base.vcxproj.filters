@@ -29,13 +29,10 @@
     <ClCompile Include="Source\Collision\Collider\SphereCollider\CSphereCollider.cpp" />
     <ClCompile Include="Source\Collision\CollisionManager\CCollisionManager.cpp" />
     <ClCompile Include="Source\Collision\Ray\CRay.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.cpp" />
     <ClCompile Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.cpp" />
     <ClCompile Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.cpp" />
     <ClCompile Include="Source\Camera\CCamera.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CCharacter.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.cpp" />
     <ClCompile Include="Source\Assets\Effect\CEffect.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\StageObject\CStageObject.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameMain\CGameMain.cpp" />
@@ -50,7 +47,6 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\ItemBoxManager\CItemBoxManager.cpp" />
     <ClCompile Include="Source\InputDevice\Input\KeyInput\CKeyInput.cpp" />
     <ClCompile Include="Source\InputDevice\Key\CMultiInputManager\CMultiInputKeyManager.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerManager\CPlayerManager.cpp" />
     <ClCompile Include="Source\Collision\Shape\Ray\CRay.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\CSceneBase.cpp" />
     <ClCompile Include="Source\SceneManager\CSceneManager.cpp" />
@@ -58,7 +54,6 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\ShotManager\CShotManager.cpp" />
     <ClCompile Include="Source\Game\CGame.cpp" />
     <ClCompile Include="Source\Main\CMain.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\CPlayer.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\CStaticMeshObject.cpp" />
     <ClCompile Include="Source\InputDevice\Input\XInput\CXInput.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.cpp" />
@@ -76,11 +71,18 @@
     <ClCompile Include="Source\Collision\BlastCollision\CBlastCollision.cpp" />
     <ClCompile Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CChase\CChase.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\CController.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameResult\ResultProduction\CResultProduction.cpp" />
     <ClCompile Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CChase\CChase.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankCannon\CCannon.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerManager\CPlayerManager.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\CPlayer.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -96,13 +98,10 @@
     <ClInclude Include="Source\Collision\Collider\SphereCollider\CSphereCollider.h" />
     <ClInclude Include="Source\Collision\CollisionManager\CCollisionManager.h" />
     <ClInclude Include="Source\Collision\Ray\CRay.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankBody\CBody.h" />
     <ClInclude Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.h" />
     <ClInclude Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.h" />
     <ClInclude Include="Source\Camera\CCamera.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\TankCannon\CCannon.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CCharacter.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CComPlayer.h" />
     <ClInclude Include="Source\Assets\Effect\CEffect.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\StageObject\CStageObject.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameMain\CGameMain.h" />
@@ -117,7 +116,6 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\CItemBoxManager.h" />
     <ClInclude Include="Source\InputDevice\Input\KeyInput\CKeyInput.h" />
     <ClInclude Include="Source\InputDevice\Key\CMultiInputManager\CMultiInputKeyManager.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerManager\CPlayerManager.h" />
     <ClInclude Include="Source\Collision\Shape\Ray\CRay.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\CSceneBase.h" />
     <ClInclude Include="Source\SceneManager\CSceneManager.h" />
@@ -126,7 +124,6 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Shot\ShotManager\CShotManager.h" />
     <ClInclude Include="Source\Game\CGame.h" />
     <ClInclude Include="Source\Main\CMain.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\CPlayer.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\CStaticMeshObject.h" />
     <ClInclude Include="Source\InputDevice\Input\XInput\CXInput.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.h" />
@@ -146,12 +143,19 @@
     <ClInclude Include="Source\Collision\BlastCollision\CBlastCollision.h" />
     <ClInclude Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CChase\CChase.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\CController.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameResult\ResultProduction\CResultProduction.h" />
     <ClInclude Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.h" />
     <ClInclude Include="Source\Assets\Data\Singleton\CSingleton.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CChase\CChase.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankCannon\CCannon.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerManager\CPlayerManager.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\CPlayer.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />
