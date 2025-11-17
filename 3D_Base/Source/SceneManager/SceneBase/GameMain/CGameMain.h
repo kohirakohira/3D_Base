@@ -26,10 +26,9 @@
 
 //-----キャラクター-----.
 #include "GameObject//StaticMeshObject//Character//CCharacter.h" // キャラクタークラス.
-#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerManager/CPlayerManager.h" // プレイヤーマネージャークラス.
+#include "GameObject//StaticMeshObject//Character//CharacterObject//Player//CharacterManager//CCharacterManager.h" // キャラクターマネージャークラス
 #include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h" // 弾クラスマネージャー.
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス.
-#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerManager/CPlayerManager.h" // 戦車：砲塔クラス.
 
 #include "Collision//BlastCollision//BlastCollisionManager//CBlastCollisionManager.h"	//爆風クラス.
 
@@ -169,8 +168,8 @@ public:
 	// スタティックメッシュオブジェクトクラス.
 	std::unique_ptr<CStaticMeshObject>			m_pBackImgObject;
 
-	// プレイヤーマネージャー.
-	std::shared_ptr<CPlayerManager>			m_pPlayerManager;
+	// キャラクターマネージャー
+	std::shared_ptr<CCharacterManager>			m_pCharacterManager;
 
 	// 弾クラスマネージャー.
 	std::shared_ptr<CShotManager>			m_pShotManager;

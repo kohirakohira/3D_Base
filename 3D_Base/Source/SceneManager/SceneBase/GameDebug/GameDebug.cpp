@@ -36,7 +36,7 @@ CGameDebug::CGameDebug(HWND hWnd)
 	, m_pStaticMesh_TankBodyBlue		( nullptr )
 	, m_pStaticMesh_TankCannonBlue		( nullptr )
 
-	//, m_pPlayerManager					( nullptr )
+	//, m_pCharacterManager					( nullptr )
 
 	, m_pTimer							( nullptr )
 
@@ -62,12 +62,12 @@ void CGameDebug::Update()
 	m_pItemBoxManager->Update();
 
 	////プレイヤーのマネージャー.
-	//m_pPlayerManager->Update();
+	//m_pCharacterManager->Update();
 
 	//// Cキー押されたら操作プレイヤー切り替え
 	//if (GetAsyncKeyState('C') & 0x0001)
 	//{
-	//	m_pPlayerManager->SwitchActivePlayer();
+	//	m_pCharacterManager->SwitchActivePlayer();
 	//}
 
 }
@@ -89,7 +89,7 @@ void CGameDebug::Draw()
 	m_pItemBoxManager->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
 
 	////プレイヤーの描画.
-	//m_pPlayerManager->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
+	//m_pCharacterManager->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
 
 	//タイマー描画.
 	m_pTimer->Draw();
@@ -196,9 +196,9 @@ void CGameDebug::Create()
 	m_pStaticMesh_TankBodyBlue		= std::make_shared<CStaticMesh>();
 	m_pStaticMesh_TankCannonBlue	= std::make_shared<CStaticMesh>();
 
-	////プレイヤーマネージャーのインスタンス生成.
-	//m_pPlayerManager = std::make_shared<CPlayerManager>();
-	//m_pPlayerManager->Initialize();
+	////キャラクターマネージャーのインスタンス生成.
+	//m_pCharacterManager = std::make_shared<CPlayerManager>();
+	//m_pCharacterManager->Initialize();
 
 
 	//デバッグテキストのインスタンス作成]
@@ -269,7 +269,7 @@ HRESULT CGameDebug::LoadData()
 	m_pStaticMesh_TankBodyBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Body\\Body.x"));
 	m_pStaticMesh_TankCannonBlue->Init(_T("Data\\Mesh\\Static\\Tank\\Blue\\Cannon\\Cannon.x"));
 	////プレイヤーマナージャーにアタッチ.
-	//m_pPlayerManager->AttachMeshesToPlayer(0, m_pStaticMesh_TankBodyRed,  m_pStaticMesh_TankCannonRed);
-	//m_pPlayerManager->AttachMeshesToPlayer(1, m_pStaticMesh_TankBodyBlue, m_pStaticMesh_TankCannonBlue);
+	//m_pCharacterManager->AttachMeshesToPlayer(0, m_pStaticMesh_TankBodyRed,  m_pStaticMesh_TankCannonRed);
+	//m_pCharacterManager->AttachMeshesToPlayer(1, m_pStaticMesh_TankBodyBlue, m_pStaticMesh_TankCannonBlue);
 	return S_OK;
 }

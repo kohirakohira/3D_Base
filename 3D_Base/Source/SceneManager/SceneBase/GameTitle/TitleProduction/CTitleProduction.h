@@ -37,5 +37,7 @@ public:
 	std::shared_ptr<CCamera>		m_Camera;
 	//地面クラス変数.
 	std::unique_ptr<CGround>		m_Ground;
+	//プレイヤークラス変数.
+	std::unique_ptr<CCharacterManager> m_Player;
 
 };
