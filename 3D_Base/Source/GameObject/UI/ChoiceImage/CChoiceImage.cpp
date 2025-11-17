@@ -38,25 +38,31 @@ void CChoiceImage::Draw()
 void CChoiceImage::MoveChoiceImg()
 {
 	//コントローラーの取得※0番しか動かせない.
-	CController* controller = CControllerManager::GetInstance().GetController(0);
-	////中身が無いときは通らないようにする.
-	//if (!controller || !controller->CheckConnected()) return;
+	if (CControllerManager::GetInstance().GetController(0) != nullptr)
+	{
+		//コントローラーの動作.
+		ControllerUpdate();
+	}
+	else
+	{
+		//キーの動作.
+		KeyUpdate();
+	}
 
-	////スティックの入力方向取得.
-	//CController::Direction dirlef = controller->GetLeftStickDirection(0.2f);
 
-	//定数宣言.
-	//位置の調整用.
-	const float posAdjustment_1 = 1.5f;
-	const float posAdjustment_2 = 1.2f;
-	const float posAdjustment_3 = 1.37f;
-	const float posAdjustment_4 = 2.75f;
+
+}
+
+void CChoiceImage::ControllerUpdate()
+{
+	//スティックの入力方向取得.
+	CController::Direction dirlef = CControllerManager::GetInstance().GetController(0)->GetLeftStickDirection(0.2f);
 
 	switch (m_SceneType)
 	{
 	case CSceneType::Title:
 		//上移動(プレイ).
-		if (m_Key->NowInputKey('W') == true /*|| dirlef == CController::Direction::Up*/)
+		if (dirlef == CController::Direction::Up)
 		{
 			//戻る処理.
 			m_vPosition.y = WND_H / posAdjustment_1;
@@ -64,7 +70,7 @@ void CChoiceImage::MoveChoiceImg()
 			m_IsSelected = false;
 		}
 		//下移動(エンド).
-		if (m_Key->NowInputKey('S') == true /*|| dirlef == CController::Direction::Down*/)
+		if (dirlef == CController::Direction::Down)
 		{
 			//ゲームスタート処理.
 			m_vPosition.y = WND_H / posAdjustment_2;
@@ -77,7 +83,7 @@ void CChoiceImage::MoveChoiceImg()
 		break;
 	case CSceneType::Setting:
 		//右移動(スタート).
-		if (m_Key->NowInputKey('D') == true /*|| dirlef == CController::Direction::Right*/)
+		if (dirlef == CController::Direction::Right)
 		{
 			//タイトルに戻る処理.
 			m_vPosition.x = WND_W / posAdjustment_3;
@@ -85,7 +91,63 @@ void CChoiceImage::MoveChoiceImg()
 			m_IsSelected = false;
 		}
 		//左移動(戻る).
-		if (m_Key->NowInputKey('A') == true /*|| dirlef == CController::Direction::Left*/)
+		if (dirlef == CController::Direction::Left)
+		{
+			//ゲームメイン処理.
+			m_vPosition.x = WND_W / posAdjustment_4;
+			//メイン.
+			m_IsSelected = true;
+		}
+		break;
+	case CSceneType::Main:
+		//多分何も処理がない.
+		break;
+	case CSceneType::Result:
+	case CSceneType::ResultWin:
+	case CSceneType::ResultDraw:
+
+		break;
+	default:
+		break;
+	}
+}
+
+void CChoiceImage::KeyUpdate()
+{
+	switch (m_SceneType)
+	{
+	case CSceneType::Title:
+		//上移動(プレイ).
+		if (m_Key->NowInputKey('W') == true)
+		{
+			//戻る処理.
+			m_vPosition.y = WND_H / posAdjustment_1;
+			//セッティング.
+			m_IsSelected = false;
+		}
+		//下移動(エンド).
+		if (m_Key->NowInputKey('S') == true)
+		{
+			//ゲームスタート処理.
+			m_vPosition.y = WND_H / posAdjustment_2;
+			//閉じる.
+			m_IsSelected = true;
+		}
+		break;
+	case CSceneType::Debug:
+		//多分何も処理がない.
+		break;
+	case CSceneType::Setting:
+		//右移動(スタート).
+		if (m_Key->NowInputKey('D') == true)
+		{
+			//タイトルに戻る処理.
+			m_vPosition.x = WND_W / posAdjustment_3;
+			//戻る.
+			m_IsSelected = false;
+		}
+		//左移動(戻る).
+		if (m_Key->NowInputKey('A') == true)
 		{
 			//ゲームメイン処理.
 			m_vPosition.x = WND_W / posAdjustment_4;

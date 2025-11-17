@@ -28,6 +28,10 @@ public:
 	//選択しているかどうかを取得する関数.
 	bool GetSelectedFlag() const { return m_IsSelected; }
 
+	//コントローラー入出力.
+	void ControllerUpdate();
+	//キー入出力.
+	void KeyUpdate();
 
 public:
 	//シーンタイプ変数.
@@ -36,6 +40,12 @@ public:
 	//選択しているものを識別するためのモノ.
 	bool 			m_IsSelected;
 
+	//定数宣言.
+	//位置の調整用.
+	const float posAdjustment_1 = 1.5f;
+	const float posAdjustment_2 = 1.2f;
+	const float posAdjustment_3 = 1.37f;
+	const float posAdjustment_4 = 2.75f;
 private:
 	//キークラスの宣言.
 	std::unique_ptr<CMultiInputKeyManager>	m_Key;
