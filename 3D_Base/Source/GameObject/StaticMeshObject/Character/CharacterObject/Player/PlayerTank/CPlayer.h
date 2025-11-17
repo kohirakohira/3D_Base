@@ -171,7 +171,7 @@ protected:
 	int			m_ControllerIndex;
 
 private:
-	//TankTuning m_Tune{};
+	///TankTuning m_Tune{};
 	std::shared_ptr<CInputManager> m_pInput;
 
 };
