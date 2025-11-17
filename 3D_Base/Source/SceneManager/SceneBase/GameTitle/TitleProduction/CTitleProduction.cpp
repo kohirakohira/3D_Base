@@ -3,7 +3,6 @@
 CTitleProduction::CTitleProduction()
 	: m_Camera				( nullptr )
 	, m_GroundMesh			( nullptr )
-	, m_PlayerMesh			( nullptr )
 
 	, m_Ground				( nullptr )
 {
@@ -56,6 +55,13 @@ void CTitleProduction::Init()
 {
 	//カメラの初期化.
 	m_Camera->Init();
+	
+	//カメラの設定.
+	m_Camera->SetLightPos(0.0f, 10.0f, 10.0f);		//位置設定.
+	m_Camera->SetLightColor(1.0f, 1.0f, 1.0f);		//色の設定.
+	m_Camera->SetLightIntensity(10.0f);				//ライトの強さ.
+	m_Camera->SetLightRange(100.0f);				//ライトの長さ.
+	m_Camera->SetLightAtten(0.0f, 0.0f, 0.1);		//ライトの減衰.
 
 	//地面の初期化.
 	m_Ground->Init();

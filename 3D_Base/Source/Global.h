@@ -43,7 +43,7 @@ const int   WND_W	= 1920;		//ウィンドウの幅.
 const float WND_WF	= 1920.f;	//ウィンドウの幅.
 const int   WND_H	= 1080;		//ウィンドウの高さ.
 const float WND_HF	= 1080.f;	//ウィンドウの高さ.
-const int FPS = 60;			//フレームレート.
+const int	FPS		= 60;		//フレームレート.
 
 //-----定数宣言(連続入力阻止カウントマックス)-----.
 const int INPUT_COUNT_MAX = 60;	//連続入力阻止のカウントマックス.

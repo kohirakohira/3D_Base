@@ -60,7 +60,6 @@
     <ClCompile Include="Source\Main\CMain.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\CPlayer.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\CStaticMeshObject.cpp" />
-    <ClCompile Include="Source\Tameshi\CTameshi.cpp" />
     <ClCompile Include="Source\InputDevice\Input\XInput\CXInput.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.cpp" />
     <ClCompile Include="Source\GameObject\CGameObject.cpp" />
@@ -72,7 +71,6 @@
     <ClCompile Include="Source\GameObject\UI\SelectIcon\CSelectIcon.cpp" />
     <ClCompile Include="Source\GameObject\UI\Timer\CTimer.cpp" />
     <ClCompile Include="Source\stdafx.cpp" />
-    <ClCompile Include="Source\Tameshi\test.cpp" />
     <ClCompile Include="Source\Vector3.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
     <ClCompile Include="Source\Collision\BlastCollision\CBlastCollision.cpp" />
@@ -81,6 +79,8 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\COM\CChase\CChase.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\CController.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.cpp" />
+    <ClCompile Include="Source\SceneManager\SceneBase\GameResult\ResultProduction\CResultProduction.cpp" />
+    <ClCompile Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -128,7 +128,6 @@
     <ClInclude Include="Source\Main\CMain.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\Player\PlayerTank\CPlayer.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\CStaticMeshObject.h" />
-    <ClInclude Include="Source\Tameshi\CTameshi.h" />
     <ClInclude Include="Source\InputDevice\Input\XInput\CXInput.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameDebug\GameDebug.h" />
     <ClInclude Include="Source\GameObject\CGameObject.h" />
@@ -150,6 +149,9 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\COM\CChase\CChase.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\CController.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.h" />
+    <ClInclude Include="Source\SceneManager\SceneBase\GameResult\ResultProduction\CResultProduction.h" />
+    <ClInclude Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.h" />
+    <ClInclude Include="Source\Assets\Data\Singleton\CSingleton.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />
