@@ -20,8 +20,8 @@ public:
 private:
 	//friend：クラスや関数に「private/protectedメンバへのアクセス権」を与えることができる.
 	friend class CSingleton<CGameDataManager>;
-	CGameDataManager() = default;
-	~CGameDataManager() = default;
+	CGameDataManager();
+	~CGameDataManager();
 
 private:
 	//保存データ.

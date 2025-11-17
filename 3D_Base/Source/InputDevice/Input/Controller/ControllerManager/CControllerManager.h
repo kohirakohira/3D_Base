@@ -7,10 +7,14 @@
 //コントローラークラス.
 #include "InputDevice\Input\Controller\CController.h"
 
+//シングルトン基底クラス.
+#include "../../../../Assets/Data/Singleton/CSingleton.h"
+
 //=======================================================
 // コントローラーマネージャー※シングルトン化.
 //=======================================================
 class CControllerManager
+	: public CSingleton<CControllerManager>
 {
 public:
 	//シングルトン化.

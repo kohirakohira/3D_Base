@@ -4,7 +4,6 @@
 //-----外部クラス-----
 #include "../../../../Camera/CCamera.h" //カメラクラス.
 #include "../../../../GameObject/StaticMeshObject/Ground/CGround.h" //地面クラス.
-#include "../../../../GameObject/StaticMeshObject/Character/Player/PlayerManager/CPlayerManager.h"	//プレイヤーマネージャークラス.
 
 //-----メッシュクラス-----
 #include "../../../../Assets/Mesh/StaticMesh/CStaticMesh.h" //スタティックメッシュクラス.
