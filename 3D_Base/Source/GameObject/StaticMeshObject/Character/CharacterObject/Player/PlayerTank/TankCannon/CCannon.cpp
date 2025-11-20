@@ -6,22 +6,13 @@ CCannon::CCannon(int inputID)
 	: m_TurnSpeed				( 0.01f )	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
 	, m_ShotCoolTime			( 120 )
 	, m_ShotInterval			( 120 )
-	, m_pCamera					( nullptr )
-	, m_pInput					( nullptr )
 	, m_PlayerID				( inputID )
+	, m_pController				()
 {
-	// 入力受付インスタンスの生成とセット
-	m_Input = std::make_shared<CInputManager>(inputID);
+	//コントローラーの設定
+	m_pController = CControllerManager::GetInstance().GetController(inputID);
 
-
-
-#if 0
-	if (m_Input) {
-		// 親クラス(CCharacter)の m_Input にも共有
-		CCharacter::m_Input = m_Input;
-	}
-#endif
-
+	// コライダー作成
 	m_pCollider = std::make_shared<CBoxCollider>();
 	//m_pRay = std::make_shared<CRay>();
 }
@@ -32,13 +23,6 @@ CCannon::~CCannon()
 
 void CCannon::Update()
 {
-	if (m_Input)
-	{
-		m_Input->Update();
-	}
-	m_pCollider->SetPosition(m_vPosition);
-
-	// クールタイマー更新
 	if (m_ShotCoolTime < m_ShotInterval)
 	{
 		m_ShotCoolTime++;
@@ -64,12 +48,6 @@ void CCannon::Init()
 void CCannon::SetCannonPosition(const D3DXVECTOR3& Pos)
 {
 	m_vPosition = Pos;
-}
-
-void CCannon::SetInputManager(const std::shared_ptr<CInputManager>& input)
-{
-	m_pInput = input;
-	CCharacter::m_Input = m_Input;	//共有
 }
 
 void CCannon::PushBack(const D3DXVECTOR3& push)
@@ -104,16 +82,17 @@ void CCannon::Reload(D3DXVECTOR3 pos, float y, bool flag, int index)
 void CCannon::KeyInput()
 {
 	auto& tunign = GetTuning();
+
+	float DeadZone = 0.2f; // スティックのデッドゾーン
+
 	// 左方向に入力検知
-	if (m_Input->GetArrowKeyDirection() == CInputManager::Direction::Left ||
-		m_Input->GetRightStickDirection() == CInputManager::Direction::Left)
+	if (m_pController->GetRightStickDirection(DeadZone) == CController::Direction::Left)
 	{
 		m_vRotation.y -= tunign.turretTurnSpeed;
 	}
 
 	// 右方向に入力検知
-	if (m_Input->GetArrowKeyDirection() == CInputManager::Direction::Right ||
-		m_Input->GetRightStickDirection() == CInputManager::Direction::Right)
+	if (m_pController->GetRightStickDirection(DeadZone) == CController::Direction::Right)
 	{
 		m_vRotation.y += tunign.turretTurnSpeed;
 	}
@@ -126,8 +105,7 @@ void CCannon::KeyInput()
 	}
 	else
 	{
-		if (m_Input->IsKeyboardRepeat('Z') ||
-			m_Input->GetRightTrigger() == CInputManager::Trigger::RightTrigger)
+		if (m_pController->GetRightTrigger() == CController::Trigger::RightTrigger)
 		{
 			Reload(m_vPosition, m_vRotation.y, true, m_PlayerID);
 		}

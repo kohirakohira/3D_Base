@@ -36,9 +36,6 @@ public:
 	// 砲塔の情報を渡す
 	D3DXVECTOR3 GetCannonPosition() const { return m_vPosition; }
 
-	// 入力クラスを設定
-	void SetInputManager(const std::shared_ptr<CInputManager>& input);
-
 	//プレイヤーが壁に当たると戻す.
 	void PushBack(const D3DXVECTOR3& push);
 
@@ -60,14 +57,14 @@ protected:
 
 	int			m_ShotCoolTime;			// ショットのクールタイム
 	const int	m_ShotInterval;			// ショットのインターバル
-	std::shared_ptr<CCamera> m_pCamera;
 
 private:
+	// 弾クラス
+	std::shared_ptr<CShotManager>		m_pShot;
+
 	// プレイヤーの番号を管理するための変数
 	int 			m_PlayerID;				// 入力ID
 
-	std::shared_ptr<CInputManager>		m_pInput;
-
-	// 弾クラス
-	std::shared_ptr<CShotManager>		m_pShot;
+	// コントローラークラス
+	CController* m_pController;
 };

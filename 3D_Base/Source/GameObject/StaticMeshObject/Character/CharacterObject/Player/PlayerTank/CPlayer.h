@@ -127,7 +127,6 @@ public:
 	//マネージャーセット
 	void SetInputManagerShared(const std::shared_ptr<CInputManager>& im);
 	void SetKeyboardEnabled(bool on);
-	std::shared_ptr<CInputManager>& GetInputManager() { return m_Input; }
 
 	// PlayerIDをCOMに渡す
 	int GetPlayerID() const { return m_PlayerID; }

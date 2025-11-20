@@ -28,6 +28,15 @@ public:
 		None = -1   // 無設定
 	};
 
+	    // トリガー入力
+    enum class Trigger
+    {
+        LeftTrigger,    // 左トリガー
+        RightTrigger,   // 右トリガー
+       
+        None = -1       // 無設定          
+    };
+
 public:
 	//explicit：コンパイラの勝手な変換を防ぐ保険.
 	explicit CController(int index);
@@ -51,12 +60,12 @@ public:
 	bool Repeat(CXInput::KEY key) const ;
 
 	//スティックの方向を反映させる※左.
-	Direction GetLeftStickDirection(float value);
+	Direction GetLeftStickDirection(float threshold);
 	//スティックの方向を反映させる※右.
-	Direction GetRightStickDirection(float value);
+	Direction GetRightStickDirection(float threshold);
 
 	//XY座標から方向判定する関数.
-	Direction GetDirectionFromXY(float x, float y, float value);
+	Direction GetDirectionFromXY(float x, float y, float threshold);
 
 	//スティック値を-1.0f～1.0fに正規化して返す.
 	float GetLeftStickX() const;
@@ -64,9 +73,9 @@ public:
 	float GetRightStickX() const;
 	float GetRightStickY() const;
 
-	//トリガー値(0～255)を0.0～1.0にする.
-	float GetLeftTrigger() const;
-	float GetRightTrigger() const;
+	//トリガー入力.
+	Trigger GetLeftTrigger(int threshold);   //左トリガーの入力検知.
+	Trigger GetRightTrigger(int threshold);  //右トリガーの入力検知.
 
 	//振動.
 	void SetVibration(WORD left, WORD right);

@@ -32,14 +32,6 @@ public:
 	//Y軸方向へ伸ばしたレイを取得.
 	std::shared_ptr<RAY> GetRayY() const { return m_pRayY; }
 
-	// 入力受付を取得.
-	std::shared_ptr<CInputManager> GetInput() const
-	{
-		return m_Input;
-	}
-	
-	void SetInput(const std::shared_ptr<CInputManager> input) { m_Input = input; }
-
 	//使っていないみたいなので消した
 	////初期値設定用関数.
 	//void SettingTune();
@@ -51,8 +43,6 @@ public:
 
 protected:
 	std::shared_ptr<RAY>	m_pRayY;	//Y方向へ伸ばしたレイ.
-
-	std::shared_ptr<CInputManager> m_Input;	// 入力受付クラス.
 
 	TankTuning m_Tuning;	//戦車の情報
 	

@@ -165,10 +165,10 @@ void CPlayer::Update()
 	}
 
 	//‘€ìŒ ‚ª‚È‚¢Žž‚Í“ü—Í‚ð“Ç‚Ü‚È‚¢
-	if (!m_HasControl)
+	//if (!m_HasControl)
 	{
-		if (m_pBody)   m_pBody->CCharacter::Update();
-		if (m_pCannon) m_pCannon->CCharacter::Update();
+		if (m_pBody)   m_pBody->Update();
+		if (m_pCannon) m_pCannon->Update();
 		return;
 	}
 
@@ -179,7 +179,6 @@ void CPlayer::Update()
 
 	//ˆÚ“®‚Æ‚©“K—p
 	UpdateHumanInputAndMove(m_CurrentInput);
-
 }
 
 void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)

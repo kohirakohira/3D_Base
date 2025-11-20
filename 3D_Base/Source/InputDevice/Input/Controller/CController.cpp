@@ -56,50 +56,50 @@ bool CController::Repeat(CXInput::KEY key) const
 }
 
 //スティックの方向を反映させる※左.
-CController::Direction CController::GetLeftStickDirection(float value)
+CController::Direction CController::GetLeftStickDirection(float threshold)
 {
 	float x = m_Pad->GetLeftStickXNormalized();
 	float y = m_Pad->GetLeftStickYNormalized();
 
-	return GetDirectionFromXY(x, y, value);
+	return GetDirectionFromXY(x, y, threshold);
 }
 //スティックの方向を反映させる※右.
-CController::Direction CController::GetRightStickDirection(float value)
+CController::Direction CController::GetRightStickDirection(float threshold)
 {
 	float x = m_Pad->GetRightStickXNormalized();
 	float y = m_Pad->GetRightStickYNormalized();
 
-	return GetDirectionFromXY(x, y, value);
+	return GetDirectionFromXY(x, y, threshold);
 }
 
 //XY座標から方向判定する関数.
-CController::Direction CController::GetDirectionFromXY(float x, float y, float value)
+CController::Direction CController::GetDirectionFromXY(float x, float y, float threshold)
 {
 	//デッドゾーン※入力範囲.
-	if (std::fabs(x) < value && std::fabs(y) < value)
+	if (std::fabs(x) < threshold && std::fabs(y) < threshold)
 	{
 		return CController::Direction::None;
 	}
 
 	//上.
-	if (y > value)
+	if (y > threshold)
 	{
 		//左上か右上を判定.
-		if (x > value)	return CController::Direction::UpRight;
-		if (x < -value)	return CController::Direction::UpLeft;
+		if (x > threshold)	return CController::Direction::UpRight;
+		if (x < -threshold)	return CController::Direction::UpLeft;
 		return CController::Direction::Up;
 	}
 	//下.
-	if (y < -value)
+	if (y < -threshold)
 	{
 		//左下か右下を判定.
-		if (x > value)	return CController::Direction::DownRight;
-		if (x < -value)	return CController::Direction::DownLeft;
+		if (x > threshold)	return CController::Direction::DownRight;
+		if (x < -threshold)	return CController::Direction::DownLeft;
 		return CController::Direction::Down;
 	}
 	//左右のみ.
-	if (x > value)	return CController::Direction::Right;
-	if (x < -value) return CController::Direction::Left;
+	if (x > threshold)	return CController::Direction::Right;
+	if (x < -threshold) return CController::Direction::Left;
 
 	//どの条件にも当てはまらないとき.
 	return CController::Direction::None;
@@ -125,15 +125,30 @@ float CController::GetRightStickY() const
 	return m_Pad->GetRightStickYNormalized();
 }
 
-float CController::GetLeftTrigger() const
+CController::Trigger CController::GetLeftTrigger(int threshold)
 {
-	return m_Pad->GetLeftTriggerNormalized();
+	BYTE PushTrigger = m_Pad->GetLTrigger();
+
+	// トリガーの押し込み
+	if (PushTrigger > threshold)
+	{
+		return Trigger::LeftTrigger; // 左トリガーを返す
+	}
+	return Trigger::None; // 無設定を返す
 }
 
-float CController::GetRightTrigger() const
+CController::Trigger CController::GetRightTrigger(int threshold)
 {
-	return m_Pad->GetRightTriggerNormalized();
+	BYTE PushTrigger = m_Pad->GetRTrigger();
+
+	// トリガーの押し込み
+	if (PushTrigger > threshold)
+	{
+		return Trigger::RightTrigger; // 右トリガーを返す
+	}
+	return Trigger::None; // 無設定を返す
 }
+
 
 //振動.
 void CController::SetVibration(WORD left, WORD right)

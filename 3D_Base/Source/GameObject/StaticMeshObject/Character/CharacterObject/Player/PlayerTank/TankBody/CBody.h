@@ -73,5 +73,6 @@ private:
 	int			m_RespawnCoolTime;  // リスポーンクールタイム
 	int			m_RespawnTime;		// リスポーン時間測定
 
+	// コントローラー変数
 	CController* m_pController;
 };

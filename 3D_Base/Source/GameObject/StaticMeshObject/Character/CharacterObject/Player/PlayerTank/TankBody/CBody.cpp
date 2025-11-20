@@ -8,19 +8,12 @@ CBody::CBody(int inputID)
 	, m_Death				(false)
 	, m_RespawnCoolTime		(120)
 	, m_RespawnTime			(0)
-	, m_pController			(nullptr)
+	, m_pController			()
 {
 	m_vPosition.y = -0.5f;
 
-	//コントローラーの取得※0番のみ動かせる.
+	//コントローラーの設定
 	m_pController = CControllerManager::GetInstance().GetController(inputID);
-
-#if 0
-	if (m_Input) {
-		// 親クラス(CCharacter)の m_Input にも共有
-		CCharacter::m_Input = m_Input;
-	}
-#endif
 
 	m_pCollider = std::make_shared<CBoxCollider>();
 }
@@ -35,11 +28,6 @@ void CBody::Init()
 
 void CBody::Update()
 {
-	if (m_Input)
-	{
-		m_Input->Update();
-	}
-
 	// Y座標を固定
 	m_vPosition.y = 0;
 
@@ -109,69 +97,57 @@ void CBody::AddRotationY(float value)
 void CBody::KeyInput()
 {
 	auto& tunign = GetTuning();
-	// 入力が無ければ処理しない
-	if (!m_pController) return;
 
-	//------------------------------------------------
-	// 入力チェック
-	//------------------------------------------------
-	float DeadZone = 0.2f; 
+	float DeadZone = 0.2f; // スティックのデッドゾーン
+
 	// 上方向の入力検知
-	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::Up ||
-		m_Input->GetLeftStickDirection() == CInputManager::Direction::Up)
+	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::Up)
 	{
 		m_MoveState = enMoveState::Forward;
 	}
 
 	// 左上方向の入力検知
-	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::UpLeft ||
-		m_Input->GetLeftStickDirection() == CInputManager::Direction::UpLeft)
+	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::UpLeft)
 	{
 		m_vRotation.y -= tunign.turretTurnSpeed;
 		m_MoveState = enMoveState::Forward;
 	}
 
 	// 右上方向の入力検知
-	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::UpRight ||
-		m_Input->GetLeftStickDirection() == CInputManager::Direction::UpRight)
+	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::UpRight)
 	{
 		m_vRotation.y += tunign.turretTurnSpeed;
 		m_MoveState = enMoveState::Forward;
 	}
 
 	// 下方向の入力検知
-	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::Down ||
-		m_Input->GetLeftStickDirection() == CInputManager::Direction::Down)
+	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::Down)
 	{
 		m_MoveState = enMoveState::Backward;
 	}
 
 	// 左下方向の入力検知
-	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::DownLeft ||
-		m_Input->GetLeftStickDirection() == CInputManager::Direction::DownLeft)
+	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::DownLeft)
 	{
 		m_vRotation.y -= tunign.turretTurnSpeed;
 		m_MoveState = enMoveState::Backward;
 	}
 
 	// 右下方向の入力検知
-	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::DownRight ||
-		m_Input->GetLeftStickDirection() == CInputManager::Direction::DownRight)
+	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::DownRight)
 	{
 		m_vRotation.y += tunign.turretTurnSpeed;
 		m_MoveState = enMoveState::Backward;
 	}
 
 	// 左方向に入力検知
-	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::Left ||
-		m_Input->GetLeftStickDirection() == CInputManager::Direction::Left)
+	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::Left)
 	{
 		m_vRotation.y -= tunign.turretTurnSpeed;
 	}
 
 	// 右方向に入力検知
-	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::Right ||
-		m_Input->GetLeftStickDirection() == CInputManager::Direction::Right)
+	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::Right)
 	{
 		m_vRotation.y += tunign.turretTurnSpeed;
 	}
