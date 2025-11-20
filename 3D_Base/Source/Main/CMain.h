@@ -14,6 +14,7 @@ public:
 	~CMain();	//デストラクタ.
 
 	void Update();		//更新処理.
+	void Draw();		//描画処理.
 	HRESULT Create();	//構築処理.
 	HRESULT LoadData();	//データロード処理.
 	void Release();		//解放処理.

@@ -3,8 +3,11 @@
 //-----外部クラス-----
 #include "Assets//DirectX//DirectX9//CDirectX9.h"	// DirectX9クラス
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス
-#include "ImGui//CImguiManager.h"					//ImGuiマネージャークラス.
 #include "Game//CGame.h" // ゲームクラス
+
+#ifdef _DEBUG
+#include "ImGui//CImguiManager.h"					//ImGuiマネージャークラス.
+#endif
 
 //ウィンドウを画面中央で起動を有効にする.
 #define ENABLE_WINDOWS_CENTERING
@@ -52,6 +55,11 @@ CMain::~CMain()
 {
 	SAFE_DELETE( m_pGame );
 
+#ifdef _DEBUG
+	//Imguiの破棄
+	CImguiManager::GetInstance().Release();
+#endif
+
 	DeleteObject( m_hWnd );
 }
 
@@ -61,35 +69,33 @@ void CMain::Update()
 {
 	//更新処理.
 	m_pGame->Update();
+	
+#ifdef _DEBUG
+	//Imguiフレーム管理.
+	CImguiManager::GetInstance().SetFrame();
+#endif
+
+}
+
+//描画処理.
+void CMain::Draw()
+{
 
 	//バックバッファをクリアにする.
 	CDirectX11::GetInstance().ClearBackBuffer();
 
 	//描画処理.
 	m_pGame->Draw();
-	
-	//Imguiフレーム管理.
-	CImguiManager::GetInstance().SetFrame();
-	//ここで描画.
-	{
-		ImGui::Begin("Debug Window");
-		ImGui::Text("Test");
-		static float testValue = 100.0f;
-		static bool  testBox1 = false;
-		static std::vector<float> fpsData;
 
-		CImguiManager::GetInstance().Graph("CheckBox", fpsData, ImVec2(200, 80));
-		CImguiManager::GetInstance().Slider("Value", testValue, 0.0f, 1.0f);
-		ImGui::End();
-	}
+#ifdef _DEBUG
 	//imguiの描画.
 	CImguiManager::GetInstance().Render();
+#endif
 
 	//画面に描画.
 	CDirectX11::GetInstance().Present();
 
 }
-
 
 //構築処理.
 HRESULT CMain::Create()
@@ -100,8 +106,10 @@ HRESULT CMain::Create()
 	//DirectX11の生成.
 	CDirectX11::GetInstance().Create(m_hWnd);
 
+#ifdef _DEBUG
 	//Imguiの生成.
 	CImguiManager::GetInstance().Init(m_hWnd);
+#endif
 
 	//ゲームクラスのインスタンス生成.
 	m_pGame = new CGame(m_hWnd );
@@ -125,7 +133,6 @@ void CMain::Release()
 	//リーリス関数.
 	CDirectX11::GetInstance().Release();
 	CDirectX9::GetInstance().Release();
-	//CImguiManager::GetInstance().Release();
 }
 
 
@@ -167,6 +174,9 @@ void CMain::Loop()
 
 			//更新処理.
 			Update();
+
+			//描画処理.
+			Draw();
 		}
 	}
 	//アプリケーションの終了.

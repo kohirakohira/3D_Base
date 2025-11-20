@@ -18,11 +18,7 @@ class CImguiManager final
 public:
 	//Imgui‚ÌƒVƒ“ƒOƒ‹ƒgƒ“‰».
 	//Å‰‚Ìˆê‰ñ‚¾‚¯.
-	static CImguiManager& GetInstance()
-	{
-		static CImguiManager instance;
-		return instance;
-	}
+	static CImguiManager& GetInstance();
 
 	//‰Šú‰».
 	static HRESULT Init(HWND hWnd);

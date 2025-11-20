@@ -80,9 +80,10 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankCannon\CCannon.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerManager\CPlayerManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\CPlayer.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.cpp" />
+    <ClCompile Include="Source\ImGui\DebugUIClass\CDebugUIClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -153,9 +154,10 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankCannon\CCannon.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerManager\CPlayerManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\CPlayer.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.h" />
+    <ClInclude Include="Source\ImGui\DebugUIClass\CDebugUIClass.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />

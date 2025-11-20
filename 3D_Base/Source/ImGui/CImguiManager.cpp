@@ -13,6 +13,14 @@ CImguiManager::~CImguiManager()
 {
 }
 
+//Imgui‚ÌƒVƒ“ƒOƒ‹ƒgƒ“‰».
+//Å‰‚Ìˆê‰ñ‚¾‚¯.
+CImguiManager& CImguiManager::GetInstance()
+{
+	static CImguiManager instance;
+	return instance;
+}
+
 //‰Šú‰».
 HRESULT CImguiManager::Init(HWND hWnd)
 {
