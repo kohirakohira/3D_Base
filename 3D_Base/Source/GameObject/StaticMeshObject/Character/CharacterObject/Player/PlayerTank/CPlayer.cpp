@@ -111,7 +111,6 @@ void CPlayer::SetInputManagerShared(const std::shared_ptr<CInputManager>& im)
 	m_Input = im;
 	if (m_pBody)
 	{
-		m_pBody->SetInputManager(m_Input);
 	}
 	if (m_pCannon)
 	{

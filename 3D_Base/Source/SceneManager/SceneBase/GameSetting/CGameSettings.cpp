@@ -24,7 +24,6 @@ CGameSettings::CGameSettings(HWND hWnd)
 
 	, m_SpriteConnection			()
 
-
 	, m_pSpriteSettingImg			( nullptr )
 	, m_pSpriteSettingBackGroundImg ( nullptr )
 
@@ -79,9 +78,9 @@ void CGameSettings::Update()
 	m_pSpriteChoiceImg->Update();
 
 	//シーンの遷移.
-	//if (controller && controller->CheckConnected())
+	if (controller && controller->CheckConnected())
 	{
-		if (m_InputKey->ReleaseInputKey('Z') == true /*|| controller->Down(CXInput::A, true)*/)
+		if (m_InputKey->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 		{
 			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
 			{
@@ -124,10 +123,17 @@ void CGameSettings::Draw()
 	//画像インスタンスの複製.
 	for (int i = 0; i < IMAGE; i++)
 	{
-		m_SpriteConnectionImg[i]->Draw();
+		//コントローラーの取得
+		if (CControllerManager::GetInstance().GetController(i))
+		{
+			// 準備完了
+			m_SpriteConnectionImg[i]->Draw();
+		}
+		else
+		{
+			//m_SpriteConnectionImg[i]->Draw();
+		}
 	}
-
-
 
 	m_pSpriteYesSelectImg->Draw();
 	m_pSpriteNoSelectImg->Draw();

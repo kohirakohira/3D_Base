@@ -3,8 +3,8 @@
 #include "GameObject//StaticMeshObject//Character//CCharacter.h" // キャラクタークラス
 
 //-----外部クラス-----
-#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankCannon/CCannon.h" // 戦車：砲塔クラス
-#include "InputDevice//Input//CInputManager.h" // 入力受付クラス
+#include "GameObject//StaticMeshObject//Character//CharacterObject//Player//PlayerTank//TankCannon//CCannon.h" // 戦車：砲塔クラス
+#include "InputDevice//Input//Controller//CController.h" // 入力受付クラス
 
 #include <memory>
 
@@ -47,23 +47,11 @@ public:
 	// ラジコン操作
 	void RadioControl();
 
-	// 入力クラスを設定
-	void SetInputManager(const std::shared_ptr<CInputManager>& input);
-
 	//プレイヤーが壁に当たると戻す.
 	void PushBack(const D3DXVECTOR3& push);
 
 	// バウンディングボックスを作成
 	void CreateBounding(std::shared_ptr<CStaticMesh> pBody);
-
-	// リスポーンエリア設定
-	void SetRespawnArea(int Area);
-
-	// リスポーン
-	void Respawn();
-
-	// 死亡確認
-	void Death();
 
 	//Bodyの向きを変更できる関数.
 	void AddRotationY(float value);
@@ -85,5 +73,5 @@ private:
 	int			m_RespawnCoolTime;  // リスポーンクールタイム
 	int			m_RespawnTime;		// リスポーン時間測定
 
-	std::shared_ptr<CInputManager> m_pInput;
+	CController* m_pController;
 };

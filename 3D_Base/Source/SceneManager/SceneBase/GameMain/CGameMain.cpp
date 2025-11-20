@@ -230,14 +230,19 @@ void CGameMain::Update()
 	// 当たり判定の更新
 	m_pCollisionManager->Update();
 
+	CController* controller = CControllerManager::GetInstance().GetController(0);
+
 	//勝敗条件(確認用)..
 	//勝ち..
-	if (GetKey('K') & 0x8000)
+	if (controller && controller->CheckConnected())
 	{
-		//BGMのループ停止..
-		CSoundManager::Stop(CSoundManager::BGM_Bonus);
+		if (GetKey('K') & 0x8000)
+		{
+			//BGMのループ停止..
+			CSoundManager::Stop(CSoundManager::BGM_Bonus);
 
-		m_SceneType = CSceneType::Result;
+			m_SceneType = CSceneType::Result;
+		}
 	}
 	//敗北..
 	//体力がなくなるか.

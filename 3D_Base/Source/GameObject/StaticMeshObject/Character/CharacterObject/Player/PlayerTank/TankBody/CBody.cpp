@@ -2,18 +2,18 @@
 #include "Collision/CollisionManager/CCollisionManager.h"
 
 CBody::CBody(int inputID)
-	: m_TurnSpeed(0.01f)	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
-	, m_MoveSpeed(0.1f)
-	, m_MoveState(enMoveState::Stop)
-	, m_Death(false)
-	, m_RespawnCoolTime(120)
-	, m_RespawnTime(0)
-	, m_pInput(nullptr)
+	: m_TurnSpeed			(0.01f)	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
+	, m_MoveSpeed			(0.1f)
+	, m_MoveState			(enMoveState::Stop)
+	, m_Death				(false)
+	, m_RespawnCoolTime		(120)
+	, m_RespawnTime			(0)
+	, m_pController			(nullptr)
 {
 	m_vPosition.y = -0.5f;
 
-	// 入力受付インスタンスの生成とセット
-	m_Input = std::make_shared<CInputManager>(inputID);
+	//コントローラーの取得※0番のみ動かせる.
+	m_pController = CControllerManager::GetInstance().GetController(inputID);
 
 #if 0
 	if (m_Input) {
@@ -43,8 +43,8 @@ void CBody::Update()
 	// Y座標を固定
 	m_vPosition.y = 0;
 
-	//KeyInput();		// 入力処理
-	//RadioControl();	// 回転・移動処理
+	KeyInput();		// 入力処理
+	RadioControl();	// 回転・移動処理
 	CCharacter::Update();
 }
 
@@ -91,12 +91,6 @@ void CBody::RadioControl()
 	m_MoveState = enMoveState::Stop;
 }
 
-void CBody::SetInputManager(const std::shared_ptr<CInputManager>& input)
-{
-	m_pInput = input;
-	CCharacter::m_Input = m_Input;	//共有しておく
-}
-
 void CBody::PushBack(const D3DXVECTOR3& push)
 {
 	m_vPosition += push;
@@ -104,62 +98,7 @@ void CBody::PushBack(const D3DXVECTOR3& push)
 
 void CBody::CreateBounding(std::shared_ptr<CStaticMesh> pBody)
 {
-	//CreateBBoxForMesh(*pBody);
-}
-
-void CBody::SetRespawnArea(int Area)
-{
-	//プレイヤーiの位置を変更
-	float offsetX = 20.0f;
-	float offsetZ = 20.0f;
-
-	// プレイヤーの向き
-	float AngleY = 45.0;
-
-	if (m_Death == true)
-	{
-		m_RespawnTime++;
-		if (m_RespawnTime >= m_RespawnCoolTime)
-		{
-			switch (Area)
-			{
-			case 1:
-				m_vPosition = D3DXVECTOR3(-offsetX, 0.0f, -offsetZ);
-				m_vRotation = D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f);
-				m_Death = false;
-				break;
-			case 2:
-				m_vPosition = D3DXVECTOR3(-offsetX, 0.0f, offsetZ);
-				m_vRotation = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f);
-				m_Death = false;
-				break;
-			case 3:
-				m_vPosition = D3DXVECTOR3(offsetX, 0.0f, offsetZ);
-				m_vRotation = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f);
-				m_Death = false;
-				break;
-			case 4:
-				m_vPosition = D3DXVECTOR3(offsetX, 0.0f, -offsetZ);
-				m_vRotation = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f);
-				m_Death = false;
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	else
-	{
-		m_RespawnTime = 0;
-	}
-}
-
-void CBody::Respawn()
-{
-}
-
-void CBody::Death()
-{
+	CreateBBoxForMesh(*pBody);
 }
 
 void CBody::AddRotationY(float value)
@@ -171,14 +110,14 @@ void CBody::KeyInput()
 {
 	auto& tunign = GetTuning();
 	// 入力が無ければ処理しない
-	if (!m_Input) return;
+	if (!m_pController) return;
 
 	//------------------------------------------------
 	// 入力チェック
 	//------------------------------------------------
-
+	float DeadZone = 0.2f; 
 	// 上方向の入力検知
-	if (m_Input->GetWASDKeyDirection() == CInputManager::Direction::Up ||
+	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::Up ||
 		m_Input->GetLeftStickDirection() == CInputManager::Direction::Up)
 	{
 		m_MoveState = enMoveState::Forward;
@@ -236,5 +175,4 @@ void CBody::KeyInput()
 	{
 		m_vRotation.y += tunign.turretTurnSpeed;
 	}
-
 }
