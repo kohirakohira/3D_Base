@@ -84,6 +84,7 @@ void CCannon::KeyInput()
 	auto& tunign = GetTuning();
 
 	float DeadZone = 0.2f; // スティックのデッドゾーン
+	int Trigger = 30;
 
 	// 左方向に入力検知
 	if (m_pController->GetRightStickDirection(DeadZone) == CController::Direction::Left)
@@ -105,7 +106,7 @@ void CCannon::KeyInput()
 	}
 	else
 	{
-		if (m_pController->GetRightTrigger() == CController::Trigger::RightTrigger)
+		if (m_pController->GetRightTrigger(Trigger) == CController::Trigger::RightTrigger)
 		{
 			Reload(m_vPosition, m_vRotation.y, true, m_PlayerID);
 		}

@@ -3,7 +3,7 @@
 
 //-----外部クラス-----
 #include "Camera//CCamera.h" //カメラクラス
-#include "InputDevice//Input//CInputManager.h" // 入力受付クラス
+#include "InputDevice//Input//Controller//CController.h" // コントローラークラス
 #include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h"
 
 #include <memory>

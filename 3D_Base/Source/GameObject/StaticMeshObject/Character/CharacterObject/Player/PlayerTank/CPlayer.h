@@ -124,10 +124,6 @@ public:
 	void SetKeyBoadEnble(bool control) { m_HasControl = control; }
 	bool HasControl() const { return m_HasControl; }
 
-	//マネージャーセット
-	void SetInputManagerShared(const std::shared_ptr<CInputManager>& im);
-	void SetKeyboardEnabled(bool on);
-
 	// PlayerIDをCOMに渡す
 	int GetPlayerID() const { return m_PlayerID; }
 

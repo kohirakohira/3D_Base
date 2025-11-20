@@ -4,7 +4,7 @@
 
 //-----外部クラス-----
 #include "GameObject//StaticMeshObject//Character//CharacterObject//Player//PlayerTank//TankCannon//CCannon.h" // 戦車：砲塔クラス
-#include "InputDevice//Input//Controller//CController.h" // 入力受付クラス
+#include "InputDevice//Input//Controller//CController.h" // コントローラークラス
 
 #include <memory>
 
@@ -73,6 +73,6 @@ private:
 	int			m_RespawnCoolTime;  // リスポーンクールタイム
 	int			m_RespawnTime;		// リスポーン時間測定
 
-	// コントローラー変数
+	// コントローラークラス
 	CController* m_pController;
 };

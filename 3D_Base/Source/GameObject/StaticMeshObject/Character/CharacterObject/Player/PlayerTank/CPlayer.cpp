@@ -82,9 +82,6 @@ void CPlayer::Init(int id)
 	m_pCannon->Init();
 	m_pBody->Init();
 
-	auto im = std::make_shared<CInputManager>();	
-	SetInputManagerShared(im);
-
 	// プレイヤーの体力に最大体力を入れる
 	m_Player.m_Hp = m_Player.m_MaxHp;
 	// プレイヤーの無敵時間を初期化
@@ -104,28 +101,6 @@ void CPlayer::Init(int id)
 	m_IsActive = true;
 	m_IsAlive = true;
 }
-
-//共有
-void CPlayer::SetInputManagerShared(const std::shared_ptr<CInputManager>& im)
-{
-	m_Input = im;
-	if (m_pBody)
-	{
-	}
-	if (m_pCannon)
-	{
-		m_pCannon->SetInputManager(m_Input);
-	}
-}
-
-void CPlayer::SetKeyboardEnabled(bool on)
-{
-	if (m_Input)
-	{
-		m_Input->SetUseKeyboard(on);
-	}
-}
-
 
 void CPlayer::SetTankPosition(const D3DXVECTOR3& pos)
 {	
