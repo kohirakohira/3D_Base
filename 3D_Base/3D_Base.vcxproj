@@ -192,9 +192,8 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CCharacter.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.cpp" />
     <ClCompile Include="Source\Assets\Effect\CEffect.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\TitleOnlyPlayer\CTitleOnlyPlayer.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\StageObject\CStageObject.cpp" />
-    <ClCompile Include="Source\ImGui\DebugUIClass\CDebugUIClass.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\CController.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameMain\CGameMain.cpp" />
@@ -266,9 +265,8 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CCharacter.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.h" />
     <ClInclude Include="Source\Assets\Effect\CEffect.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\TitleOnlyPlayer\CTitleOnlyPlayer.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\StageObject\CStageObject.h" />
-    <ClInclude Include="Source\ImGui\DebugUIClass\CDebugUIClass.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\CController.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameMain\CGameMain.h" />

@@ -668,6 +668,8 @@ void CStaticMesh::Render(
 		float I = (Light.fIntensity > 0.0f) ? Light.fIntensity : 1.0f;;
 		cb.LightColor = D3DXVECTOR4(col.x, col.y, col.z, I);
 
+		
+
 		memcpy_s(
 			pData.pData,	//コピー先のバッファ.
 			pData.RowPitch,	//コピー先のバッファサイズ.

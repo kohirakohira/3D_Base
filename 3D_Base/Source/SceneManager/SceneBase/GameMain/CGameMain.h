@@ -84,6 +84,8 @@ public:
 	//シーンの種類..
 	CSceneType GetSceneType() const override;
 
+	//Imguiの表示と調整.
+
 
 	// ラッピング関数
 	// 制限時間画像の設定

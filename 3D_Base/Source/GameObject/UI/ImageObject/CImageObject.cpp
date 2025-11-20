@@ -38,11 +38,11 @@ void CImageObject::ImageMove()
 	//m_vPosition.y += 0.5;
 	if (m_vPosition.x < -WND_W)
 	{
-		m_vPosition.x += WND_W * 3;
+		m_vPosition.x += WND_W * 10;
 	}
 	if (m_vPosition.y > WND_H)
 	{
-		m_vPosition.y -= WND_H * 3;
+		m_vPosition.y -= WND_H * 10;
 	}
 }
 

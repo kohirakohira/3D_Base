@@ -65,9 +65,9 @@ public:
 	std::shared_ptr<CSprite2D>			m_SpriteConnection;
 
 
-	//タイトル画像.
+	//選択時の画像.
 	std::shared_ptr<CSprite2D>			m_pSpriteSetting;
-	//タイトル画像の背景.
+	//選択時の画像の背景.
 	std::shared_ptr<CSprite2D>			m_pSpriteSettingBackGround;
 	//「開始する？」画像.
 	std::shared_ptr<CSprite2D>			m_pSpriteStart;
@@ -82,7 +82,7 @@ public:
 	std::vector<std::shared_ptr<CImageObject>>	m_SpriteConnectionImg;
 
 
-	//タイトル表示用板ポリ.
+	//選択時の画像表示用板ポリ.
 	std::shared_ptr<CImageObject>				m_pSpriteSettingImg;
 	//背景模様表示用板ポリ.
 	std::shared_ptr<CImageObject>				m_pSpriteSettingBackGroundImg;
@@ -97,8 +97,8 @@ public:
 	//シーンタイプ変数.
 	CSceneType					m_SceneType;
 
-	//試し.
-	D3DXVECTOR2 m_UV = { 1.f, 1.f };
+	//バック画像のUV更新用.
+	D3DXVECTOR2 m_UV = { 1.0f, 1.0f };
 
 	//キー入力.
 	std::shared_ptr<CMultiInputKeyManager>		m_InputKey;
