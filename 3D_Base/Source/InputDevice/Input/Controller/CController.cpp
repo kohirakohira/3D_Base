@@ -149,7 +149,6 @@ CController::Trigger CController::GetRightTrigger(int threshold)
 	return Trigger::None; // –³İ’è‚ğ•Ô‚·
 }
 
-
 //U“®.
 void CController::SetVibration(WORD left, WORD right)
 {
