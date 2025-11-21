@@ -63,7 +63,7 @@ public:
 	// 戦車の座標、回転、拡縮を設定
 	void SetTankPosition(const D3DXVECTOR3& pos) override;
 	void SetTankRotation(const D3DXVECTOR3& rot) override;
-	void SetTankScale(const float sca) override;
+	void SetTankScale   (const D3DXVECTOR3& sca) override;
 
 	//プレイヤーが壁に当たる処理をまとめる.
 	void SetPushBack(const D3DXVECTOR3& push);
@@ -108,8 +108,8 @@ public:
 	void CreateCollider();
 
 	//外部のクラスから情報取得.
-	void SetCBody(std::shared_ptr<CBody> pBody) override{ m_pBody = pBody; }
-	void SetCannon(std::shared_ptr<CCannon> pCannon) override{ m_pCannon = pCannon; }
+	void SetCBody(std::shared_ptr<CBody> pBody) override { m_pBody = pBody; }
+	void SetCannon(std::shared_ptr<CCannon> pCannon) override { m_pCannon = pCannon; }
 
 	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) override;
 

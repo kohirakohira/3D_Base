@@ -50,7 +50,7 @@ void CItemBoxManager::Create()
 		D3DXVECTOR3 pos = ItemPositionRandom();
 		item->SetPosition(pos.x, pos.y, pos.z);
 		item->SetRotation(0.0f, 0.0f, 0.0f);
-		item->SetScale(0.2f);
+		item->SetScale(D3DXVECTOR3(0.2f, 0.2f, 0.2f));
 		//“–‚½‚è”»’è‚ÌÝ’è.
 		item->CreateBBoxForMesh(*m_ItemMesh);
 		item->CreateBoxCollider(item->GetMinPos(), item->GetMaxPos());

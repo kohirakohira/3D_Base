@@ -121,7 +121,7 @@ void CBlastCollisionManager::SetScale(float xyz, int index)
 {
 	if (index >= 0 && index < m_pBlastCollision.size())
 	{
-		m_pBlastCollision[index]->SetScale(xyz);
+		m_pBlastCollision[index]->SetScale(D3DXVECTOR3(xyz, xyz, xyz));
 	}
 }
 

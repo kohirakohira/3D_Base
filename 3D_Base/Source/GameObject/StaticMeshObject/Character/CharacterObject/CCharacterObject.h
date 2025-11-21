@@ -65,7 +65,7 @@ public:
 	//戦車のTransform
 	virtual void SetTankPosition(const D3DXVECTOR3& pos) {};
 	virtual void SetTankRotation(const D3DXVECTOR3& rot) {};
-	virtual void SetTankScale(float sca) {};
+	virtual void SetTankScale   (const D3DXVECTOR3& sca) {};
 
 	//メッシュアタッチ.CPlayerManagerで使う用
 	virtual void AttachMeshse(std::shared_ptr<CStaticMesh>pBody, std::shared_ptr<CStaticMesh>pCannon) ;

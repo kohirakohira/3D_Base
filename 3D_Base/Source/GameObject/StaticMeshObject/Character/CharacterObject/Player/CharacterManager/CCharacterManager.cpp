@@ -29,7 +29,7 @@ CCharacterManager::~CCharacterManager()
 {
 }
 
-//インスタンス生成.
+//=======初期化======
 void CCharacterManager::Init()
 {
 	m_pPlayers.clear();
@@ -73,190 +73,9 @@ void CCharacterManager::Init()
 		}
 	}
 }
+//===================
 
-void CCharacterManager::AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
-{
-	m_pPlayers[index]->AttachMeshse(pBody, pCannon);
-}
-
-void CCharacterManager::SetPlayerPosition(int index, const D3DXVECTOR3& pos)
-{
-	if (index < m_pPlayers.size())
-	{
-		m_pPlayers[index]->SetTankPosition(pos);
-	}
-}
-
-void CCharacterManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
-{
-	if (index < m_pPlayers.size())
-	{
-		m_pPlayers[index]->SetTankPosition(push);
-	}
-}
-
-void CCharacterManager::SetPlayerScale(int index, const float& xyz)
-{
-	if (index < m_pPlayers.size())
-	{
-		m_pPlayers[index]->SetTankScale(xyz);
-	}
-}
-
-// バウンディングオブジェクトの作成
-void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon)
-{
-	if (index < m_pPlayers.size())
-	{
-		m_pPlayers[index]->SetBounding(body, cannon);
-	}
-}
-
-// コライダーの作成
-void CCharacterManager::CreateCollider(int index)
-{
-	if (index < m_pPlayers.size())
-	{
-		m_pPlayers[index]->CreateCollider();
-	}
-}
-
-void CCharacterManager::PlayerRespawn(int index)
-{
-	if (index < m_pPlayers.size())
-	{
-		if (m_pPlayers[index]->GetRespawnFlag() == true)
-		{
-			SetRespawnArea(index);
-			m_pPlayers[index]->SetRespawnFlag(false);
-		}
-	}
-}
-
-void CCharacterManager::SetRespawnArea(int index)
-{
-	// エリア4つを定義（マップの座標系に合わせて調整）
-	// リスポーン位置をセット
-	areas[0].RespawnPos = { -offset, 0.f,  offset }; // 左上
-	areas[1].RespawnPos = {  offset, 0.f,  offset }; // 右上
-	areas[2].RespawnPos = { -offset, 0.f, -offset }; // 左下
-	areas[3].RespawnPos = {  offset, 0.f, -offset }; // 右下
-
-	// リスポーン向きをセット
-	areas[0].RespawnRot = { 0.f, D3DXToRadian(AngleY * 3), 0.f }; // 左上
-	areas[1].RespawnRot = { 0.f, D3DXToRadian(AngleY * 5), 0.f }; // 右上
-	areas[2].RespawnRot = { 0.f, D3DXToRadian(AngleY),	   0.f }; // 左下
-	areas[3].RespawnRot = { 0.f, D3DXToRadian(AngleY * 7), 0.f }; // 右下
-
-	// 各プレイヤーがどのエリアにいるか調べる
-	for (int index = 0; index < PLAYER_MAX; index++)
-	{
-		auto PPos = m_pPlayers[index]->GetBody()->GetPosition();
-
-		int areaIndex = GetAreaIndex(PPos.x, PPos.z);
-
-		areas[areaIndex].Taken = true;
-	}
-
-	// 空いているエリアを探す
-	int freeIndex = -1;
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		if (areas[i].Taken == false)
-		{
-			freeIndex = i;
-			break;
-		}
-	}
-
-	if (freeIndex == -1)
-	{
-		// 全て埋まっている場合 → ランダムなどで選ぶ
-		freeIndex = rand() % 4;
-	}
-
-	// 各プレイヤーがどのエリアにいるか調べる
-	if (index < m_pPlayers.size())
-	{
-		m_pPlayers[index]->SetTankPosition(areas[freeIndex].RespawnPos);
-		m_pPlayers[index]->SetTankRotation(areas[freeIndex].RespawnRot);
-
-		for (int index = 0; index < PLAYER_MAX; index++)
-		{
-			areas[index].Taken = false;
-		}
-	}
-}
-
-int CCharacterManager::GetAreaIndex(float x, float z)
-{
-	// 四捨五入の座標を使用
-	float rx = std::round(x);
-	float rz = std::round(z);
-
-	// もし四捨五入結果が0なら、適当に片方に寄せる
-	if (rx == 0) rx = (x >= 0) ? 1 : -1;
-	if (rz == 0) rz = (z >= 0) ? 1 : -1;
-
-	// これで確実に x,z は ±1 のどちらかに分類できる
-	if (rx < 0 && rz > 0) return 0; // 左上
-	if (rx > 0 && rz > 0) return 1; // 右上
-	if (rx < 0 && rz < 0) return 2; // 左下
-	if (rx > 0 && rz < 0) return 3; // 右下
-}
-
-// ゲームの開始座標設定
-void CCharacterManager::SetStartPosition()
-{
-	for (int index = 0; index < PLAYER_MAX; ++index)
-	{
-		if (index == 0)	
-		{
-			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, -offset));
-			// 回転を設定
-			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
-			// スケールを設定
-			m_pPlayers[index]->SetTankScale(1.8f);
-		}
-		else if (index == 1)
-		{
-			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, offset));
-			// 回転を設定
-			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
-			// スケールを設定
-			m_pPlayers[index]->SetTankScale(1.8f);
-		}
-		else if (index == 2)
-		{
-			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, offset));
-			// 回転を設定
-			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
-			// スケールを設定
-			m_pPlayers[index]->SetTankScale(1.8f);
-		}
-		else if (index == 3)
-		{
-			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, -offset));
-			// 回転を設定
-			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
-			// スケールを設定
-			m_pPlayers[index]->SetTankScale(1.8f);
-		}
-	}
-}
-
-void CCharacterManager::SetPlayerRotation(int index, const D3DXVECTOR3& rad)
-{
-	if (index < m_pPlayers.size())
-	{
-		m_pPlayers[index]->SetTankRotation(rad);
-	}
-}
-
+//=======更新=======
 void CCharacterManager::Update()
 {
 	//コントローラーの接続状態をチェック・切り替え.
@@ -317,7 +136,9 @@ void CCharacterManager::Update()
 	//	}
 	//}
 }
+//==================
 
+//=======描画=======
 void CCharacterManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
 	for (auto& player : m_pPlayers)
@@ -325,13 +146,202 @@ void CCharacterManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, C
 		player->Draw(View, Proj, Light, Camera);
 	}
 }
+//==================
 
-//D3DXVECTOR3 CPlayerManager::GetPosition()
-//{
-//	if (m_pPlayers.empty()) return D3DXVECTOR3(0, 0, 0);
-//	return m_pPlayers[m_ActivePlayerIndex]->GetPosition();
-//}
+//=======メッシュをアタッチ=======
+void CCharacterManager::AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
+{
+	m_pPlayers[index]->AttachMeshse(pBody, pCannon);
+}
+//==============================
 
+//=======プレイヤー座標設定=======
+void CCharacterManager::SetPlayerPosition(int index, const D3DXVECTOR3& pos)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetTankPosition(pos);
+	}
+}
+//==============================
+
+//=======プレイヤー回転設定=======
+void CCharacterManager::SetPlayerRotation(int index, const D3DXVECTOR3& rad)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetTankRotation(rad);
+	}
+}
+//==============================
+
+//=======プレイヤー拡縮設定=======
+void CCharacterManager::SetPlayerScale(int index, const D3DXVECTOR3& xyz)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetTankScale(xyz);
+	}
+}
+//==============================
+
+//=======バウンディングの作成=======
+void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetBounding(body, cannon);
+	}
+}
+//================================
+
+//=======コライダーの作成=======
+void CCharacterManager::CreateCollider(int index)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->CreateCollider();
+	}
+}
+//============================
+
+//=======プレイヤーのリスポーン=======
+void CCharacterManager::PlayerRespawn(int index)
+{
+	if (index < m_pPlayers.size())
+	{
+		if (m_pPlayers[index]->GetRespawnFlag() == true)
+		{
+			SetRespawnArea(index);
+			m_pPlayers[index]->SetRespawnFlag(false);
+		}
+	}
+}
+//==================================
+
+//=======リスポーン座標設定=======
+void CCharacterManager::SetRespawnArea(int index)
+{
+	// エリア4つを定義（マップの座標系に合わせて調整）
+	// リスポーン位置をセット
+	areas[0].RespawnPos = { -offset, 0.f,  offset }; // 左上
+	areas[1].RespawnPos = {  offset, 0.f,  offset }; // 右上
+	areas[2].RespawnPos = { -offset, 0.f, -offset }; // 左下
+	areas[3].RespawnPos = {  offset, 0.f, -offset }; // 右下
+
+	// リスポーン向きをセット
+	areas[0].RespawnRot = { 0.0f, D3DXToRadian(AngleY * 3), 0.0f }; // 左上
+	areas[1].RespawnRot = { 0.0f, D3DXToRadian(AngleY * 5), 0.0f }; // 右上
+	areas[2].RespawnRot = { 0.0f, D3DXToRadian(AngleY),	    0.0f }; // 左下
+	areas[3].RespawnRot = { 0.0f, D3DXToRadian(AngleY * 7), 0.0f }; // 右下
+
+	// 各プレイヤーがどのエリアにいるか調べる
+	for (int index = 0; index < PLAYER_MAX; index++)
+	{
+		auto PPos = m_pPlayers[index]->GetBody()->GetPosition();
+
+		int areaIndex = GetAreaIndex(PPos.x, PPos.z);
+
+		areas[areaIndex].Taken = true;
+	}
+
+	// 空いているエリアを探す
+	int freeIndex = -1;
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (areas[i].Taken == false)
+		{
+			freeIndex = i;
+			break;
+		}
+	}
+
+	if (freeIndex == -1)
+	{
+		// 全て埋まっている場合 → ランダムなどで選ぶ
+		freeIndex = rand() % 4;
+	}
+
+	// 各プレイヤーがどのエリアにいるか調べる
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetTankPosition(areas[freeIndex].RespawnPos);
+		m_pPlayers[index]->SetTankRotation(areas[freeIndex].RespawnRot);
+
+		for (int index = 0; index < PLAYER_MAX; index++)
+		{
+			areas[index].Taken = false;
+		}
+	}
+}
+//==============================
+
+//=======中央を跨がないように計算=======
+int CCharacterManager::GetAreaIndex(float x, float z)
+{
+	// 四捨五入の座標を使用
+	float rx = std::round(x);
+	float rz = std::round(z);
+
+	// もし四捨五入結果が0なら、適当に片方に寄せる
+	if (rx == 0) rx = (x >= 0) ? 1 : -1;
+	if (rz == 0) rz = (z >= 0) ? 1 : -1;
+
+	// これで確実に x,z は ±1 のどちらかに分類できる
+	if (rx < 0 && rz > 0) return 0; // 左上
+	if (rx > 0 && rz > 0) return 1; // 右上
+	if (rx < 0 && rz < 0) return 2; // 左下
+	if (rx > 0 && rz < 0) return 3; // 右下
+}
+//====================================
+
+//=======ゲーム開始時の座標設定=======
+void CCharacterManager::SetStartPosition()
+{
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		if (index == 0)	
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, -offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+		}
+		else if (index == 1)
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+		}
+		else if (index == 2)
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+		}
+		else if (index == 3)
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, -offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+		}
+	}
+}
+//==================================
+
+//=======プレイヤーを取得=======	
+// 引数あり
 std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int index)
 {
 	if (index >= 0 && index < (int)m_pPlayers.size()) {
@@ -339,18 +349,16 @@ std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int in
 	}
 	return nullptr;
 }
-
+// 引数なし
 std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer()
 {
 	for(size_t i = 0; i < m_pPlayers.size(); i++)
 	{
-		//if (IsHumanControlled(m_pPlayers[i]->Get) == true)
-		//{
-
-		//}
+		return m_pPlayers[i];
 	}
-	return 0;
+	return nullptr;
 }
+//============================
 
 void CCharacterManager::SwitchActivePlayer()
 {
@@ -360,7 +368,7 @@ void CCharacterManager::SwitchActivePlayer()
 	const int next = (m_ActivePlayerIndex + 1) % (int)m_pPlayers.size();	//次の対象にする
 
 	//全員の操作権を落とす
-	for (auto& p : m_pPlayers) p->SetHasControl(false);
+	for (auto& p : m_pPlayers) p->SetHasControl(true);
 
 	//前のアクティブがCOMなら戻す
 	if (prev >= 0)
@@ -511,5 +519,14 @@ void CCharacterManager::SwitchControl()
 			//プレイヤーからCOMに入れ替え.
 			m_pPlayers[No] = newCOM;
 		}
+	}
+}
+
+// 関数の中がプレイヤー座標と中身が同じ、この関数必要？
+void CCharacterManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
+{
+	if (index < m_pPlayers.size())
+	{
+		m_pPlayers[index]->SetTankPosition(push);
 	}
 }

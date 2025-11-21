@@ -117,8 +117,8 @@ void CPlayer::SetTankRotation(const D3DXVECTOR3& rot)
 	m_pCannon->SetRotation(rot);	// –C“ƒ‰ñ“]Žw’è
 }
 
-void CPlayer::SetTankScale(const float sca)
-{
+void CPlayer::SetTankScale(const D3DXVECTOR3& sca)
+{	
 	m_pBody->SetScale(sca);			// ŽÔ‘Ì‘å‚«‚³Žw’è
 	m_pCannon->SetScale(sca);		// –C“ƒ‘å‚«‚³Žw’è
 }

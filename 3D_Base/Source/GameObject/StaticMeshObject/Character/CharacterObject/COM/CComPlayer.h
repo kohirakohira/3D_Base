@@ -103,7 +103,7 @@ public:
 	// 戦車の座標、回転、拡縮を設定
 	void SetTankPosition(const D3DXVECTOR3& pos) override {};
 	void SetTankRotation(const D3DXVECTOR3& rot) override {};
-	void SetTankScale(const float sca) override {};
+	void SetTankScale(   const D3DXVECTOR3& sca) override {};
 
 	//パラメータの設定.
 	virtual void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; }

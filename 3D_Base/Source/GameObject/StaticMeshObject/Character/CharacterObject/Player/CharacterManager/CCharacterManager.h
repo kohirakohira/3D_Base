@@ -29,45 +29,47 @@ public:
 	CCharacterManager();
 	~CCharacterManager() override;
 
+	//=======初期化・更新・描画=======
+	void Init(); // 初期化
+	void Update() override;// 更新関数	
+	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;// 描画関数
+	//==============================
 
-	void Init();
-	// 更新関数
-	void Update() override;
-	// 描画関数
-	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
-
+	//=======メッシュをアタッチ=======
 	void AttachMeshesToPlayer(int index, std::shared_ptr<CStaticMesh> body, std::shared_ptr<CStaticMesh> cannon);
-	void SetPlayerPosition(int index, const D3DXVECTOR3& pos);
+	//==============================
+
+	//=======座標・回転・拡縮を設定=======
+	void SetPlayerPosition(int index, const D3DXVECTOR3& pos); // 各プレイヤーに座標設定
+	void SetPlayerRotation(int index, const D3DXVECTOR3& rad); // 各プレイヤーに回転設定
+	void SetPlayerScale	  (int index, const D3DXVECTOR3& xyz); // 各プレイヤーに拡縮設定
+	//==================================
+
+	//=======オブジェクトと当たった時の押し返し=======
 	void SetPushBackPosision(int index, const D3DXVECTOR3& push);
-	void SetPlayerScale(int index, const float& xyz);
+	//=============================================
 
-	// バウンディングオブジェクトの作成
+	//=======バウンディング・コライダーの作成=======
 	void CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon);
+	void CreateCollider(int index);	// コライダーの作成
+	//===========================================
 	
-	// コライダーの作成
-	void CreateCollider(int index);
+	//=======プレイヤーのリスポーン=======	
+	void PlayerRespawn(int index);		// プレイヤーのリスポーン
+	void SetRespawnArea(int index);		// リスポーン可能エリアにプレイヤーの座標を指定する		
+	int GetAreaIndex(float x, float z); // マップの中央を跨がないように計算する
+	//==================================
 
-	void PlayerRespawn(int index);
+	//=======プレイヤーのゲーム開始時の座標設定=======	
+	void SetStartPosition();	// ゲームの開始座標設定
+	//=============================================
 
-	// リスポーン可能エリアに
-	// プレイヤーの座標を指定する
-	void SetRespawnArea(int index);
+	//=======プレイヤーを取得=======	
+	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(int index); // 引数あり
+	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(); // 引数なし
+	//============================
 
-	// マップの中央を跨がないように計算する
-	int GetAreaIndex(float x, float z);
-
-	// ゲームの開始座標設定
-	void SetStartPosition();
-
-	// ゲーム開始時のプレイヤーの向き設定
-	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);
-
-	// プレイヤーを取得(引数あり)
-	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(int index);
-	// プレイヤーを取得(引数なし)
-	std::shared_ptr<CCharacterObjectBase> GetControlPlayer();
-
-	void SwitchActivePlayer();
+	void SwitchActivePlayer(); // 旧コード：動かせるプレイヤーを変更できた
 
 	//プレイヤーの位置と回転を取得.引数には各プレイヤーを入れる
 	D3DXVECTOR3 GetPosition(int index)const;
@@ -84,17 +86,21 @@ public:
 	//子オブジェクトに各BodyとCannonを設定してあげる関数.
 	void SetBodyAndCannon(std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon);
 
-	//パラメータ設定用
-	void SetPlayerTuningAll(const TankTuning& t);
-	void SetPlayerTuning(int idx, const TankTuning& t);
-
 	//プレイヤーとCOMの切り替え.
 	void SwitchControl();
 
-	// パラメータの設定
-	void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; };
-	// パラメータの取得
+	//=======パラメータ設定用=======
+	void SetPlayerTuningAll(const TankTuning& t);
+	void SetPlayerTuning(int idx, const TankTuning& t);
+	//============================
+
+	//=======パラメータの設定・取得=======
+	void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; }
 	const TankTuning& GetTuning() const override { return m_Tuning; }
+	//==================================
+
+	// プレイヤークラスをセット
+	void SetCPlayer(std::vector<std::shared_ptr<CPlayer>> pPlayer) { m_pPlayer = pPlayer; }
 
 private:
 

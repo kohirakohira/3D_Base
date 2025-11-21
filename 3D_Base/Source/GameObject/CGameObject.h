@@ -55,8 +55,8 @@ public:
 		m_vScale.y = y;
 		m_vScale.z = z;
 	}
-	void SetScale(float xyz) {
-		m_vScale = D3DXVECTOR3(xyz, xyz, xyz);
+	void SetScale(const D3DXVECTOR3& sca) {
+		m_vScale = sca;
 	}
 	//ägèkéÊìæä÷êî.
 	const D3DXVECTOR3& GetScale() const {
