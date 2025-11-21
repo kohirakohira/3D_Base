@@ -146,6 +146,8 @@ public:
 
 	static void DebugLog(const char* msg){OutputDebugStringA(msg);}
 
+	void RotateTurretByPad();
+
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }
 	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }

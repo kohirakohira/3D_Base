@@ -146,7 +146,7 @@ void CPlayer::Update()
 	{
 		if (m_pBody)   m_pBody->Update();
 		if (m_pCannon) m_pCannon->Update();
-		//return;
+		return;
 	}
 
 	// ダメージ処理の更新
@@ -156,6 +156,9 @@ void CPlayer::Update()
 
 	//移動とか適用
 	UpdateHumanInputAndMove(m_CurrentInput);
+
+	//車体の位置が決まったあとで砲塔の位置を同期
+	SyncCannonToBody();
 }
 
 void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
@@ -201,101 +204,8 @@ const D3DXVECTOR3 CPlayer::GetScale()
 	return D3DXVECTOR3();
 }
 
-void CPlayer::Move(const PlayerInput& input)
-{
-	// まず必須ポインタチェック
-	if (!m_pBody || !m_Controller)
-	{
-		OutputDebugStringA("CPlayer::Move: m_pBody or m_Controller is null\n");
-		return;
-	}
 
-	//左スティックで移動.
-	auto dir = m_Controller->GetLeftStickDirection(0.5f);
-
-	// 移動前の情報を保存.
-	D3DXVECTOR3 beforePos = m_pBody->GetPosition();
-	D3DXVECTOR3 beforeRot = m_pBody->GetRotation();
-
-	{
-		char buf[256];
-		// dir は enum なので int にキャストして出す
-		sprintf_s(
-			buf,
-			"CPlayer::Move: dir=%d beforePos=(%.2f, %.2f, %.2f) beforeRotY=%.2f\n",
-			static_cast<int>(dir),
-			beforePos.x, beforePos.y, beforePos.z,
-			beforeRot.y
-		);
-		OutputDebugStringA(buf);
-	}
-
-	//現在の情報を取得・保存.
-	auto& tuning = GetTuning();
-	//デフォは停止.
-	m_pBody->SetMoveState(CBody::Stop);
-
-	switch (dir)
-	{
-	case CController::Direction::Up:
-		//前進.
-		m_pBody->SetMoveState(CBody::Forward);
-		break;
-	case CController::Direction::Down:
-		//後退.
-		m_pBody->SetMoveState(CBody::Backward);
-		break;
-	case CController::Direction::Left:
-		m_pBody->AddRotationY(-tuning.turretTurnSpeed);
-		break;
-	case CController::Direction::Right:
-		m_pBody->AddRotationY(tuning.turretTurnSpeed);
-		break;
-	case CController::Direction::UpLeft:
-		m_pBody->AddRotationY(-tuning.turretTurnSpeed);
-		m_pBody->SetMoveState(CBody::Forward);
-		break;
-	case CController::Direction::UpRight:
-		m_pBody->AddRotationY(tuning.turretTurnSpeed);
-		m_pBody->SetMoveState(CBody::Forward);
-		break;
-	case CController::Direction::DownLeft:
-		m_pBody->AddRotationY(-tuning.turretTurnSpeed);
-		m_pBody->SetMoveState(CBody::Backward);
-		break;
-	case CController::Direction::DownRight:
-		m_pBody->AddRotationY(tuning.turretTurnSpeed);
-		m_pBody->SetMoveState(CBody::Backward);
-		break;
-	case CController::Direction::None:
-		//何も入力が無いので停止しておく.
-		m_pBody->SetMoveState(CBody::Stop);
-		break;
-	default:
-		break;
-	}
-
-	//移動.
-	m_pBody->RadioControl();
-
-	// 移動後の情報をログ
-	{
-		D3DXVECTOR3 afterPos = m_pBody->GetPosition();
-		D3DXVECTOR3 afterRot = m_pBody->GetRotation();
-
-		char buf[256];
-		sprintf_s(
-			buf,
-			"CPlayer::Move: afterPos=(%.2f, %.2f, %.2f) afterRotY=%.2f\n",
-			afterPos.x, afterPos.y, afterPos.z,
-			afterRot.y
-		);
-		OutputDebugStringA(buf);
-	}
-}
-
-
-#if 0
+#if 1
 //移動.
 void CPlayer::Move(const PlayerInput& input)
 {
@@ -354,53 +264,70 @@ void CPlayer::Move(const PlayerInput& input)
 //砲塔回転.
 void CPlayer::Rotate(const PlayerInput& input)
 {
-	auto dir = m_Controller->GetRightStickDirection(0.5f);
-	//現在の情報を取得・保存.
-	auto& tuning = GetTuning();
+	// 必要なポインタがなければ何もしない
+	if (!m_pCannon || !m_Controller) return;
+	if (!m_Controller->CheckConnected()) return;
 
-	//スティックをある程度倒していなければ回転しない.
-	if (dir == CController::Direction::None)
-	{
+	// ある程度スティックが倒れていないなら回転しない
+	auto dir = m_Controller->GetRightStickDirection(0.5f);
+	if (dir == CController::Direction::None) {
 		return;
 	}
 
-	//スティック入力の「XY値」を取得して角度を計算する.
-	D3DXVECTOR2 stick = { m_Controller->GetRightStickX(), m_Controller->GetRightStickY()};
+	auto& tuning = GetTuning();
 
-	//角度を求める.
-	//※atan2f(x,y)でなくx,yの順にするのは座標系の都合.
-	float targetAngle = atan2f(stick.x, stick.y);
+	// 右スティックの生のXY値を取得
+	D3DXVECTOR2 stick = {
+		m_Controller->GetRightStickX(),
+		m_Controller->GetRightStickY()
+	};
 
-	//角度差を求める.
-	float diff = targetAngle - m_vRotation.y;
-
-	//角度差を-π～πまでに補正.
-	if(diff > D3DX_PI)	diff -= D3DX_PI * 2.0f;
-	if(diff < -D3DX_PI)	diff += D3DX_PI * 2.0f;
-	
-	//スティックの方向に応じて徐々に角度を変える.
-	if (fabsf(diff) < tuning.turretTurnSpeed)
-	{
-		m_vRotation.y = targetAngle;
+	// 完全にゼロなら何もしない（安全策）
+	if (stick.x == 0.f && stick.y == 0.f) {
+		return;
 	}
-	else if (diff > 0)
+
+	// スティック方向から「目標の角度」を求める
+	// ※座標系の都合で x,y の順にしている
+	const float targetAngle = std::atan2f(stick.x, stick.y);
+
+	// いまの砲塔の角度
+	D3DXVECTOR3 rot = m_pCannon->GetRotation();
+
+	// 差分を求める
+	float diff = targetAngle - rot.y;
+	const float twoPi = D3DX_PI * 2.0f;
+
+	// 差分を [-π, π] に正規化
+	if (diff > D3DX_PI)       diff -= twoPi;
+	else if (diff < -D3DX_PI) diff += twoPi;
+
+	const float step = tuning.turretTurnSpeed;
+
+	// 一歩で追いつけるなら一気に合わせる
+	if (std::fabs(diff) <= step)
 	{
-		m_vRotation.y += tuning.turretTurnSpeed;	//右回転.
+		rot.y = targetAngle;
+	}
+	else if (diff > 0.f)
+	{
+		// 目標が正方向にある → 正方向に少し回す
+		rot.y += step;
 	}
 	else
 	{
-		m_vRotation.y += tuning.turretTurnSpeed;	//左回転.
+		// 目標が負方向にある → 負方向に少し回す
+		rot.y -= step;
 	}
 
-	//角度が0～2πの範囲になるように補正.
-	if (m_vRotation.y > D3DX_PI * 2.0f)
-	{
-		m_vRotation.y -= D3DX_PI * 2.0f;
-	}
-	else
-	{
-		m_vRotation.y += D3DX_PI * 2.0f;
-	}
+	// rot.y を [0, 2π] に正規化
+	if (rot.y > twoPi)
+		rot.y -= twoPi;
+	else if (rot.y < 0.f)
+		rot.y += twoPi;
+
+	// 砲塔に反映
+	m_pCannon->SetRotation(rot);
 }
 
 //弾発射.
@@ -418,6 +345,40 @@ void CPlayer::Reload(const D3DXVECTOR3& pos, float y)
 void CPlayer::SetControllerIndex(int index)
 {
 	m_ControllerIndex = index;
+}
+
+//砲塔だけを回転させる
+void CPlayer::RotateTurretByPad()
+{
+	if (!m_pCannon || !m_Controller)return;
+	if (!m_Controller->CheckConnected()) return;
+
+	auto dir = m_Controller->GetRightStickDirection(0.5f);
+	auto& tuning = GetTuning();
+
+	D3DXVECTOR3 rot = m_pCannon->GetRotation();
+
+	switch (dir)
+	{
+	case CController::Direction::Left:
+	case CController::Direction::UpLeft:
+	case CController::Direction::DownLeft:
+		rot.y -= tuning.turretTurnSpeed;
+		break;
+
+	case CController::Direction::Right:
+	case CController::Direction::UpRight:
+	case CController::Direction::DownRight:
+		rot.y += tuning.turretTurnSpeed;
+		break;
+
+	default:
+		break;
+	}
+
+	m_pCannon->SetRotation(rot);
+	
+	
 }
 
 void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
@@ -440,12 +401,9 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 			//LSHICK入力があった時.
 			//移動.
 			Move(input);
-			//RSHICK入力があった時.
-			if (m_Controller->Down(CXInput::RSTICK, true))
-			{
-				//砲塔回転.
-				Rotate(input);
-			}
+			//砲塔回転.
+			Rotate(input);
+			
 			//RB入力があった時.
 			if (m_Controller->Down(CXInput::RB, true))
 			{
@@ -453,6 +411,7 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 				Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
 			}
 		}
+		SyncCannonToBody();
 
 		m_pBody->Update();
 		m_pCannon->Update();
