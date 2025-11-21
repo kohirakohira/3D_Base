@@ -99,10 +99,10 @@ struct LIGHT
 //タンクの情報構造体.
 struct TankTuning
 {
-	float moveSpeed;		//前進、後退
-	float bodyTurnSpeed;	//車体ヨー
-	float turretTurnSpeed;	//砲塔ヨー
-	float cannonHeight;		//砲塔の取り付けの高さ
+	float moveSpeed = 10.f;		//前進、後退
+	float bodyTurnSpeed = 10.f;	//車体ヨー
+	float turretTurnSpeed = 10.f;	//砲塔ヨー
+	float cannonHeight = 3.f;		//砲塔の取り付けの高さ
 };
 
 //アイテム効果の構造体.

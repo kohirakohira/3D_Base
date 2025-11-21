@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 #include <cmath>
+#include <Windows.h>
 
 //-----外部クラス-----
 #include "GameObject//StaticMeshObject//Character//CharacterObject\\Player//PlayerTank//TankBody//CBody.h"		// 戦車：車体クラス
@@ -142,6 +143,8 @@ public:
 	virtual void SetTuning(const TankTuning& tuning) override {	m_Tuning = tuning; }
 	//パラメータの取得.
 	virtual const TankTuning& GetTuning() const override { return m_Tuning; }
+
+	static void DebugLog(const char* msg){OutputDebugStringA(msg);}
 
 protected:
 	std::shared_ptr<CBody> Body() const { return m_pBody; }

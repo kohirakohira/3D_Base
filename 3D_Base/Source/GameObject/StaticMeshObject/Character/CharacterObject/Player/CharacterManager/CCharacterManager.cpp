@@ -35,31 +35,49 @@ void CCharacterManager::Init()
 	m_pPlayers.clear();
 	m_pPlayers.reserve(PLAYER_MAX);
 
-	for(int i = 0; i < PLAYER_MAX; i++)
+	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		// コントローラーが繋がれていれば
-		if (CControllerManager::GetInstance().GetController(i) != nullptr)
+		// コントローラーの取得
+		CController* ctrl = CControllerManager::GetInstance().GetController(i);
+
+		//オブジェクトがあるかではなく実際に接続されているかで判定する
+		bool connected = false;
+		if (ctrl != nullptr)
 		{
-			//プレイヤー.
+			connected = ctrl->CheckConnected();
+		}
+
+		if (connected)
+		{
+			//=================
+			//   プレイヤー
+			//=================
 			auto player = std::make_shared<CPlayer>();	// インスタンス生成.
-			player->Init(i);						// 車体・砲塔を生成.
-			player->SetHasControl(true);			// コントローラー操作ON.
-			player->SetKeyBoadEnble(true);			// .
-			player->SetControllerIndex(i);			// コントローラー設定.
+			player->Init(i);							// 車体・砲塔を生成.
+			player->SetHasControl(true);				// 操作権ON
+			player->SetKeyBoadEnble(true);				// （内部的には m_HasControl を true にする）
+			player->SetControllerIndex(i);				// コントローラー番号を教える
+
+			// Body / Cannon のポインタをマネージャ内にキャッシュ
 			SetBodyAndCannon(player->GetBody(), player->GetCannon());
-			//プレイヤーとCOMを生成.
+
+			// リストに追加
 			m_pPlayers.push_back(std::move(player));
 		}
 		else
 		{
-			//COM.
+			//=================
+			//      COM
+			//=================
 			auto com = std::make_shared<CComPlayer>();	//インスタンス生成.
 			com->Create(i);								//車体・砲塔を生成.
-			com->SetComEnabled(true);					//COMかプレイヤーか判断.
-			com->SetHasControl(false);					//コントローラー操作ON.
-			//com->SetKeyBoadEnble(false);				//.
+			com->SetComEnabled(true);					// COMのAI処理を有効にするフラグ
+			com->SetHasControl(false);					// 人間入力は読まない
+
+			// Body / Cannon のポインタをマネージャ内にキャッシュ
 			SetBodyAndCannon(com->GetBody(), com->GetCannon());
-			//プレイヤーとCOMを生成.
+
+			// リストに追加
 			m_pPlayers.push_back(std::move(com));
 		}
 	}
@@ -73,6 +91,7 @@ void CCharacterManager::Init()
 		}
 	}
 }
+//===================
 //===================
 
 //=======更新=======
@@ -352,10 +371,9 @@ std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int in
 // 引数なし
 std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer()
 {
-	for(size_t i = 0; i < m_pPlayers.size(); i++)
-	{
-		return m_pPlayers[i];
-	}
+	for (const auto& p : m_pPlayer)
+		if (p && p->HasControl())   // ← ここで本当に操作中か判定
+			return p;
 	return nullptr;
 }
 //============================
@@ -368,7 +386,7 @@ void CCharacterManager::SwitchActivePlayer()
 	const int next = (m_ActivePlayerIndex + 1) % (int)m_pPlayers.size();	//次の対象にする
 
 	//全員の操作権を落とす
-	for (auto& p : m_pPlayers) p->SetHasControl(true);
+	for (auto& p : m_pPlayers) p->SetHasControl(false);
 
 	//前のアクティブがCOMなら戻す
 	if (prev >= 0)
@@ -383,7 +401,7 @@ void CCharacterManager::SwitchActivePlayer()
 		nextCom->SetComEnabled(false);	//プレイヤー操作
 	}
 	//次のやつに操作権を渡す
-	m_pPlayers[next]->SetHasControl(true);
+	m_pPlayers[next]->SetHasControl(false);
 	m_ActivePlayerIndex = next;
 }
 
@@ -423,11 +441,14 @@ void CCharacterManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::share
 	m_pBody = body;
 	m_pCannon = cannon;
 
+	
+#if 1
 	for (auto& player : m_pPlayers)
 	{
 		player->SetCBody(body);
 		player->SetCannon(cannon);
 	}
+#endif
 }
 
 void CCharacterManager::SetPlayerTuningAll(const TankTuning& t)
@@ -484,8 +505,14 @@ void CCharacterManager::SwitchControl()
 			//新しいプレイヤーを生成.
 			std::shared_ptr<CPlayer> newPlayer = std::make_shared<CPlayer>();
 
+			//プレイヤーとしての初期化
+			newPlayer->Init(No);
+
 			//コントローラーを設定.
 			newPlayer->SetControllerIndex(No);
+
+			newPlayer->SetHasControl(true);
+			newPlayer->SetKeyBoadEnble(true);
 
 			//元のCOMの位置を引き継ぐ.
 			if (current != nullptr)
@@ -511,11 +538,28 @@ void CCharacterManager::SwitchControl()
 			//新しCOMを生成.
 			std::shared_ptr<CComPlayer> newCOM = std::make_shared<CComPlayer>();
 
+			//COMとして初期化
+			newCOM->Create(No);
+
+			//COMとして動かしたいのでAI有効と人間操作無効
+			newCOM->SetComEnabled(true);
+			newCOM->SetHasControl(false);
+
 			//元のプレイヤーの位置を引き継ぐ.
 			if (current != nullptr)
 			{
 				newCOM->SetPosition(current->GetPosition());
 			}
+
+			//COMどうしで参照を共有できるようにする
+			newCOM->SetPlayersRef(&m_pPlayers);
+
+			//すでにShotManagerが設定されていればCOMにもつける
+			if (m_ShotManager)
+			{
+				newCOM->AttachShotManager(m_ShotManager);
+			}
+
 			//プレイヤーからCOMに入れ替え.
 			m_pPlayers[No] = newCOM;
 		}
