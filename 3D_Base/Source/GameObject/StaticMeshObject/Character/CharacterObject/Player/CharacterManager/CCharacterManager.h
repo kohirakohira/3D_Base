@@ -62,8 +62,10 @@ public:
 	// ゲーム開始時のプレイヤーの向き設定
 	void SetPlayerRotation(int index, const D3DXVECTOR3& rad);
 
-	
+	// プレイヤーを取得(引数あり)
 	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(int index);
+	// プレイヤーを取得(引数なし)
+	std::shared_ptr<CCharacterObjectBase> GetControlPlayer();
 
 	void SwitchActivePlayer();
 

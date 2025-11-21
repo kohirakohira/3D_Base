@@ -48,10 +48,6 @@ public:
 	//弾を作成・リロード・発射関数.
 	void Reload(D3DXVECTOR3 pos, float y, bool flag, int index);
 
-private:
-	// キー入力受付
-	void KeyInput();
-
 protected:
 	float		m_TurnSpeed;			// 回転速度
 

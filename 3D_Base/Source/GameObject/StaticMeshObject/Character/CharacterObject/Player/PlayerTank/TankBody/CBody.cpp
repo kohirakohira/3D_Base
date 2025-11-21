@@ -8,12 +8,9 @@ CBody::CBody(int inputID)
 	, m_Death				(false)
 	, m_RespawnCoolTime		(120)
 	, m_RespawnTime			(0)
-	, m_pController			()
 {
 	m_vPosition.y = -0.5f;
 
-	//コントローラーの設定
-	m_pController = CControllerManager::GetInstance().GetController(inputID);
 
 	m_pCollider = std::make_shared<CBoxCollider>();
 }
@@ -31,7 +28,6 @@ void CBody::Update()
 	// Y座標を固定
 	m_vPosition.y = 0;
 
-	KeyInput();		// 入力処理
 	RadioControl();	// 回転・移動処理
 	CCharacter::Update();
 }
@@ -92,63 +88,4 @@ void CBody::CreateBounding(std::shared_ptr<CStaticMesh> pBody)
 void CBody::AddRotationY(float value)
 {
 	m_vRotation.y += value;
-}
-
-void CBody::KeyInput()
-{
-	auto& tunign = GetTuning();
-
-	float DeadZone = 0.2f; // スティックのデッドゾーン
-
-	// 上方向の入力検知
-	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::Up)
-	{
-		m_MoveState = enMoveState::Forward;
-	}
-
-	// 左上方向の入力検知
-	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::UpLeft)
-	{
-		m_vRotation.y -= tunign.turretTurnSpeed;
-		m_MoveState = enMoveState::Forward;
-	}
-
-	// 右上方向の入力検知
-	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::UpRight)
-	{
-		m_vRotation.y += tunign.turretTurnSpeed;
-		m_MoveState = enMoveState::Forward;
-	}
-
-	// 下方向の入力検知
-	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::Down)
-	{
-		m_MoveState = enMoveState::Backward;
-	}
-
-	// 左下方向の入力検知
-	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::DownLeft)
-	{
-		m_vRotation.y -= tunign.turretTurnSpeed;
-		m_MoveState = enMoveState::Backward;
-	}
-
-	// 右下方向の入力検知
-	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::DownRight)
-	{
-		m_vRotation.y += tunign.turretTurnSpeed;
-		m_MoveState = enMoveState::Backward;
-	}
-
-	// 左方向に入力検知
-	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::Left)
-	{
-		m_vRotation.y -= tunign.turretTurnSpeed;
-	}
-
-	// 右方向に入力検知
-	if (m_pController->GetLeftStickDirection(DeadZone) == CController::Direction::Right)
-	{
-		m_vRotation.y += tunign.turretTurnSpeed;
-	}
 }

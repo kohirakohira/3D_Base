@@ -57,10 +57,25 @@ public:
 
 	static std::vector<CComPlayer*>& Instances();
 
-	std::shared_ptr<CCannon> const GetCannon() override { return m_pCannon; }
-	std::shared_ptr<CCannon> GetCannon() const override { return m_pCannon; }
-	std::shared_ptr<CBody> const GetBody() override { return m_pBody; }
+	//リスポーンフラグの取得
+	bool GetRespawnFlag() { return m_Respawn; }
+
+	//リスポーンフラグの設定
+	void SetRespawnFlag(bool flg) override {};
+
+	//操作権の設定
+	virtual void SetHasControl(bool control) override {};
+
+	//車体の設定
+	virtual void SetCBody(std::shared_ptr<CBody> pBody) override { m_pBody = pBody; }
+	//車体の取得
 	std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
+
+	//砲塔の設定
+	virtual void SetCannon(std::shared_ptr<CCannon> pCannon) override { m_pCannon = pCannon; }
+	//砲塔の取得
+	std::shared_ptr<CCannon> GetCannon() const override { return m_pCannon; }
+
 	
 	//追尾対象の設定
 	void SetTarget(std::shared_ptr<CCharacterObjectBase> actor) { m_pTarget = std::move(actor); }
@@ -84,6 +99,16 @@ public:
 	void SetObject(const std::vector<std::shared_ptr<CBoxCollider>>* BoxCollider) {};
 
 	int GetPlayerID() const { return m_PlayerID; }
+
+	// 戦車の座標、回転、拡縮を設定
+	void SetTankPosition(const D3DXVECTOR3& pos) override {};
+	void SetTankRotation(const D3DXVECTOR3& rot) override {};
+	void SetTankScale(const float sca) override {};
+
+	//パラメータの設定.
+	virtual void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; }
+	//パラメータの取得.
+	virtual const TankTuning& GetTuning() const override { return m_Tuning; }
 
 private:
 	//構造体
@@ -223,6 +248,8 @@ private:
 	float		m_AvoidMax;
 
 	int m_PlayerID = -1;
+
+	bool		m_Respawn;				// リスポーン
 };
 
 

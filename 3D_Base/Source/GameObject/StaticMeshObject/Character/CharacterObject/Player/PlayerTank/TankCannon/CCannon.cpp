@@ -77,38 +77,3 @@ void CCannon::Reload(D3DXVECTOR3 pos, float y, bool flag, int index)
 	//クールタイムのリセット.
 	m_ShotCoolTime = 0;
 }
-
-// キー入力受付
-void CCannon::KeyInput()
-{
-	auto& tunign = GetTuning();
-
-	float DeadZone = 0.2f; // スティックのデッドゾーン
-	int Trigger = 30;
-
-	// 左方向に入力検知
-	if (m_pController->GetRightStickDirection(DeadZone) == CController::Direction::Left)
-	{
-		m_vRotation.y -= tunign.turretTurnSpeed;
-	}
-
-	// 右方向に入力検知
-	if (m_pController->GetRightStickDirection(DeadZone) == CController::Direction::Right)
-	{
-		m_vRotation.y += tunign.turretTurnSpeed;
-	}
-
-	// クールタイマー更新
-	if (m_ShotCoolTime < m_ShotInterval)
-	{
-		m_ShotCoolTime++;
-		//m_Shot = false;
-	}
-	else
-	{
-		if (m_pController->GetRightTrigger(Trigger) == CController::Trigger::RightTrigger)
-		{
-			Reload(m_vPosition, m_vRotation.y, true, m_PlayerID);
-		}
-	}
-}

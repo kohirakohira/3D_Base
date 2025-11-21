@@ -59,10 +59,6 @@ public:
 	//移動列挙型の設定.
 	void SetMoveState(enMoveState state) { m_MoveState = state; }
 
-private:
-	// キー入力受付.
-	void KeyInput();
-
 protected:
 	float		m_TurnSpeed;	// 回転速度
 	float		m_MoveSpeed;	// 移動速度
@@ -72,7 +68,4 @@ private:
 	bool		m_Death;			// 死亡
 	int			m_RespawnCoolTime;  // リスポーンクールタイム
 	int			m_RespawnTime;		// リスポーン時間測定
-
-	// コントローラークラス
-	CController* m_pController;
 };

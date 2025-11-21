@@ -1,6 +1,8 @@
 #pragma once
-#include "GameObject//StaticMeshObject//CStaticMeshObject.h" /* 継承クラス || スタティックメッシュオブジェクトクラス */
+//-----継承するクラス-----
+#include "GameObject//StaticMeshObject//CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス
 
+//-----ライブラリ-----
 #include <iostream>
 #include <memory>
 
@@ -37,9 +39,9 @@ public:
 	//void SettingTune();
 
 	// パラメータの設定
-	virtual void SetTuning(const TankTuning& tuning) { m_Tuning = tuning; }
+	virtual void SetTuning(const TankTuning& tuning) = 0;
 	// パラメータの取得
-	virtual const TankTuning& GetTuning() const { return m_Tuning; }
+	virtual const TankTuning& GetTuning() const = 0;
 
 protected:
 	std::shared_ptr<RAY>	m_pRayY;	//Y方向へ伸ばしたレイ.

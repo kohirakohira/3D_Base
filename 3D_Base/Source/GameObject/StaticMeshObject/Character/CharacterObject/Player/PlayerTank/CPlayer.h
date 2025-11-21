@@ -59,13 +59,14 @@ public:
 	void Init(int id);
 
 	//void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) ;
+
+	// 戦車の座標、回転、拡縮を設定
 	void SetTankPosition(const D3DXVECTOR3& pos) override;
 	void SetTankRotation(const D3DXVECTOR3& rot) override;
 	void SetTankScale(const float sca) override;
 
 	//プレイヤーが壁に当たる処理をまとめる.
 	void SetPushBack(const D3DXVECTOR3& push);
-
 
 	// 更新関数
 	virtual void Update() override;
@@ -113,22 +114,16 @@ public:
 	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) override;
 
 	// 外部のクラスに情報を渡す
-	std::shared_ptr<CBody> const GetBody() override { return m_pBody; }
-	std::shared_ptr<CCannon> const GetCannon() override { return m_pCannon; }
-
-	float GetCannonYaw() const override;
-	D3DXVECTOR3 GetCannonPosition() const override;
+	std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
+	std::shared_ptr<CCannon> GetCannon() const override { return m_pCannon; }
 
 	//操作権関連の外部関数
-	void SetHasControl(bool control)override { m_HasControl = control; }
+	void SetHasControl(bool control) override { m_HasControl = control; }
 	void SetKeyBoadEnble(bool control) { m_HasControl = control; }
 	bool HasControl() const { return m_HasControl; }
 
 	// PlayerIDをCOMに渡す
 	int GetPlayerID() const { return m_PlayerID; }
-
-	// プレイヤーのTuneを設定
-	void SetTune(const TankTuning& info);
 
 	// リスポーンフラグ設定
 	//void SetRespawnFlag(bool flg) { m_Player.m_Respawn = flg; }
@@ -144,7 +139,7 @@ public:
 	int GetControllerIndex() const { return m_ControllerIndex; }
 
 	//パラメータの設定.
-	virtual void SetTuning(const TankTuning& tuning) override;
+	virtual void SetTuning(const TankTuning& tuning) override {	m_Tuning = tuning; }
 	//パラメータの取得.
 	virtual const TankTuning& GetTuning() const override { return m_Tuning; }
 
@@ -158,7 +153,7 @@ protected:
 
 protected:
 
-	std::shared_ptr<CController>	m_Controller;
+	CController* 	m_Controller;
 	int			m_PlayerID;
 	bool		m_HasControl;	//操作権があるか
 

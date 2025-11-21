@@ -57,9 +57,6 @@ public:
 
 	//当たった時の処理.
 	virtual void OnHit(CCharacterObjectBase* other) {};
-	//車体・砲塔を取得.
-	virtual std::shared_ptr<CBody> const GetBody() { return m_pBody; }
-	virtual std::shared_ptr<CCannon> const GetCannon() { return m_pCannon; }
 
 	//Body.Cannonのオーバロード
 	virtual std::shared_ptr<CBody> GetBody() const { return m_pBody; }
@@ -81,7 +78,6 @@ public:
 
 	//リスポーンフラグの取得
 	virtual bool GetRespawnFlag() { return m_Respawn; }
-
 	//リスポーンフラグの設定
 	virtual void SetRespawnFlag(bool flg) { m_Respawn = flg; }
 

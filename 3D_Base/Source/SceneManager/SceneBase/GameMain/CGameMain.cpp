@@ -175,8 +175,8 @@ void CGameMain::Update()
 	{
 		if (auto player = m_pCharacterManager->GetControlPlayer(i))
 		{
-			const D3DXVECTOR3 camPos = player->GetCannonPosition();	//砲塔の位置.
-			float yaw = player->GetCannonYaw();	//砲塔の向きY.
+			const D3DXVECTOR3 camPos = player->GetCannon()->GetPosition();	//砲塔の位置.
+			float yaw = player->GetCannon()->GetRotation().y;	//砲塔の向きY.
 
 			m_pCameras[i]->SetTargetPos(camPos);
 			m_pCameras[i]->SetTargetRotY(yaw);
@@ -423,8 +423,15 @@ void CGameMain::Draw()
 
 void CGameMain::Init()
 {
-	//カメラ位置設定..
-	for (int i = 0; i < PLAYER_MAX; i++)
+	////キャラの情報を設定.
+	//for (size_t i = 0; i < m_pCharacterManager->GetControlPlayer(); ++i)
+	//{
+	//	TankTuning info = { 0.08f, 0.03f, 0.03f, 0.3f };
+	//	m_pCharacterManager->SetPlayerTuning(i, info);
+	//}
+
+	//カメラ位置設定.
+	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		//キャラクターマネージャーから各プレイヤーの位置を取得.
 		D3DXVECTOR3 pos = m_pCharacterManager->GetPosition(i);

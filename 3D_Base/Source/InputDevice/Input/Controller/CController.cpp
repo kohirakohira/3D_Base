@@ -58,6 +58,10 @@ bool CController::Repeat(CXInput::KEY key) const
 //スティックの方向を反映させる※左.
 CController::Direction CController::GetLeftStickDirection(float threshold)
 {
+	// スティックの軸データを取得
+	SHORT LeftX = m_Pad->GetLThumbX();
+	SHORT LeftY = m_Pad->GetLThumbY();
+
 	float x = m_Pad->GetLeftStickXNormalized();
 	float y = m_Pad->GetLeftStickYNormalized();
 
@@ -66,6 +70,10 @@ CController::Direction CController::GetLeftStickDirection(float threshold)
 //スティックの方向を反映させる※右.
 CController::Direction CController::GetRightStickDirection(float threshold)
 {
+	// スティックの軸データを取得
+	SHORT RightX = m_Pad->GetRThumbX();
+	SHORT RightY = m_Pad->GetRThumbY();
+
 	float x = m_Pad->GetRightStickXNormalized();
 	float y = m_Pad->GetRightStickYNormalized();
 

@@ -267,54 +267,54 @@ void CCharacterManager::Update()
 		player->Update();
 	}
 
+
 	//{
 	//	const int count = static_cast<int>(m_pPlayers.size());
 	//	if (count <= 0)return;
 
-		////基本ターゲットを決める
-		////ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
-		//auto pickHumanTargetIndex = [&]()->int {
-		//	auto isValidHuman = [&](int idx) {
-		//		return(idx == m_ActivePlayerIndex) && IsHumanControlled(m_pPlayers[idx]);
-		//		};
-		//	if (isValidHuman(m_LockTargetIndex)) return m_LockTargetIndex;
-		//	if (isValidHuman(m_ActivePlayerIndex)) return m_ActivePlayerIndex;
-		//	return -1;	//プレイヤーがいない
-		//	};
+	//	//基本ターゲットを決める
+	//	//ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
+	//	auto pickHumanTargetIndex = [&]()->int {
+	//		auto isValidHuman = [&](int idx) {
+	//			return(idx == m_ActivePlayerIndex) && IsHumanControlled(m_pPlayers[idx]);
+	//			};
+	//		if (isValidHuman(m_LockTargetIndex)) return m_LockTargetIndex;
+	//		if (isValidHuman(m_ActivePlayerIndex)) return m_ActivePlayerIndex;
+	//		return -1;	//プレイヤーがいない
+	//		};
 
-		//const int tgtIdx = pickHumanTargetIndex();
-		//std::shared_ptr<CPlayer> target = (tgtIdx >= 0) ? m_pPlayers[tgtIdx] : nullptr;
+	//	const int tgtIdx = pickHumanTargetIndex();
+	//	std::shared_ptr<CPlayer> target = (tgtIdx >= 0) ? m_pPlayers[tgtIdx] : nullptr;
 
-		//for (int i = 0; i < count; ++i)
-		//{
-		//	auto self = m_pPlayers[i];
-
-		//	if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
-		//	{
-		//		if (com->IsComEnabled())
-		//		{
-		//			////COM稼働中だけターゲットをあげる
-		//			//if (target && IsHumanControlled(target) && target != self)
-		//			//{
-		//			//	//ターゲットがプレイヤー限定なのであとで消す
-		//			//	com->SetTarget(target);
-		//			//}
-		//			//else
-		//			//{
-		//			//	com->ClearTarget();
-		//			//}
-		//			com->Update();
-		//		}
-		//		else
-		//		{
-		//			self->Update();
-		//		}
-		//	}
-		//	else
-		//	{
-		//		self->Update();
-		//	}				
-		//}
+	//	for (int i = 0; i < count; ++i)
+	//	{
+	//		auto self = m_pPlayers[i];
+	//		if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
+	//		{
+	//			if (com->IsComEnabled())
+	//			{
+	//				//COM稼働中だけターゲットをあげる
+	//				if (target && IsHumanControlled(target) && target != self)
+	//				{
+	//					//ターゲットがプレイヤー限定なのであとで消す
+	//					com->SetTarget(target);
+	//				}
+	//				else
+	//				{
+	//					com->ClearTarget();
+	//				}
+	//				com->Update();
+	//			}
+	//			else
+	//			{
+	//				self->Update();
+	//			}
+	//		}
+	//		else
+	//		{
+	//			self->Update();
+	//		}				
+	//	}
 	//}
 }
 
@@ -338,6 +338,18 @@ std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int in
 		return m_pPlayers[index];
 	}
 	return nullptr;
+}
+
+std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer()
+{
+	for(size_t i = 0; i < m_pPlayers.size(); i++)
+	{
+		//if (IsHumanControlled(m_pPlayers[i]->Get) == true)
+		//{
+
+		//}
+	}
+	return 0;
 }
 
 void CCharacterManager::SwitchActivePlayer()

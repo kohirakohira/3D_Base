@@ -50,7 +50,7 @@ static inline float Deadzone(float v, float z)
 
 
 CPlayer::CPlayer()
-	: m_Controller		( nullptr )
+	: m_Controller( nullptr )
 
 	, m_PlayerID		()
 	, m_HasControl		( false )
@@ -75,6 +75,8 @@ void CPlayer::Init(int id)
 {
 	// プレイヤーIDにそれぞれのID番号を入れる
 	m_PlayerID = id;
+
+	m_Controller = CControllerManager::GetInstance().GetController(m_PlayerID);
 
 	//インスタンスを生成
 	m_pBody = std::make_shared<CBody>(id);
@@ -140,11 +142,11 @@ void CPlayer::Update()
 	}
 
 	//操作権がない時は入力を読まない
-	//if (!m_HasControl)
+	if (!m_HasControl)
 	{
 		if (m_pBody)   m_pBody->Update();
 		if (m_pCannon) m_pCannon->Update();
-		return;
+		//return;
 	}
 
 	// ダメージ処理の更新
@@ -317,19 +319,10 @@ void CPlayer::Reload(const D3DXVECTOR3& pos, float y)
 	m_pCannon->Reload(pos, y, input.shot, m_PlayerID);
 }
 
-void CPlayer::SetTune(const TankTuning& info)
-{
-	SetTuning(info);
-}
-
 //プレイヤーのコントローラー設定.
 void CPlayer::SetControllerIndex(int index)
 {
 	m_ControllerIndex = index;
-}
-
-void CPlayer::SetTuning(const TankTuning& tuning)
-{
 }
 
 void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
@@ -349,11 +342,8 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 		if (m_Controller != nullptr && m_Controller->CheckConnected())
 		{
 			//LSHICK入力があった時.
-			if (m_Controller->Down(CXInput::LSTICK, true))
-			{
-				//移動.
-				Move(input);
-			}
+			//移動.
+			Move(input);
 			//RSHICK入力があった時.
 			if (m_Controller->Down(CXInput::RSTICK, true))
 			{
@@ -548,31 +538,4 @@ void CPlayer::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<C
 {
 	m_pBody->AttachMesh(pBody);
 	m_pCannon->AttachMesh(pCannon);
-}
-
-
-D3DXVECTOR3 CPlayer::GetCannonPosition() const
-{
-
-	if (m_pCannon)
-	{
-		return m_pCannon->GetPosition();
-	}
-	//else
-	//{
-	//	return GetPosition();
-	//}
-}
-
-float CPlayer::GetCannonYaw() const
-{
-
-	if (m_pCannon)
-	{
-		return m_pCannon->GetRotation().y;
-	}
-	//else
-	//{
-	//	return GetRotation().y;
-	//}
 }
