@@ -52,6 +52,8 @@
 #include "Global.h"
 #include "Collision/CollisionManager/CCollisionManager.h"
 
+//#include "GameObject/StaticMeshObject/Character/COM/CComPlayer.h"
+
 class CXInput;
 
 class CGameMain
@@ -212,6 +214,10 @@ public:
 	// シーン列挙変数
 	CSceneType		m_SceneType;
 
+	//COM用の障害物リスト
+	std::vector<CComPlayer::SimpleObstacle> m_ComObstacles;
+
+
 public:		
 	// 変数用
 	// 簡易時間を止める変数
@@ -226,4 +232,7 @@ public:
 	D3DXVECTOR3 push;
 
 	std::shared_ptr<CXInput> m_pPad;
+
+private:
+	void BuildComObstacles(); // 1 回だけ組み立てる関数を用意
 };

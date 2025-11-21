@@ -23,6 +23,7 @@
 #include <limits>
 
 
+
 class CComPlayer
 	: public CPlayer
 {
@@ -32,6 +33,13 @@ public:
 
 	void Initialize(int id)override;
 	void Update() override;
+
+	//障害物
+	struct SimpleObstacle
+	{
+		D3DXVECTOR3 pos;	//上からみた中心位置
+		float radius;		//おおよその半径
+	};
 
 	//敵判定
 	//自分以外は全員敵	
@@ -64,6 +72,14 @@ public:
 	void SetNavGrid(std::shared_ptr<NavGrid> nav) { m_pNavGrid = std::move(nav); }
 
 	void RequestPathTo(const D3DXVECTOR3& goal);
+
+	//ステージ側からみた障害物の配列
+	void SetSimpleObstacles(const std::vector<SimpleObstacle>* obstacles);
+
+	// CComPlayer.cpp
+
+	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
+
 
 private:
 	//構造体
@@ -101,7 +117,7 @@ private:
 	void SanitizeParams();												//パラメータ調整
 	void TickChaseTo(const D3DXVECTOR3& targetPos);						//追尾
 	void TickAimTo(const D3DXVECTOR3& targetPos);						//砲塔追尾
-	void TickWander(float turnStep, float moveStep);
+	void TickWander();
 	void Blacklist(int id) { m_TargetBlackList[id] = m_BlackListTime; }	//一定時間ターゲットにしない
 	bool IsBlacklisted(int id) const;									//IDがリストに登録されているか判定.読み取り専用
 	void TickBlacklist();												//フレームごとにブラックリストを更新
@@ -116,15 +132,7 @@ private:
 	static float ToRad(float d) { return d * (D3DX_PI / 180.0f); }
 	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 
-	//障害物判定用
-	bool SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const;
 
-	//前方に見えない当たり判定を置く
-	bool HasObstacleAheadWithBox(const CBoxCollider& selfBox,
-		const D3DXVECTOR3& forward,
-		float probeDist,
-		float step,
-		float& outHitDist) const;
 
 	//回避側に固定旋回を混ぜる
 	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
@@ -147,6 +155,14 @@ private:
 		return (v < lo) ? lo : (v > hi) ? hi : v;
 	}
 
+	bool HasObstacleAheadSimple(
+		const D3DXVECTOR3& selfPos,
+		float              yaw,
+		float              probeDist,
+		float              step,
+		float& outHitDist) const;
+
+
 	//動作切り替え
 	static float Sqr(float v) { return v * v; }
 
@@ -154,7 +170,6 @@ private:
 	void ComputeSeparation(const D3DXVECTOR3& selfPos,
 		D3DXVECTOR3& outSep, float& outNearest) const;
 
-	bool FollorPath(float turnStep, float moveStep);
 
 	//COMの状態変更
 	void ChangeState(State state);
@@ -220,20 +235,11 @@ private:
 	float m_WayPointeReach;			//WPの到達判定
 	float m_LookAheadSkep;			//近いWPは一旦スキップ
 
-
-
-
-
-
-
-	//std::shared_ptr<NavGrid> m_Nav;              // 共有Gridへの参照
-	//std::deque<D3DXVECTOR3>  m_Path;             // ワールド座標のWP列
-	//int   m_PathReplanTimer = 0;
-	//int   m_PathReplanInterval = 20;             // 20fごと再探索
-	//float m_WaypointReach = 0.6f;                // WP到達判定
-	//float m_LookAheadSkip = 2.0f;                // 近いWPは先送り
-
-
+	const std::vector<SimpleObstacle>* m_pSimpleObstacles = nullptr;
+	float m_ObstacleProbeDist = 8.0f;								// 何メートル先まで見るか
+	float m_ObstacleProbeStep = 0.5f;								// 何メートル刻みでチェックするか
+	float m_ObstacleRadius = 1.5f;									// 自分の半径
+	float m_ProbeAngleRad = D3DXToRadian(25.0f);					// 左右にどれくらい首を振るか
 
 };
 

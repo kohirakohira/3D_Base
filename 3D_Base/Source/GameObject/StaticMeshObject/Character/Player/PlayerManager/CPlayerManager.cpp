@@ -299,6 +299,17 @@ void CPlayerManager::SetPlayerTuning(int idx, const TankTuning& t)
 	if (idx >= 0 && idx < (int)m_pPlayers.size())m_pPlayers[idx]->SetTune(t);
 }
 
+void CPlayerManager::SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles)
+{
+	for (auto& up : m_pPlayers)
+	{
+		if (auto* com = dynamic_cast<CComPlayer*>(up.get()))
+		{
+			com->SetSimpleObstacles(obstacles);
+		}
+	}
+}
+
 void CPlayerManager::SyncByPadConnection()
 {
 	//Ú‘±‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğæ“¾‚·‚é

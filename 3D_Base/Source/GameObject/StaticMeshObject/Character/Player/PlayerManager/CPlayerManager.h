@@ -68,6 +68,7 @@ public:
 	void SetPlayerTuningAll(const TankTuning& t);
 	void SetPlayerTuning(int idx, const TankTuning& t);
 
+	void SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles);
 
 	////ƒvƒŒƒCƒ„[‚©‚Ç‚¤‚©
 	//bool IsPlayer(int index) const;

@@ -124,6 +124,36 @@ D3DXVECTOR3 CComPlayer::ForwardFromYaw(float yaw)
     return D3DXVECTOR3(std::sinf(yaw), 0.0f, std::cosf(yaw));
 }
 
+//COMの正面方向に、一定距離以内に障害物があるか
+bool CComPlayer::HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const
+{
+    outHitDist = probeDist;
+    if (!m_pSimpleObstacles || m_pSimpleObstacles->empty()) return false;   //障害物リストがない
+
+    //自身の半径を取得
+    const float selfR = m_ObstacleRadius;
+
+    for (float d = step; d <= probeDist; d += step)
+    {
+        D3DXVECTOR3 p = selfPos + ForwardFromYaw(yaw) * d;
+        p.y = 0.0f;
+
+        for (const auto& ob : *m_pSimpleObstacles)
+        {
+            D3DXVECTOR3 v = p - ob.pos;
+            v.y = 0.0f;
+            const float dist2 = v.x * v.x + v.z * v.z;
+            const float r = selfR + ob.radius;   // 自分＋障害物の安全距離
+            if (dist2 <= r * r)
+            {
+                outHitDist = d;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 //COM同士の分離ベクトルを計算
 void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
     D3DXVECTOR3& outSep, float& outNearest)const
@@ -396,163 +426,74 @@ void CComPlayer::Update()
     case State::Seek:     StepSeek();     break;
     case State::Chase:    StepChase();    break;
     case State::Attack:   StepAttack();   break;
-    //case State::Evade:  StepEvade();    break; 
+    case State::Evade:  StepEvade();    break; 
     case State::ItemSeek: StepItemSeek(); break;
     }
     ++m_StateFrames;
 }
 
-//前方に当たり判定を設置する
-bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
-    const D3DXVECTOR3& forward,
-    float  prodeDist,
-    float  step,
-    float& outHitDist)const
-{
-    if (!m_pBoxCollider || m_pBoxCollider->empty()) return false;
-    CBoxCollider ghost = selfBox;
-    const D3DXVECTOR3 base = selfBox.GetPosition();
-
-    for (float d = step; d <= prodeDist; d += step)
-    {
-        ghost.SetPosition(base + forward * d);
-        for (const auto& object : *m_pBoxCollider)
-        {
-            if (object && ghost.CheckCollisionBox(*object))
-            {
-                outHitDist = d;
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
 {
     auto body = Body();
-    if (!body) return;  //bodyがなければ早期リターン
+    if (!body) return;
 
-    //分離ベクトル
     D3DXVECTOR3 pos = body->GetPosition();
+    pos.y = 0.0f;
+
+    // COM 同士の分離
     D3DXVECTOR3 sep(0, 0, 0);
     float nearest = 1e9f;
-
-
     ComputeSeparation(pos, sep, nearest);
-    
-    body->SetPosition(pos.x, pos.y = 0, pos.z);
 
-    //前進
-    pos += ForwardFromYaw(nextYaw) * moveStep; 
-    pos.x += sep.x * 0.02f;
-    pos.z += sep.z * 0.02f;
+    // 次の候補位置を計算
+    D3DXVECTOR3 nextPos = pos + ForwardFromYaw(nextYaw) * moveStep;
+    nextPos.x += sep.x * 0.02f;
+    nextPos.z += sep.z * 0.02f;
+    nextPos.y = 0.0f;
 
-    //乗り上げ対策
-    pos.y = 0.0f;
-    body->SetPosition({ pos.x , nextYaw, pos.z });
-    body->SetPosition(pos);
+    //ここで危険ゾーン判定
+    if (IsInDangerZone(nextPos))
+    {
+        //今の向きのまま、そのフレームは前進しない
+        body->SetRotation({ 0.f, nextYaw, 0.f });
+        body->CCharacter::Update();
+        SyncCannonToBody();
+        return;
+    }
+
+    // 実際に移動する
+    body->SetRotation({ 0.f, nextYaw, 0.f });
+    body->SetPosition(nextPos);
     body->CCharacter::Update();
     SyncCannonToBody();
 }
 
 
-//{
-//    auto body = Body(); if (!body) return;
-//
-//    D3DXVECTOR3 pos = body->GetPosition();
-//    D3DXVECTOR3 sep(0, 0, 0); float nearest = 1e9f;
-//    ComputeSeparation(pos, sep, nearest);
-//
-//    // 前進 + 分離補正
-//    pos += ForwardFromYaw(nextYaw) * moveStep;
-//    pos.x += sep.x * 0.02f;
-//    pos.z += sep.z * 0.02f;
-//
-//    // 段差乗り上げ防止（必要なら地形からYを取得）
-//    pos.y = 0.0f;
-//
-//    body->SetRotation({ 0.f, nextYaw, 0.f });
-//    body->SetPosition(pos);
-//    body->CCharacter::Update();
-//    SyncCannonToBody();
-//}
 
-#if 0
-//探索処理
-void CComPlayer::StepSeek()
-{
-    auto body = Body();
-    if (!body) return;
-    //パラメータ取得
-    const auto tuning = GetTuning();
-    const auto cur = body->GetRotation().y;
-    const float desired = cur + m_WanderAngle;  //探索角度
-
-    TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);     //動作
-    if (m_pTarget)
-    {
-        //回頭して狙ってうつ
-        TickAimTo(m_pTarget->GetPosition());
-        TryAutoFire();
-    }
-}
-#endif
-#if 1
 void CComPlayer::StepSeek()
 {
     auto body = Body();
     if (!body) return;
     const auto tuning = GetTuning();
+
+    // Wander 更新を入れる
+    TickWander();
 
     const float cur = body->GetRotation().y;
-
-    // desired加算
     const float desired = cur + m_WanderAngle;
 
-    // 障害物優先でステア
     const float next = SteerWithAvoidAABB(cur, desired, tuning.bodyTurnSpeed);
-
-    // 避障つき前進
     SafeAdvance(next, tuning.moveSpeed);
 
-    // 敵が見えているなら、移動しながら狙い撃ち
-    if (m_pTarget) 
-    {
-        TickAimTo(m_pTarget->GetPosition()); 
-        TryAutoFire();
-    }
-}
-
-#endif
-
-#if 0
-void CComPlayer::StepChase()
-{
-    auto body = Body();
-    if (body) return;
-
-    //パラメータ
-    const auto tuning = GetTuning();
-    const float cur = body->GetRotation().y;
-    const float desired = cur + m_WanderAngle;
-
-    TickWander(tuning.bodyTurnSpeed, tuning.moveSpeed);
-    
-    //こっちでも障害物ステア
-    const float Object = SteerWithAvoidAABB(cur, desired, tuning.bodyTurnSpeed);
-    SafeAdvance(Object, tuning.moveSpeed);
-
-    //追尾処理
     if (m_pTarget)
     {
         TickAimTo(m_pTarget->GetPosition());
         TryAutoFire();
     }
 }
-#endif
 
-#if 1
+
 void CComPlayer::StepChase()
 {
     auto body = Body(); if (!body || !m_pTarget) { StepSeek(); return; }
@@ -577,9 +518,7 @@ void CComPlayer::StepChase()
     TickAimTo(tp);
     TryAutoFire();
 }
-#endif
 
-#if 1
 void CComPlayer::StepAttack()
 {
     auto body = Body(); if (!body || !m_pTarget) { StepSeek(); return; }
@@ -613,7 +552,6 @@ void CComPlayer::StepAttack()
     TryAutoFire();
 }
 
-#endif
 //退避
 void CComPlayer::StepEvade()
 {
@@ -850,69 +788,22 @@ D3DXVECTOR3 CComPlayer::GetRotation() const
     return CCharacter::GetRotation();
 }
 
-
-void CComPlayer::TickWander(float turnStep, float moveStep)
+void CComPlayer::TickWander()
 {
-#if 0
-    //body取得
-    auto body = Body();
-    if (!body) return;
-
-    const auto tuning = GetTuning();
-
-    const float WanderDelta = 0.08f;
+    const float WanderDelta = 0.10f;
     const float WanderClamp = 0.6f;
 
-    //乱数設定
-    int randomBit = std::rand() & 1;
-
-    if (randomBit != 0)
+    // たまにだけ方向を揺らす
+    if ((std::rand() & 31) == 0) // 1/32フレームぐらい
     {
-        m_WanderAngle += WanderDelta;
+        const float sign = (std::rand() & 1) ? +1.f : -1.f;
+        m_WanderAngle += sign * WanderDelta;
+        if (m_WanderAngle > WanderClamp) m_WanderAngle = WanderClamp;
+        if (m_WanderAngle < -WanderClamp) m_WanderAngle = -WanderClamp;
     }
-    else
-    {
-        m_WanderAngle -= WanderDelta;
-    }
-
-    //クランプ
-    if (m_WanderAngle > WanderClamp)
-    {
-        m_WanderAngle = WanderClamp;
-    }
-
-    if (m_WanderAngle < -WanderClamp)
-    {
-        m_WanderAngle = -WanderClamp;
-    }
-
-    //回頭
-    float yawRed = body->GetRotation().y;
-    yawRed = Approach(yawRed, yawRed + m_WanderAngle, turnStep);
-
-    //位置
-    D3DXVECTOR3 pos = body->GetPosition();
-
-    //分離の情報
-    D3DXVECTOR3 dir(0, 0, 0);
-    float Dist = 1e9f;  //大きい値
-    ComputeSeparation(pos, dir, Dist);
-
-    //後退
-    D3DXVECTOR3 Dir = ForwardFromYaw(yawRed);
-    pos += Dir * moveStep;
-    pos.x += dir.x * 0.02f;
-    pos.z += dir.z * 0.02f;
-
-    //見た目に反映
-    body->SetRotation({ 0.f,yawRed,0.f });
-    body->SetPosition(pos);
-    body->CCharacter::Update();
-
-    //砲塔を車体に追尾
-    SyncCannonToBody();
-#endif
 }
+
+
 //IDがリストに登録されているか判定
 //読み取り専用
 bool CComPlayer::IsBlacklisted(int id) const
@@ -994,21 +885,6 @@ bool CComPlayer::FollowPath(float turnStep, float moveSte)
 
     //float nextYaw = Approach(curYaw, curYaw + Wrap(desired - curYaw), turnStep);
 
-#if 0
-    D3DXVECTOR3 pos = p + ForwardFromYaw(nextYaw) * tuning.moveStep;
-    pos.y = 0.f;
-    body->SetRotation({ 0, nextYaw, 0 });
-    body->SetPosition(pos);
-    SyncCannonToBody();
-    body->CCharacter::Update();
-
-    // 到達判定
-    float dx = w.x - pos.x, dz = w.z - pos.z;
-    if (dx * dx + dz * dz < m_WayPointeReach * m_WayPointeReach) {
-        m_Path.pop_front();
-    }
-    return true;
-#endif
 }
 
 
@@ -1064,7 +940,7 @@ void CComPlayer::RequestPathTo(const D3DXVECTOR3& goal)
         wp.push_back({ wx, 0.f, wz });
     }
 
-    // 簡易スムージング）
+    // 簡易スムージング
     std::deque<D3DXVECTOR3> smooth;
     if (!wp.empty()) {
         smooth.push_back(wp.front());
@@ -1081,100 +957,90 @@ void CComPlayer::RequestPathTo(const D3DXVECTOR3& goal)
     m_Path = std::move(smooth);
 }
 
-
-bool CComPlayer::SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const
+void CComPlayer::SetSimpleObstacles(const std::vector<SimpleObstacle>* obstacles)
 {
-    const float angs[3] = { 0.f, +m_ProdeAngleRad, -m_ProdeAngleRad };
-    const float step = 0.30;
-    const float prode = m_ProdeDist;
+    m_pSimpleObstacles = obstacles;
+}
 
-    bool any = false;
-    outAvoid = { 0,0,0 };
-    nearest = 1e9f;
+bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
+{
+    if (!m_pSimpleObstacles) return false;
 
-    for (float a : angs)
+    for (const auto& z : *m_pSimpleObstacles)
     {
-        D3DXVECTOR3 dir = ForwardFromYaw(yaw + a);
-        dir.y = 0.f;
-        float hitD;
-        if (HasObstacleAheadWithBox(selfBox, dir, prode, step, hitD))
+        const float dx = pos.x - z.pos.x;
+        const float dz = pos.z - z.pos.z;
+        const float r = z.radius + m_ObstacleRadius; // 自分の大きさも足す
+        if (dx * dx + dz * dz < r * r)
         {
-            any = true;
-            nearest = std::min(nearest, hitD);
-            //前線ベクトル
-            D3DXVECTOR3 tang = { dir.z, 0.f,-dir.x };
-            outAvoid.x += tang.x;
-            outAvoid.z += tang.z;
+            return true; // 危険ゾーンに入っている
         }
     }
-    return any;
+    return false;
 }
+
+
 
 float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep)
 {
     auto body = Body();
-    if (!body)
+    if (!body) return curYaw;
+
+    const D3DXVECTOR3 selfPos = body->GetPosition();
+
+    //障害物情報がなければ、純粋にdesiredYawへ寄せるだけ
+    if (!m_pSimpleObstacles || m_pSimpleObstacles->empty())
     {
-        return curYaw;
+        const float d = Wrap(desiredYaw - curYaw);
+        return Approach(curYaw, curYaw + d, turnStep);
     }
 
-    auto box = std::dynamic_pointer_cast<CBoxCollider>(body->GetCollider());
-    if (!box)
-    {
+    // 3本の仮想レイを試す：正面、少し左、少し右
+    const float angs[3] = { 0.f, +m_ProbeAngleRad, -m_ProbeAngleRad };
 
-        return curYaw;
-    }
-    D3DXVECTOR3 avoid;
-    float nearHit;
-    const bool blocke = SenseObstacleAABB(*box, curYaw, avoid, nearHit);
+    float bestYaw = desiredYaw;
+    float bestScore = -1e9f;
 
-    if (m_AvoidHolde > 0)
+    for (float a : angs)
     {
-        --m_AvoidHolde;
-        return curYaw + turnStep * (float)m_AvoidSide;
-    }
-    //基本的には左
-    if (blocke)
-    {
-        if (m_AvoidSide == 0)
+        const float testYaw = desiredYaw + a;
+        float hitD;
+        const bool blocked = HasObstacleAheadSimple(
+            selfPos, testYaw,
+            m_ObstacleProbeDist,
+            m_ObstacleProbeStep,
+            hitD);
+
+        // スコア設計：
+        //  - 障害物がない方向を超優先
+        //  - desired からあまり外れない方向を優先
+        float score = 0.0f;
+        if (!blocked)
         {
-            m_AvoidSide = (avoid.x + avoid.z >= 0) ? +1 : -1;
+            score += 1000.0f; // ぶつからない方向
         }
-        m_AvoidHolde = m_AvoidMax;
-        return curYaw + turnStep * m_AvoidSide;
+        else
+        {
+            // ぶつかる場合も、近いよりは遠くでぶつかる方向をマシとする
+            score -= (m_ObstacleProbeDist - hitD);
+        }
+
+        // desired からのズレはなるべく小さくしたい
+        score -= std::fabs(Wrap(testYaw - desiredYaw)) * 10.0f;
+
+        if (score > bestScore)
+        {
+            bestScore = score;
+            bestYaw = testYaw;
+        }
     }
 
-    //通常時の動作
-    const float d = Wrap(curYaw - desiredYaw);
-    if (d > turnStep) return curYaw + turnStep;
-    if (d < -turnStep) return curYaw - turnStep;
-    return curYaw + d;
+    // 最終的に選ばれた bestYaw に向かうよう、curYaw を turnStep 分だけ近づける
+    const float d = Wrap(bestYaw - curYaw);
+    return Approach(curYaw, curYaw + d, turnStep);
 }
 
 
-//// 初期化時に一度だけ
-//void BuildGridFromAABBs(NavGrid& grid,
-//    const std::vector<std::shared_ptr<CBoxCollider>>& obsts,
-//    float agentRadius)
-//{
-//    const int W = grid.W(), H = grid.H(); const float C = grid.Cell();
-//
-//    // AABBをエージェント半径ぶん膨らませて安全側に
-//    for (auto& o : obsts) {
-//        if (!o) continue;
-//        D3DXVECTOR3 mn = o->GetMinPosition();
-//        D3DXVECTOR3 mx = o->GetMaxPosition();
-//        mn.x -= agentRadius; mn.z -= agentRadius;
-//        mx.x += agentRadius; mx.z += agentRadius;
-//
-//        // AABBをセル範囲へ
-//        Vec2i cmin = grid.ToCell(mn.x, mn.z);
-//        Vec2i cmax = grid.ToCell(mx.x, mx.z);
-//        for (int y = cmin.y; y <= cmax.y; ++y)
-//            for (int x = cmin.x; x <= cmax.x; ++x)
-//                grid.MarkBlocked(x, y);
-//    }
-//}
 
 
 
