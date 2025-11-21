@@ -50,7 +50,6 @@ public:
 public:
 	//“à•”‚ÅBodyECannon‚ğ‚Ü‚Æ‚ß‚éŠÖ”.
 	void Move(const PlayerInput& input);
-	void Rotate(const PlayerInput& input);
 	void Reload(const D3DXVECTOR3& pos, float y);
 
 public:

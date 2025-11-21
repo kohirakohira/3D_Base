@@ -101,7 +101,7 @@ struct TankTuning
 {
 	float moveSpeed = 0.1f;			//前進、後退
 	float bodyTurnSpeed = 0.01f;	//車体ヨー
-	float turretTurnSpeed = 0.01f;	//砲塔ヨー
+	float turretTurnSpeed = 0.02f;	//砲塔ヨー
 	float cannonHeight = 0.3f;		//砲塔の取り付けの高さ
 };
 

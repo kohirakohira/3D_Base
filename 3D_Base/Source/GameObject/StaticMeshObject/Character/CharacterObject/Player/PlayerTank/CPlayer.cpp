@@ -261,68 +261,6 @@ void CPlayer::Move(const PlayerInput& input)
 
 }
 #endif
-void CPlayer::Rotate(const PlayerInput& input)
-{
-	// 必要なポインタがなければ何もしない
-	if (!m_pCannon || !m_Controller) return;
-	if (!m_Controller->CheckConnected()) return;
-
-	// 右スティックがほぼ倒れていないなら何もしない
-	auto dir = m_Controller->GetRightStickDirection(0.5f);
-	if (dir == CController::Direction::None)
-	{
-		return;
-	}
-
-	auto& tuning = GetTuning();
-
-	// 右スティックの値を取得
-	const float sx = m_Controller->GetRightStickX();
-	const float sy = m_Controller->GetRightStickY();
-
-	// 完全にゼロに近いなら安全のため何もしない
-	if (sx == 0.f && sy == 0.f) return;
-
-	// スティックの向きから「目標の角度」を計算
-	// ※座標系の都合で (x, y) の順
-	const float targetAngle = std::atan2f(sx, sy);
-
-	// いまの砲塔の角度
-	D3DXVECTOR3 rot = m_pCannon->GetRotation();
-
-	// 差分を [-π, π] に丸める
-	float diff = targetAngle - rot.y;
-	const float pi = D3DX_PI;
-	const float twoPi = D3DX_PI * 2.0f;
-
-	if (diff > pi)      diff -= twoPi;
-	else if (diff < -pi) diff += twoPi;
-
-	const float step = tuning.turretTurnSpeed;
-
-	// 一歩で追いつけるなら一気に目標角へ
-	if (std::fabs(diff) <= step)
-	{
-		rot.y = targetAngle;
-	}
-	else if (diff > 0.f)
-	{
-		// 目標が正方向にある → 正方向に少し回す
-		rot.y += step;
-	}
-	else
-	{
-		// 目標が負方向にある → 負方向に少し回す
-		rot.y -= step;
-	}
-
-	// rot.y を [0, 2π] に正規化
-	if (rot.y >= twoPi)      rot.y -= twoPi;
-	else if (rot.y < 0.0f)   rot.y += twoPi;
-
-	//砲塔に反映
-	m_pCannon->SetRotation(rot);
-}
 
 //弾発射.
 void CPlayer::Reload(const D3DXVECTOR3& pos, float y)
@@ -377,39 +315,37 @@ void CPlayer::RotateTurretByPad()
 
 void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 {
-#if 1
+
 	//松岡.
+	 // コントローラー番号を取得
+	const int index = GetControllerIndex();
+
+	// そのコントローラーの入力を取得
+	CController* controller = CControllerManager::GetInstance().GetController(index);
+
+	// コントローラーが接続されていなければ通らない
+	if (!controller) return;
+	if (!controller->CheckConnected()) return;
+
+	// 左スティックで車体の移動／回転
+	Move(input);
+
+	//右スティックで砲塔回転
+	RotateTurretByPad();
+	//Rotate(input);
+
+	// RB入力があった時 → リロード
+	if (controller->Down(CXInput::RB, true))
 	{
-		//コントローラー番号を取得.
-		int index = GetControllerIndex();
-
-		//そのコントローラーの入力を取得.
-		CController* m_Controller = CControllerManager::GetInstance().GetController(index);
-
-		//コントローラーが接続されていなければ通らない.
-		if (!m_Controller)return;
-
-		//コントローラーがあり、ボタンを押されたか.
-		if (m_Controller != nullptr && m_Controller->CheckConnected())
-		{
-			//LSHICK入力があった時.
-			//移動.
-			Move(input);
-			//砲塔回転.
-			Rotate(input);
-			
-			//RB入力があった時.
-			if (m_Controller->Down(CXInput::RB, true))
-			{
-				//リロード.
-				Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
-			}
-		}
-
-		m_pBody->Update();
-		m_pCannon->Update();
+		Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
 	}
-#endif
+
+	// 砲塔を車体位置に追従させる
+	SyncCannonToBody();
+
+	// 見た目の更新
+	if (m_pBody)   m_pBody->Update();
+	if (m_pCannon) m_pCannon->Update();
 }
 
 //砲塔と車体を同期する

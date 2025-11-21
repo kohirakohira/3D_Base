@@ -91,8 +91,6 @@ void CCharacterManager::Init()
 		}
 	}
 }
-//===================
-//===================
 
 //=======XV=======
 void CCharacterManager::Update()
