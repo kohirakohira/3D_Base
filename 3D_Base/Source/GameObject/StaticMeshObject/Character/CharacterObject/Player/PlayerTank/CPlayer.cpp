@@ -261,50 +261,46 @@ void CPlayer::Move(const PlayerInput& input)
 
 }
 #endif
-//砲塔回転.
 void CPlayer::Rotate(const PlayerInput& input)
 {
 	// 必要なポインタがなければ何もしない
 	if (!m_pCannon || !m_Controller) return;
 	if (!m_Controller->CheckConnected()) return;
 
-	// ある程度スティックが倒れていないなら回転しない
+	// 右スティックがほぼ倒れていないなら何もしない
 	auto dir = m_Controller->GetRightStickDirection(0.5f);
-	if (dir == CController::Direction::None) {
+	if (dir == CController::Direction::None)
+	{
 		return;
 	}
 
 	auto& tuning = GetTuning();
 
-	// 右スティックの生のXY値を取得
-	D3DXVECTOR2 stick = {
-		m_Controller->GetRightStickX(),
-		m_Controller->GetRightStickY()
-	};
+	// 右スティックの値を取得
+	const float sx = m_Controller->GetRightStickX();
+	const float sy = m_Controller->GetRightStickY();
 
-	// 完全にゼロなら何もしない（安全策）
-	if (stick.x == 0.f && stick.y == 0.f) {
-		return;
-	}
+	// 完全にゼロに近いなら安全のため何もしない
+	if (sx == 0.f && sy == 0.f) return;
 
-	// スティック方向から「目標の角度」を求める
-	// ※座標系の都合で x,y の順にしている
-	const float targetAngle = std::atan2f(stick.x, stick.y);
+	// スティックの向きから「目標の角度」を計算
+	// ※座標系の都合で (x, y) の順
+	const float targetAngle = std::atan2f(sx, sy);
 
 	// いまの砲塔の角度
 	D3DXVECTOR3 rot = m_pCannon->GetRotation();
 
-	// 差分を求める
+	// 差分を [-π, π] に丸める
 	float diff = targetAngle - rot.y;
+	const float pi = D3DX_PI;
 	const float twoPi = D3DX_PI * 2.0f;
 
-	// 差分を [-π, π] に正規化
-	if (diff > D3DX_PI)       diff -= twoPi;
-	else if (diff < -D3DX_PI) diff += twoPi;
+	if (diff > pi)      diff -= twoPi;
+	else if (diff < -pi) diff += twoPi;
 
 	const float step = tuning.turretTurnSpeed;
 
-	// 一歩で追いつけるなら一気に合わせる
+	// 一歩で追いつけるなら一気に目標角へ
 	if (std::fabs(diff) <= step)
 	{
 		rot.y = targetAngle;
@@ -321,12 +317,10 @@ void CPlayer::Rotate(const PlayerInput& input)
 	}
 
 	// rot.y を [0, 2π] に正規化
-	if (rot.y > twoPi)
-		rot.y -= twoPi;
-	else if (rot.y < 0.f)
-		rot.y += twoPi;
+	if (rot.y >= twoPi)      rot.y -= twoPi;
+	else if (rot.y < 0.0f)   rot.y += twoPi;
 
-	// 砲塔に反映
+	//砲塔に反映
 	m_pCannon->SetRotation(rot);
 }
 
@@ -411,7 +405,6 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 				Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
 			}
 		}
-		SyncCannonToBody();
 
 		m_pBody->Update();
 		m_pCannon->Update();
