@@ -250,10 +250,8 @@ void CPlayer::Move(const PlayerInput& input)
 	default:
 		break;
 	}
-
 	//ˆÚ“®.
 	m_pBody->RadioControl();
-
 }
 
 //–C“ƒ‰ñ“].
