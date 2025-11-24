@@ -97,6 +97,9 @@ public:
 
 	virtual void HitPlayer();
 
+	virtual bool HasControl() const { return m_HasControl; }
+
+
 protected:
 
 	

@@ -115,6 +115,7 @@ CGameMain::~CGameMain()
 
 void CGameMain::Update()
 {
+
 	//BGMのループ再生..
 	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
@@ -169,7 +170,7 @@ void CGameMain::Update()
 #endif
 	m_pShotManager->Update();
 
-
+#if 1
 	//カメラ追従＆更新.砲塔基準
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -183,6 +184,45 @@ void CGameMain::Update()
 		}
 		m_pCameras[i]->Update();
 	}
+#endif
+#if 0
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		auto player = m_pCharacterManager->GetControlPlayer(i);
+
+		if (player)
+		{
+			auto body = player->GetBody();
+			auto cannon = player->GetCannon();
+			D3DXVECTOR3 bpos(0, 0, 0), cpos(0, 0, 0);
+			if (body)   bpos = body->GetPosition();
+			if (cannon) cpos = cannon->GetPosition();
+
+			printf("[Update] CamSlot %d: player=%p body=%p cannon=%p  bodyPos=(%.1f,%.1f,%.1f) cannonPos=(%.1f,%.1f,%.1f)\n",
+				i,
+				(void*)player.get(),
+				(void*)(body ? body.get() : nullptr),
+				(void*)(cannon ? cannon.get() : nullptr),
+				bpos.x, bpos.y, bpos.z,
+				cpos.x, cpos.y, cpos.z
+			);
+
+			const D3DXVECTOR3 camPos = cannon ? cannon->GetPosition()
+				: (body ? body->GetPosition() : D3DXVECTOR3(0, 0, 0));
+			float yaw = cannon ? cannon->GetRotation().y
+				: (body ? body->GetRotation().y : 0.0f);
+
+			m_pCameras[i]->SetTargetPos(camPos);
+			m_pCameras[i]->SetTargetRotY(yaw);
+		}
+		else
+		{
+			printf("[Update] CamSlot %d: player = nullptr\n", i);
+		}
+
+		m_pCameras[i]->Update();
+	}
+#endif
 	
 	//定数宣言..
 	const float PI = 3.14159265358979f;
@@ -287,14 +327,36 @@ void CGameMain::Draw()
 		LIGHT&		light	= camera->m_Light;
 		CAMERA&		paramC	= camera->m_Camera;
 
-		//プレイヤーを描画.ここで全員描く.
+		////プレイヤーを描画.ここで全員描く.
+		//for (int players = 0; players < PLAYER_MAX; ++players)
+		//{
+		//	if (auto p = m_pCharacterManager->GetControlPlayer(players))
+		//	{
+		//		p->Draw(view, proj, light, paramC);
+		//	}
+		//}
+
+#if 0
 		for (int players = 0; players < PLAYER_MAX; ++players)
 		{
 			if (auto p = m_pCharacterManager->GetControlPlayer(players))
 			{
+				auto body = p->GetBody();
+				D3DXVECTOR3 pos(0, 0, 0);
+				if (body) pos = body->GetPosition();
+
+				printf("  [DrawOneViewport] vpOwner? playerIdx=%d player=%p body=%p pos=(%.1f,%.1f,%.1f)\n",
+					players,
+					(void*)p.get(),
+					(void*)(body ? body.get() : nullptr),
+					pos.x, pos.y, pos.z
+				);
+
 				p->Draw(view, proj, light, paramC);
 			}
 		}
+#endif
+
 		m_pCharacterManager->Draw(view, proj, light, paramC);
 
 //オブジェクトの描画..

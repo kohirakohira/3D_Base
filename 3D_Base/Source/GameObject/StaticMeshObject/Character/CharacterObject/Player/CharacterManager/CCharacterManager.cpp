@@ -35,12 +35,14 @@ void CCharacterManager::Init()
 	m_pPlayers.clear();
 	m_pPlayers.reserve(PLAYER_MAX);
 
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		// コントローラーの取得
-		CController* ctrl = CControllerManager::GetInstance().GetController(i);
+	// テンプレ用 Body/Cannon まだ未設定
+	m_pBody = nullptr;
+	m_pCannon = nullptr;
 
-		//オブジェクトがあるかではなく実際に接続されているかで判定する
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		// コントローラーの接続状態を確認
+		CController* ctrl = CControllerManager::GetInstance().GetController(i);
 		bool connected = false;
 		if (ctrl != nullptr)
 		{
@@ -49,36 +51,43 @@ void CCharacterManager::Init()
 
 		if (connected)
 		{
-			//=================
-			//   プレイヤー
-			//=================
-			auto player = std::make_shared<CPlayer>();	// インスタンス生成.
-			player->Init(i);							// 車体・砲塔を生成.
-			player->SetHasControl(true);				// 操作権ON
-			player->SetKeyBoadEnble(true);				// （内部的には m_HasControl を true にする）
-			player->SetControllerIndex(i);				// コントローラー番号を教える
+			//==============================
+			// Padあり → プレイヤー生成
+			//==============================
 
-			// Body / Cannon のポインタをマネージャ内にキャッシュ
-			SetBodyAndCannon(player->GetBody(), player->GetCannon());
+			//プレイヤー.
+			auto player = std::make_shared<CPlayer>();   // インスタンス生成.
+			player->Init(i);                             // 車体・砲塔を生成.
+			player->SetControllerIndex(i);               // コントローラー設定.
+			player->SetHasControl(true);                 // コントローラー操作ON.
+			player->SetKeyBoadEnble(true);               // キーボード操作ON(必要なら).
 
-			// リストに追加
-			m_pPlayers.push_back(std::move(player));
+			// 1人目の Body/Cannon をテンプレとして控えておく（SwitchControl用）
+			if (!m_pBody || !m_pCannon)
+			{
+				SetBodyAndCannon(player->GetBody(), player->GetCannon());
+			}
+
+			m_pPlayers.push_back(player);
 		}
 		else
 		{
-			//=================
-			//      COM
-			//=================
-			auto com = std::make_shared<CComPlayer>();	//インスタンス生成.
-			com->Create(i);								//車体・砲塔を生成.
-			com->SetComEnabled(true);					// COMのAI処理を有効にするフラグ
-			com->SetHasControl(false);					// 人間入力は読まない
+			//==============================
+			// Padなし → COM生成
+			//==============================
 
-			// Body / Cannon のポインタをマネージャ内にキャッシュ
-			SetBodyAndCannon(com->GetBody(), com->GetCannon());
+			auto com = std::make_shared<CComPlayer>();   //インスタンス生成.
+			com->Create(i);                              //車体・砲塔を生成.
+			com->SetComEnabled(true);                    //COMモードON.
+			com->SetHasControl(false);                   //プレイヤー操作OFF.
 
-			// リストに追加
-			m_pPlayers.push_back(std::move(com));
+			// 1体目の Body/Cannon をテンプレとして控えておく（SwitchControl用）
+			if (!m_pBody || !m_pCannon)
+			{
+				SetBodyAndCannon(com->GetBody(), com->GetCannon());
+			}
+
+			m_pPlayers.push_back(com);
 		}
 	}
 
@@ -88,9 +97,47 @@ void CCharacterManager::Init()
 		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
 		{
 			com->SetPlayersRef(&m_pPlayers);
+
 		}
 	}
+
+	// アクティブプレイヤーは最初に見つかった「人間プレイヤー」にしておく（いなければ0番）
+	m_ActivePlayerIndex = 0;
+	for (int i = 0; i < (int)m_pPlayers.size(); ++i)
+	{
+		if (auto p = std::dynamic_pointer_cast<CPlayer>(m_pPlayers[i]))
+		{
+			if (p->HasControl())
+			{
+				m_ActivePlayerIndex = i;
+				break;
+			}
+		}
+	}
+
+#if 0
+	// 誰が何番に入ったか確認したい時用のログ
+	for (int i = 0; i < (int)m_pPlayers.size(); ++i)
+	{
+		bool isCom = (std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[i]) != nullptr);
+
+		auto body = m_pPlayers[i]->GetBody();
+		auto cannon = m_pPlayers[i]->GetCannon();
+		D3DXVECTOR3 pos(0, 0, 0);
+		if (body) pos = body->GetPosition();
+
+		printf("Init Slot %d : %s  player=%p body=%p cannon=%p pos=(%.1f, %.1f, %.1f)\n",
+			i,
+			isCom ? "COM" : "PLAYER",
+			(void*)m_pPlayers[i].get(),
+			(void*)(body ? body.get() : nullptr),
+			(void*)(cannon ? cannon.get() : nullptr),
+			pos.x, pos.y, pos.z
+		);
+	}
+#endif
 }
+//===================
 
 //=======更新=======
 void CCharacterManager::Update()
@@ -354,6 +401,21 @@ void CCharacterManager::SetStartPosition()
 			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
 		}
 	}
+
+	printf("==== SetStartPosition after ====\n");
+	for (int i = 0; i < PLAYER_MAX && i < (int)m_pPlayers.size(); ++i)
+	{
+		bool isCom = (std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[i]) != nullptr);
+		auto body = m_pPlayers[i]->GetBody();
+		D3DXVECTOR3 pos = body ? body->GetPosition() : D3DXVECTOR3(0, 0, 0);
+
+		printf("StartPos Slot %d : %s  player=%p body=%p pos=(%.2f, %.2f, %.2f)\n",
+			i,
+			isCom ? "COM" : "PLAYER",
+			(void*)m_pPlayers[i].get(),
+			(void*)body.get(),
+			pos.x, pos.y, pos.z);
+	}
 }
 //==================================
 
@@ -361,19 +423,15 @@ void CCharacterManager::SetStartPosition()
 // 引数あり
 std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int index)
 {
-	if (index >= 0 && index < (int)m_pPlayers.size()) {
-		return m_pPlayers[index];
+
+	for (const auto& p : m_pPlayers)
+	{
+		if (p && p->HasControl())
+			return p;
 	}
 	return nullptr;
 }
-// 引数なし
-std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer()
-{
-	for (const auto& p : m_pPlayer)
-		if (p && p->HasControl())   // ← ここで本当に操作中か判定
-			return p;
-	return nullptr;
-}
+
 //============================
 
 void CCharacterManager::SwitchActivePlayer()
@@ -399,7 +457,7 @@ void CCharacterManager::SwitchActivePlayer()
 		nextCom->SetComEnabled(false);	//プレイヤー操作
 	}
 	//次のやつに操作権を渡す
-	m_pPlayers[next]->SetHasControl(false);
+	m_pPlayers[next]->SetHasControl(true);
 	m_ActivePlayerIndex = next;
 }
 
@@ -437,10 +495,9 @@ void CCharacterManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::share
 {
 	//このクラス内で使えるようにする.
 	m_pBody = body;
-	m_pCannon = cannon;
-
+	m_pCannon = cannon;	
 	
-#if 1
+#if 0
 	for (auto& player : m_pPlayers)
 	{
 		player->SetCBody(body);

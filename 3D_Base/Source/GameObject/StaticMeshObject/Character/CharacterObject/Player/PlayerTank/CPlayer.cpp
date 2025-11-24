@@ -81,8 +81,6 @@ void CPlayer::Init(int id)
 	//インスタンスを生成
 	m_pBody = std::make_shared<CBody>(id);
 	m_pCannon = std::make_shared<CCannon>(id);
-	m_pCannon->Init();
-	m_pBody->Init();
 
 	// プレイヤーの体力に最大体力を入れる
 	m_Player.m_Hp = m_Player.m_MaxHp;
