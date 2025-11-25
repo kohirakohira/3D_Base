@@ -234,7 +234,7 @@ void CGameMain::Update()
 
 	//勝敗条件(確認用)..
 	//勝ち..
-	if (controller && controller->CheckConnected())
+	//if (controller && controller->CheckConnected())
 	{
 		if (GetKey('K') & 0x8000)
 		{

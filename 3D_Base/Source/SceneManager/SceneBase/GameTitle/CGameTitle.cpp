@@ -58,7 +58,7 @@ void CGameTitle::Update()
 
 
 	//ƒQ[ƒ€Ý’è‚É‘JˆÚ.
-	if (controller && controller->CheckConnected())
+	//if (controller && controller->CheckConnected())
 	{
 		if (m_KeyInput->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 		{
