@@ -265,7 +265,7 @@ void CPlayer::Reload(const D3DXVECTOR3& pos, float y)
 {
 	PlayerInput input{};
 
-	//’e‚Ì”­ŽË.
+	//’e‚Ì”­ŽË. 
 	input.shot = true;
 
 	m_pCannon->Reload(pos, y, input.shot, m_PlayerID);
