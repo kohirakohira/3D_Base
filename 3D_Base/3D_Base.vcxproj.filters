@@ -156,6 +156,14 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\CPlayer.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\TitleOnlyPlayer\CTitleOnlyPlayer.h" />
+    <ClInclude Include="Data\ImGui\Library\imconfig.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_impl_dx11.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_impl_win32.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_internal.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_rectpack.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_textedit.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />

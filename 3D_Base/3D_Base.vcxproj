@@ -238,6 +238,14 @@
     <ClCompile Include="Source\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Data\ImGui\Library\imconfig.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_impl_dx11.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_impl_win32.h" />
+    <ClInclude Include="Data\ImGui\Library\imgui_internal.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_rectpack.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_textedit.h" />
+    <ClInclude Include="Data\ImGui\Library\imstb_truetype.h" />
     <ClInclude Include="Source\Assets\Data\Singleton\CSingleton.h" />
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX11\CDirectX11.h" />

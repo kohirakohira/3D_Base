@@ -19,6 +19,7 @@ public:
 	void Update() override;
 	//ï`âÊä÷êî.
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)override;
+	//.
 
 
 private:
