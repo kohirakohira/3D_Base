@@ -35,12 +35,14 @@ void CCharacterManager::Init()
 	m_pPlayers.clear();
 	m_pPlayers.reserve(PLAYER_MAX);
 
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		// コントローラーの取得
-		CController* ctrl = CControllerManager::GetInstance().GetController(i);
+	//BodyCannonまだ未設定
+	m_pBody = nullptr;
+	m_pCannon = nullptr;
 
-		//オブジェクトがあるかではなく実際に接続されているかで判定する
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		// コントローラーの接続状態を確認
+		CController* ctrl = CControllerManager::GetInstance().GetController(i);
 		bool connected = false;
 		if (ctrl != nullptr)
 		{
@@ -49,36 +51,43 @@ void CCharacterManager::Init()
 
 		if (connected)
 		{
-			//=================
-			//   プレイヤー
-			//=================
-			auto player = std::make_shared<CPlayer>();	// インスタンス生成.
-			player->Init(i);							// 車体・砲塔を生成.
-			player->SetHasControl(true);				// 操作権ON
-			player->SetKeyBoadEnble(true);				// （内部的には m_HasControl を true にする）
-			player->SetControllerIndex(i);				// コントローラー番号を教える
+			//==============================
+			// Padありプレイヤー生成
+			//==============================
 
-			// Body / Cannon のポインタをマネージャ内にキャッシュ
-			SetBodyAndCannon(player->GetBody(), player->GetCannon());
+			//プレイヤー.
+			auto player = std::make_shared<CPlayer>();   // インスタンス生成.
+			player->Init(i);                             // 車体・砲塔を生成.
+			player->SetControllerIndex(i);               // コントローラー設定.
+			player->SetHasControl(true);                 // コントローラー操作ON.
+			player->SetKeyBoadEnble(true);               // キーボード操作ON.
 
-			// リストに追加
-			m_pPlayers.push_back(std::move(player));
+			//1人目のBodyCannonをテンプレとして控えておく
+			if (!m_pBody || !m_pCannon)
+			{
+				SetBodyAndCannon(player->GetBody(), player->GetCannon());
+			}
+
+			m_pPlayers.push_back(player);
 		}
 		else
 		{
-			//=================
-			//      COM
-			//=================
-			auto com = std::make_shared<CComPlayer>();	//インスタンス生成.
-			com->Create(i);								//車体・砲塔を生成.
-			com->SetComEnabled(true);					// COMのAI処理を有効にするフラグ
-			com->SetHasControl(false);					// 人間入力は読まない
+			//==============================
+			// COM生成
+			//==============================
 
-			// Body / Cannon のポインタをマネージャ内にキャッシュ
-			SetBodyAndCannon(com->GetBody(), com->GetCannon());
+			auto com = std::make_shared<CComPlayer>();   //インスタンス生成.
+			com->Create(i);                              //車体・砲塔を生成.
+			com->SetComEnabled(true);                    //COMモードON.
+			com->SetHasControl(false);                   //プレイヤー操作OFF.
 
-			// リストに追加
-			m_pPlayers.push_back(std::move(com));
+			//1体目のBody/Cannon をテンプレとして控えておく
+			if (!m_pBody || !m_pCannon)
+			{
+				SetBodyAndCannon(com->GetBody(), com->GetCannon());
+			}
+
+			m_pPlayers.push_back(com);
 		}
 	}
 
@@ -88,70 +97,119 @@ void CCharacterManager::Init()
 		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
 		{
 			com->SetPlayersRef(&m_pPlayers);
+
 		}
 	}
+
+	SetStartPosition();
+
+	//アクティブプレイヤーは最初に見つかった人間プレイヤーにしておく
+	m_ActivePlayerIndex = 0;
+	for (int i = 0; i < (int)m_pPlayers.size(); ++i)
+	{
+		if (auto p = std::dynamic_pointer_cast<CPlayer>(m_pPlayers[i]))
+		{
+			if (p->HasControl())
+			{
+				m_ActivePlayerIndex = i;
+				break;
+			}
+		}
+	}
+
+#if 0
+	// 誰が何番に入ったか確認したい時用のログ
+	for (int i = 0; i < (int)m_pPlayers.size(); ++i)
+	{
+		bool isCom = (std::dynamic_pointer_cast<CComPlayer>(m_pPlayers[i]) != nullptr);
+
+		auto body = m_pPlayers[i]->GetBody();
+		auto cannon = m_pPlayers[i]->GetCannon();
+		D3DXVECTOR3 pos(0, 0, 0);
+		if (body) pos = body->GetPosition();
+
+		printf("Init Slot %d : %s  player=%p body=%p cannon=%p pos=(%.1f, %.1f, %.1f)\n",
+			i,
+			isCom ? "COM" : "PLAYER",
+			(void*)m_pPlayers[i].get(),
+			(void*)(body ? body.get() : nullptr),
+			(void*)(cannon ? cannon.get() : nullptr),
+			pos.x, pos.y, pos.z
+		);
+	}
+#endif
 }
+//===================
 
 //=======更新=======
 void CCharacterManager::Update()
 {
-	//コントローラーの接続状態をチェック・切り替え.
+	//pad の接続状態に応じてPlayer.COMを入れ替える
 	SwitchControl();
 
-	for (auto& player : m_pPlayers)
+	const int count = static_cast<int>(m_pPlayers.size());
+	if (count <= 0) return;
+
+	//人間が操作しているプレイヤーを1人決める
+	auto pickHumanTargetIndex = [&]() -> int
+		{
+			auto isValidHuman = [&](int idx) -> bool
+				{
+					if (idx < 0 || idx >= count) return false;
+					auto& p = m_pPlayers[idx];
+					if (!p) return false;
+					return p->HasControl();
+				};
+
+			if (isValidHuman(m_LockTargetIndex))   return m_LockTargetIndex;
+			if (isValidHuman(m_ActivePlayerIndex)) return m_ActivePlayerIndex;
+
+			for (int i = 0; i < count; ++i)
+			{
+				if (isValidHuman(i)) return i;
+			}
+			return -1;
+		};
+
+	const int tgtIdx = pickHumanTargetIndex();
+	auto target = (tgtIdx >= 0) ? m_pPlayers[tgtIdx] : nullptr;
+
+	//各スロットごとにUpdate
+	for (int i = 0; i < count; ++i)
 	{
-		player->Update();
+		auto self = m_pPlayers[i];
+		if (!self) continue;
+
+		//COMかどうか判定
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
+		{
+			if (com->IsComEnabled())
+			{
+				//COMが追いかけるターゲットを設定
+				if (target && target != self)
+				{
+					com->SetTarget(target);    // プレイヤーを追いかける
+				}
+				else
+				{
+					com->ClearTarget();
+				}
+
+				//AIとしてのUpdate
+				com->Update();
+			}
+			else
+			{
+				//COMインスタンスだけど人間操作モードの場合
+				self->Update();
+			}
+		}
+		else
+		{
+			//素のPlayerなどは普通にUpdate
+			self->Update();
+		}
 	}
-
-
-	//{
-	//	const int count = static_cast<int>(m_pPlayers.size());
-	//	if (count <= 0)return;
-
-	//	//基本ターゲットを決める
-	//	//ラムダ式[&]で外側の変数を参照でつかう.->int戻り値のかた指定
-	//	auto pickHumanTargetIndex = [&]()->int {
-	//		auto isValidHuman = [&](int idx) {
-	//			return(idx == m_ActivePlayerIndex) && IsHumanControlled(m_pPlayers[idx]);
-	//			};
-	//		if (isValidHuman(m_LockTargetIndex)) return m_LockTargetIndex;
-	//		if (isValidHuman(m_ActivePlayerIndex)) return m_ActivePlayerIndex;
-	//		return -1;	//プレイヤーがいない
-	//		};
-
-	//	const int tgtIdx = pickHumanTargetIndex();
-	//	std::shared_ptr<CPlayer> target = (tgtIdx >= 0) ? m_pPlayers[tgtIdx] : nullptr;
-
-	//	for (int i = 0; i < count; ++i)
-	//	{
-	//		auto self = m_pPlayers[i];
-	//		if (auto com = std::dynamic_pointer_cast<CComPlayer>(self))
-	//		{
-	//			if (com->IsComEnabled())
-	//			{
-	//				//COM稼働中だけターゲットをあげる
-	//				if (target && IsHumanControlled(target) && target != self)
-	//				{
-	//					//ターゲットがプレイヤー限定なのであとで消す
-	//					com->SetTarget(target);
-	//				}
-	//				else
-	//				{
-	//					com->ClearTarget();
-	//				}
-	//				com->Update();
-	//			}
-	//			else
-	//			{
-	//				self->Update();
-	//			}
-	//		}
-	//		else
-	//		{
-	//			self->Update();
-	//		}				
-	//	}
-	//}
 }
 //==================
 
@@ -313,67 +371,135 @@ int CCharacterManager::GetAreaIndex(float x, float z)
 //====================================
 
 //=======ゲーム開始時の座標設定=======
+//void CCharacterManager::SetStartPosition()
+//{
+//	for (int index = 0; index < PLAYER_MAX; ++index)
+//	{
+//		if (index == 0)	
+//		{
+//			// 座標を設定
+//			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, -offset));
+//			// 回転を設定
+//			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
+//			// スケールを設定
+//			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+//		}
+//		else if (index == 1)
+//		{
+//			// 座標を設定
+//			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, offset));
+//			// 回転を設定
+//			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
+//			// スケールを設定
+//			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+//		}
+//		else if (index == 2)
+//		{
+//			// 座標を設定
+//			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, offset));
+//			// 回転を設定
+//			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
+//			// スケールを設定
+//			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+//		}
+//		else if (index == 3)
+//		{
+//			// 座標を設定
+//			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, -offset));
+//			// 回転を設定
+//			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
+//			// スケールを設定
+//			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+//		}
+//	}
+//
+//}
+
+//=======ゲーム開始時の座標設定=======
 void CCharacterManager::SetStartPosition()
 {
-	for (int index = 0; index < PLAYER_MAX; ++index)
+	const int count = (int)m_pPlayers.size();
+	for (int index = 0; index < count; ++index)
 	{
-		if (index == 0)	
+		if (!m_pPlayers[index]) continue;
+
+		D3DXVECTOR3 pos;
+		D3DXVECTOR3 rot;
+
+		if (index == 0)
 		{
-			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, -offset));
-			// 回転を設定
-			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
-			// スケールを設定
-			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+			pos = D3DXVECTOR3(-offset, 0.0f, -offset);
+			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f);
 		}
 		else if (index == 1)
 		{
-			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, offset));
-			// 回転を設定
-			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
-			// スケールを設定
-			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+			pos = D3DXVECTOR3(-offset, 0.0f, offset);
+			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f);
 		}
 		else if (index == 2)
 		{
-			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, offset));
-			// 回転を設定
-			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
-			// スケールを設定
-			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+			pos = D3DXVECTOR3(offset, 0.0f, offset);
+			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f);
 		}
 		else if (index == 3)
 		{
-			// 座標を設定
-			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, -offset));
-			// 回転を設定
-			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
-			// スケールを設定
-			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+			pos = D3DXVECTOR3(offset, 0.0f, -offset);
+			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f);
+		}
+		else
+		{
+			continue;
+		}
+
+		//戦車全体の位置・回転
+		m_pPlayers[index]->SetTankPosition(pos);
+		m_pPlayers[index]->SetTankRotation(rot);
+		m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+
+		//BodyCannonにも直接書き込む
+		if (auto body = m_pPlayers[index]->GetBody())
+		{
+			body->SetPosition(pos);
+			body->SetRotation(rot);
+		}
+
+		if (auto cannon = m_pPlayers[index]->GetCannon())
+		{
+			D3DXVECTOR3 cpos = pos;
+			cannon->SetPosition(cpos);
+
+			D3DXVECTOR3 crot = cannon->GetRotation();
+			crot.y = rot.y;
+			cannon->SetRotation(crot);
 		}
 	}
+
 }
-//==================================
+
 
 //=======プレイヤーを取得=======	
-// 引数あり
+//std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int index)
+//{
+//
+//	for (const auto& p : m_pPlayers)
+//	{
+//		if (p && p->HasControl())
+//			return p;
+//	}
+//	return nullptr;
+//}
+
+//=======プレイヤーを取得=======	
 std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int index)
 {
-	if (index >= 0 && index < (int)m_pPlayers.size()) {
+	if (index >= 0 && index < static_cast<int>(m_pPlayers.size()))
+	{
 		return m_pPlayers[index];
 	}
 	return nullptr;
 }
-// 引数なし
-std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer()
-{
-	for (const auto& p : m_pPlayer)
-		if (p && p->HasControl())   // ← ここで本当に操作中か判定
-			return p;
-	return nullptr;
-}
+
+
 //============================
 
 void CCharacterManager::SwitchActivePlayer()
@@ -399,7 +525,7 @@ void CCharacterManager::SwitchActivePlayer()
 		nextCom->SetComEnabled(false);	//プレイヤー操作
 	}
 	//次のやつに操作権を渡す
-	m_pPlayers[next]->SetHasControl(false);
+	m_pPlayers[next]->SetHasControl(true);
 	m_ActivePlayerIndex = next;
 }
 
@@ -437,10 +563,9 @@ void CCharacterManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::share
 {
 	//このクラス内で使えるようにする.
 	m_pBody = body;
-	m_pCannon = cannon;
-
+	m_pCannon = cannon;	
 	
-#if 1
+#if 0
 	for (auto& player : m_pPlayers)
 	{
 		player->SetCBody(body);
