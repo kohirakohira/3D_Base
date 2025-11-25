@@ -39,6 +39,15 @@ void CCharacterManager::Init()
 	m_pBody = nullptr;
 	m_pCannon = nullptr;
 
+	//for (int i = 0; i < PLAYER_MAX; ++i)
+	//{
+	//	// 各プレイヤー / COM に対応するメッシュを渡す
+	//	
+	//	m_pCharacterManager->CreateBounding(i, bodyMesh[i], cannonMesh[i]);
+	//	m_pCharacterManager->CreateCollider(i);
+	//}
+
+
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		// コントローラーの接続状態を確認
@@ -279,6 +288,37 @@ void CCharacterManager::CreateCollider(int index)
 	}
 }
 //============================
+
+#if 0
+void CCharacterManager::CreateBounding(int index,
+	const std::shared_ptr<CStaticMesh>& body,
+	const std::shared_ptr<CStaticMesh>& cannon)
+{
+	if (index < m_pPlayers.size())
+	{
+		printf("[CreateBounding] idx=%d player=%p bodyMesh=%p cannonMesh=%p\n",
+			index,
+			(void*)m_pPlayers[index].get(),
+			(void*)body.get(),
+			(void*)cannon.get());
+
+		m_pPlayers[index]->SetBounding(body, cannon);
+	}
+}
+
+void CCharacterManager::CreateCollider(int index)
+{
+	if (index < m_pPlayers.size())
+	{
+		printf("[CreateCollider] idx=%d player=%p\n",
+			index,
+			(void*)m_pPlayers[index].get());
+
+		m_pPlayers[index]->CreateCollider();
+	}
+}
+
+#endif
 
 //=======プレイヤーのリスポーン=======
 void CCharacterManager::PlayerRespawn(int index)
