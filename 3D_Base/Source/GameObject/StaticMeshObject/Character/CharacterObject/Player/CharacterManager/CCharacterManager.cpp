@@ -274,6 +274,13 @@ void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticM
 {
 	if (index < m_pPlayers.size())
 	{
+		//デバッグログ
+		printf("[CreateBounding] index=%d player=%p bodyMesh=%p cannonMesh=%p\n",
+			index,
+			(void*)m_pPlayers[index].get(),
+			(void*)m_pBody.get(),
+			(void*)m_pCannon.get());
+
 		m_pPlayers[index]->SetBounding(body, cannon);
 	}
 }
@@ -284,41 +291,15 @@ void CCharacterManager::CreateCollider(int index)
 {
 	if (index < m_pPlayers.size())
 	{
-		m_pPlayers[index]->CreateCollider();
-	}
-}
-//============================
-
-#if 0
-void CCharacterManager::CreateBounding(int index,
-	const std::shared_ptr<CStaticMesh>& body,
-	const std::shared_ptr<CStaticMesh>& cannon)
-{
-	if (index < m_pPlayers.size())
-	{
-		printf("[CreateBounding] idx=%d player=%p bodyMesh=%p cannonMesh=%p\n",
-			index,
-			(void*)m_pPlayers[index].get(),
-			(void*)body.get(),
-			(void*)cannon.get());
-
-		m_pPlayers[index]->SetBounding(body, cannon);
-	}
-}
-
-void CCharacterManager::CreateCollider(int index)
-{
-	if (index < m_pPlayers.size())
-	{
-		printf("[CreateCollider] idx=%d player=%p\n",
+		//デバッグ
+		printf("[CreateCollider] index=%d player=%p\n",
 			index,
 			(void*)m_pPlayers[index].get());
 
 		m_pPlayers[index]->CreateCollider();
 	}
 }
-
-#endif
+//============================
 
 //=======プレイヤーのリスポーン=======
 void CCharacterManager::PlayerRespawn(int index)
@@ -465,26 +446,31 @@ void CCharacterManager::SetStartPosition()
 
 		D3DXVECTOR3 pos;
 		D3DXVECTOR3 rot;
+		D3DXVECTOR3 sca;
 
 		if (index == 0)
 		{
 			pos = D3DXVECTOR3(-offset, 0.0f, -offset);
 			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f);
+			sca = D3DXVECTOR3(1.8f, 1.8f, 1.8f);
 		}
 		else if (index == 1)
 		{
 			pos = D3DXVECTOR3(-offset, 0.0f, offset);
 			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f);
+			sca = D3DXVECTOR3(1.8f, 1.8f, 1.8f);
 		}
 		else if (index == 2)
 		{
 			pos = D3DXVECTOR3(offset, 0.0f, offset);
 			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f);
+			sca = D3DXVECTOR3(1.8f, 1.8f, 1.8f);
 		}
 		else if (index == 3)
 		{
 			pos = D3DXVECTOR3(offset, 0.0f, -offset);
 			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f);
+			sca = D3DXVECTOR3(1.8f, 1.8f, 1.8f);
 		}
 		else
 		{
@@ -515,7 +501,6 @@ void CCharacterManager::SetStartPosition()
 	}
 
 }
-
 
 //=======プレイヤーを取得=======	
 //std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int index)
@@ -604,6 +589,7 @@ void CCharacterManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::share
 	//このクラス内で使えるようにする.
 	m_pBody = body;
 	m_pCannon = cannon;	
+	
 	
 #if 0
 	for (auto& player : m_pPlayers)
