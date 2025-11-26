@@ -40,14 +40,6 @@ void CCharacterManager::Init()
 	m_pBody = nullptr;
 	m_pCannon = nullptr;
 
-	//for (int i = 0; i < PLAYER_MAX; ++i)
-	//{
-	//	// 各プレイヤー / COM に対応するメッシュを渡す
-	//	
-	//	m_pCharacterManager->CreateBounding(i, bodyMesh[i], cannonMesh[i]);
-	//	m_pCharacterManager->CreateCollider(i);
-	//}
-
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{

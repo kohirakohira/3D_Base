@@ -138,6 +138,65 @@ void CGameTitle::Update()
 		//}
 	}
 
+#if 0
+	void CGameTitle::Update()
+	{
+
+		// =========================
+		// 決定入力の判定
+		// =========================
+		bool decide = false;
+
+		// キーボード Z は常に見る
+		if (m_KeyInput->ReleaseInputKey('Z'))
+		{
+			decide = true;
+		}
+
+		// パッドAは刺さっていて接続済みのときだけ見る
+		if (controller && controller->CheckConnected())
+		{
+			if (controller->Down(CXInput::A, true))
+			{
+				decide = true;
+			}
+		}
+
+		if (decide)
+		{
+			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
+			{
+				// BGMのループ停止.
+				CSoundManager::Stop(CSoundManager::BGM_Title);
+
+				// SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Click);
+
+				DrawFlag = true;
+
+				// ゲーム設定に遷移.
+				m_SceneType = CSceneType::Setting;
+			}
+			else
+			{
+				// BGMのループ停止.
+				CSoundManager::Stop(CSoundManager::BGM_Title);
+
+				// SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Click);
+
+				DrawFlag = true;
+
+				// ゲームを終了させる.
+				PostMessage(m_hWnd, WM_CLOSE, 0, 0);
+			}
+		}
+
+		// 以下デバッグ用のコメントアウト部分はそのまま
+	}
+
+#endif
+
 }
 
 void CGameTitle::Draw()
