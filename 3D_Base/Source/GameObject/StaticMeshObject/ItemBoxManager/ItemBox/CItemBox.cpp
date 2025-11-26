@@ -70,7 +70,7 @@ void CItemBox::ShieldEffect()
 void CItemBox::SpeedUpEffect()
 {
 	//’è”éŒ¾.
-	static constexpr float PLUS_SPEED = 0.2f;
+	static constexpr float PLUS_SPEED = 10.0f;
 
 	//‘‰Á‚·‚é‘¬“xİ’è.
 	m_Item.m_Speed = PLUS_SPEED;

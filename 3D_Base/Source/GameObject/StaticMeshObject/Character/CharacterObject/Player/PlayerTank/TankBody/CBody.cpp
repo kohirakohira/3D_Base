@@ -62,7 +62,7 @@ void CBody::RadioControl()
 	// 移動状態によって処理を分ける
 	switch (m_MoveState)
 	{
-	case enMoveState::Forward: 	// 前進
+	case enMoveState::Forward: 		// 前進
 		m_vPosition += vecAxisZ * tunign.moveSpeed;
 		break;
 	case enMoveState::Backward: 	// 後退

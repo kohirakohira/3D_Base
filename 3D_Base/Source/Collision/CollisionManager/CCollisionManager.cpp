@@ -238,7 +238,7 @@ void CCollisionManager::PlayertoItemBox()
 
 				//–³“Gˆ—.
 				//ƒvƒŒƒCƒ„[‚ÉÝ’è.
-				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_ShieldFlag != false)
+				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_ShieldFlag == true)
 				{
 
 				}
