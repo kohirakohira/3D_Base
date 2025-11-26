@@ -401,6 +401,12 @@ void CComPlayer::Update()
 
 void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
+    if (m_Drawflag)
+    {
+        m_pBody->Draw(View, Proj, Light, Camera);
+        m_pCannon->Draw(View, Proj, Light, Camera);
+        m_pCannon->SetScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+    }
 }
 
 const D3DXVECTOR3 CComPlayer::GetPosition()
@@ -574,6 +580,28 @@ void CComPlayer::StepEvade()
 //アイテム取得.アイテム認識
 void CComPlayer::StepItemSeek()
 {
+#if 0
+    auto item = std::shared_ptr<CItemBox>();
+    auto body = GetBody();
+
+    if (!item)
+    {
+        return;
+    }
+
+    if (item->IsActive())
+    {
+        for (int i = 0; i < ITEM_MAX; i++)
+        {
+            if (m_ItemGetRadius > m_BodyRadius)
+            {
+                item->GetItem();
+                item->GetItemInfo();
+            }
+        }
+    }
+#endif
+    
 }
 
 void CComPlayer::EvaluateTransitions(float dist2)

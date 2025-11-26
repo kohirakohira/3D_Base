@@ -66,8 +66,8 @@ void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light
 
 void CCharacterObjectBase::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
 {
-	//m_Body->AttachMesh(pBody);
-	//m_Cannon->AttachMesh(pCannon);
+	m_pBody->AttachMesh(pBody);
+	m_pCannon->AttachMesh(pCannon);
 }
 
 void CCharacterObjectBase::SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)

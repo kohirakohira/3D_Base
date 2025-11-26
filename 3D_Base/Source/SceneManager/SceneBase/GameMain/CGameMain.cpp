@@ -130,6 +130,7 @@ void CGameMain::Update()
 	// アイテムボックスマネージャーをセット
 	m_pCollisionManager->SetCItemBoxManager(m_pItemBoxManager);
 
+
 //-----メイン演出用-----..
 	
 	//Iconを回転させる..
