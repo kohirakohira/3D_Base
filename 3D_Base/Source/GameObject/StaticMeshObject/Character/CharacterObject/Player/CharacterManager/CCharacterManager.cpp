@@ -600,7 +600,7 @@ void CCharacterManager::SwitchControl()
 		}
 
 		//現在のプレイヤー情報を取得.
-		std::shared_ptr<CCharacter> current = nullptr;	//CCharacterObjectBase
+		std::shared_ptr<CCharacterObjectBase> current = nullptr;	//CCharacterObjectBase
 		//プレイヤーリストの範囲内なら、その番号のプレイヤーを取得.
 		if (No < static_cast<int>(m_pPlayers.size()))
 		{

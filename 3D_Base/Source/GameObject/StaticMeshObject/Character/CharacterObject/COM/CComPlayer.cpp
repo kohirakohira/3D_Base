@@ -264,7 +264,7 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
     // ”½‰f
     body->SetRotation(D3DXVECTOR3(0.0f, yaw, 0.0f));
     body->SetPosition(pos);
-    body->CCharacter::Update();
+    body->CStaticMeshObject::Update();
 }
 
 // –C“ƒ‚ª‚ ‚ê‚Îí‚Éƒ^[ƒQƒbƒg‚ðŒü‚­
@@ -288,7 +288,7 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
 
     cannon->SetPosition(base);
     cannon->SetRotation(D3DXVECTOR3(0.0f, cyaw, 0.0f));
-    cannon->CCharacter::Update();
+    cannon->CStaticMeshObject::Update();
 }
 
 //–CŒû‚Ìƒ[ƒ‹ƒhÀ•W‚Æƒˆ[Šp‚ðŒvŽZ
@@ -360,7 +360,7 @@ void CComPlayer::Update()
     auto body = GetBody();
     auto cannon = GetCannon();
     if (!body) { 
-        if (cannon) cannon->CCharacter::Update(); 
+        if (cannon) cannon->CStaticMeshObject::Update();
         return;
     }
 
@@ -406,19 +406,19 @@ void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& 
 const D3DXVECTOR3 CComPlayer::GetPosition()
 {
     if (m_pBody) return m_pBody->GetPosition();
-    return CCharacter::GetPosition();
+    //return CCharacterObjectBase::GetPosition();
 }
 
 const D3DXVECTOR3 CComPlayer::GetRotation()
 {
     if (m_pBody) return m_pBody->GetRotation();
-    return CCharacter::GetRotation();
+    //return CCharacterObjectBase::GetRotation();
 }
 
 const D3DXVECTOR3 CComPlayer::GetScale()
 {
     if (m_pBody) return m_pBody->GetRotation();
-    return CCharacter::GetRotation();
+    //return CCharacterObjectBase::GetRotation();
 }
 
 
@@ -561,12 +561,12 @@ void CComPlayer::StepEvade()
         SyncCannonToBody();
         //TryAutoFire();  //“¦‚°‚È‚ª‚ç”­ŽË
 
-        body->CCharacter::Update();
+        body->CStaticMeshObject::Update();
 
         //–C“ƒ‚ÌŒ©‚½–Ú‚ðXV
         if (auto cannon = GetCannon())
         {
-            cannon->CCharacter::Update();
+            cannon->CStaticMeshObject::Update();
         }
     }
 }
@@ -782,7 +782,7 @@ void CComPlayer::TickWander(float turnStep, float moveStep)
     //Œ©‚½–Ú‚É”½‰f
     body->SetRotation({ 0.f,yawRed,0.f });
     body->SetPosition(pos);
-    body->CCharacter::Update();
+    body->CStaticMeshObject::Update();
 
     //–C“ƒ‚ðŽÔ‘Ì‚É’Ç”ö
     SyncCannonToBody();

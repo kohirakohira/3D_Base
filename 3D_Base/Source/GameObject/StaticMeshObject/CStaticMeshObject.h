@@ -88,5 +88,9 @@ protected:
 	std::shared_ptr<CBoundingBox>		m_pBBox;
 
 	std::shared_ptr<CCollider>			m_pCollider;
+
+	//íÔ‚Ìî•ñ.
+	TankTuning m_Tuning;
+
 };
 

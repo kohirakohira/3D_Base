@@ -174,32 +174,41 @@ void CPlayer::Create(int index)
 
 void CPlayer::SetPosition(D3DXVECTOR3 pos)
 {
+	if (m_pBody) {
+		m_pBody->SetPosition(pos);
+	}
 }
 
 const D3DXVECTOR3 CPlayer::GetPosition()
 {
 	if (m_pBody) return m_pBody->GetPosition(); //常にbodyの実位置を返す
-	return CCharacter::GetPosition();
+	//return CCharacterObjectBase::GetPosition();
 }
 
 
 void CPlayer::SetRotation(D3DXVECTOR3 rot)
 {
+	if (m_pBody) {
+		m_pBody->SetRotation(rot.x, rot.y, rot.z);
+	}
 }
 
 const D3DXVECTOR3 CPlayer::GetRotation()
 {
-	if (m_pBody) return m_pBody->GetRotation();;
-	return CCharacter::GetRotation();
+	if (m_pBody) return m_pBody->GetRotation();
+	//return CCharacterObjectBase::GetRotation();
 }
 
 void CPlayer::SetScale(D3DXVECTOR3 sca)
 {
+	if (m_pBody) {
+		m_pBody->SetScale(sca);
+	}
 }
 
 const D3DXVECTOR3 CPlayer::GetScale()
 {
-	return D3DXVECTOR3();
+	if (m_pBody) return m_pBody->GetScale();
 }
 
 
@@ -313,15 +322,11 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 {
 
 	//松岡.
-	 // コントローラー番号を取得
+	// コントローラー番号を取得
 	const int index = GetControllerIndex();
 
 	// そのコントローラーの入力を取得
 	CController* controller = CControllerManager::GetInstance().GetController(index);
-
-	// コントローラーが接続されていなければ通らない
-	if (!controller) return;
-	if (!controller->CheckConnected()) return;
 
 	// 左スティックで車体の移動／回転
 	Move(input);

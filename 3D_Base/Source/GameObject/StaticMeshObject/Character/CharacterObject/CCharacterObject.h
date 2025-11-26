@@ -3,18 +3,21 @@
 #include <iostream>
 #include <memory>
 
-//継承するクラス.
-#include "GameObject/StaticMeshObject/Character/CCharacter.h"
+//-----継承するクラス-----
+#include "GameObject//StaticMeshObject//CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス
 
 //車体と砲塔クラス.
 #include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankBody/CBody.h"
 #include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankCannon/CCannon.h"
 
+//弾マネージャークラス.
+#include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"
+
 //================================================================
 //	キャラクターオブジェクト※基底クラス(キャラクターを継承).
 //================================================================
 class CCharacterObjectBase
-	: public CCharacter
+	: public CStaticMeshObject // スタティックメッシュオブジェクトクラスを継承.
 {
 public:
 	CCharacterObjectBase(
@@ -48,9 +51,9 @@ public:
 	virtual const D3DXVECTOR3 GetScale() = 0;
 
 	//パラメータの設定.
-	virtual void SetTuning(const TankTuning& tuning) override{ m_Tuning = tuning; }
+	virtual void SetTuning(const TankTuning& tuning) { m_Tuning = tuning; }
 	//パラメータの取得.
-	virtual const TankTuning& GetTuning() const override{ return m_Tuning; }
+	virtual const TankTuning& GetTuning() const { return m_Tuning; }
 
 	//プレイヤーかCOMを識別.
 	virtual bool IsPlayer() const = 0;
@@ -89,6 +92,9 @@ public:
 
 	//キャノンの設定
 	virtual void SetCannon(std::shared_ptr<CCannon> pCannon) { m_pCannon = pCannon; }
+	
+	//弾マネージャーの設定.
+	virtual void SetShotManager(std::shared_ptr<CShotManager> pshot) { m_pCannon->SetShotManager(pshot); }
 
 	//キャノンポジション
 	virtual D3DXVECTOR3 GetCannonPosition() const;
@@ -101,21 +107,16 @@ public:
 
 
 protected:
-
-	
 	//車体クラス.
-	std::shared_ptr<CBody>		m_pBody;
+	std::shared_ptr<CBody>			m_pBody;
 	//砲塔クラス.
-	std::shared_ptr<CCannon>	m_pCannon;
+	std::shared_ptr<CCannon>		m_pCannon;
 
 	//キャラクターの状態.
 	bool m_IsActive;
 
 	//キャラクターの生存フラグ.
 	bool m_IsAlive;
-
-	//戦車の情報.
-	TankTuning m_Tuning;
 
 	//ここから下はいらなかったら消してください
 	//キャラクターの体力.

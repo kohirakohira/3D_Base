@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObject//StaticMeshObject//Character//CCharacter.h" // 継承 || キャラクタークラス
+#include "GameObject//StaticMeshObject//CStaticMeshObject.h" // 継承 
 
 //-----外部クラス-----
 #include "Camera//CCamera.h" //カメラクラス
@@ -12,7 +12,7 @@
 *	砲塔クラス.
 **/
 class CCannon
-	: public CCharacter	//キャラクタークラスを継承.
+	: public CStaticMeshObject	//スタティックメッシュオブジェクトを継承.
 {
 public:
 	CCannon(int inputID);
@@ -24,11 +24,6 @@ public:
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 	// 初期化関数
 	void Init();
-
-	// パラメータの設定
-	void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; };
-	// パラメータの取得
-	const TankTuning& GetTuning() const override { return m_Tuning; }
 
 	// 砲塔座標設定
 	void SetCannonPosition(const D3DXVECTOR3& Pos);
@@ -48,13 +43,12 @@ public:
 	//弾を作成・リロード・発射関数.
 	void Reload(D3DXVECTOR3 pos, float y, bool flag, int index);
 
-protected:
+private:
 	float		m_TurnSpeed;			// 回転速度
 
 	int			m_ShotCoolTime;			// ショットのクールタイム
 	const int	m_ShotInterval;			// ショットのインターバル
 
-private:
 	// 弾クラス
 	std::shared_ptr<CShotManager>		m_pShot;
 

@@ -30,15 +30,15 @@ void CCannon::Update()
 
 	//KeyInput();
 
-	CCharacter::Update();
+	CStaticMeshObject::Update();
 
-	auto ray = CCharacter::GetRayY();	//YŽ²ƒŒƒCŽæ“¾
+	//auto ray = CStaticMeshObject::GetRayY();	//YŽ²ƒŒƒCŽæ“¾
 }
 
 void CCannon::Draw(
 	D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	CCharacter::Draw(View, Proj, Light, Camera);
+	CStaticMeshObject::Draw(View, Proj, Light, Camera);
 }
 
 void CCannon::Init()

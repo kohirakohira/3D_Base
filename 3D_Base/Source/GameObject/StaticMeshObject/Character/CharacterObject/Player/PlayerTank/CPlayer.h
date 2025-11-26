@@ -69,29 +69,29 @@ public:
 	void SetPushBack(const D3DXVECTOR3& push);
 
 	// 更新関数
-	virtual void Update() override;
+	void Update() override;
 	// 描画関数
-	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 	// インスタンス生成関数
-	virtual void Create(int index) override;
+	void Create(int index) override;
 
 	// 位置の設定
-	virtual void SetPosition(D3DXVECTOR3 pos) override;
+	void SetPosition(D3DXVECTOR3 pos) override;
 	// 位置を取得
-	virtual const D3DXVECTOR3 GetPosition() override;
+	const D3DXVECTOR3 GetPosition() override;
 
 	// 回転の設定
-	virtual void SetRotation(D3DXVECTOR3 rot) override;
+	void SetRotation(D3DXVECTOR3 rot) override;
 	// 回転を取得
-	virtual const D3DXVECTOR3 GetRotation() override;
+	const D3DXVECTOR3 GetRotation() override;
 
 	// 拡縮の設定
-	virtual void SetScale(D3DXVECTOR3 sca) override;
+	void SetScale(D3DXVECTOR3 sca) override;
 	// 拡縮を取得
-	virtual const D3DXVECTOR3 GetScale() override;
+	const D3DXVECTOR3 GetScale() override;
 
 	// プレイヤーかCOMを識別
-	virtual bool IsPlayer() const override { return true; }
+	bool IsPlayer() const override { return true; }
 
 	// プレイヤーのダメージ処理
 	void PlayerDamage();

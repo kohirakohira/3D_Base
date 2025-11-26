@@ -9,7 +9,6 @@ CCharacterObjectBase::CCharacterObjectBase(
 
 	: m_HP					( hp )
 	, m_MaxHP				( hp )
-	//, m_Tuning			( tuning )
 	, m_pBody				(std::move(body))
 	, m_pCannon				(std::move(cannon))
 	, m_IsActive			( false )
@@ -19,7 +18,6 @@ CCharacterObjectBase::CCharacterObjectBase(
 	, m_HasControl			( false )
 	, m_Death				( false )
 	, m_Damage				( false )
-	, m_Tuning				()
 {
 }
 
@@ -50,8 +48,6 @@ void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light
 	if (!m_IsAlive || !m_Drawflag) {
 		return;
 	}
-
-	CCharacter::Draw(View, Proj, Light, Camera);
 
 #if 1
 	// ŽÔ‘Ì‚Æ–C“ƒ‚ð‚Ü‚Æ‚ß‚Ä•`‰æ
