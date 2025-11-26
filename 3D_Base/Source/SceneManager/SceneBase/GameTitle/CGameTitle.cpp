@@ -192,7 +192,6 @@ void CGameTitle::Update()
 			}
 		}
 
-		// 以下デバッグ用のコメントアウト部分はそのまま
 	}
 
 #endif
