@@ -66,7 +66,6 @@ public:
 
 	//=======プレイヤーを取得=======	
 	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(int index); // 引数あり
-	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(); // 引数なし
 	//============================
 
 	void SwitchActivePlayer(); // 旧コード：動かせるプレイヤーを変更できた

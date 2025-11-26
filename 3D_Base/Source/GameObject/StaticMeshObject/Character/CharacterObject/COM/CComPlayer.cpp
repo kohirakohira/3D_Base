@@ -574,6 +574,28 @@ void CComPlayer::StepEvade()
 //アイテム取得.アイテム認識
 void CComPlayer::StepItemSeek()
 {
+#if 0
+    auto item = std::shared_ptr<CItemBox>();
+    auto body = GetBody();
+
+    if (!item)
+    {
+        return;
+    }
+
+    if (item->IsActive())
+    {
+        for (int i = 0; i < ITEM_MAX; i++)
+        {
+            if (m_ItemGetRadius > m_BodyRadius)
+            {
+                item->GetItem();
+                item->GetItemInfo();
+            }
+        }
+    }
+#endif
+    
 }
 
 void CComPlayer::EvaluateTransitions(float dist2)

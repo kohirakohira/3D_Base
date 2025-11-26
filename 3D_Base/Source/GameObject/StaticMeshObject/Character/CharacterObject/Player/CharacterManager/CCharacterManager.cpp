@@ -1,4 +1,5 @@
 #include "CCharacterManager.h"
+#include "Assets/Mesh/StaticMesh/CStaticMesh.h"
 
 #undef max;
 #undef min;
@@ -283,6 +284,21 @@ void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticM
 
 		m_pPlayers[index]->SetBounding(body, cannon);
 	}
+#if 0
+		//body,cannonが存在すれば
+		if (body && cannon)
+		{
+			printf("[body&cannon] index=%d player&p bodyMesh=p\n",
+				index,
+				(void*)m_pPlayers[index].get(),
+				(void*)m_pBody.get(),
+				(void*)m_pCannon.get());
+
+			m_pPlayers[index]->SetBounding(body, cannon);
+		}
+#endif
+	
+
 }
 //================================
 
@@ -292,11 +308,20 @@ void CCharacterManager::CreateCollider(int index)
 	if (index < m_pPlayers.size())
 	{
 		//デバッグ
-		printf("[CreateCollider] index=%d player=%p\n",
+		printf("[CreateCollider] index=%d player=%p bodyMesh=%p cannonMesh=%p\n"),
 			index,
-			(void*)m_pPlayers[index].get());
+			(void*)m_pPlayers[index].get(),
+			(void*)m_pBody.get(),
+			(void*)m_pCannon.get();
 
 		m_pPlayers[index]->CreateCollider();
+
+#if 0
+		for (auto& p : m_pPlayers)
+		{
+			m_pPlayers[index]->CreateCollider();
+		}
+#endif
 	}
 }
 //============================
@@ -437,6 +462,7 @@ int CCharacterManager::GetAreaIndex(float x, float z)
 //}
 
 //=======ゲーム開始時の座標設定=======
+
 void CCharacterManager::SetStartPosition()
 {
 	const int count = (int)m_pPlayers.size();
@@ -446,31 +472,27 @@ void CCharacterManager::SetStartPosition()
 
 		D3DXVECTOR3 pos;
 		D3DXVECTOR3 rot;
-		D3DXVECTOR3 sca;
+		//D3DXVECTOR3 sca;
 
 		if (index == 0)
 		{
 			pos = D3DXVECTOR3(-offset, 0.0f, -offset);
 			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f);
-			sca = D3DXVECTOR3(1.8f, 1.8f, 1.8f);
 		}
 		else if (index == 1)
 		{
 			pos = D3DXVECTOR3(-offset, 0.0f, offset);
 			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f);
-			sca = D3DXVECTOR3(1.8f, 1.8f, 1.8f);
 		}
 		else if (index == 2)
 		{
 			pos = D3DXVECTOR3(offset, 0.0f, offset);
 			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f);
-			sca = D3DXVECTOR3(1.8f, 1.8f, 1.8f);
 		}
 		else if (index == 3)
 		{
 			pos = D3DXVECTOR3(offset, 0.0f, -offset);
 			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f);
-			sca = D3DXVECTOR3(1.8f, 1.8f, 1.8f);
 		}
 		else
 		{
@@ -480,13 +502,14 @@ void CCharacterManager::SetStartPosition()
 		//戦車全体の位置・回転
 		m_pPlayers[index]->SetTankPosition(pos);
 		m_pPlayers[index]->SetTankRotation(rot);
-		m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+		//m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
 
 		//BodyCannonにも直接書き込む
 		if (auto body = m_pPlayers[index]->GetBody())
 		{
 			body->SetPosition(pos);
 			body->SetRotation(rot);
+			//body->SetScale(sca);	
 		}
 
 		if (auto cannon = m_pPlayers[index]->GetCannon())
@@ -502,17 +525,6 @@ void CCharacterManager::SetStartPosition()
 
 }
 
-//=======プレイヤーを取得=======	
-//std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int index)
-//{
-//
-//	for (const auto& p : m_pPlayers)
-//	{
-//		if (p && p->HasControl())
-//			return p;
-//	}
-//	return nullptr;
-//}
 
 //=======プレイヤーを取得=======	
 std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int index)
@@ -523,9 +535,22 @@ std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int in
 	}
 	return nullptr;
 }
-
-
 //============================
+
+#if 0
+//プレイヤー取得
+std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int index)
+{
+	for (const auto& player : m_pPlayers)
+	{
+		if (player && player->HasControl())
+		{
+			return player;
+		}
+		return nullptr;
+	}
+}
+#endif
 
 void CCharacterManager::SwitchActivePlayer()
 {

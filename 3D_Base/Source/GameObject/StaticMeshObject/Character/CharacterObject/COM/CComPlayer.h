@@ -246,6 +246,7 @@ private:
 	float		m_AvoidHolde;
 	int			m_AvoidSide;
 	float		m_AvoidMax;
+	float		m_BodyRadius;
 
 	int m_PlayerID = -1;
 
