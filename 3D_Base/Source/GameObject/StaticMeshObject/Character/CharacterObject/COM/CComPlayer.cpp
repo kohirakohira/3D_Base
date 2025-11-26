@@ -401,6 +401,12 @@ void CComPlayer::Update()
 
 void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
+    if (m_Drawflag)
+    {
+        m_pBody->Draw(View, Proj, Light, Camera);
+        m_pCannon->Draw(View, Proj, Light, Camera);
+        m_pCannon->SetScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+    }
 }
 
 const D3DXVECTOR3 CComPlayer::GetPosition()
