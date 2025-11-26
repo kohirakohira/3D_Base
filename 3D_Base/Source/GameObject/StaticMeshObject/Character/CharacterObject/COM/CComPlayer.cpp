@@ -76,9 +76,6 @@ void CComPlayer::Create(int id)
     m_pBody = std::make_shared<CBody>(id);
     m_pCannon = std::make_shared<CCannon>(id);
 
-    m_pBody->Init();
-    m_pCannon->Init();
-
     //¶‘¶.•`‰æƒtƒ‰ƒO
     m_IsAlive = true;
     m_IsActive = true;

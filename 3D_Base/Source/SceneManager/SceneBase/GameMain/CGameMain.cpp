@@ -115,6 +115,7 @@ CGameMain::~CGameMain()
 
 void CGameMain::Update()
 {
+
 	//BGMのループ再生..
 	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
@@ -169,7 +170,7 @@ void CGameMain::Update()
 #endif
 	m_pShotManager->Update();
 
-
+#if 1
 	//カメラ追従＆更新.砲塔基準
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -183,7 +184,8 @@ void CGameMain::Update()
 		}
 		m_pCameras[i]->Update();
 	}
-	
+#endif
+
 	//定数宣言..
 	const float PI = 3.14159265358979f;
 	//時計の針の回転..
@@ -234,7 +236,7 @@ void CGameMain::Update()
 
 	//勝敗条件(確認用)..
 	//勝ち..
-	if (controller && controller->CheckConnected())
+	//if (controller && controller->CheckConnected())
 	{
 		if (GetKey('K') & 0x8000)
 		{
@@ -295,7 +297,8 @@ void CGameMain::Draw()
 				p->Draw(view, proj, light, paramC);
 			}
 		}
-		m_pCharacterManager->Draw(view, proj, light, paramC);
+
+		//m_pCharacterManager->Draw(view, proj, light, paramC);
 
 //オブジェクトの描画..
 		//弾描画..
