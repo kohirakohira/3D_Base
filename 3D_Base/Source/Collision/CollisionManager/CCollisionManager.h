@@ -53,6 +53,8 @@ public:
 	void GroundtoItemBox();
 	// 爆風とプレイヤーの当たり判定
 	void PlayertoBlast();
+	//アイテムと木箱.
+	void ItemtoWoodBox();
 
 	//-----------------------
 	// 外部から情報をセット

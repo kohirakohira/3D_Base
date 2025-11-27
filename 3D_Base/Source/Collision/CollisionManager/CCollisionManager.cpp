@@ -552,3 +552,9 @@ void CCollisionManager::PlayertoBlast()
 		}
 	}
 }
+
+//ƒAƒCƒeƒ€‚Æ–Ø” .
+void CCollisionManager::ItemtoWoodBox()
+{
+
+}
