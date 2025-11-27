@@ -275,6 +275,7 @@ void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticM
 	{
 		m_pCharacter[index]->GetBody()->CreateBounding(pBody);
 		m_pCharacter[index]->GetCannon()->CreateBounding(pCannon);
+		
 #if 0
 		m_pCom->GetBody()->CreateBounding(pBody);
 		m_pCom->GetCannon()->CreateBounding(pCannon);
