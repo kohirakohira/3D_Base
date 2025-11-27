@@ -26,9 +26,9 @@ public:
 	virtual ~CCharacterObjectBase();
 
 	//“®ìŠÖ”.
-	virtual void Update() override = 0;;
+	virtual void Update() override = 0;
 	//•`‰æŠÖ”.
-	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override = 0;;
+	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override = 0;
 
 	//Ô‘Ì‚Ìæ“¾.
 	virtual std::shared_ptr<CBody> GetBody() const = 0;

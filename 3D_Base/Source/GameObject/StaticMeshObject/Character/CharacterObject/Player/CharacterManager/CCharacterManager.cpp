@@ -9,7 +9,9 @@ CCharacterManager::CCharacterManager()
 	, AngleY				(45.f)
 	, m_pCharacter			()
 	, m_ActivePlayerIndex	( 0 )
+	, m_pCom				()
 {
+	//m_pCom = std::make_shared<CComPlayer>();
 }
 
 //PlayerがCComPlayerならそのポインタにキャストして返す.そうでなければnullptr
@@ -266,12 +268,21 @@ void CCharacterManager::SetPlayerScale(int index, const D3DXVECTOR3& xyz)
 //==============================
 
 //=======バウンディングの作成=======
-void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon)
+void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh>& pBody, const std::shared_ptr<CStaticMesh>& pCannon)
 {
+
 	if (index < m_pCharacter.size())
 	{
-		m_pCharacter[index]->GetBody()->CreateBounding(body);
-		m_pCharacter[index]->GetCannon()->CreateBounding(cannon);
+		m_pCharacter[index]->GetBody()->CreateBounding(pBody);
+		m_pCharacter[index]->GetCannon()->CreateBounding(pCannon);
+#if 0
+		m_pCom->GetBody()->CreateBounding(pBody);
+		m_pCom->GetCannon()->CreateBounding(pCannon);
+		printf("[createbounding] index=%d bodyMesh=%p cannonMesh=%p \n",
+			index,
+			(void*)m_pBody.get()),
+			(void*)m_pCannon.get();
+#endif
 	}
 }
 //================================
