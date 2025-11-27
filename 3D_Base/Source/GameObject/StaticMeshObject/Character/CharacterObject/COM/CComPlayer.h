@@ -129,6 +129,11 @@ public:
 	//パラメータの取得.
 	virtual const TankTuning& GetTuning() const override { return m_Tuning; }
 
+	//ナビゲーション.障害物判定用
+	float NearestItemDist2(float& outDist2);
+
+	//プレイヤーID
+	int PlayerID() { return m_PlayerID; }
 
 private:
 	//構造体
@@ -152,12 +157,17 @@ private:
 		ItemSeek,	//アイテム探索
 	};
 
+	//ステータスごとの処理
+	void StepSeek();
+	void StepChase();
+	void StepAttack();
+	void StepEvade();
+	void StepItem();	
+	void StepItem(float& outDist2);	//アイテム引数
+
+
 	//関数
 	//フレームごとのステート処理
-	void StepSeek();													//探索処理
-	void StepChase();													//追跡処理
-	void StepAttack();													//攻撃処理
-	void StepEvade();													//離脱処理
 	void StepItemSeek();												//アイテム探索処理
 	void TryAutoFire();													//COMの弾発射処理
 	void MakeItemTarget();												
@@ -221,7 +231,7 @@ private:
 	std::weak_ptr<CShotManager> m_pShotManager;							//弾マネージャー.自動発射用のパラメータ
 	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;			//プレイヤーの一覧取得
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;					//アイテムボックス
-	std::weak_ptr<CItemBox> m_pItemTarget;								//弱参照のアイテムボックス
+	std::weak_ptr<CItemBox> m_pItemBox_weak;								//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;	//障害物の一部を外部から差し込む
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
 
@@ -267,9 +277,6 @@ private:
 	int			m_AvoidSide;
 	float		m_AvoidMax;
 	float		m_BodyRadius;
-
-	int m_PlayerID = -1;
-
 };
 
 

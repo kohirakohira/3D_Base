@@ -21,6 +21,9 @@ CCharacterObjectBase::CCharacterObjectBase(
 	, m_Damage				( false )
 	, m_Tuning				()
 	, m_RespawnTimer		( 3.0f)
+	, m_PlayerID			( -1 )
+	, m_MutekiCut			()
+	, m_MutekiTimer			()
 {
 }
 
@@ -92,15 +95,6 @@ D3DXVECTOR3 CCharacterObjectBase::GetCannonPosition() const
 	}
 }
 
-#if 0
-float CCharacterObjectBase::GetCannonYaw() const
-{
-	if (m_pCannon)
-	{
-		return m_pCannon->GetRotation().y;
-	}
-}
-#endif
 
 void CCharacterObjectBase::HitPlayer()
 {

@@ -273,11 +273,12 @@ void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticM
 			(void*)body.get());
 
 		m_pPlayers[index]->SetBounding(body, cannon);
-
+#if 0
 		for (auto& p : m_pPlayers)
 		{
 			m_pPlayers[index]->SetBounding(body, cannon);
 		}
+#endif
 	}	
 }
 //================================
@@ -391,50 +392,52 @@ int CCharacterManager::GetAreaIndex(float x, float z)
 }
 //====================================
 
+#if 0
 //=======ゲーム開始時の座標設定=======
-//void CCharacterManager::SetStartPosition()
-//{
-//	for (int index = 0; index < PLAYER_MAX; ++index)
-//	{
-//		if (index == 0)	
-//		{
-//			// 座標を設定
-//			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, -offset));
-//			// 回転を設定
-//			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
-//			// スケールを設定
-//			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
-//		}
-//		else if (index == 1)
-//		{
-//			// 座標を設定
-//			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, offset));
-//			// 回転を設定
-//			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
-//			// スケールを設定
-//			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
-//		}
-//		else if (index == 2)
-//		{
-//			// 座標を設定
-//			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, offset));
-//			// 回転を設定
-//			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
-//			// スケールを設定
-//			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
-//		}
-//		else if (index == 3)
-//		{
-//			// 座標を設定
-//			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, -offset));
-//			// 回転を設定
-//			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
-//			// スケールを設定
-//			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
-//		}
-//	}
-//
-//}
+void CCharacterManager::SetStartPosition()
+{
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		if (index == 0)	
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, -offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+		}
+		else if (index == 1)
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+		}
+		else if (index == 2)
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+		}
+		else if (index == 3)
+		{
+			// 座標を設定
+			m_pPlayers[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, -offset));
+			// 回転を設定
+			m_pPlayers[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
+			// スケールを設定
+			m_pPlayers[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+		}
+	}
+
+}
+#endif
 
 //=======ゲーム開始時の座標設定=======
 
@@ -511,6 +514,10 @@ std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int in
 {
 	if (index >= 0 && index < static_cast<int>(m_pPlayers.size()))
 	{
+		//プレイヤーが取得できてるか確認用
+		printf("[GetControlPlayer] index=%d\n",
+			index);
+
 		return m_pPlayers[index];
 	}
 	return nullptr;
