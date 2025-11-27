@@ -20,6 +20,7 @@ CCharacterObjectBase::CCharacterObjectBase(
 	, m_Death				( false )
 	, m_Damage				( false )
 	, m_Tuning				()
+	, m_RespawnTimer		( 3.0f)
 {
 }
 
@@ -82,6 +83,7 @@ void CCharacterObjectBase::CreateCollider()
 	m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
 }
 
+
 D3DXVECTOR3 CCharacterObjectBase::GetCannonPosition() const
 {
 	if (m_pCannon)
@@ -90,6 +92,7 @@ D3DXVECTOR3 CCharacterObjectBase::GetCannonPosition() const
 	}
 }
 
+#if 0
 float CCharacterObjectBase::GetCannonYaw() const
 {
 	if (m_pCannon)
@@ -97,6 +100,7 @@ float CCharacterObjectBase::GetCannonYaw() const
 		return m_pCannon->GetRotation().y;
 	}
 }
+#endif
 
 void CCharacterObjectBase::HitPlayer()
 {
@@ -111,4 +115,18 @@ void CCharacterObjectBase::HitPlayer()
 		m_Damage = true;
 	}
 }
+
+void CCharacterObjectBase::SyncCannonToBody()
+{
+	auto tuning = GetTuning();
+	auto body = GetBody();
+	auto cannon = GetCannon();
+
+	if (!body || !cannon) return;
+
+	D3DXVECTOR3 pos = body->GetPosition();
+	pos.y += tuning.cannonHeight;		// 砲塔の高さオフセット
+	cannon->SetPosition(pos);			// 位置を同期
+}
+
 

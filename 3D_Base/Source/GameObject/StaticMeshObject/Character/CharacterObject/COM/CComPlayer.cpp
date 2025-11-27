@@ -54,6 +54,7 @@ CComPlayer::CComPlayer()
     , m_AvoidHolde          ( 0.f )
     , m_AvoidSide           ( 0 )
     , m_AvoidMax            ( 0.f )
+    , m_BodyRadius          ( 1.f )
 {
 }
 
@@ -75,6 +76,8 @@ void CComPlayer::Create(int id)
     //それぞれのIDを渡して既存のBody,Cannonの設計に準拠する
     m_pBody = std::make_shared<CBody>(id);
     m_pCannon = std::make_shared<CCannon>(id);
+    m_pShotManager = std::make_shared<CShotManager>();
+
 
     //生存.描画フラグ
     m_IsAlive = true;
@@ -87,6 +90,68 @@ void CComPlayer::Create(int id)
         m_Registered = true;
     }
 
+}
+
+//バウンディング
+void CComPlayer::SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
+{
+    m_pBody->CreateBounding(pBody);
+    m_pCannon->CreateBounding(pCannon);
+}
+//ボックスコライダー
+void CComPlayer::CreateCollider()
+{
+    m_pBody->CreateBoxCollider(m_pBody->GetMinPos(), m_pBody->GetMaxPos());
+    m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
+}
+//アタッチメッシュ
+void CComPlayer::AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
+{
+    m_pBody->AttachMesh(pBody);
+    m_pCannon->AttachMesh(pCannon);
+}
+//死亡処理
+void CComPlayer::ComDeath()
+{
+    if (m_Death == false)
+    {
+        return;
+    }
+    else
+    {
+        m_RespawnTimer -= TIME;
+        m_Drawflag = false;
+        if (m_RespawnTimer <= 0.f)
+        {
+            //体力リセット
+            m_HP = m_MaxHP;
+        }
+    }
+}
+//ダメージ処理
+void CComPlayer::ComDamage()
+{
+
+    if (m_Death == true)
+    {
+        //リスポーンタイムを減少
+        m_RespawnTimer -= TIME;
+        //描画オフ
+        m_Drawflag = false;
+
+        if (m_RespawnTimer <= 0.0f)
+        {
+            m_HP = m_MaxHP;
+
+            //描画フラグ有効化
+            m_Drawflag = true;
+
+            //リスポーン初期化
+            m_RespawnTimer = 3.0f;  
+            m_Respawn = false;
+            m_Death = false;
+        }
+    }
 }
 
 //不正値を防ぐ
@@ -102,6 +167,11 @@ void CComPlayer::SanitizeParams()
     if (m_AttacRadius < 0.0f)               m_AttacRadius = 10.0f;
     if (m_SeekRadius < 0.0f)                m_SeekRadius = 5.0f;
     if (m_FireConeDeg < 0.0f)               m_FireConeDeg = 10.0f;
+    if (m_RespawnTimer < 0.0f)              m_RespawnTimer = 3.0f;
+    if (m_BodyRadius < 1.f)                 m_BodyRadius = 1.f;
+    {
+
+    }
 }
 
 //[-π,π]に正規化

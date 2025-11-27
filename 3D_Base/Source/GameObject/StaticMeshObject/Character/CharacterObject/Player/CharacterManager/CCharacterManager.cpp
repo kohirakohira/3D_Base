@@ -267,14 +267,13 @@ void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticM
 {
 	if (index < m_pPlayers.size())
 	{
-#if 1
-		//デバッグログ
-		printf("[CreateBounding] index=%d player=%p bodyMesh=%p cannonMesh=%p\n",
+		//プレイヤー状態を見るようのデバック
+		printf("[CreateBounding] index=%d, bodyMesh=%p\n",
 			index,
-			(void*)m_pPlayers[index].get(),
-			(void*)m_pBody.get(),
-			(void*)m_pCannon.get());
-#endif
+			(void*)body.get());
+
+		m_pPlayers[index]->SetBounding(body, cannon);
+
 		for (auto& p : m_pPlayers)
 		{
 			m_pPlayers[index]->SetBounding(body, cannon);
@@ -287,22 +286,17 @@ void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticM
 void CCharacterManager::CreateCollider(int index)
 {
 	if (index < m_pPlayers.size())
-	{
-#if 0
-		//デバッグ
-		printf("[CreateCollider] index=%d player=%p\n"),
+	{		
+		printf("[CreateCOllider] index=%d bodyMesh=%p\n",
 			index,
-			(void*)m_pPlayers[index].get();
-#endif	
-	m_pPlayers[index]->CreateCollider();
-		
+			(void*)m_pBody.get());
 
-#if 0
-		for (auto& p : m_pPlayers)
+		m_pPlayers[index]->CreateCollider();
+
+		for (auto p : m_pPlayers)
 		{
 			m_pPlayers[index]->CreateCollider();
 		}
-#endif
 	}
 }
 //============================

@@ -93,13 +93,13 @@ public:
 	//キャノンポジション
 	virtual D3DXVECTOR3 GetCannonPosition() const;
 
-	virtual float GetCannonYaw() const;
+	//virtual float GetCannonYaw() const;
 
 	virtual void HitPlayer();
 
 	virtual bool HasControl() const { return m_HasControl; }
 
-
+	virtual void SyncCannonToBody();
 protected:
 
 	
@@ -128,6 +128,9 @@ protected:
 
 	//リスポーンフラグ
 	bool m_Respawn;
+	
+	//リスポーンタイム
+	float m_RespawnTimer;
 
 	//操作権があるか
 	bool m_HasControl;	
@@ -137,6 +140,15 @@ protected:
 
 	//ダメージフラグ
 	bool m_Damage;
+
+	//無敵フラグ
+	bool m_Muteki;
+	
+	//無敵時間
+	float m_MutekiTimer;
+
+	//無敵状態カウント
+	float m_MutekiCut;
 
 
 };

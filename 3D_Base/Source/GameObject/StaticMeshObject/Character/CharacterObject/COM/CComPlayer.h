@@ -32,6 +32,10 @@ class CComPlayer
 	: public CCharacterObjectBase
 {
 public:
+
+	//定数
+	const float TIME = 1.f / FPS;
+
 	CComPlayer();
 	~CComPlayer() override;
 
@@ -39,6 +43,21 @@ public:
 	void Update() override;
 	bool IsPlayer() const override { return false; }
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+
+	//バウンディングスフィアセット
+	void SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) override;
+
+	//コライダー生成
+	void CreateCollider();
+
+	//アタッチメッシュ
+	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) override;
+
+	//COM死亡処理
+	void ComDeath();
+
+	//COMのダメージ処理
+	void ComDamage();
 
 	// 位置の設定
 	virtual void SetPosition(D3DXVECTOR3 pos) override {};
@@ -109,6 +128,7 @@ public:
 	virtual void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; }
 	//パラメータの取得.
 	virtual const TankTuning& GetTuning() const override { return m_Tuning; }
+
 
 private:
 	//構造体
@@ -250,7 +270,6 @@ private:
 
 	int m_PlayerID = -1;
 
-	bool		m_Respawn;				// リスポーン
 };
 
 

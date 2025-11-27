@@ -54,9 +54,6 @@ void CGameTitle::Update()
 
 //↑-----タイトルでの演出-----↑.
 
-
-
-
 	//ゲーム設定に遷移.
 	if (controller && controller->CheckConnected())
 	{
@@ -138,15 +135,13 @@ void CGameTitle::Update()
 		//}
 	}
 
-#if 0
-	void CGameTitle::Update()
-	{
-
+#if 1
 		// =========================
 		// 決定入力の判定
 		// =========================
 		bool decide = false;
 
+		//キーボード入力用.padなしでの接続用
 		// キーボード Z は常に見る
 		if (m_KeyInput->ReleaseInputKey('Z'))
 		{
@@ -192,7 +187,6 @@ void CGameTitle::Update()
 			}
 		}
 
-	}
 
 #endif
 

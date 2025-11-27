@@ -168,9 +168,6 @@ void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Cam
 	}
 }
 
-void CPlayer::Create(int index)
-{
-}
 
 void CPlayer::SetPosition(D3DXVECTOR3 pos)
 {

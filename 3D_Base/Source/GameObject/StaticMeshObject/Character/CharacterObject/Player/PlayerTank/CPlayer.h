@@ -73,7 +73,7 @@ public:
 	// 描画関数
 	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 	// インスタンス生成関数
-	virtual void Create(int index) override;
+	//virtual void Create(int index) override;
 
 	// 位置の設定
 	virtual void SetPosition(D3DXVECTOR3 pos) override;
