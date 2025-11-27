@@ -26,12 +26,6 @@ public:
 	//メッシュの設定.
 	void AttachMesh(std::shared_ptr<CStaticMesh> pMesh);
 
-	// バウンディングオブジェクトの作成
-	void CreateBounding(std::shared_ptr<CStaticMesh>& pItem);
-
-	//// コライダーの作成
-	//void CreateCollider();
-
 	//位置設定.
 	void SetPosition(float x, float y, float z);
 	//回転設定.

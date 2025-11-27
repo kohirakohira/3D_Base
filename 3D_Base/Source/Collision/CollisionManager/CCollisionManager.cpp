@@ -352,7 +352,6 @@ void CCollisionManager::WoodBoxtoPlayer()
 					chara->GetBody()->PushBack(dir);
 					chara->GetCannon()->PushBack(dir);
 				}
-
 			}
 		}
 
@@ -528,6 +527,7 @@ void CCollisionManager::GroundtoItemBox()
 		{
 			// アイテムボックスの処理を入れる
 			item->SetGravity(true);
+			item->StartEffect();
 		}
 	}
 }

@@ -273,7 +273,7 @@ bool CXInput::UpdateStatus()
 		m_connect = true;
 
 		//確認用.
-		std::cout << "PadID" << m_padId << "Connect" << (m_connect ? "YES" : "NO") << std::endl;
+		//std::cout << "PadID" << m_padId << "Connect" << (m_connect ? "YES" : "NO") << std::endl;
 
 		return true;
 	}
@@ -284,7 +284,7 @@ bool CXInput::UpdateStatus()
 		ZeroMemory(&m_state, sizeof(m_state));
 
 		//確認用.
-		std::cout << "PadID" << m_padId << "Connect" << (m_connect ? "YES" : "NO") << std::endl;
+		//std::cout << "PadID" << m_padId << "Connect" << (m_connect ? "YES" : "NO") << std::endl;
 
 		return false;
 	}

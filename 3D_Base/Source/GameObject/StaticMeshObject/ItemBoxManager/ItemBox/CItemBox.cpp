@@ -6,6 +6,8 @@ CItemBox::CItemBox()
 	, m_Active				( true )
 	, m_ItemType			()
 	, IsGravity				( false )
+	, ItemFlag				( false )
+	, hEffect				( -1 )
 {
 	//大体0.016辺りになる.
 	Framerate = 1.f / 60.f;
@@ -22,6 +24,26 @@ void CItemBox::Update()
 	//アイテムを落下させるための関数.
 	GravityMath();
 
+	if (ItemFlag == true)
+	{
+		//エフェクトを再生.
+		hEffect = CEffect::Play(CEffect::Mist, m_vPosition);
+
+		//拡大縮小
+		CEffect::SetScale(hEffect, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+
+		//回転(Y軸回転)
+		CEffect::SetRotation(hEffect, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+		//位置を再設定
+		CEffect::SetLocation(hEffect, m_vPosition);
+
+		CEffect::SetSpeed(hEffect, 0.1f);
+
+		std::cout << hEffect << std::endl;
+
+		ItemFlag = false;
+	}
 	//centerpos・rotation・scaleを設定してる.
 	CStaticMeshObject::Update();
 }
@@ -114,6 +136,9 @@ void CItemBox::HitPlayer()
 	// 消える
 	m_Active = false;
 
+	//エフェクトの終了.
+	CEffect::Stop(hEffect);
+
 	switch (m_ItemType)
 	{
 	case CItemType::Shield:
@@ -143,11 +168,11 @@ void CItemBox::HitPlayer()
 	default:
 		break;
 	}
-
 }
 
-// バウンディングボックスを作成
-void CItemBox::CreateBounding(std::shared_ptr<CStaticMesh> pItemBox)
+//エフェクトの始まり終わり.
+void CItemBox::StartEffect()
 {
-	//CreateBBoxForMesh(*pItemBox);
+	//エフェクトのはじめ.
+	ItemFlag = true;
 }

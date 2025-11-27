@@ -34,8 +34,8 @@ void CControllerManager::Update()
 		}
 	}
 
-	std::cout << "Ú‘±‚³‚ê‚½”->" << m_ConnectedCount << std::endl;
-	std::cout << "Ø’f‚³‚ê‚½”->" << PLAYER_MAX - m_ConnectedCount << std::endl;
+	//std::cout << "Ú‘±‚³‚ê‚½”->" << m_ConnectedCount << std::endl;
+	//std::cout << "Ø’f‚³‚ê‚½”->" << PLAYER_MAX - m_ConnectedCount << std::endl;
 }
 
 //‘SƒRƒ“ƒgƒ[ƒ‰[‚ÌØ’fˆ—.

@@ -75,15 +75,6 @@ void CItemBoxManager::AttachMesh(std::shared_ptr<CStaticMesh> pMesh)
 	m_ItemMesh = pMesh;
 }
 
-void CItemBoxManager::CreateBounding(std::shared_ptr<CStaticMesh>& pItem)
-{
-	// バウンディング設定.
-	for (auto& item : m_Item)
-	{
-		item->CreateBounding(pItem);
-	}
-}
-
 #if 0
 void CItemBoxManager::CreateCollider()
 {
