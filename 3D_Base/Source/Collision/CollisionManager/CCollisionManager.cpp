@@ -83,11 +83,11 @@ HRESULT CCollisionManager::LoadData()
 
 void CCollisionManager::WalltoPlayer()
 {
-	// 押し返しの強さ
-	const float pushStrength = m_pCharacterManager->GetTuning().moveSpeed;
-
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
+		// 押し返しの強さ
+		const float pushStrength = m_pCharacterManager->GetTuning(i).moveSpeed;
+
 		// i 番のプレイヤーを取得
 		auto player = m_pCharacterManager->GetControlPlayer(i);
 		if (!player->IsPlayer())continue;
@@ -179,10 +179,11 @@ void CCollisionManager::WalltoShot()
 // プレイヤーとプレイヤー当たり判別
 void CCollisionManager::PlayertoPlayer()
 {
-	const float pushStrength = 0.1f;
-
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
+		//押し返す力.
+		const float pushStrength = m_pCharacterManager->GetTuning(i).moveSpeed;
+
 		// プレイヤーAのコライダー取得
 		auto playerA = m_pCharacterManager->GetControlPlayer(i);
 		if (!playerA->IsPlayer())continue;
@@ -301,7 +302,7 @@ void CCollisionManager::PlayertoShot()
 				shot->HitShot();
 
 				// 仮でここに当たった時の処理を書いている
-				player->HitPlayer();
+				//player->HitPlayer();
 			}
 		}
 	}
@@ -310,106 +311,135 @@ void CCollisionManager::PlayertoShot()
 // 木箱とプレイヤー
 void CCollisionManager::WoodBoxtoPlayer()
 {
-	// 押し返しの強さ
-	const float pushStrength = 0.1f;
-
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
+		// 押し返しの強さ
+		const float pushStrength = m_pCharacterManager->GetTuning(i).moveSpeed;
+
 		// i 番のプレイヤーを取得
-		auto player = m_pCharacterManager->GetControlPlayer(i);
-		if (!player->IsPlayer())continue;
-		auto Coll = player->GetBody()->GetCollider();
+		auto chara = m_pCharacterManager->GetControlPlayer(i);
+		if (!chara->IsPlayer())continue;
+		auto charaColl = chara->GetBody()->GetCollider();
+		D3DXVECTOR3 charaPos = chara->GetBody()->GetPosition();
 
-		// 押し返すための変数
-		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
 
-		// 車体が壁と接触したとき
-		// 左上
-		if (Coll->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
+		//木箱をまとめて管理.
+		std::shared_ptr<CCollider> woodbox[] = {
+			m_pWoodBoxBottomLeft->GetCollider(),
+			m_pWoodBoxBottomRight->GetCollider(),
+			m_pWoodBoxCenter->GetCollider(),
+			m_pWoodBoxTopLeft->GetCollider(),
+			m_pWoodBoxTopRight->GetCollider()
+		};
+
+		for (auto& box : woodbox)
 		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopLeft->GetPosition();
-
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
+			if (charaColl->CheckCollision(*box))
 			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 右上
-		if (Coll->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopRight->GetPosition();
+				//方向ベクトル.
+				D3DXVECTOR3 dir = charaPos - box->GetPosition();
 
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 中央
-		if (Coll->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxCenter->GetPosition();
+				//長さを計算.
+				float len = D3DXVec3Length(&dir);
 
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 左下
-		if (Coll->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomLeft->GetPosition();
+				if (len > 0.0001f)
+				{
+					//正規化.
+					D3DXVec3Normalize(&dir, &dir);
+					dir *= pushStrength;
 
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 右下
-		if (Coll->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomRight->GetPosition();
+					// 壁に当たった時に押し返す
+					chara->GetBody()->PushBack(dir);
+					chara->GetCannon()->PushBack(dir);
+				}
 
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
 			}
 		}
 
-		// 押し返しを正規化
-		if (D3DXVec3Length(&push) > 0.f)
 		{
-			D3DXVec3Normalize(&push, &push);
-			push *= pushStrength;
-		}
+			// 車体が壁と接触したとき
+			//// 左上
+			//if (Coll->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
+			//{
+			//	// 衝突時の押し返し処理例
+			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopLeft->GetPosition();
 
-		// 壁に当たった時に押し返す
-		player->GetBody()->PushBack(push);
-		player->GetCannon()->PushBack(push);
+			//	// pushベクトルを正規化して押し返しの強さをかける
+			//	float length = D3DXVec3Length(&push);
+			//	if (length > 0.0001f)
+			//	{
+			//		push /= length;
+			//		push *= pushStrength;
+			//		player->GetBody()->PushBack(push);
+			//	}
+			//}
+			//// 右上
+			//if (Coll->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
+			//{
+			//	// 衝突時の押し返し処理例
+			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopRight->GetPosition();
+
+			//	// pushベクトルを正規化して押し返しの強さをかける
+			//	float length = D3DXVec3Length(&push);
+			//	if (length > 0.0001f)
+			//	{
+			//		push /= length;
+			//		push *= pushStrength;
+			//		player->GetBody()->PushBack(push);
+			//	}
+			//}
+			//// 中央
+			//if (Coll->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
+			//{
+			//	// 衝突時の押し返し処理例
+			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxCenter->GetPosition();
+
+			//	// pushベクトルを正規化して押し返しの強さをかける
+			//	float length = D3DXVec3Length(&push);
+			//	if (length > 0.0001f)
+			//	{
+			//		push /= length;
+			//		push *= pushStrength;
+			//		player->GetBody()->PushBack(push);
+			//	}
+			//}
+			//// 左下
+			//if (Coll->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
+			//{
+			//	// 衝突時の押し返し処理例
+			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomLeft->GetPosition();
+
+			//	// pushベクトルを正規化して押し返しの強さをかける
+			//	float length = D3DXVec3Length(&push);
+			//	if (length > 0.0001f)
+			//	{
+			//		push /= length;
+			//		push *= pushStrength;
+			//		player->GetBody()->PushBack(push);
+			//	}
+			//}
+			//// 右下
+			//if (Coll->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
+			//{
+			//	// 衝突時の押し返し処理例
+			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomRight->GetPosition();
+
+			//	// pushベクトルを正規化して押し返しの強さをかける
+			//	float length = D3DXVec3Length(&push);
+			//	if (length > 0.0001f)
+			//	{
+			//		push /= length;
+			//		push *= pushStrength;
+			//		player->GetBody()->PushBack(push);
+			//	}
+			//}
+			//// 押し返しを正規化
+			//if (D3DXVec3Length(&push) > 0.f)
+			//{
+			//	D3DXVec3Normalize(&push, &push);
+			//	push *= pushStrength;
+			//}
+		}
 	}
 }
 

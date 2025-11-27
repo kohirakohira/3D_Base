@@ -54,102 +54,63 @@ public:
 
 public:
 	CPlayer();
-	virtual ~CPlayer() override;
+	~CPlayer() override;
 
 	void Init(int id);
-
-	//void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) ;
-
-	// 戦車の座標、回転、拡縮を設定
-	void SetTankPosition(const D3DXVECTOR3& pos) override;
-	void SetTankRotation(const D3DXVECTOR3& rot) override;
-	void SetTankScale   (const D3DXVECTOR3& sca) override;
-
-	//プレイヤーが壁に当たる処理をまとめる.
-	void SetPushBack(const D3DXVECTOR3& push);
 
 	// 更新関数
 	void Update() override;
 	// 描画関数
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
-	// インスタンス生成関数
-	void Create(int index) override;
+	// 外部のクラスに情報を渡す
+	std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
+	std::shared_ptr<CCannon> GetCannon() const override { return m_pCannon; }
+	std::shared_ptr<CShotManager>GetShotManager() const override { return m_pShotManager; }
 
-	// 位置の設定
-	void SetPosition(D3DXVECTOR3 pos) override;
-	// 位置を取得
-	const D3DXVECTOR3 GetPosition() override;
+	//砲塔の位置取得.
+	D3DXVECTOR3 GetCannonPosition() const { return m_pCannon->GetPosition(); }
+	float GetCannonYaw() const { return m_pCannon->GetRotation().y; }
 
-	// 回転の設定
-	void SetRotation(D3DXVECTOR3 rot) override;
-	// 回転を取得
-	const D3DXVECTOR3 GetRotation() override;
-
-	// 拡縮の設定
-	void SetScale(D3DXVECTOR3 sca) override;
-	// 拡縮を取得
-	const D3DXVECTOR3 GetScale() override;
+	//当たった時用.
+	void OnHit(CCharacterObjectBase* other);
 
 	// プレイヤーかCOMを識別
 	bool IsPlayer() const override { return true; }
+
+	//操作可能かどうか.
+	void SetHasControl(bool enable) { m_HasControl = enable; }
+	bool HasControl() const { return m_HasControl; }
+
+	// インスタンス生成関数
+	void Create();
 
 	// プレイヤーのダメージ処理
 	void PlayerDamage();
 	// プレイヤーの死亡処理
 	void PlayerDeath();
 
-	// プレイヤーが爆風と当たった時の処理
-	void HitPlayer() override;
-
-	// バウンディングオブジェクトを設定
-	void SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)override;
+	//プレイヤーが壁に当たる処理をまとめる.
+	void SetPushBack(const D3DXVECTOR3& push);
 
 	// コライダーの作成
 	void CreateCollider();
 
-	//外部のクラスから情報取得.
-	void SetCBody(std::shared_ptr<CBody> pBody) override { m_pBody = pBody; }
-	void SetCannon(std::shared_ptr<CCannon> pCannon) override { m_pCannon = pCannon; }
-
-	void AttachMeshse(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon) override;
-
-	// 外部のクラスに情報を渡す
-	std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
-	std::shared_ptr<CCannon> GetCannon() const override { return m_pCannon; }
-
-	//操作権関連の外部関数
-	void SetHasControl(bool control) override { m_HasControl = control; }
-	void SetKeyBoadEnble(bool control) { m_HasControl = control; }
-	bool HasControl() const { return m_HasControl; }
-
 	// PlayerIDをCOMに渡す
 	int GetPlayerID() const { return m_PlayerID; }
 
-	// リスポーンフラグ設定
-	//void SetRespawnFlag(bool flg) { m_Player.m_Respawn = flg; }
-
 	//リスポーンフラグの設定継承版
 	void SetRespawnFlag(bool flg) override { m_Respawn = flg; } 
-
 	// リスポーンフラグの取得
-	bool GetRespawnFlag() { return m_Player.m_Respawn; }
+	bool GetRespawnFlag() const override { return m_Respawn; }
 
 	// プレイヤーのコントローラー設定・取得
 	void SetControllerIndex(int index);
 	int GetControllerIndex() const { return m_ControllerIndex; }
 
-	//パラメータの設定.
-	virtual void SetTuning(const TankTuning& tuning) override {	m_Tuning = tuning; }
-	//パラメータの取得.
-	virtual const TankTuning& GetTuning() const override { return m_Tuning; }
-
 	static void DebugLog(const char* msg){OutputDebugStringA(msg);}
 
 	void RotateTurretByPad();
 
-protected:
-	std::shared_ptr<CBody> Body() const { return m_pBody; }
-	std::shared_ptr<CCannon> Cannon() const { return m_pCannon; }
 	void UpdateHumanInputAndMove(PlayerInput input);	//プレイヤー処理をいれておく
 
 	// 砲塔と車体の同期

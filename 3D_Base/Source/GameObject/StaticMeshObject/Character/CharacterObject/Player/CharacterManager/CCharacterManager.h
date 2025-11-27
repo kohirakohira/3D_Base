@@ -23,7 +23,7 @@
 #include "InputDevice/Input/Controller\ControllerManager/CControllerManager.h"
 
 class CCharacterManager
-	: public CCharacter
+	: public CStaticMeshObject
 {
 public:
 	CCharacterManager();
@@ -95,12 +95,9 @@ public:
 	//============================
 
 	//=======パラメータの設定・取得=======
-	void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; }
-	const TankTuning& GetTuning() const override { return m_Tuning; }
+	void SetTuning(const TankTuning& tuning, int index);
+	const TankTuning& GetTuning(int index) const;
 	//==================================
-
-	// プレイヤークラスをセット
-	//void SetCPlayer(std::vector<std::shared_ptr<CPlayer>> pPlayer) { m_pPlayer = pPlayer; }
 
 private:
 
@@ -122,11 +119,10 @@ private:
 	//↓松岡.
 	std::shared_ptr<CBody>					m_pBody;
 	std::shared_ptr<CCannon>				m_pCannon;
-    //std::vector<std::shared_ptr<CPlayer>>	m_pPlayers;
 	std::shared_ptr<CShotManager>			m_ShotManager; //弾マネージャー
 
 	//CPlayerとCComPlayerを同一コンテナで管理するための基底に統一
-	std::vector<std::shared_ptr<CCharacterObjectBase>> m_pPlayers;
+	std::vector<std::shared_ptr<CCharacterObjectBase>> m_pCharacter;
 
 	int m_ActivePlayerIndex;	// 現在操作中のプレイヤー(デバッグ用)
 

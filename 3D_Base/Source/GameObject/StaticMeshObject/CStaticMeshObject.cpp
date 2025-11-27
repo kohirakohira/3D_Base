@@ -66,6 +66,11 @@ void CStaticMeshObject::CreateBoxCollider(D3DXVECTOR3 min, D3DXVECTOR3 max)
 	m_pCollider =  std::move(box);
 }
 
+void CStaticMeshObject::SetTuning(TankTuning t)
+{
+	m_Tuning = t;
+}
+
 //ƒŒƒC‚ÆƒƒbƒVƒ…‚Ì“–‚½‚è”»’è
 bool CStaticMeshObject::IsHitForRay(
 	const RAY& pRay,

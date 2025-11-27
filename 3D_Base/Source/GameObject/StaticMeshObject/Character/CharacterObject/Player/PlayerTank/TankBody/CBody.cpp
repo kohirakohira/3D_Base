@@ -13,7 +13,7 @@ CBody::CBody(int inputID)
 {
 	m_vPosition.y = -0.5f;
 
-
+	//“–‚½‚è”»’è‚Ìì¬.
 	m_pCollider = std::make_shared<CBoxCollider>();
 }
 

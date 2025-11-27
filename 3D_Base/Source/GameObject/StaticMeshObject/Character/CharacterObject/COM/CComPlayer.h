@@ -35,46 +35,53 @@ public:
 	CComPlayer();
 	~CComPlayer() override;
 
-	void Create(int id)override;
+	//動作関数.
 	void Update() override;
-	bool IsPlayer() const override { return false; }
+	//描画関数.
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
-	// 位置の設定
-	virtual void SetPosition(D3DXVECTOR3 pos) override {};
-	// 位置を取得
-	virtual const D3DXVECTOR3 GetPosition() override;
+	//車体の取得.
+	std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
+	//砲塔の取得.
+	std::shared_ptr<CCannon>GetCannon() const override { return m_pCannon; }
+	//弾マネージャーの取得.
+	std::shared_ptr<CShotManager>GetShotManager() const override{ return m_pShotManager; }
 
-	// 回転の設定
-	virtual void SetRotation(D3DXVECTOR3 rot) override {};
-	// 回転を取得
-	virtual const D3DXVECTOR3 GetRotation() override;
+	//砲塔の位置取得.
+	D3DXVECTOR3 GetCannonPosition() const override { return m_pCannon->GetPosition(); }
+	float GetCannonYaw() const override { return m_pCannon->GetRotation().y; }
 
-	// 拡縮の設定
-	virtual void SetScale(D3DXVECTOR3 sca) override {};
-	// 拡縮を取得
-	virtual const D3DXVECTOR3 GetScale() override;
+	//当たった時.
+	void OnHit(CCharacterObjectBase* other) override ;
+
+	//プレイヤーかCOMを判定する.
+	bool IsPlayer() const override { return false; }
+
+	//操作可能かどうか.
+	void SetHasControl(bool enable) override { m_HasControl = enable; }
+	bool HasControl() const override { return m_HasControl; }
+
+	void Create(int id);
 
 	static std::vector<CComPlayer*>& Instances();
 
 	//リスポーンフラグの取得
-	bool GetRespawnFlag() { return m_Respawn; }
-
+	bool GetRespawnFlag() const { return m_Respawn; }
 	//リスポーンフラグの設定
-	void SetRespawnFlag(bool flg) override {};
+	void SetRespawnFlag(bool flg) override { m_Respawn = flg; };
 
-	//操作権の設定
-	virtual void SetHasControl(bool control) override {};
+	////操作権の設定
+	//virtual void SetHasControl(bool control) override {};
 
-	//車体の設定
-	virtual void SetCBody(std::shared_ptr<CBody> pBody) override { m_pBody = pBody; }
-	//車体の取得
-	std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
+	////車体の設定
+	//virtual void SetCBody(std::shared_ptr<CBody> pBody) override { m_pBody = pBody; }
+	////車体の取得
+	//std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
 
-	//砲塔の設定
-	virtual void SetCannon(std::shared_ptr<CCannon> pCannon) override { m_pCannon = pCannon; }
-	//砲塔の取得
-	std::shared_ptr<CCannon> GetCannon() const override { return m_pCannon; }
+	////砲塔の設定
+	//virtual void SetCannon(std::shared_ptr<CCannon> pCannon) override { m_pCannon = pCannon; }
+	////砲塔の取得
+	//std::shared_ptr<CCannon> GetCannon() const override { return m_pCannon; }
 
 	
 	//追尾対象の設定
@@ -100,15 +107,15 @@ public:
 
 	int GetPlayerID() const { return m_PlayerID; }
 
-	// 戦車の座標、回転、拡縮を設定
-	void SetTankPosition(const D3DXVECTOR3& pos) override {};
-	void SetTankRotation(const D3DXVECTOR3& rot) override {};
-	void SetTankScale(   const D3DXVECTOR3& sca) override {};
+	//// 戦車の座標、回転、拡縮を設定
+	//void SetTankPosition(const D3DXVECTOR3& pos) override {};
+	//void SetTankRotation(const D3DXVECTOR3& rot) override {};
+	//void SetTankScale(   const D3DXVECTOR3& sca) override {};
 
-	//パラメータの設定.
-	virtual void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; }
-	//パラメータの取得.
-	virtual const TankTuning& GetTuning() const override { return m_Tuning; }
+	////パラメータの設定.
+	//virtual void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; }
+	////パラメータの取得.
+	//virtual const TankTuning& GetTuning() const override { return m_Tuning; }
 
 private:
 	//構造体
@@ -198,7 +205,7 @@ private:
 
 	//外部クラス
 	std::shared_ptr<CCharacterObjectBase> m_pTarget;									//追尾対象
-	std::weak_ptr<CShotManager> m_pShotManager;							//弾マネージャー.自動発射用のパラメータ
+	//std::weak_ptr<CShotManager> m_pShotManager;							//弾マネージャー.自動発射用のパラメータ
 	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;			//プレイヤーの一覧取得
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;					//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;								//弱参照のアイテムボックス
