@@ -40,15 +40,6 @@ void CCharacterManager::Init()
 	m_pBody = nullptr;
 	m_pCannon = nullptr;
 
-	//for (int i = 0; i < PLAYER_MAX; ++i)
-	//{
-	//	// 各プレイヤー / COM に対応するメッシュを渡す
-	//	
-	//	m_pCharacterManager->CreateBounding(i, bodyMesh[i], cannonMesh[i]);
-	//	m_pCharacterManager->CreateCollider(i);
-	//}
-
-
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		// コントローラーの接続状態を確認
@@ -75,7 +66,7 @@ void CCharacterManager::Init()
 			//1人目のBodyCannonをテンプレとして控えておく
 			if (!m_pBody || !m_pCannon)
 			{
-				//SetBodyAndCannon(player->GetBody(), player->GetCannon());
+				SetBodyAndCannon(player->GetBody(), player->GetCannon());
 			}
 
 			m_pCharacter.push_back(player);

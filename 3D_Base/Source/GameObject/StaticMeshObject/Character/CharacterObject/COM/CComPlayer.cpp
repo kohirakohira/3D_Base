@@ -54,6 +54,8 @@ CComPlayer::CComPlayer()
     , m_AvoidHolde          ( 0.f )
     , m_AvoidSide           ( 0 )
     , m_AvoidMax            ( 0.f )
+    , m_BodyRadius          ( 1.f )
+    , m_Respawn             ( false )
 {
 }
 
@@ -92,6 +94,13 @@ void CComPlayer::Create(int id)
     }
 
 }
+
+void CComPlayer::CreateBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
+{
+    m_pBody->CreateBounding(pBody);
+    m_pCannon->CreateBounding(pCannon);
+}
+
 
 //•s³’l‚ğ–h‚®
 void CComPlayer::SanitizeParams()
@@ -433,8 +442,6 @@ bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
     }
     return false;
 }
-
-
 
 //’Tõˆ—
 void CComPlayer::StepSeek()

@@ -70,19 +70,6 @@ public:
 	//リスポーンフラグの設定
 	void SetRespawnFlag(bool flg) override { m_Respawn = flg; };
 
-	////操作権の設定
-	//virtual void SetHasControl(bool control) override {};
-
-	////車体の設定
-	//virtual void SetCBody(std::shared_ptr<CBody> pBody) override { m_pBody = pBody; }
-	////車体の取得
-	//std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
-
-	////砲塔の設定
-	//virtual void SetCannon(std::shared_ptr<CCannon> pCannon) override { m_pCannon = pCannon; }
-	////砲塔の取得
-	//std::shared_ptr<CCannon> GetCannon() const override { return m_pCannon; }
-
 	
 	//追尾対象の設定
 	void SetTarget(std::shared_ptr<CCharacterObjectBase> actor) { m_pTarget = std::move(actor); }
@@ -107,15 +94,8 @@ public:
 
 	int GetPlayerID() const { return m_PlayerID; }
 
-	//// 戦車の座標、回転、拡縮を設定
-	//void SetTankPosition(const D3DXVECTOR3& pos) override {};
-	//void SetTankRotation(const D3DXVECTOR3& rot) override {};
-	//void SetTankScale(   const D3DXVECTOR3& sca) override {};
 
-	////パラメータの設定.
-	//virtual void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; }
-	////パラメータの取得.
-	//virtual const TankTuning& GetTuning() const override { return m_Tuning; }
+	void CreateBounding(std::shared_ptr<CStaticMesh>pBody, std::shared_ptr<CStaticMesh> pCannon);
 
 private:
 	//構造体
