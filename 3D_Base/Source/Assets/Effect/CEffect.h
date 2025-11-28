@@ -21,6 +21,7 @@
 //※コードが横に長くなって読みづらいため
 namespace {
 	namespace Es = ::Effekseer;
+	using EsColor		= ::Es::Color;
 	using EsManagerRef	= ::Es::ManagerRef;
 	using EsManager		= ::Es::Manager;
 	using EsEffectRef	= ::Es::EffectRef;
@@ -123,6 +124,12 @@ public:
 	static void SetScale(::EsHandle handle, D3DXVECTOR3 scale) {
 		CEffect::GetInstance().m_pManager->
 			SetScale(handle, scale.x, scale.y, scale.z);
+	}
+
+	//色(アルファ値)を指定する.
+	static void SetAlpha(::EsHandle handle, ::EsColor alpha) {
+		CEffect::GetInstance().m_pManager->
+			SetAllColor(handle, alpha);
 	}
 
 private:

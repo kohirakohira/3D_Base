@@ -38,6 +38,10 @@ void CItemBox::Update()
 		//位置を再設定
 		CEffect::SetLocation(hEffect, m_vPosition);
 
+		//エフェクトの色設定※アルファ値.
+		CEffect::SetAlpha(hEffect, ::EsColor{255, 255, 255, 30});
+
+		//エフェクトの速度設定.
 		CEffect::SetSpeed(hEffect, 0.1f);
 
 		std::cout << hEffect << std::endl;
