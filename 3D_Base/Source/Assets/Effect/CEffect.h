@@ -45,8 +45,9 @@ public:
 		Test0 = 0,	//仮で設定
 		Test1,		//仮で設定
 		Hit,		//当たった時
-		Explosion,//爆発
+		Explosion,	//爆発
 		Bakuhatu,	//爆発（被弾）
+		Mist,		//アイテムの煙.
 
 		Max			//最大数
 	};

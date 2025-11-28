@@ -333,6 +333,9 @@ void CGameMain::Draw()
 		//背景の表示.
 		m_pBackImgObject->Draw(view, proj, light, paramC);
 
+		//エフェクトもここでやる.
+		CEffect::GetInstance().Draw(view, proj, light, paramC);
+
 //4画面に体力を表示.
 		//前後関係無視..
 		CDirectX11::GetInstance().SetDepth(false);
@@ -394,7 +397,6 @@ void CGameMain::Draw()
 		//キル数の描画..
 		m_pSpriteKillNomber[i]->Draw();
 		CDirectX11::GetInstance().SetDepth(true);
-
 	}
 	//全画面ビューポートに戻す.
 	D3D11_VIEWPORT fullvp = {};
@@ -418,10 +420,7 @@ void CGameMain::Draw()
 	//タイマー描画..
 	m_Timer->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
-
-
-	//エフェクトもここでやる.
-
+	
 }
 
 
@@ -682,6 +681,7 @@ HRESULT CGameMain::LoadData()
 		256, 256,		//元画像の幅,高さ..
 		256, 256		//アニメーションをしないので、0でいい..
 	};
+
 	//制限時間の枠の読み込み
 	m_pSprite2DTimerFrame->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE, false);
 	m_pSprite2DTimer->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE, false);
@@ -693,6 +693,7 @@ HRESULT CGameMain::LoadData()
 	m_pSpriteTimerFrame	->AttachSprite(m_pSprite2DTimerFrame);
 	m_pSpriteTimer		->AttachSprite(m_pSprite2DTimer);
 	m_pSpriteTimerArrow	->AttachSprite(m_pSprite2DTimerArrow);
+
 	//HPの分だけアタッチ
 	for (int i = 0; i < HP_MAX; i++)
 	{
