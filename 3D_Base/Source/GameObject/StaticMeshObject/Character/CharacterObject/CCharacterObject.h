@@ -26,9 +26,9 @@ public:
 	virtual ~CCharacterObjectBase();
 
 	//動作関数.
-	virtual void Update() override = 0;;
+	virtual void Update() override = 0;
 	//描画関数.
-	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override = 0;;
+	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override = 0;
 
 	//車体の取得.
 	virtual std::shared_ptr<CBody> GetBody() const = 0;
@@ -71,7 +71,6 @@ protected:
 	//キャラクターの生存フラグ.
 	bool m_IsAlive;
 
-	//ここから下はいらなかったら消してください
 	//キャラクターの体力.
 	int m_HP;
 	//最大体力.

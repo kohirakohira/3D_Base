@@ -9,7 +9,9 @@ CCharacterManager::CCharacterManager()
 	, AngleY				(45.f)
 	, m_pCharacter			()
 	, m_ActivePlayerIndex	( 0 )
+	, m_pCom				()
 {
+	//m_pCom = std::make_shared<CComPlayer>();
 }
 
 //PlayerがCComPlayerならそのポインタにキャストして返す.そうでなければnullptr
@@ -40,15 +42,6 @@ void CCharacterManager::Init()
 	m_pBody = nullptr;
 	m_pCannon = nullptr;
 
-	//for (int i = 0; i < PLAYER_MAX; ++i)
-	//{
-	//	// 各プレイヤー / COM に対応するメッシュを渡す
-	//	
-	//	m_pCharacterManager->CreateBounding(i, bodyMesh[i], cannonMesh[i]);
-	//	m_pCharacterManager->CreateCollider(i);
-	//}
-
-
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		// コントローラーの接続状態を確認
@@ -75,7 +68,7 @@ void CCharacterManager::Init()
 			//1人目のBodyCannonをテンプレとして控えておく
 			if (!m_pBody || !m_pCannon)
 			{
-				//SetBodyAndCannon(player->GetBody(), player->GetCannon());
+				SetBodyAndCannon(player->GetBody(), player->GetCannon());
 			}
 
 			m_pCharacter.push_back(player);
@@ -127,27 +120,6 @@ void CCharacterManager::Init()
 		}
 	}
 
-#if 0
-	// 誰が何番に入ったか確認したい時用のログ
-	for (int i = 0; i < (int)m_pCharacter.size(); ++i)
-	{
-		bool isCom = (std::dynamic_pointer_cast<CComPlayer>(m_pCharacter[i]) != nullptr);
-
-		auto body = m_pCharacter[i]->GetBody();
-		auto cannon = m_pCharacter[i]->GetCannon();
-		D3DXVECTOR3 pos(0, 0, 0);
-		if (body) pos = body->GetPosition();
-
-		printf("Init Slot %d : %s  player=%p body=%p cannon=%p pos=(%.1f, %.1f, %.1f)\n",
-			i,
-			isCom ? "COM" : "PLAYER",
-			(void*)m_pCharacter[i].get(),
-			(void*)(body ? body.get() : nullptr),
-			(void*)(cannon ? cannon.get() : nullptr),
-			pos.x, pos.y, pos.z
-		);
-	}
-#endif
 }
 //===================
 
@@ -275,12 +247,14 @@ void CCharacterManager::SetPlayerScale(int index, const D3DXVECTOR3& xyz)
 //==============================
 
 //=======バウンディングの作成=======
-void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh>& body, const std::shared_ptr<CStaticMesh>& cannon)
+void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticMesh>& pBody, const std::shared_ptr<CStaticMesh>& pCannon)
 {
+
 	if (index < m_pCharacter.size())
 	{
-		m_pCharacter[index]->GetBody()->CreateBounding(body);
-		m_pCharacter[index]->GetCannon()->CreateBounding(cannon);
+		m_pCharacter[index]->GetBody()->CreateBounding(pBody);
+		m_pCharacter[index]->GetCannon()->CreateBounding(pCannon);
+		
 	}
 }
 //================================

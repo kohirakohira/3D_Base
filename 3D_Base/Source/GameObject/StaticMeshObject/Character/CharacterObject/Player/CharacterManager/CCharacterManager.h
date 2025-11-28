@@ -119,6 +119,9 @@ private:
 	std::shared_ptr<CBody>					m_pBody;
 	std::shared_ptr<CCannon>				m_pCannon;
 	std::shared_ptr<CShotManager>			m_ShotManager; //弾マネージャー
+	std::shared_ptr<CComPlayer>				m_pCom;
+	//*仮追加
+	//std::shared_ptr<CComPlayer>				m_pCom;
 
 	//CPlayerとCComPlayerを同一コンテナで管理するための基底に統一
 	std::vector<std::shared_ptr<CCharacterObjectBase>> m_pCharacter;

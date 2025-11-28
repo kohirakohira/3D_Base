@@ -54,6 +54,8 @@ CComPlayer::CComPlayer()
     , m_AvoidHolde          ( 0.f )
     , m_AvoidSide           ( 0 )
     , m_AvoidMax            ( 0.f )
+    , m_BodyRadius          ( 1.f )
+    , m_Respawn             ( false )
 {
 }
 
@@ -91,6 +93,13 @@ void CComPlayer::Create(int id)
         m_Registered = true;
     }
 
+}
+
+// コライダーの作成
+void CComPlayer::CreateCollider()
+{
+    m_pBody->CreateBoxCollider(m_pBody->GetMinPos(), m_pBody->GetMaxPos());
+    m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
 }
 
 //不正値を防ぐ
@@ -433,8 +442,6 @@ bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
     }
     return false;
 }
-
-
 
 //探索処理
 void CComPlayer::StepSeek()
