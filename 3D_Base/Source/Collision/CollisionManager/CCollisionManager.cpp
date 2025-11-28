@@ -66,8 +66,9 @@ void CCollisionManager::Update()
 	// 地面とアイテムボックス
 	GroundtoItemBox();
 
-	//アイテムと木箱.
-	ItemtoWoodBox();
+	//復活するかも.
+	////アイテムと木箱.
+	//ItemtoWoodBox();
 
 	//爆風とプレイヤーの当たり判定.
 	PlayertoBlast();
@@ -580,7 +581,7 @@ void CCollisionManager::ItemtoWoodBox()
 	for (size_t i = 0; i < item.size(); i++)
 	{
 		//アイテムの当たり判定.
-		auto itemcol = m_pItemBoxManager->GetTentativeCollider(i);
+		auto itemcol = m_pItemBoxManager->GetCollider(i);
 
 		for (auto& box : woodbox)
 		{

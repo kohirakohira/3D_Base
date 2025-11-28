@@ -46,6 +46,9 @@ public:
 	//位置をランダム化.
 	D3DXVECTOR3 ItemPositionRandom();
 
+	//アイテムの位置を設定.
+	D3DXVECTOR3 SetItemPosition();
+
 	//アイテムの情報を取得する.
 	ItemInfomation GetItemInfo(int index);
 
@@ -59,10 +62,6 @@ public:
 	std::shared_ptr<CCollider> GetCollider() const;
 	std::shared_ptr<CCollider> GetCollider(int index) const;
 
-	//仮の当たり判定の取得.
-	std::shared_ptr<CCollider> GetTentativeCollider() const;
-	std::shared_ptr<CCollider> GetTentativeCollider(int index) const;
-
 public:
 	//アイテムボックス.
 	std::vector<std::shared_ptr<CItemBox>>	m_Item;
@@ -71,4 +70,15 @@ public:
 	
 	//アイテムの種類.
 	CItemType m_ItemInfo;
+
+	//配置列挙体.
+	enum ITEM_POS
+	{
+		TOP = 0,
+		Down,
+		LEFT,
+		RIGHT,
+
+		NONE = -1
+	}m_ItemPosInfo;
 };
