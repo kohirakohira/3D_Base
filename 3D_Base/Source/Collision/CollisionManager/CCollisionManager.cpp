@@ -90,7 +90,7 @@ void CCollisionManager::WalltoPlayer()
 
 		// i 番のプレイヤーを取得
 		auto player = m_pCharacterManager->GetControlPlayer(i);
-		if (!player->IsPlayer())continue;
+		if (!player)continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		// 押し返すための変数
@@ -186,7 +186,7 @@ void CCollisionManager::PlayertoPlayer()
 
 		// プレイヤーAのコライダー取得
 		auto playerA = m_pCharacterManager->GetControlPlayer(i);
-		if (!playerA->IsPlayer())continue;
+		if (!playerA)continue;
 		auto CollA = playerA->GetBody()->GetCollider();
 
 		for (int j = 0; j < PLAYER_MAX; j++)
@@ -224,7 +224,7 @@ void CCollisionManager::PlayertoItemBox()
 	{
 		// i 番のプレイヤーを取得
 		auto player = m_pCharacterManager->GetControlPlayer(PlayerIndex);
-		if (!player->IsPlayer())continue;
+		if (!player)continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		for (size_t ItemIndex = 0; ItemIndex < m_pItemBoxManager->GetItem().size(); ItemIndex++)
@@ -286,7 +286,7 @@ void CCollisionManager::PlayertoShot()
 	{
 		// プレイヤーのコライダー取得
 		auto player = m_pCharacterManager->GetControlPlayer(i);
-		if (!player->IsPlayer())continue;
+		if (!player)continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		for (auto& shot : m_pShotManager->GetShot())
@@ -318,7 +318,7 @@ void CCollisionManager::WoodBoxtoPlayer()
 
 		// i 番のプレイヤーを取得
 		auto chara = m_pCharacterManager->GetControlPlayer(i);
-		if (!chara->IsPlayer())continue;
+		if (!chara)continue;
 		auto charaColl = chara->GetBody()->GetCollider();
 		D3DXVECTOR3 charaPos = chara->GetBody()->GetPosition();
 
@@ -443,6 +443,8 @@ void CCollisionManager::WoodBoxtoPlayer()
 	}
 }
 
+
+
 // 木箱と弾
 void CCollisionManager::WoodBoxtoShot()
 {
@@ -539,7 +541,7 @@ void CCollisionManager::PlayertoBlast()
 	{
 		//i番目のプレイヤーを取得.
 		auto player = m_pCharacterManager->GetControlPlayer(i);
-		if (!player->IsPlayer())continue;
+		if (!player)continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		if (m_pBlastManager->GetBlastFlag() == true)

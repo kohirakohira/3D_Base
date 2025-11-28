@@ -120,27 +120,6 @@ void CCharacterManager::Init()
 		}
 	}
 
-#if 0
-	// 誰が何番に入ったか確認したい時用のログ
-	for (int i = 0; i < (int)m_pCharacter.size(); ++i)
-	{
-		bool isCom = (std::dynamic_pointer_cast<CComPlayer>(m_pCharacter[i]) != nullptr);
-
-		auto body = m_pCharacter[i]->GetBody();
-		auto cannon = m_pCharacter[i]->GetCannon();
-		D3DXVECTOR3 pos(0, 0, 0);
-		if (body) pos = body->GetPosition();
-
-		printf("Init Slot %d : %s  player=%p body=%p cannon=%p pos=(%.1f, %.1f, %.1f)\n",
-			i,
-			isCom ? "COM" : "PLAYER",
-			(void*)m_pCharacter[i].get(),
-			(void*)(body ? body.get() : nullptr),
-			(void*)(cannon ? cannon.get() : nullptr),
-			pos.x, pos.y, pos.z
-		);
-	}
-#endif
 }
 //===================
 
@@ -276,14 +255,6 @@ void CCharacterManager::CreateBounding(int index, const std::shared_ptr<CStaticM
 		m_pCharacter[index]->GetBody()->CreateBounding(pBody);
 		m_pCharacter[index]->GetCannon()->CreateBounding(pCannon);
 		
-#if 0
-		m_pCom->GetBody()->CreateBounding(pBody);
-		m_pCom->GetCannon()->CreateBounding(pCannon);
-		printf("[createbounding] index=%d bodyMesh=%p cannonMesh=%p \n",
-			index,
-			(void*)m_pBody.get()),
-			(void*)m_pCannon.get();
-#endif
 	}
 }
 //================================

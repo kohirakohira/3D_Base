@@ -94,8 +94,7 @@ public:
 
 	int GetPlayerID() const { return m_PlayerID; }
 
-
-	void CreateBounding(std::shared_ptr<CStaticMesh>pBody, std::shared_ptr<CStaticMesh> pCannon);
+	void CreateCollider();
 
 private:
 	//\‘¢‘Ì

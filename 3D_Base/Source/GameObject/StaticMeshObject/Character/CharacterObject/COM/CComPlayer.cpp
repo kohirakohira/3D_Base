@@ -95,12 +95,12 @@ void CComPlayer::Create(int id)
 
 }
 
-void CComPlayer::CreateBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon)
+// コライダーの作成
+void CComPlayer::CreateCollider()
 {
-    m_pBody->CreateBounding(pBody);
-    m_pCannon->CreateBounding(pCannon);
+    m_pBody->CreateBoxCollider(m_pBody->GetMinPos(), m_pBody->GetMaxPos());
+    m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
 }
-
 
 //不正値を防ぐ
 void CComPlayer::SanitizeParams()
