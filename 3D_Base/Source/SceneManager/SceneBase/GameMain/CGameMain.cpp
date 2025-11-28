@@ -14,9 +14,9 @@ static bool prevA = false;
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス.
 
 //定数宣言.
-static constexpr int TIME = 90.0;
+static constexpr int TIME = 30;
 const float deltaTime = 1.0f / FPS;
-const float DIAMETER = 360.0f;
+const float DIALMETER = 360.0f;
 
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd						( hWnd )
@@ -135,7 +135,7 @@ void CGameMain::Update()
 	
 	//Iconを回転させる..
 	m_Rot += 1.0f * deltaTime;
-	if (m_Rot >= DIAMETER)
+	if (m_Rot >= DIALMETER)
 	{
 		m_Rot = 0.0f;
 	}
@@ -237,24 +237,15 @@ void CGameMain::Update()
 
 	//勝敗条件(確認用)..
 	//勝ち..
-	//if (controller && controller->CheckConnected())
+	//敗北..
 	{
-		if (GetKey('K') & 0x8000)
+		if (m_Timer->GetRemainingTime() <= 0.0f)
 		{
 			//BGMのループ停止..
 			CSoundManager::Stop(CSoundManager::BGM_Bonus);
 
 			m_SceneType = CSceneType::Result;
 		}
-	}
-	//敗北..
-	//体力がなくなるか.
-	if (GetKey('L') & 0x8000)
-	{
-		//BGMのループ停止..
-		CSoundManager::Stop(CSoundManager::BGM_Bonus);
-
-		m_SceneType = CSceneType::Result;
 	}
 }
 

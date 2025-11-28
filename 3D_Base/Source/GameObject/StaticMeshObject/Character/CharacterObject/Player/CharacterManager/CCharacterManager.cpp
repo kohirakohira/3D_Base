@@ -301,11 +301,11 @@ void CCharacterManager::PlayerRespawn(int index)
 {
 	if (index < m_pCharacter.size())
 	{
-		//if (m_pCharacter[index]->GetRespawnFlag() == true)
-		//{
-		//	SetRespawnArea(index);
-		//	m_pCharacter[index]->SetRespawnFlag(false);
-		//}
+		if (m_pCharacter[index]->GetRespawnFlag() == true)
+		{
+			SetRespawnArea(index);
+			m_pCharacter[index]->SetRespawnFlag(false);
+		}
 	}
 }
 //==================================
@@ -389,52 +389,6 @@ int CCharacterManager::GetAreaIndex(float x, float z)
 //====================================
 
 //=======ゲーム開始時の座標設定=======
-//void CCharacterManager::SetStartPosition()
-//{
-//	for (int index = 0; index < PLAYER_MAX; ++index)
-//	{
-//		if (index == 0)	
-//		{
-//			// 座標を設定
-//			m_pCharacter[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, -offset));
-//			// 回転を設定
-//			m_pCharacter[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f));
-//			// スケールを設定
-//			m_pCharacter[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
-//		}
-//		else if (index == 1)
-//		{
-//			// 座標を設定
-//			m_pCharacter[index]->SetTankPosition(D3DXVECTOR3(-offset, 0.0f, offset));
-//			// 回転を設定
-//			m_pCharacter[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f));
-//			// スケールを設定
-//			m_pCharacter[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
-//		}
-//		else if (index == 2)
-//		{
-//			// 座標を設定
-//			m_pCharacter[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, offset));
-//			// 回転を設定
-//			m_pCharacter[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 5), 0.f));
-//			// スケールを設定
-//			m_pCharacter[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
-//		}
-//		else if (index == 3)
-//		{
-//			// 座標を設定
-//			m_pCharacter[index]->SetTankPosition(D3DXVECTOR3(offset, 0.0f, -offset));
-//			// 回転を設定
-//			m_pCharacter[index]->SetTankRotation(D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 7), 0.f));
-//			// スケールを設定
-//			m_pCharacter[index]->SetTankScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
-//		}
-//	}
-//
-//}
-
-//=======ゲーム開始時の座標設定=======
-
 void CCharacterManager::SetStartPosition()
 {
 	const int count = (int)m_pCharacter.size();
@@ -504,19 +458,6 @@ void CCharacterManager::SetStartPosition()
 	}
 
 }
-
-
-//=======プレイヤーを取得=======	
-//std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int index)
-//{
-//
-//	for (const auto& p : m_pCharacter)
-//	{
-//		if (p && p->HasControl())
-//			return p;
-//	}
-//	return nullptr;
-//}
 
 //=======プレイヤーを取得=======	
 std::shared_ptr<CCharacterObjectBase> CCharacterManager::GetControlPlayer(int index)

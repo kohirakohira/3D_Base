@@ -43,8 +43,9 @@ void CItemBox::Update()
 
 		//エフェクトの速度設定.
 		CEffect::SetSpeed(hEffect, 0.1f);
-
+#ifdef _DEBUG
 		std::cout << hEffect << std::endl;
+#endif
 
 		ItemFlag = false;
 	}
