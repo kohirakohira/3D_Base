@@ -347,55 +347,55 @@ void CComPlayer::Update()
 {
     CCharacterObjectBase::Update();
 
-    SanitizeParams();
+    //SanitizeParams();
 
-    if (!m_ComEnabled) { 
-        SyncCannonToBody(); //COM–³Œø‚È‚ç~‚ß‚Ä–C“ƒ’Ç]‚¾‚¯
-        return;
-    }
-    
-    TickBlacklist();
+    //if (!m_ComEnabled) { 
+    //    SyncCannonToBody(); //COM–³Œø‚È‚ç~‚ß‚Ä–C“ƒ’Ç]‚¾‚¯
+    //    return;
+    //}
+    //
+    //TickBlacklist();
 
-    auto body = GetBody();
-    auto cannon = GetCannon();
-    if (!body) { 
-        if (cannon) cannon->CStaticMeshObject::Update();
-        return;
-    }
+    //auto body = GetBody();
+    //auto cannon = GetCannon();
+    //if (!body) { 
+    //    if (cannon) cannon->CStaticMeshObject::Update();
+    //    return;
+    //}
 
-    //áŠQ•¨‚Ìæ‚è‚İ‘Îô.y‚ğ0‚ÅŒÅ’è
-    auto pos = body->GetPosition();
-    body->SetPosition(pos.x, pos.y = 0, pos.z);
+    ////áŠQ•¨‚Ìæ‚è‚İ‘Îô.y‚ğ0‚ÅŒÅ’è
+    //auto pos = body->GetPosition();
+    //body->SetPosition(pos.x, pos.y = 0, pos.z);
 
-    //’èŠúƒŠƒ^[ƒQƒbƒg
-    if (--m_RetargetTimer <= 0 || !m_pTarget) {
-        //MakeFixedTimeTarget();
-        m_RetargetTimer = m_RetargetInterval;
-    }
+    ////’èŠúƒŠƒ^[ƒQƒbƒg
+    //if (--m_RetargetTimer <= 0 || !m_pTarget) {
+    //    //MakeFixedTimeTarget();
+    //    m_RetargetTimer = m_RetargetInterval;
+    //}
 
-    //‹——£‚ğŒvZ
-    float dist2 = 1e18f;
-    if (m_pTarget) {
-        const D3DXVECTOR3 d = m_pTarget->GetPosition() - body->GetPosition();
-        dist2 = d.x * d.x + d.z * d.z;
-        m_LostSightFrames = 0;
-    }
-    else {
-        ++m_LostSightFrames;
-    }
+    ////‹——£‚ğŒvZ
+    //float dist2 = 1e18f;
+    //if (m_pTarget) {
+    //    const D3DXVECTOR3 d = m_pTarget->GetPosition() - body->GetPosition();
+    //    dist2 = d.x * d.x + d.z * d.z;
+    //    m_LostSightFrames = 0;
+    //}
+    //else {
+    //    ++m_LostSightFrames;
+    //}
 
-    //ó‘Ô‘JˆÚ‚Í‚±‚±‚¾‚¯‚Ås‚¤
-    EvaluateTransitions(dist2);
+    ////ó‘Ô‘JˆÚ‚Í‚±‚±‚¾‚¯‚Ås‚¤
+    //EvaluateTransitions(dist2);
 
-    //Às
-    switch (m_State) {
-    //case State::Seek:     StepSeek();     break;
-    case State::Chase:    StepChase();    break;
-    case State::Attack:   StepAttack();   break;
-    case State::Evade:    StepEvade();    break;
-    case State::ItemSeek: StepItemSeek(); break;
-    }
-    ++m_StateFrames;
+    ////Às
+    //switch (m_State) {
+    ////case State::Seek:     StepSeek();     break;
+    //case State::Chase:    StepChase();    break;
+    //case State::Attack:   StepAttack();   break;
+    //case State::Evade:    StepEvade();    break;
+    //case State::ItemSeek: StepItemSeek(); break;
+    //}
+    //++m_StateFrames;
 }
 
 void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)

@@ -578,7 +578,7 @@ void CCollisionManager::ItemtoWoodBox()
 	for (size_t i = 0; i < item.size(); i++)
 	{
 		//ƒAƒCƒeƒ€‚Ì“–‚½‚è”»’è.
-		auto itemcol = m_pItemBoxManager->GetCollider(i);
+		auto itemcol = m_pItemBoxManager->GetTentativeCollider(i);
 
 		for (auto& box : woodbox)
 		{

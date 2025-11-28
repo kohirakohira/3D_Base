@@ -194,8 +194,8 @@ D3DXVECTOR3 CItemBoxManager::ItemPositionRandom()
 	static std::mt19937 gen(rd());
 
 	//”ÍˆÍİ’è.
-	std::uniform_real_distribution < float > distX(-25.0f, 25.0f);
-	std::uniform_real_distribution < float > distZ(-25.0f, 25.0f);
+	std::uniform_real_distribution < float > distX(-22.0f, 22.0f);
+	std::uniform_real_distribution < float > distZ(-22.0f, 22.0f);
 
 	//Y²ŒÅ’è.
 	const float fixedY = 20.0f;
@@ -230,5 +230,21 @@ std::shared_ptr<CCollider> CItemBoxManager::GetCollider(int index) const
 	if (index >= 0 && index < m_Item.size())
 	{
 		return m_Item[index]->GetCollider();
+	}
+}
+
+std::shared_ptr<CCollider> CItemBoxManager::GetTentativeCollider() const
+{
+	for (auto& item : m_Item)
+	{
+		return item->GetTentativeCollider();
+	}
+}
+
+std::shared_ptr<CCollider> CItemBoxManager::GetTentativeCollider(int index) const
+{
+	if (index >= 0 && index < m_Item.size())
+	{
+		return m_Item[index]->GetTentativeCollider();
 	}
 }

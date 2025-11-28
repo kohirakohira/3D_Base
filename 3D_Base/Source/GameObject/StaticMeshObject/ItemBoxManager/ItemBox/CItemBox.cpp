@@ -13,6 +13,7 @@ CItemBox::CItemBox()
 	Framerate = 1.f / 60.f;
 
 	m_pCollider = std::make_shared<CBoxCollider>();
+	m_pTentativeCollider = std::make_shared<CBoxCollider>();
 }
 
 CItemBox::~CItemBox()
@@ -49,6 +50,13 @@ void CItemBox::Update()
 
 		ItemFlag = false;
 	}
+
+	//‰¼‚Ì“–‚½‚è”»’è‚ÌˆÊ’u‚ğİ’è.
+	if (m_pTentativeCollider != nullptr)
+	{
+		m_pTentativeCollider->UpdateTransform(D3DXVECTOR3{ m_vPosition.x, 0.2f, m_vPosition.z }, m_vRotation, m_vScale);
+	}
+
 	//centerposErotationEscale‚ğİ’è‚µ‚Ä‚é.
 	CStaticMeshObject::Update();
 }

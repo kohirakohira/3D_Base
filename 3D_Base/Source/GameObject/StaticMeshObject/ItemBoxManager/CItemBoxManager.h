@@ -59,6 +59,10 @@ public:
 	std::shared_ptr<CCollider> GetCollider() const;
 	std::shared_ptr<CCollider> GetCollider(int index) const;
 
+	//仮の当たり判定の取得.
+	std::shared_ptr<CCollider> GetTentativeCollider() const;
+	std::shared_ptr<CCollider> GetTentativeCollider(int index) const;
+
 public:
 	//アイテムボックス.
 	std::vector<std::shared_ptr<CItemBox>>	m_Item;

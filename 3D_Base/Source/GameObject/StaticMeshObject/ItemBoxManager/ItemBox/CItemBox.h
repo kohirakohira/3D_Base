@@ -41,6 +41,9 @@ public:
 	//アクティブフラグの取得関数.
 	bool IsActive() { return m_Active; }
 
+	//仮の当たり判定を取得.
+	std::shared_ptr<CCollider> GetTentativeCollider() const { return m_pTentativeCollider; }
+
 public:
 	//各アイテムごとの効果.
 	//シールド効果.
@@ -89,5 +92,8 @@ protected:
 	//※３つ表示して制御するなら３つ必要になる
 	::EsHandle hEffect;
 
+	//仮当たり判定.
+	//※木箱との当たり判定に使用.
+	std::shared_ptr<CCollider> m_pTentativeCollider;
 
 };
