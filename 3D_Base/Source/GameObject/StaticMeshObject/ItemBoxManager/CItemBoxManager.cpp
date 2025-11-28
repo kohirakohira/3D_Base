@@ -5,6 +5,7 @@ CItemBoxManager::CItemBoxManager()
 	: m_Item			()
 	, m_ItemInfo		()
 	, m_ItemPosInfo		(ITEM_POS::TOP)
+	, m_OldItemPos		(D3DXVECTOR3(0.0f, 0.0f, 0.0f))
 {
 }
 
@@ -14,6 +15,8 @@ CItemBoxManager::~CItemBoxManager()
 
 void CItemBoxManager::Update()
 {
+	//動的生成.
+	Create();
 	for (auto& item : m_Item)
 	{
 		item->Update();
@@ -48,7 +51,18 @@ void CItemBoxManager::Create()
 		//メッシュの設定.
 		item->AttachMesh(m_ItemMesh);
 		//各設定.
-		D3DXVECTOR3 pos = SetItemPosition();
+		D3DXVECTOR3 pos = {0.0f, 0.0f, 0.0f};
+		//m_OldItemPosの中身があるなら、位置を取得されたアイテム位置に設定する.
+		if (m_OldItemPos != D3DXVECTOR3(0.0f, 0.0f, 0.0f))
+		{
+			pos = m_OldItemPos;
+			m_OldItemPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		}
+		else
+		{
+			pos = SetItemPosition();
+		}
+		//アイテム情報を更新.
 		item->SetPosition(pos.x, pos.y, pos.z);
 		item->SetRotation(0.0f, 0.0f, 0.0f);
 		item->SetScale(D3DXVECTOR3(0.2f, 0.2f, 0.2f));
@@ -80,6 +94,7 @@ void CItemBoxManager::RemoveItem(int index)
 {
 	if (index >= 0 && index < m_Item.size())
 	{
+		m_OldItemPos = { m_Item[index]->GetPosition().x, 20.0f, m_Item[index]->GetPosition().z };
 		m_Item.erase(m_Item.begin() + index);
 	}
 }

@@ -11,6 +11,17 @@
 class CItemBoxManager
 {
 public:
+	//配置列挙体.
+	enum ITEM_POS
+	{
+		TOP = 0,
+		Down,
+		LEFT,
+		RIGHT,
+
+		NONE = -1
+	};
+public:
 	CItemBoxManager();
 	~CItemBoxManager();
 
@@ -71,14 +82,7 @@ public:
 	//アイテムの種類.
 	CItemType m_ItemInfo;
 
-	//配置列挙体.
-	enum ITEM_POS
-	{
-		TOP = 0,
-		Down,
-		LEFT,
-		RIGHT,
-
-		NONE = -1
-	}m_ItemPosInfo;
+	//アイテムの位置固定用.
+	ITEM_POS m_ItemPosInfo;
+	D3DXVECTOR3 m_OldItemPos;
 };

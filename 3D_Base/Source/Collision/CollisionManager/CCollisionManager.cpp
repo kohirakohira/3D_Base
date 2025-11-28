@@ -278,6 +278,10 @@ void CCollisionManager::PlayertoItemBox()
 				{
 
 				}
+
+				//”z—ñ(ƒƒ‚ƒŠã)‚©‚çÁ‚·.
+				m_pItemBoxManager->RemoveItem(ItemIndex);
+
 			}
 		}
 	}
