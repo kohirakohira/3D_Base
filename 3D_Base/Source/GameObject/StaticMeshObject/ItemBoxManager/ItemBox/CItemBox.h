@@ -57,8 +57,8 @@ public:
 	// 当たった時の処理
 	void HitPlayer();
 
-	// バウンディングボックスを作成
-	void CreateBounding(std::shared_ptr<CStaticMesh> pItemBox);
+public:
+	//.
 
 protected:
 	//重力があるかないか.

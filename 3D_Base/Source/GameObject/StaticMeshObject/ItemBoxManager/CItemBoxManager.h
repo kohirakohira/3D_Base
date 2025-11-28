@@ -26,9 +26,6 @@ public:
 	//メッシュの設定.
 	void AttachMesh(std::shared_ptr<CStaticMesh> pMesh);
 
-	// バウンディングオブジェクトの作成
-	void CreateBounding(std::shared_ptr<CStaticMesh>& pItem);
-
 	//アイテムの削除(1つだけ).
 	void RemoveItem(int index);
 
