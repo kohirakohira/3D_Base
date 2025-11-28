@@ -66,6 +66,9 @@ void CCollisionManager::Update()
 	// 地面とアイテムボックス
 	GroundtoItemBox();
 
+	//アイテムと木箱.
+	ItemtoWoodBox();
+
 	//爆風とプレイヤーの当たり判定.
 	PlayertoBlast();
 }
@@ -556,5 +559,41 @@ void CCollisionManager::PlayertoBlast()
 //アイテムと木箱.
 void CCollisionManager::ItemtoWoodBox()
 {
+	//アイテム一つ一つの情報.
+	auto item = m_pItemBoxManager->GetItem();
 
+	//木箱とかぶった時のアイテム保持用.
+	std::vector<int> DeleteIndex;
+
+	//木箱をまとめて管理.
+	std::shared_ptr<CCollider> woodbox[] = {
+		m_pWoodBoxBottomLeft->GetCollider(),
+		m_pWoodBoxBottomRight->GetCollider(),
+		m_pWoodBoxCenter->GetCollider(),
+		m_pWoodBoxTopLeft->GetCollider(),
+		m_pWoodBoxTopRight->GetCollider()
+	};
+
+	//当たり判定.
+	for (size_t i = 0; i < item.size(); i++)
+	{
+		//アイテムの当たり判定.
+		auto itemcol = m_pItemBoxManager->GetCollider(i);
+
+		for (auto& box : woodbox)
+		{
+			//各アイテムと各木箱の当たり判定.
+			if (itemcol->CheckCollision(*box))
+			{
+				DeleteIndex.push_back(i);
+				break;
+			}
+		}
+	}
+
+	for (size_t i = 0; i < DeleteIndex.size(); i++)
+	{
+		m_pItemBoxManager->RemoveItem(DeleteIndex[i]);
+		m_pItemBoxManager->Create();
+	}
 }

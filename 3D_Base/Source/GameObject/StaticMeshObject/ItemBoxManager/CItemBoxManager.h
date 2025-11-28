@@ -29,8 +29,8 @@ public:
 	// バウンディングオブジェクトの作成
 	void CreateBounding(std::shared_ptr<CStaticMesh>& pItem);
 
-	//// コライダーの作成
-	//void CreateCollider();
+	//アイテムの削除(1つだけ).
+	void RemoveItem(int index);
 
 	//位置設定.
 	void SetPosition(float x, float y, float z);
@@ -60,6 +60,7 @@ public:
 
 	//当たり判定の取得.
 	std::shared_ptr<CCollider> GetCollider() const;
+	std::shared_ptr<CCollider> GetCollider(int index) const;
 
 public:
 	//アイテムボックス.

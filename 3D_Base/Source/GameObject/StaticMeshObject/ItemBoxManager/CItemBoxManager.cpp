@@ -84,6 +84,14 @@ void CItemBoxManager::CreateBounding(std::shared_ptr<CStaticMesh>& pItem)
 	}
 }
 
+void CItemBoxManager::RemoveItem(int index)
+{
+	if (index >= 0 && index < m_Item.size())
+	{
+		m_Item.erase(m_Item.begin() + index);
+	}
+}
+
 #if 0
 void CItemBoxManager::CreateCollider()
 {
@@ -223,5 +231,13 @@ std::shared_ptr<CCollider> CItemBoxManager::GetCollider() const
 	for (auto& item : m_Item)
 	{
 		return item->GetCollider();
+	}
+}
+
+std::shared_ptr<CCollider> CItemBoxManager::GetCollider(int index) const
+{
+	if (index >= 0 && index < m_Item.size())
+	{
+		return m_Item[index]->GetCollider();
 	}
 }
