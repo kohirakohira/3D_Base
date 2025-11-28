@@ -56,6 +56,8 @@ public:
 	//リスポーンフラグの設定
 	virtual void SetRespawnFlag(bool flg) = 0;
 
+	int GetPlayerID() { return m_PlayerID; }
+
 protected:
 	//車体クラス.
 	std::shared_ptr<CBody>			m_pBody;
@@ -91,5 +93,7 @@ protected:
 	//ダメージフラグ
 	bool m_Damage;
 
+	//プレイヤーID
+	int m_PlayerID;
 
 };

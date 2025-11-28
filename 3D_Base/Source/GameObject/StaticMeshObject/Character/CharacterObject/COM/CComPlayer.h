@@ -32,6 +32,7 @@ class CComPlayer
 	: public CCharacterObjectBase
 {
 public:
+
 	CComPlayer();
 	~CComPlayer() override;
 
@@ -71,9 +72,11 @@ public:
 	void SetRespawnFlag(bool flg) override { m_Respawn = flg; };
 
 	
-	//追尾対象の設定
-	void SetTarget(std::shared_ptr<CCharacterObjectBase> actor) { m_pTarget = std::move(actor); }
-	void ClearTarget() { m_pTarget = nullptr; }
+	// 追尾対象の設定
+	void SetTarget(const std::shared_ptr<CCharacterObjectBase>& actor);
+
+	// 追尾対象のクリア
+	void ClearTarget(){ m_pTarget.reset(); }
 
 
 	//COMの有効無効を決める
@@ -105,6 +108,13 @@ private:
 		int	ShotCooldownFrames = 120;			//クールダウン時間
 		float FireAngleEpsDeg = 30;				//この角度以内なら発射
 		float MuzzleOffsetZ = 1;				//砲口のオフセット
+	};
+
+	//障害物
+	struct SimpleObstacle
+	{
+		D3DXVECTOR3 pos;	//上からみた中心位置
+		float radius;		//おおよその半径
 	};
 
 	//列挙型
@@ -182,8 +192,14 @@ private:
 	//COMの状態変更
 	void ChangeState(State state);
 
+	//危険ゾーン
+	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
+
+	//
+	void SafeAdvance(float nextYaw, float moveStep);
+
 	//外部クラス
-	std::shared_ptr<CCharacterObjectBase> m_pTarget;									//追尾対象
+	//std::shared_ptr<CCharacterObjectBase> m_pTarget;									//追尾対象
 	//std::weak_ptr<CShotManager> m_pShotManager;							//弾マネージャー.自動発射用のパラメータ
 	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;			//プレイヤーの一覧取得
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;					//アイテムボックス
@@ -235,6 +251,17 @@ private:
 	float		m_BodyRadius;
 
 	int m_PlayerID = -1;
+
+	//障害物判定用
+	const std::vector<SimpleObstacle>* m_pSimpleObstacles = nullptr;
+	float m_ObstacleProbeDist = 8.0f;								// 何メートル先まで見るか
+	float m_ObstacleProbeStep = 0.5f;								// 何メートル刻みでチェックするか
+	float m_ObstacleRadius = 1.5f;									// 自分の半径
+	float m_ProbeAngleRad = D3DXToRadian(25.0f);					// 左右にどれくらい首を振るか
+
+	std::weak_ptr<CCharacterObjectBase> m_pTarget;
+
+
 
 	bool		m_Respawn;				// リスポーン
 };
