@@ -24,11 +24,6 @@ void CController::Update()
 {
 	m_Connected = m_Pad->Update();
 
-	//強制的に全員をプレイヤーにできるので、メッシュと当たり判定が復活する
-	printf("[CControllerUpdate] Pad=%p player=%p\n",
-		(void*)m_Pad.get());
-
-	//m_Connected = m_Pad->A;
 }
 
 //接続判定.
