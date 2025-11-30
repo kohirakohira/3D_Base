@@ -297,6 +297,36 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 	if (m_pCannon) m_pCannon->Update();
 }
 
+#if 0
+void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
+{
+	const int index = GetControllerIndex();
+	CController* controller = CControllerManager::GetInstance().GetController(index);
+
+	if (!controller || !controller->CheckConnected())
+	{
+		// ‚±‚±‚É—ˆ‚éŽž“_‚Å–{“–‚Í SwitchControl() ‘¤‚Å
+		// CPlayerCComPlayer ‚ÉØ‚è‘Ö‚í‚Á‚Ä‚¢‚Ä‚Ù‚µ‚¢‚ªA
+		// ”O‚Ì‚½‚ß‰½‚à‚µ‚È‚¢‚Å”²‚¯‚é
+		return;
+	}
+
+	Move(input);
+	RotateTurretByPad();
+
+	if (controller->Down(CXInput::RB, true))
+	{
+		Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
+	}
+
+	SyncCannonToBody();
+
+	if (m_pBody)   m_pBody->Update();
+	if (m_pCannon) m_pCannon->Update();
+}
+
+#endif
+
 //–C“ƒ‚ÆŽÔ‘Ì‚ð“¯Šú‚·‚é
 void CPlayer::SyncCannonToBody()
 {
