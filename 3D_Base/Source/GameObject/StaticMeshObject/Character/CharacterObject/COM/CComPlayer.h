@@ -262,6 +262,15 @@ private:
 	std::shared_ptr<CCharacterObjectBase>m_pSimpleObstacles;
 	float m_ObstacleRadius;
 
+	//障害物判定
+	const std::vector<SimpleObstacle>* m_pSimpleObstacles = nullptr;
+	float m_ObstacleProbeDist = 8.0f;								// 何メートル先まで見るか
+	float m_ObstacleProbeStep = 0.5f;								// 何メートル刻みでチェックするか
+	float m_ObstacleRadius = 1.5f;									// 自分の半径
+	float m_ProbeAngleRad = D3DXToRadian(25.0f);					// 左右にどれくらい首を振るか
+
+
+
 };
 
 
