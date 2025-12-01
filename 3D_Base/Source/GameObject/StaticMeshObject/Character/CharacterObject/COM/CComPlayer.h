@@ -26,6 +26,7 @@
 #include <limits>
 #include <unordered_set>
 #include <memory>
+#include <deque>
 
 
 class CComPlayer
@@ -84,7 +85,7 @@ public:
 	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
 
 	//プレイヤーを取得する.読み取り専用
-	void SetPlayersRef(const std::vector<std::shared_ptr<CCharacterObjectBase>>* all) { m_pAllPlayer = all; }
+	void SetPlayersRef(const std::vector<std::weak_ptr<CCharacterObjectBase>>* all) { m_pAllPlayer = all; }
 
 	//マネージャーからアイテムの参照
 	void SetItemBox(std::vector<std::shared_ptr<CItemBox>>* item) { m_pItemBox = item; }
@@ -192,13 +193,8 @@ private:
 	//セーフ
 	void SafeAdvance(float nextYaw, float moveStep);
 
-	//近いターゲットの追尾と更新
-	//void MakeFixedTimeTarget();
 
 	//外部クラス
-	//std::shared_ptr<CCharacterObjectBase> m_pTarget;									//追尾対象
-	//std::weak_ptr<CShotManager> m_pShotManager;										//弾マネージャー.自動発射用のパラメータ
-	//const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;				//プレイヤーの一覧取得
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;									//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;												//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;					//障害物の一部を外部から差し込む
@@ -256,6 +252,14 @@ private:
 	int m_PlayerID = -1;
 
 	bool		m_Respawn;				// リスポーン
+
+	//探索
+	std::deque<D3DXVECTOR3> m_Path;	//ワールド座標WP列
+	int	m_PathReplanTimer;			//探索した場所をいつまで保存するか	
+	int m_PathReplanInterval;		//再探索までの時間
+	float m_WayPointeReach;			//WPの到達判定
+	float m_LookAheadSkep;			//近いWPは一旦スキップ
+
 };
 
 
