@@ -781,8 +781,8 @@ void CComPlayer::TickWander(float turnStep, float moveStep)
     //Œã‘Þ
     D3DXVECTOR3 Dir = ForwardFromYaw(yawRed);
     pos += Dir * moveStep;
-    pos.x += dir.x * 0.02f;
-    pos.z += dir.z * 0.02f;
+    //pos.x += dir.x * 0.02f;
+    //pos.z += dir.z * 0.02f;
 
     //Œ©‚½–Ú‚É”½‰f
     body->SetRotation({ 0.f,yawRed,0.f });
