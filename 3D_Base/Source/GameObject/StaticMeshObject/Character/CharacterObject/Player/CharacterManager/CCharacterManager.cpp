@@ -63,7 +63,7 @@ void CCharacterManager::Init()
 			player->Init(i);                             // 車体・砲塔を生成.
 			player->SetControllerIndex(i);               // コントローラー設定.
 			player->SetHasControl(true);                 // コントローラー操作ON.
-			//player->SetKeyBoadEnble(true);               // キーボード操作ON.
+			player->SetKeyBoadEnble(true);               // キーボード操作ON.
 
 			//1人目のBodyCannonをテンプレとして控えておく
 			if (!m_pBody || !m_pCannon)
@@ -520,16 +520,7 @@ void CCharacterManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::share
 {
 	//このクラス内で使えるようにする.
 	m_pBody = body;
-	m_pCannon = cannon;	
-	
-	
-#if 0
-	for (auto& player : m_pCharacter)
-	{
-		player->SetCBody(body);
-		player->SetCannon(cannon);
-	}
-#endif
+	m_pCannon = cannon;		
 }
 
 void CCharacterManager::SetPlayerTuningAll(const TankTuning& t)
@@ -568,9 +559,14 @@ void CCharacterManager::SwitchControl()
 		//接続出来てる？を判定する用.
 		bool Connected = false;
 		//判定中.
-		if (ctrl != nullptr)
+		if (ctrl)
 		{
 			Connected = ctrl->CheckConnected();
+		}
+
+		if (!ctrl)
+		{
+			return;
 		}
 
 		//現在のプレイヤー情報を取得.
@@ -582,7 +578,8 @@ void CCharacterManager::SwitchControl()
 		}
 
 		//COMかどうか判定.
-		bool isCom = false;
+		//bool isCom = false;
+		bool isCom = true;
 		if (current != nullptr)
 		{
 			isCom = std::dynamic_pointer_cast<CComPlayer>(current) != nullptr;
@@ -609,7 +606,7 @@ void CCharacterManager::SwitchControl()
 			newPlayer->SetControllerIndex(No);
 
 			newPlayer->SetHasControl(true);
-			//newPlayer->SetKeyBoadEnble(true);
+			newPlayer->SetKeyBoadEnble(true);
 
 			//元のCOMの位置を引き継ぐ.
 			if (current != nullptr)

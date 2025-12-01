@@ -54,6 +54,7 @@ CPlayer::CPlayer()
 
 	, m_PlayerID		()
 	, m_HasControl		( false )
+	, m_KeyBoad			( true )
 	, m_ControllerIndex	()
 {
 	//プレイヤー初期値.

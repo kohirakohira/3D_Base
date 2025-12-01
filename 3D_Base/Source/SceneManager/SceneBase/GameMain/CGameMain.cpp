@@ -958,6 +958,9 @@ void CGameMain::CreateBounding()
 	m_pWoodBoxBottomLeft->CreateBoxCollider(m_pWoodBoxBottomLeft->GetMinPos(), m_pWoodBoxBottomLeft->GetMaxPos());
 	m_pWoodBoxBottomRight->CreateBoxCollider(m_pWoodBoxBottomRight->GetMinPos(), m_pWoodBoxBottomRight->GetMaxPos());
 
+	//弾のセット
+	m_pCharacterManager->SetShotManager(m_pShotManager);
+
 	//// 弾の当たり判定生成
 	//m_pShotManager->CreateBounding(m_pStaticMesh_BulletRed);
 	//// 当たり判定設定

@@ -193,6 +193,9 @@ private:
 	//セーフ
 	void SafeAdvance(float nextYaw, float moveStep);
 
+	//近づけないようにする
+	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
+
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;									//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;												//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;					//障害物の一部を外部から差し込む
@@ -256,6 +259,8 @@ private:
 	int m_PathReplanInterval;		//再探索までの時間
 	float m_WayPointeReach;			//WPの到達判定
 	float m_LookAheadSkep;			//近いWPは一旦スキップ
+	std::shared_ptr<CCharacterObjectBase>m_pSimpleObstacles;
+	float m_ObstacleRadius;
 
 };
 

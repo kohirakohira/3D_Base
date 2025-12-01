@@ -61,6 +61,7 @@ CComPlayer::CComPlayer()
     , m_AvoidMax            ( 0.f )
     , m_BodyRadius          ( 1.f )
     , m_Respawn             ( false )
+    , m_ObstacleRadius      ( 3.0f )
 {
 }
 
@@ -450,6 +451,25 @@ bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
     return false;
 }
 
+bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
+{
+    if (!m_pSimpleObstacles) return false;
+
+    for (const auto& z : *m_pSimpleObstacles)
+    {
+        const float dx = pos.x - z.pos.x;
+        const float dz = pos.z - z.pos.z;
+        const float r = z.radius + m_ObstacleRadius; // Ž©•ª‚Ì‘å‚«‚³‚à‘«‚·
+        if (dx * dx + dz * dz < r * r)
+        {
+            return true; // ŠëŒ¯ƒ][ƒ“‚É“ü‚Á‚Ä‚¢‚é
+        }
+    }
+    return false;
+}
+
+//‹ŒStepSeek,StepAttack,StepChase
+#if 0
 //’Tõˆ—
 void CComPlayer::StepSeek()
 {
@@ -465,7 +485,6 @@ void CComPlayer::StepSeek()
         TryAutoFire();
     }
 }
-
 
 void CComPlayer::StepChase()
 {
@@ -493,7 +512,7 @@ void CComPlayer::StepAttack()
         TryAutoFire();
     }
 }
-
+#endif
 void CComPlayer::Update()
 {
     SanitizeParams();
@@ -843,7 +862,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
 #endif
 
 //‹ŒStepSeek,StepChase,StepAttack
-#if 0
+#if 1
 void CComPlayer::StepSeek()
 {
     auto body = GetBody();

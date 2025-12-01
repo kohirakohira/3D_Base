@@ -80,6 +80,7 @@ public:
 	//操作可能かどうか.
 	void SetHasControl(bool enable) { m_HasControl = enable; }
 	bool HasControl() const { return m_HasControl; }
+	void SetKeyBoadEnble(bool keyboad) {}
 
 	// インスタンス生成関数
 	void Create();
@@ -121,6 +122,7 @@ protected:
 	CController* 	m_Controller;
 	int				m_PlayerID;
 	bool			m_HasControl;	//操作権があるか
+	bool			m_KeyBoad;		//キーボードかどうか
 
 	//コントローラーを識別する変数.
 	int				m_ControllerIndex;
