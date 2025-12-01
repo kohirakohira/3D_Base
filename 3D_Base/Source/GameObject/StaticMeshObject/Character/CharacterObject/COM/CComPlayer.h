@@ -72,8 +72,8 @@ public:
 
 	
 	//追尾対象の設定
-	void SetTarget(std::shared_ptr<CCharacterObjectBase> actor) { m_pTarget = std::move(actor); }
-	void ClearTarget() { m_pTarget = nullptr; }
+	void SetTarget(const std::shared_ptr<CCharacterObjectBase>& actor);
+	void ClearTarget() { m_pTarget.reset(); }
 
 
 	//COMの有効無効を決める
@@ -189,16 +189,26 @@ private:
 	//障害物を確認
 	bool FollowPath(float turnStep, float moveSte);
 
+	//セーフ
+	void SafeAdvance(float nextYaw, float moveStep);
+
+	//近いターゲットの追尾と更新
+	//void MakeFixedTimeTarget();
+
 	//外部クラス
 	//std::shared_ptr<CCharacterObjectBase> m_pTarget;									//追尾対象
 	//std::weak_ptr<CShotManager> m_pShotManager;										//弾マネージャー.自動発射用のパラメータ
-	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;				//プレイヤーの一覧取得
+	//const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;				//プレイヤーの一覧取得
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;									//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;												//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;					//障害物の一部を外部から差し込む
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
 	
-	std::weak_ptr<CCharacterObjectBase> m_pCharacterObject;								//キャラクターオブジェクト.弱参照
+	std::weak_ptr<CCharacterObjectBase> m_pTarget;										//キャラクターオブジェクト.弱参照
+	const std::vector<std::weak_ptr<CCharacterObjectBase>>* m_pAllPlayer;				//プレイヤー一覧の取得
+
+	//障害物処理
+	bool IsInDangerZone;				//場所がいいのか
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
