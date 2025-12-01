@@ -119,6 +119,14 @@ private:
 		ItemSeek,	//アイテム探索
 	};
 
+	//障害物の位置
+	struct SimpleObstacle
+	{
+		D3DXVECTOR3 pos;	//上からみた中心位置
+		float radius;		//おおよその半径
+	};
+
+
 	//関数
 	//フレームごとのステート処理
 	void StepSeek();													//探索処理
@@ -194,7 +202,9 @@ private:
 	void SafeAdvance(float nextYaw, float moveStep);
 
 	//近づけないようにする
+	//bool IsInDangerZone(const D3DXVECTOR3& pos) const;
 	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
+
 
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;									//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;												//弱参照のアイテムボックス

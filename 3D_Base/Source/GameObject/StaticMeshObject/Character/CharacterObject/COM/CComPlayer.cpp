@@ -451,22 +451,6 @@ bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
     return false;
 }
 
-bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
-{
-    if (!m_pSimpleObstacles) return false;
-
-    for (const auto& z : *m_pSimpleObstacles)
-    {
-        const float dx = pos.x - z.pos.x;
-        const float dz = pos.z - z.pos.z;
-        const float r = z.radius + m_ObstacleRadius; // Ž©•ª‚Ì‘å‚«‚³‚à‘«‚·
-        if (dx * dx + dz * dz < r * r)
-        {
-            return true; // ŠëŒ¯ƒ][ƒ“‚É“ü‚Á‚Ä‚¢‚é
-        }
-    }
-    return false;
-}
 
 //‹ŒStepSeek,StepAttack,StepChase
 #if 0
@@ -577,6 +561,24 @@ void CComPlayer::Update()
     }
     ++m_StateFrames;
 }
+
+bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
+{
+    if (!m_pSimpleObstacles) return false;
+
+    for (const auto& z : *m_pSimpleObstacles)
+    {
+        const float dx = pos.x - z.pos.x;
+        const float dz = pos.z - z.pos.z;
+        const float r = z.radius + m_ObstacleRadius; // Ž©•ª‚Ì‘å‚«‚³‚à‘«‚·
+        if (dx * dx + dz * dz < r * r)
+        {
+            return true; // ŠëŒ¯ƒ][ƒ“‚É“ü‚Á‚Ä‚¢‚é
+        }
+    }
+    return false;
+}
+
 
 //‹ŒMakeFixedTimeTarget
 #if 0
