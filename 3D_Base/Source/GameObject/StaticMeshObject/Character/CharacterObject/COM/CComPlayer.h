@@ -96,6 +96,9 @@ public:
 
 	void CreateCollider();
 
+	//弾マネージャーの設定.
+	void SetShotManager(std::shared_ptr<CShotManager> shot) override;
+
 private:
 	//構造体
 	//COMのショット関連のパラメータ

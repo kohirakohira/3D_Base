@@ -56,6 +56,9 @@ public:
 	//リスポーンフラグの設定
 	virtual void SetRespawnFlag(bool flg) = 0;
 
+	//弾マネージャーのインスタンス設定.
+	virtual void SetShotManager(std::shared_ptr<CShotManager> shot) = 0;
+
 protected:
 	//車体クラス.
 	std::shared_ptr<CBody>			m_pBody;

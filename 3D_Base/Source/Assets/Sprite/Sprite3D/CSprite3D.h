@@ -102,6 +102,13 @@ public:
 	//ビルボード機能のON/OFF切り替え
 	void SetBillboard(bool flag) { m_Billboard = flag; }
 
+	//UV情報を設定.
+	void SetUVInfomation(D3DXVECTOR2 uv, bool flg)
+	{
+		m_UV = uv;
+		m_MoveFlag = flg;
+	}
+
 private:
 	CDirectX11*				m_pDx11;
 	ID3D11Device*			m_pDevice11;
@@ -122,6 +129,8 @@ private:
 	D3DXVECTOR3		m_vScale;		//拡縮.
 
 	D3DXVECTOR2		m_UV;		//テクスチャUV座標.
+
+	bool			m_MoveFlag;	//テクスチャの動かすか否か.
 
 	float			m_Alpha;	//α値(0:透明、1:完全不透明).
 

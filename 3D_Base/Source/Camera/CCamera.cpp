@@ -109,7 +109,7 @@ void CCamera::Projection()
 	//アスペクト（幅÷高さ）.
 	float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
 	float near_z = 0.3f;
-	float far_z = 300.0f;
+	float far_z = 1000.0f;
 
 	//プロジェクション（射影）変換.
 	D3DXMatrixPerspectiveFovLH(
@@ -117,7 +117,7 @@ void CCamera::Projection()
 		fov_y,		//視野角（FOV：Field of View）.
 		aspect,		//アスペクト.
 		near_z,		//近いビュー平面のz値.
-		far_z);	//遠いビュー平面のz値.
+		far_z);		//遠いビュー平面のz値.
 }
 
 //三人称カメラ
@@ -166,23 +166,23 @@ void CCamera::SetTargetRotY(float rotY)
 void CCamera::FreeMove()
 {
 	//カメラ座標のデバックコマンド.
-	float add_value = 0.1f;
+	float add_value = 0.005f;
 	if (GetAsyncKeyState('G') & 0x8000) {
-		m_Camera.vPosition.y -= add_value;
+		m_Position.y += add_value;
 	}
 	if (GetAsyncKeyState('T') & 0x8000) {
-		m_Camera.vPosition.y += add_value;
+		m_Position.y -= add_value;
 	}
 	if (GetAsyncKeyState('H') & 0x8000) {
-		m_Camera.vPosition.x -= add_value;
+		m_Position.x -= add_value;
 	}
 	if (GetAsyncKeyState('F') & 0x8000) {
-		m_Camera.vPosition.x += add_value;
+		m_Position.x += add_value;
 	}
 	if (GetAsyncKeyState('Q') & 0x8000) {
-		m_Camera.vPosition.z += add_value;
+		m_Position.z += add_value;
 	}
-	if (GetAsyncKeyState('E') & 0x8000) {
-		m_Camera.vPosition.z -= add_value;
+	if (GetAsyncKeyState('Y') & 0x8000) {
+		m_Position.z -= add_value;
 	}
 }

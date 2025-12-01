@@ -255,6 +255,7 @@ void CCollisionManager::CharactertoItemBox()
 					const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 0.03f, 0.03f, 0.3f };
 					//ƒvƒŒƒCƒ„[‚Ìî•ñ‚ğİ’è.
 					m_pCharacterManager->SetPlayerTuning(PlayerIndex, Info);
+
 				}
 
 				////UŒ‚—Íİ’è.

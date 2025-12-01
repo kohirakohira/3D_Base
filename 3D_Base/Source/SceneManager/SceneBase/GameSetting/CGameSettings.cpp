@@ -50,20 +50,11 @@ CGameSettings::~CGameSettings()
 //動作関数.
 void CGameSettings::Update()
 {
-	//定数宣言.
-	constexpr float UV_SPEED = 0.001f;
-
 	//コントローラーの取得※0番のみ動かせる.
 	CController* controller = CControllerManager::GetInstance().GetController(0);
 
 	//BGMのループ再生.
 	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
-
-	//背景の動かす速度.
-	m_UV.x += UV_SPEED;
-	m_UV.y -= UV_SPEED;
-	//背景の模様を動かす値を設定.
-	m_pSpriteSettingBackGround->SetUVInfomation(m_UV, true);
 
 	//キー入力受付.
 	m_InputKey->Update();
@@ -80,7 +71,7 @@ void CGameSettings::Update()
 	//シーンの遷移.
 	//if (controller && controller->CheckConnected())
 	{
-		if (m_InputKey->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
+		if (m_InputKey->ReleaseInputKey('Z') == true /*|| controller->Down(CXInput::A, true)*/)
 		{
 			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
 			{
@@ -342,6 +333,9 @@ HRESULT CGameSettings::LoadData()
 //背景を動かす関数.
 void CGameSettings::MoveBackGround()
 {
+	//定数宣言.
+	const float UV_SPEED = 0.001f;
+
 	m_UV.x += UV_SPEED;
 	m_UV.y -= UV_SPEED;
 	//背景の模様を動かす値を設定.

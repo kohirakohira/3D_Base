@@ -159,8 +159,6 @@ void CPlayer::Create()
 	//インスタンス生成(BodyとCannon).
 	m_pBody = std::make_shared<CBody>(m_PlayerID);
 	m_pCannon = std::make_shared<CCannon>(m_PlayerID);
-	//弾マネージャー.
-	m_pShotManager = std::make_shared<CShotManager>();
 }
 
 #if 1
@@ -305,6 +303,12 @@ void CPlayer::SyncCannonToBody()
 	D3DXVECTOR3 pos = GetBody()->GetPosition();
 	pos.y += m_Tuning.cannonHeight;			// 砲塔の高さオフセット
 	GetCannon()->SetPosition(pos);			// 位置を同期
+}
+
+//弾マネージャーの設定.
+void CPlayer::SetShotManager(std::shared_ptr<CShotManager> shot)
+{
+	m_pShotManager = shot;
 }
 
 // プレイヤーのダメージ処理

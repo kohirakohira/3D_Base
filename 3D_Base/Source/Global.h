@@ -54,7 +54,8 @@ static constexpr int PLAYER_MAX = 4;
 static const int ShotMax = 100;	// 弾の最大数
 
 //アイテムの数.
-static constexpr int ITEM_MAX = 4;
+static constexpr int	ITEM_MAX = 4;
+constexpr float			TIME_LIMIT = 3.0f;		//アイテムの制限時間.
 
 //テスト.
 const int IMAGE = 4;

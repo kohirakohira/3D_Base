@@ -540,6 +540,9 @@ void CCharacterManager::SetPlayerTuningAll(const TankTuning& t)
 void CCharacterManager::SetPlayerTuning(int idx, const TankTuning& t)
 {
 	if (idx >= 0 && idx < (int)m_pCharacter.size())m_pCharacter[idx]->GetBody()->SetTuning(t);
+
+	std::cout << m_pCharacter[idx]->GetBody()->GetTuning().moveSpeed << std::endl;
+
 }
 
 void CCharacterManager::SetTuning(const TankTuning& tuning, int index)
