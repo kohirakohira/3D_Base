@@ -2,13 +2,13 @@
 
 CTitleProduction::CTitleProduction()
 	: m_Camera				( nullptr )
-	, m_GroundMesh			( nullptr )
 	, m_BackGroundMesh		( nullptr )
 
 	, m_SpriteGround		( nullptr )
 	, m_SpriteObjGround		( nullptr )
 	, m_pBackImgObject		( nullptr )
-	, m_Ground				( nullptr )
+
+	, rad					( 0.0f )
 {
 }
 
@@ -22,6 +22,18 @@ void CTitleProduction::Update()
 	//カメラの動作.
 	m_Camera->Update();
 
+	//地面回転.
+	rad--;
+	if (rad >= 360.0f)
+	{
+		rad = 0.0f;
+	}
+	D3DXVECTOR3 angle = {0.0f, 0.0f, 0.0f};
+	angle.x = rad * PI / 180.0f;
+	angle.y = rad * PI / 180.0f;
+	angle.z = rad * PI / 180.0f;
+	m_SpriteObjGround->SetRotation(angle.x, angle.y, angle.z);
+
 }
 
 //描画関数.
@@ -32,7 +44,6 @@ void CTitleProduction::Draw()
 
 	//地面を描画する.
 	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
-	m_Ground->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
 	//背景を描画する.
 	m_pBackImgObject->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
 
@@ -47,11 +58,13 @@ void CTitleProduction::Create()
 	//地面の生成.
 	m_SpriteGround = std::make_unique<CSprite3D>();
 
+	//地面オブジェクトの生成.
+	m_SpriteObjGround = std::make_unique<CSpriteObject>();
+
 	//背景の生成.
 	m_pBackImgObject = std::make_unique<CStaticMeshObject>();
 
 	//スタティックメッシュの生成.
-	m_GroundMesh		= std::make_shared<CStaticMesh>();
 	m_BackGroundMesh	= std::make_shared<CStaticMesh>();
 
 }
@@ -69,13 +82,9 @@ void CTitleProduction::Init()
 	m_Camera->SetLightAtten(0.0f, 0.0f, 0.1);		//ライトの減衰.
 	m_Camera->SetCameraPos(0.0f, 100.0f, 0.0f);		//カメラ位置の設定.
 
-	//地面の初期化.
-	m_Ground->Init();
-	m_Ground->SetPosition(0.0f, -38.0f, 0.0f);
-	m_Ground->SetRotato(0.0f, 0.0f, 0.0f);
-
-	//地面オブジェクトの生成.
-	m_SpriteObjGround = std::make_unique<CSpriteObject>();
+	//地面の設定.
+	m_SpriteObjGround->SetPosition(0.0f, -100.0f, 200.0f);
+	m_SpriteObjGround->SetScale(1.0f, 1.0f, 1.0f);
 
 	//背景の初期化.
 	m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
@@ -87,23 +96,21 @@ void CTitleProduction::Init()
 HRESULT CTitleProduction::LoadData()
 {
 	//スプライトの読み込みサイズ.
-	CSprite3D::SPRITE_STATE GROUND
+	CSprite3D::SPRITE_STATE GROUND = 
 	{
-
+		256,256,
+		256,256,
+		256,256
 	};
 
-	//地面のメッシュの読み込み.
-	m_GroundMesh->Init(_T("Data\\Mesh\\Static\\Ground\\ground.x"));
 	//スプライトの読み込み.
-	m_SpriteGround->Init(CDirectX11::GetInstance(), _T(""), GROUND);
+	m_SpriteGround->Init(CDirectX11::GetInstance(), _T("Data\\Mesh\\Static\\Ground\\groundex.bmp"), GROUND);
 
-	m_GroundMesh->Init(_T("Data\\Mesh\\Static\\Ground\\groundex.x"));
 	//背景のメッシュの読み込み.
 	m_BackGroundMesh->Init(_T("Data\\Mesh\\Static\\OutBackImage\\BackImage.x"));
 
 	//地面メッシュのアタッチ.
 	m_SpriteObjGround->AttachSprite(*m_SpriteGround);
-	m_Ground->AttachMesh(m_GroundMesh);
 	//背景メッシュのアタッチ.
 	m_pBackImgObject->AttachMesh(m_BackGroundMesh);
 
