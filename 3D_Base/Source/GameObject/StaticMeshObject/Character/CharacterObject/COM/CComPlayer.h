@@ -85,7 +85,7 @@ public:
 	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
 
 	//プレイヤーを取得する.読み取り専用
-	void SetPlayersRef(const std::vector<std::weak_ptr<CCharacterObjectBase>>* all) { m_pAllPlayer = all; }
+	void SetPlayersRef(const std::vector<std::shared_ptr<CCharacterObjectBase>>* all) { m_pAllPlayer = all; }
 
 	//マネージャーからアイテムの参照
 	void SetItemBox(std::vector<std::shared_ptr<CItemBox>>* item) { m_pItemBox = item; }
@@ -193,16 +193,13 @@ private:
 	//セーフ
 	void SafeAdvance(float nextYaw, float moveStep);
 
-
-	//外部クラス
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;									//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;												//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;					//障害物の一部を外部から差し込む
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
 	
 	std::weak_ptr<CCharacterObjectBase> m_pTarget;										//キャラクターオブジェクト.弱参照
-	const std::vector<std::weak_ptr<CCharacterObjectBase>>* m_pAllPlayer;				//プレイヤー一覧の取得
-
+	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;				//プレイヤー一覧の取得
 	//障害物処理
 	bool IsInDangerZone;				//場所がいいのか
 
