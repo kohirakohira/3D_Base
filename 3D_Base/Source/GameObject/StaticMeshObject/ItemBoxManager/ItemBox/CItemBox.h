@@ -34,6 +34,8 @@ public:
 	bool GetGravity() { return IsGravity; }
 	//アイテム情報を渡す用.
 	ItemInfomation GetItem() const { return m_Item; }
+	//アイテム情報を設定する.
+	void SetItem(ItemInfomation item) { m_Item = item; }
 
 	//アイテムの種類を取得する関数.
 	CItemType GetItemInfo() { return m_ItemType; }

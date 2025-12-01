@@ -119,11 +119,11 @@ public:
 protected:
 
 	CController* 	m_Controller;
-	int			m_PlayerID;
-	bool		m_HasControl;	//操作権があるか
+	int				m_PlayerID;
+	bool			m_HasControl;	//操作権があるか
 
 	//コントローラーを識別する変数.
-	int			m_ControllerIndex;
+	int				m_ControllerIndex;
 
 private:
 	///TankTuning m_Tune{};

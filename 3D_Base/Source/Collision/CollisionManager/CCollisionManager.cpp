@@ -48,8 +48,8 @@ void CCollisionManager::Update()
 	// プレイヤーとプレイヤー当たり判定判別
 	PlayertoPlayer();
 
-	// プレイヤーとアイテムボックス
-	PlayertoItemBox();
+	// キャラクターとアイテムボックス
+	CharactertoItemBox();
 
 	// プレイヤーと弾
 	PlayertoShot();
@@ -221,15 +221,15 @@ void CCollisionManager::PlayertoPlayer()
 	}
 }
 
-// プレイヤーとアイテムボックス
-void CCollisionManager::PlayertoItemBox()
+// キャラクターとアイテムボックス
+void CCollisionManager::CharactertoItemBox()
 {
 	for (int PlayerIndex = 0; PlayerIndex < PLAYER_MAX; ++PlayerIndex)
 	{
 		// i 番のプレイヤーを取得
-		auto player = m_pCharacterManager->GetControlPlayer(PlayerIndex);
-		if (!player)continue;
-		auto Coll = player->GetBody()->GetCollider();
+		auto chara = m_pCharacterManager->GetControlPlayer(PlayerIndex);
+		if (!chara)continue;
+		auto Coll = chara->GetBody()->GetCollider();
 
 		for (size_t ItemIndex = 0; ItemIndex < m_pItemBoxManager->GetItem().size(); ItemIndex++)
 		{
@@ -241,12 +241,11 @@ void CCollisionManager::PlayertoItemBox()
 				//画面から消す.
 				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
 
-				//無敵処理.
-				//プレイヤーに設定.
-				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_ShieldFlag == true)
-				{
-
-				}
+				////無敵処理.
+				////プレイヤーに設定.
+				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_ShieldFlag == true)
+				//{
+				//}
 
 				//速度設定.
 				//プレイヤーに設定.
@@ -258,26 +257,23 @@ void CCollisionManager::PlayertoItemBox()
 					m_pCharacterManager->SetPlayerTuning(PlayerIndex, Info);
 				}
 
-				//攻撃力設定.
-				//弾に設定.
-				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Power > 0.0f)
-				{
+				////攻撃力設定.
+				////弾に設定.
+				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Power > 0.0f)
+				//{
+				//}
 
-				}
+				////爆風の半径設定.
+				////爆風に設定.
+				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
+				//{
+				//}
 
-				//爆風の半径設定.
-				//爆風に設定.
-				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
-				{
-
-				}
-
-				//装填時短設定.
-				//弾に設定.
-				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Reload > 0.0f)
-				{
-
-				}
+				////装填時短設定.
+				////弾に設定.
+				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Reload > 0.0f)
+				//{
+				//}
 
 				//配列(メモリ上)から消す.
 				m_pItemBoxManager->RemoveItem(ItemIndex);
