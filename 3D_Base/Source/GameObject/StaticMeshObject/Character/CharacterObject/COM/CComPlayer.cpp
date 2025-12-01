@@ -559,6 +559,8 @@ void CComPlayer::Update()
     ++m_StateFrames;
 }
 
+//旧MakeFixedTimeTarget
+#if 0
 void CComPlayer::MakeFixedTimeTarget()
 {
     if (!m_pAllPlayer) return;
@@ -619,6 +621,124 @@ void CComPlayer::MakeFixedTimeTarget()
         Target.reset();
         m_CurTargetDist2 = 1e9f;
     }
+}
+#endif
+// 一番近いターゲットを狙う
+void CComPlayer::MakeFixedTimeTarget()
+{
+    // プレイヤー配列が無い or Body が無い場合はターゲット解除
+    if (!m_pAllPlayer) {
+        m_pTarget.reset();
+        m_CurTargetDist2 = 1e9f;
+        return;
+    }
+
+    auto body = GetBody();
+    if (!body) {
+        m_pTarget.reset();
+        m_CurTargetDist2 = 1e9f;
+        return;
+    }
+
+    const D3DXVECTOR3 self = body->GetPosition();
+
+    //キャラ共通ベース型で OK
+    std::shared_ptr<CCharacterObjectBase> best;
+    float bestD2 = 1e9f;
+
+    // 一番近いターゲットを探す（Player でも COM でも可）
+    for (auto& p : *m_pAllPlayer) {
+        if (!p) continue;
+
+        // 自分自身は除外
+        if (p->GetPlayerID() == m_PlayerID) continue;
+
+        // ブラックリストも除外
+        if (IsBlacklisted(p->GetPlayerID())) continue;
+
+        const float d2 = DistXZ(self, p->GetPosition()); // XZ 平面距離^2
+        if (d2 < bestD2) {
+            bestD2 = d2;
+            best = p; // shared_ptr<Base> 同士なので代入 OK
+        }
+    }
+
+    // 候補がいない → ターゲット解除
+    if (!best) {
+        m_pTarget.reset();
+        m_CurTargetDist2 = 1e9f;
+        return;
+    }
+
+    // 現在のターゲット
+    auto cur = m_pTarget.lock();
+
+    // まだターゲットがいない / 失効している → 新しいターゲットに即決
+    if (!cur) {
+        m_pTarget = best;   
+        m_CurTargetDist2 = bestD2;
+        return;
+    }
+
+    // すでにターゲットがいる場合：乗り換え条件チェック
+    const float curD2 = DistXZ(self, cur->GetPosition());
+    if (best.get() != cur.get() && bestD2 < curD2 * m_StickinessRatio) {
+        // もっと十分近い敵がいたら乗り換え
+        m_pTarget = best;
+        m_CurTargetDist2 = bestD2;
+    }
+    else {
+        m_CurTargetDist2 = curD2;
+    }
+
+    // 遠くなりすぎたら忘れるブラックリスト入り
+    const float forget2 = m_ForgetDistance * m_ForgetDistance;
+    if (m_CurTargetDist2 > forget2) {
+        Blacklist(cur->GetPlayerID());
+        m_pTarget.reset();
+        m_CurTargetDist2 = 1e9f;
+    }
+}
+
+float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep)
+{
+    auto body = GetBody();
+    if (!body)
+    {
+        return curYaw;
+    }
+
+    auto box = std::dynamic_pointer_cast<CBoxCollider>(body->GetCollider());
+    if (!box)
+    {
+
+        return curYaw;
+    }
+    D3DXVECTOR3 avoid;
+    float nearHit;
+    const bool blocke = SenseObstacleAABB(*box, curYaw, avoid, nearHit);
+
+    if (m_AvoidHolde > 0)
+    {
+        --m_AvoidHolde;
+        return curYaw + turnStep * (float)m_AvoidSide;
+    }
+    //基本的には左
+    if (blocke)
+    {
+        if (m_AvoidSide == 0)
+        {
+            m_AvoidSide = (avoid.x + avoid.z >= 0) ? +1 : -1;
+        }
+        m_AvoidHolde = m_AvoidMax;
+        return curYaw + turnStep * m_AvoidSide;
+    }
+
+    //通常時の動作
+    const float d = Wrap(curYaw - desiredYaw);
+    if (d > turnStep) return curYaw + turnStep;
+    if (d < -turnStep) return curYaw - turnStep;
+    return curYaw + d;
 }
 
 
@@ -864,7 +984,7 @@ void CComPlayer::StepEvade()
     }
 }
 
-
+#if 0
 float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep)
 {
     auto body = GetBody();
@@ -923,7 +1043,7 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
     const float d = Wrap(bestYaw - curYaw);
     return Approach(curYaw, curYaw + d, turnStep);
 }
-
+#endif
 //アイテム取得.アイテム認識
 void CComPlayer::StepItemSeek()
 {
@@ -987,20 +1107,20 @@ void CComPlayer::EvaluateTransitions(float dist2)
         break;
     }
 #endif
-}
+    }
 
 
-
+#if 0
 //COM弾発射処理
 void CComPlayer::TryAutoFire()
 {
     //auto manager = m_pShotManager.lock();
     //if (!manager || !m_pTarget) return;
 
-    if (m_ShotState.m_ShotCD > 0) 
-    { 
+    if (m_ShotState.m_ShotCD > 0)
+    {
         --m_ShotState.m_ShotCD;
-        return; 
+        return;
     }
 
     D3DXVECTOR3 muzzle; float yaw = 0.f;
@@ -1020,7 +1140,8 @@ void CComPlayer::TryAutoFire()
         m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
     }
 }
-
+#endif
+}
 //砲塔と車体の同期
 void CComPlayer::SyncCannonToBody()
 {

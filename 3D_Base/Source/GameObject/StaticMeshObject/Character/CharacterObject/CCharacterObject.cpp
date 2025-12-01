@@ -15,6 +15,7 @@ CCharacterObjectBase::CCharacterObjectBase(
 	, m_HasControl			( false )
 	, m_Death				( false )
 	, m_Damage				( false )
+	, m_PlayerID			( -1 )
 {
 }
 
