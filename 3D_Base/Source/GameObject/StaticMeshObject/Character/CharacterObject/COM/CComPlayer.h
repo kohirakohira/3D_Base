@@ -190,6 +190,8 @@ private:
 	std::weak_ptr<CItemBox> m_pItemTarget;								//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;	//障害物の一部を外部から差し込む
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
+	
+	std::weak_ptr<CCharacterObjectBase> m_pCharacterObject;				//キャラクターオブジェクト
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効

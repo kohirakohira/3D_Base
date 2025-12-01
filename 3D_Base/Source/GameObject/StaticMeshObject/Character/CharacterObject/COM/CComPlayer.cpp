@@ -451,6 +451,7 @@ void CComPlayer::StepSeek()
 
     if (m_pTarget)
     {
+        m_pCharacterObject.lock();
         //‰ñ“ª‚µ‚Ä‘_‚Á‚Ä‚¤‚Â
         TickAimTo(m_pTarget->GetPosition());
         //TryAutoFire();
