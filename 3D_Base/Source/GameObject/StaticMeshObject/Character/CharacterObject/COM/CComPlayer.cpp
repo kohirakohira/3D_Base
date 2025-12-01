@@ -351,7 +351,7 @@ inline float CComPlayer::AngleError(float fromYaw, const D3DXVECTOR3& fromPos, c
     return std::fabs(error);
 
 }
-
+#if 0
 void CComPlayer::Update()
 {
     CCharacterObjectBase::Update();
@@ -406,7 +406,7 @@ void CComPlayer::Update()
     }
     ++m_StateFrames;
 }
-
+#endif
 void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
     if (m_Drawflag)
@@ -515,7 +515,7 @@ void CComPlayer::Update()
 
     auto tuning = GetTuning();
 
-    //FollowPath(tuning.turretTurnSpeed, tuning.moveSpeed);
+    FollowPath(tuning.turretTurnSpeed, tuning.moveSpeed);
 
     TickBlacklist();
 
@@ -527,6 +527,8 @@ void CComPlayer::Update()
         if (cannon) cannon->CStaticMeshObject::Update();   //cannonだけ動かす
         return;
     }
+
+    
 
     //定期リターゲット
     if (--m_RetargetTimer <= 0 || !m_pTarget) {
@@ -549,7 +551,7 @@ void CComPlayer::Update()
     body->SetPosition(pos.x, pos.y = 0, pos.z);
 
     float itemD2;
-    //NearestItemDist2(itemD2);
+    NearestItemDist2(itemD2);
 
     //状態遷移はここだけで行う
     EvaluateTransitions(dist2);
@@ -564,6 +566,67 @@ void CComPlayer::Update()
     }
     ++m_StateFrames;
 }
+
+float CComPlayer::NearestItemDist2(float& outDist2) const
+{
+    //大きい値
+    outDist2 = 1e18f;
+    if (!m_pItemBox) return outDist2;
+
+    auto body = Body();
+    if (!body)
+    {
+        return outDist2;
+    }
+    const D3DXVECTOR3 self = body->GetPosition();
+    for (auto& box : *m_pItemBox)
+    {
+        if (!box) continue;
+        if (!box->IsActive()) continue;
+
+        const D3DXVECTOR3 dist = box->GetPosition() - self;
+
+        const float d2 = dist.x * dist.x + dist.z * dist.z;
+        if (d2 < outDist2)
+        {
+            outDist2 = d2;
+        }
+        return outDist2;
+    }
+}
+
+bool CComPlayer::FollowPath(float turnStep, float moveSte)
+{
+    auto body = Body();
+    if (!body) return false;
+
+    const D3DXVECTOR3 pos = body->GetPosition();
+    //常に見続ける
+    while (!m_Path.empty())
+    {
+        D3DXVECTOR3 w = m_Path.front(); //先頭要素
+        float dx = w.x - pos.x;
+        float dz = w.z - pos.z;
+
+        if (dx * dx + pos.z * pos.z > m_LookAheadSkep * m_LookAheadSkep)
+        {
+            m_Path.pop_front();
+        }
+        else break;
+    }
+    if (m_Path.empty()) return false;
+
+    const D3DXVECTOR3 w = m_Path.front();
+    float cur = body->GetRotation().y;
+    float d = std::atan2f(w.x - pos.x, w.z - pos.z);
+
+    // 既存の分離はYawにブレンド（詰まり回避）
+    //desired = BlendYawBySeparation(desired, p);
+
+    //float nextYaw = Approach(curYaw, curYaw + Wrap(desired - curYaw), turnStep);
+
+}
+
 
 #if 0
 void CComPlayer::SafeAdvance(float nextYaw, float moveStep)

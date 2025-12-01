@@ -182,16 +182,23 @@ private:
 	//COMの状態変更
 	void ChangeState(State state);
 
+
+	//ナビゲーション
+	float NearestItemDist2(float& outDist2) const;
+
+	//障害物を確認
+	bool FollowPath(float turnStep, float moveSte);
+
 	//外部クラス
-	std::shared_ptr<CCharacterObjectBase> m_pTarget;									//追尾対象
-	//std::weak_ptr<CShotManager> m_pShotManager;							//弾マネージャー.自動発射用のパラメータ
-	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;			//プレイヤーの一覧取得
-	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;					//アイテムボックス
-	std::weak_ptr<CItemBox> m_pItemTarget;								//弱参照のアイテムボックス
-	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;	//障害物の一部を外部から差し込む
+	//std::shared_ptr<CCharacterObjectBase> m_pTarget;									//追尾対象
+	//std::weak_ptr<CShotManager> m_pShotManager;										//弾マネージャー.自動発射用のパラメータ
+	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;				//プレイヤーの一覧取得
+	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;									//アイテムボックス
+	std::weak_ptr<CItemBox> m_pItemTarget;												//弱参照のアイテムボックス
+	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;					//障害物の一部を外部から差し込む
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
 	
-	std::weak_ptr<CCharacterObjectBase> m_pCharacterObject;				//キャラクターオブジェクト
+	std::weak_ptr<CCharacterObjectBase> m_pCharacterObject;								//キャラクターオブジェクト.弱参照
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
