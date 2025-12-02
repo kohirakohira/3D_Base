@@ -91,7 +91,7 @@ public:
 	void SetItemBox(std::vector<std::shared_ptr<CItemBox>>* item) { m_pItemBox = item; }
 
 	//当たり判定用
-	void SetObject(const std::vector<std::shared_ptr<CBoxCollider>>* BoxCollider) {};
+	void SetObject(const std::vector<std::shared_ptr<CBoxCollider>>* BoxCollider) { m_pBoxCollider = BoxCollider; };
 
 	int GetPlayerID() const { return m_PlayerID; }
 
@@ -203,6 +203,9 @@ private:
 
 	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
 
+	//COMの正面方向に、一定距離以内に障害物があるか
+	bool HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const;
+
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;									//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;												//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;					//障害物の一部を外部から差し込む
@@ -267,7 +270,7 @@ private:
 
 	//障害物判定
 	const std::vector<SimpleObstacle>* m_pSimpleObstacles = nullptr;
-	float m_ObstacleProbeDist = 8.0f;								// 何メートル先まで見るか
+	float m_ObstacleProbeDist = 5.0f;								// 何メートル先まで見るか
 	float m_ObstacleProbeStep = 0.5f;								// 何メートル刻みでチェックするか
 	float m_ObstacleRadius = 1.5f;									// 自分の半径
 	float m_ProbeAngleRad = D3DXToRadian(25.0f);					// 左右にどれくらい首を振るか

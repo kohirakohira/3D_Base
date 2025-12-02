@@ -578,8 +578,7 @@ void CCharacterManager::SwitchControl()
 		}
 
 		//COM‚©‚Ç‚¤‚©”»’è.
-		//bool isCom = false;
-		bool isCom = true;
+		bool isCom = false;
 		if (current != nullptr)
 		{
 			isCom = std::dynamic_pointer_cast<CComPlayer>(current) != nullptr;
