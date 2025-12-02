@@ -1138,6 +1138,67 @@ void CComPlayer::MakeItemTarget()
     }
 }
 
+//これが元
+float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep)
+{
+    auto body = GetBody();
+    if (!body) return curYaw;
+
+    const D3DXVECTOR3 selfPos = body->GetPosition();
+
+    //障害物情報がなければ、純粋にdesiredYawへ寄せるだけ
+    if (!m_pSimpleObstacles || m_pSimpleObstacles->empty())
+    {
+        const float d = Wrap(desiredYaw - curYaw);
+        return Approach(curYaw, curYaw + d, turnStep);
+    }
+
+    // 3本の仮想レイを試す：正面、少し左、少し右
+    const float angs[3] = { 0.f, +m_ProbeAngleRad, -m_ProbeAngleRad };
+
+    float bestYaw = desiredYaw;
+    float bestScore = -1e9f;
+
+    for (float a : angs)
+    {
+        const float testYaw = desiredYaw + a;
+        float hitD;
+        const bool blocked = HasObstacleAheadSimple(
+            selfPos, testYaw,
+            m_ObstacleProbeDist,
+            m_ObstacleProbeStep,
+            hitD);
+
+        // スコア設計：
+        //  - 障害物がない方向を超優先
+        //  - desired からあまり外れない方向を優先
+        float score = 0.0f;
+        if (!blocked)
+        {
+            score += 1000.0f; // ぶつからない方向
+        }
+        else
+        {
+            // ぶつかる場合も、近いよりは遠くでぶつかる方向をマシとする
+            score -= (m_ObstacleProbeDist - hitD);
+        }
+
+        // desired からのズレはなるべく小さくしたい
+        score -= std::fabs(Wrap(testYaw - desiredYaw)) * 10.0f;
+
+        if (score > bestScore)
+        {
+            bestScore = score;
+            bestYaw = testYaw;
+        }
+    }
+
+    // 最終的に選ばれた bestYaw に向かうよう、curYaw を turnStep 分だけ近づける
+    const float d = Wrap(bestYaw - curYaw);
+    return Approach(curYaw, curYaw + d, turnStep);
+}
+
+
 bool CComPlayer::SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const
 {
     const float angs[3] = { 0.f, +m_ProdeAngleRad, -m_ProdeAngleRad };
