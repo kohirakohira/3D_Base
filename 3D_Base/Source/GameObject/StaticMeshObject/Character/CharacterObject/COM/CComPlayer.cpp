@@ -357,63 +357,6 @@ inline float CComPlayer::AngleError(float fromYaw, const D3DXVECTOR3& fromPos, c
     return std::fabs(error);
 
 }
-//旧Update
-#if 0
-void CComPlayer::Update()
-{
-    CCharacterObjectBase::Update();
-
-    SanitizeParams();
-
-    if (!m_ComEnabled) { 
-        SyncCannonToBody(); //COM無効なら止めて砲塔追従だけ
-        return;
-    }
-    
-    TickBlacklist();
-
-    auto body = GetBody();
-    auto cannon = GetCannon();
-    if (!body) { 
-        if (cannon) cannon->CStaticMeshObject::Update();
-        return;
-    }
-
-    //障害物の乗り込み対策.yを0で固定
-    auto pos = body->GetPosition();
-    body->SetPosition(pos.x, pos.y = 0, pos.z);
-
-    //定期リターゲット
-    if (--m_RetargetTimer <= 0 || !m_pTarget) {
-        //MakeFixedTimeTarget();
-        m_RetargetTimer = m_RetargetInterval;
-    }
-
-    //距離を計算
-    float dist2 = 1e18f;
-    if (m_pTarget) {
-        const D3DXVECTOR3 d = m_pTarget->GetPosition() - body->GetPosition();
-        dist2 = d.x * d.x + d.z * d.z;
-        m_LostSightFrames = 0;
-    }
-    else {
-        ++m_LostSightFrames;
-    }
-
-    //状態遷移はここだけで行う
-    EvaluateTransitions(dist2);
-
-    //実行
-    switch (m_State) {
-    //case State::Seek:     StepSeek();     break;
-    case State::Chase:    StepChase();    break;
-    case State::Attack:   StepAttack();   break;
-    case State::Evade:    StepEvade();    break;
-    case State::ItemSeek: StepItemSeek(); break;
-    }
-    ++m_StateFrames;
-}
-#endif
 
 void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
@@ -451,52 +394,6 @@ bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
     return false;
 }
 
-
-//旧StepSeek,StepAttack,StepChase
-#if 0
-//探索処理
-void CComPlayer::StepSeek()
-{
-    auto Target = m_pTarget.lock();
-
-    //パラメータ取得
-    TickWander(m_Tuning.bodyTurnSpeed, m_Tuning.moveSpeed);     //動作
-
-    if (Target)
-    {
-        //回頭して狙ってうつ
-        TickAimTo(Target->GetPosition());
-        TryAutoFire();
-    }
-}
-
-void CComPlayer::StepChase()
-{
-    auto Target = m_pTarget.lock();
-
-    //パラメータ
-    TickWander(m_Tuning.bodyTurnSpeed, m_Tuning.moveSpeed);
-
-    if (Target)
-    {
-        TickAimTo(Target->GetPosition());
-        TryAutoFire();
-    }
-}
-
-//攻撃、基本的には弾発射処理
-void CComPlayer::StepAttack()
-{
-    auto Target = m_pTarget.lock();
-
-    TickWander(m_Tuning.bodyTurnSpeed, m_Tuning.moveSpeed);
-    if (Target)
-    {
-        TickAimTo(Target->GetPosition());
-        TryAutoFire();
-    }
-}
-#endif
 void CComPlayer::Update()
 {
     SanitizeParams();
@@ -579,71 +476,6 @@ bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
     return false;
 }
 
-
-//旧MakeFixedTimeTarget
-#if 0
-void CComPlayer::MakeFixedTimeTarget()
-{
-    if (!m_pAllPlayer) return;
-    auto body = GetBody();
-    if (!body) return;
-
-    const D3DXVECTOR3 self = body->GetPosition();
-
-    std::shared_ptr<CCharacterObjectBase> best;
-    float bestD2 = std::numeric_limits<float>::infinity();
-
-    //auto pAllPlayer = m_pTarget.lock();
-
-    for (auto& p : *m_pTarget.lock()) {
-        if (!p) continue;
-        if (p.get() == this) continue;  // 自分は除外
-        if (IsBlacklisted(p.get())) continue;
-        {
-            const int pid = ResolveActorID(p);
-            if (pid < 0) continue;                // ID取れない対象は無視
-            if (IsBlacklisted(pid)) continue;     // 既存のIDベースBLをそのまま利用
-        }
-
-        const float d2 = DistXZ(self, p->GetPosition());
-        if (d2 < bestD2) { bestD2 = d2; best = p; }
-    }
-
-    auto Target = m_pTarget.lock();
-
-    if (!best) {
-        Target.reset();
-        m_CurTargetDist2 = 1e9f;
-        return;
-    }
-
-    if (!Target) {
-        Target = best;
-        m_CurTargetDist2 = bestD2;
-        return;
-    }
-
-    //近いターゲット
-    const float curD2 = DistXZ(self, Target->GetPosition());
-    if (best.get() != Target.get() && bestD2 < curD2 * m_StickinessRatio) {
-        Target = best;
-        m_CurTargetDist2 = bestD2;
-    }
-    else {
-        m_CurTargetDist2 = curD2;
-    }
-
-    //遠くなったら忘れさせる
-    const float forget2 = m_ForgetDistance * m_ForgetDistance;
-    if (m_CurTargetDist2 > forget2) {
-        Blacklist(GetPlayerID());
-        const int tid = ResolveActorID(Target);
-        if (tid >= 0) Blacklist(tid);   // 自分ではなく“ターゲット”のIDをBLへ
-        Target.reset();
-        m_CurTargetDist2 = 1e9f;
-    }
-}
-#endif
 // 一番近いターゲットを狙う
 void CComPlayer::MakeFixedTimeTarget()
 {

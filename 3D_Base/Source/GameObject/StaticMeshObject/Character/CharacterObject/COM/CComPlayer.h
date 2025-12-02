@@ -201,10 +201,7 @@ private:
 	//セーフ
 	void SafeAdvance(float nextYaw, float moveStep);
 
-	//近づけないようにする
-	//bool IsInDangerZone(const D3DXVECTOR3& pos) const;
 	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
-
 
 	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;									//アイテムボックス
 	std::weak_ptr<CItemBox> m_pItemTarget;												//弱参照のアイテムボックス
@@ -213,8 +210,6 @@ private:
 	
 	std::weak_ptr<CCharacterObjectBase> m_pTarget;										//キャラクターオブジェクト.弱参照
 	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;				//プレイヤー一覧の取得
-	//障害物処理
-	bool IsInDangerZone;				//場所がいいのか
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
@@ -269,8 +264,6 @@ private:
 	int m_PathReplanInterval;		//再探索までの時間
 	float m_WayPointeReach;			//WPの到達判定
 	float m_LookAheadSkep;			//近いWPは一旦スキップ
-	std::shared_ptr<CCharacterObjectBase>m_pSimpleObstacles;
-	float m_ObstacleRadius;
 
 	//障害物判定
 	const std::vector<SimpleObstacle>* m_pSimpleObstacles = nullptr;
