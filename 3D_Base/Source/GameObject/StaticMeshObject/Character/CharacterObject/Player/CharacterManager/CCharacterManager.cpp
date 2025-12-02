@@ -167,15 +167,15 @@ void CCharacterManager::Update()
 		{
 			if (com->IsComEnabled())
 			{
-				//COMが追いかけるターゲットを設定
-				if (target && target != self)
-				{
-					com->SetTarget(target);    // プレイヤーを追いかける
-				}
-				else
-				{
-					com->ClearTarget();
-				}
+				////COMが追いかけるターゲットを設定
+				//if (target && target != self)
+				//{
+				//	com->SetTarget(target);    // プレイヤーを追いかける
+				//}
+				//else
+				//{
+				//	com->ClearTarget();
+				//}
 
 				//AIとしてのUpdate
 				com->Update();

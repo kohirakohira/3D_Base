@@ -76,13 +76,15 @@
     <ClCompile Include="Source\SceneManager\SceneBase\GameResult\ResultProduction\CResultProduction.cpp" />
     <ClCompile Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CChase\CChase.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankCannon\CCannon.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerManager\CPlayerManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\CPlayer.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComUtility\CComUtility.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComBody\IComBody.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComBrain\CComBrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -149,13 +151,16 @@
     <ClInclude Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.h" />
     <ClInclude Include="Source\Assets\Data\Singleton\CSingleton.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CChase\CChase.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankCannon\CCannon.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerManager\CPlayerManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\CPlayer.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\ComCommon\ComCommon.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComUtility\CComUtility.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComBody\IComBody.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComBrain\CComBrain.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />

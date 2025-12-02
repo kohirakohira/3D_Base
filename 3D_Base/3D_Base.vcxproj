@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -183,7 +183,9 @@
     <ClCompile Include="Source\Collision\CollisionManager\CCollisionManager.cpp" />
     <ClCompile Include="Source\Collision\Ray\CRay.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CChase\CChase.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComBrain\CComBrain.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComUtility\CComUtility.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComBody\IComBody.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.cpp" />
     <ClCompile Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.cpp" />
     <ClCompile Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.cpp" />
@@ -256,7 +258,10 @@
     <ClInclude Include="Source\Collision\CollisionManager\CCollisionManager.h" />
     <ClInclude Include="Source\Collision\Ray\CRay.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CChase\CChase.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComBrain\CComBrain.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComUtility\CComUtility.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\ComCommon\ComCommon.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComBody\IComBody.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.h" />
     <ClInclude Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.h" />
     <ClInclude Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.h" />
