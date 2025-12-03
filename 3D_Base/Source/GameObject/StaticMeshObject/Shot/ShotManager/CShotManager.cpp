@@ -14,7 +14,7 @@ void CShotManager::Initialize()
 {
 	for (int i = 0; i < ShotMax; ++i)
 	{
-		m_pShots.push_back(std::make_unique<CShot>());
+		m_pShots.push_back(std::make_shared<CShot>());
 	}
 	m_pShots.reserve(ShotMax);
 }
@@ -74,6 +74,7 @@ void CShotManager::HitShot()
 
 void CShotManager::Create(const D3DXVECTOR3& pos, float rotY, bool shotFlg, int No)
 {
+
 	// インスタンス生成
 	auto shot = std::make_unique<CShot>();
 
