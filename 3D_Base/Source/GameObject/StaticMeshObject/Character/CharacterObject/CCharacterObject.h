@@ -3,107 +3,70 @@
 #include <iostream>
 #include <memory>
 
-//継承するクラス.
-#include "GameObject/StaticMeshObject/Character/CCharacter.h"
+//-----継承するクラス-----
+#include "GameObject//StaticMeshObject//CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス
 
 //車体と砲塔クラス.
 #include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankBody/CBody.h"
 #include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankCannon/CCannon.h"
 
+//弾マネージャークラス.
+#include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"
+
 //================================================================
 //	キャラクターオブジェクト※基底クラス(キャラクターを継承).
 //================================================================
 class CCharacterObjectBase
-	: public CCharacter
+	: public CStaticMeshObject // スタティックメッシュオブジェクトクラスを継承.
 {
 public:
 	CCharacterObjectBase(
-		int hp = 2,
-		//const TankTuning& tuning = {},
-		std::shared_ptr<CBody> body = nullptr, 
-		std::shared_ptr<CCannon> cannon = nullptr
+		int hp = 2
 	);
 	virtual ~CCharacterObjectBase();
 
 	//動作関数.
-	virtual void Update() override;
+	virtual void Update() override = 0;
 	//描画関数.
-	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
-	//インスタンス生成関数.
-	virtual void Create(int index);
+	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override = 0;
 
-	//位置の設定.
-	virtual void SetPosition(D3DXVECTOR3 pos) = 0;
-	//位置を取得.
-	virtual const D3DXVECTOR3 GetPosition() = 0;
+	//車体の取得.
+	virtual std::shared_ptr<CBody> GetBody() const = 0;
+	//砲塔の取得.
+	virtual std::shared_ptr<CCannon> GetCannon() const = 0;
+	//弾マネージャーの取得.
+	virtual std::shared_ptr<CShotManager> GetShotManager() const = 0;
 
-	//回転の設定.
-	virtual void SetRotation(D3DXVECTOR3 rot) = 0;
-	//回転を取得.
-	virtual const D3DXVECTOR3 GetRotation() = 0;
+	//砲塔の位置取得.
+	virtual D3DXVECTOR3 GetCannonPosition() const = 0;
+	virtual float GetCannonYaw() const = 0;
 
-	//拡縮の設定.
-	virtual void SetScale(D3DXVECTOR3 sca) = 0;
-	//拡縮を取得.
-	virtual const D3DXVECTOR3 GetScale() = 0;
+	//当たった時用.
+	virtual void OnHit(CCharacterObjectBase* other) = 0;
 
-	//パラメータの設定.
-	virtual void SetTuning(const TankTuning& tuning) override{ m_Tuning = tuning; }
-	//パラメータの取得.
-	virtual const TankTuning& GetTuning() const override{ return m_Tuning; }
-
-	//プレイヤーかCOMを識別.
+	//プレイヤーかCOMを判定する用.
 	virtual bool IsPlayer() const = 0;
 
-	//当たった時の処理.
-	virtual void OnHit(CCharacterObjectBase* other) {};
-
-	//Body.Cannonのオーバロード
-	virtual std::shared_ptr<CBody> GetBody() const { return m_pBody; }
-	virtual std::shared_ptr<CCannon> GetCannon() const { return m_pCannon; }
-
-	//戦車のTransform
-	virtual void SetTankPosition(const D3DXVECTOR3& pos) {};
-	virtual void SetTankRotation(const D3DXVECTOR3& rot) {};
-	virtual void SetTankScale   (const D3DXVECTOR3& sca) {};
-
-	//メッシュアタッチ.CPlayerManagerで使う用
-	virtual void AttachMeshse(std::shared_ptr<CStaticMesh>pBody, std::shared_ptr<CStaticMesh>pCannon) ;
-	
-	//バウンディングオブジェクト設定
-	virtual void SetBounding(std::shared_ptr<CStaticMesh> pBody, std::shared_ptr<CStaticMesh> pCannon);
-
-	//コライダー作成
-	void CreateCollider();
+	//操作可能かどうか.
+	virtual void SetHasControl(bool enable) = 0;
+	virtual bool HasControl() const = 0;
 
 	//リスポーンフラグの取得
-	virtual bool GetRespawnFlag() { return m_Respawn; }
+	virtual bool GetRespawnFlag() const = 0;
 	//リスポーンフラグの設定
-	virtual void SetRespawnFlag(bool flg) { m_Respawn = flg; }
+	virtual void SetRespawnFlag(bool flg) = 0;
 
-	//操作権の設定
-	virtual void SetHasControl(bool control) { m_HasControl = control; }
-
-	//ボディの設定
-	virtual void SetCBody(std::shared_ptr<CBody> pBody) { m_pBody = pBody; }
-
-	//キャノンの設定
-	virtual void SetCannon(std::shared_ptr<CCannon> pCannon) { m_pCannon = pCannon; }
-
-	//キャノンポジション
-	virtual D3DXVECTOR3 GetCannonPosition() const;
-
-	virtual float GetCannonYaw() const;
-
-	virtual void HitPlayer();
+	//弾マネージャーのインスタンス設定.
+	virtual void SetShotManager(std::shared_ptr<CShotManager> shot) = 0;
 
 protected:
-
-	
 	//車体クラス.
-	std::shared_ptr<CBody>		m_pBody;
+	std::shared_ptr<CBody>			m_pBody;
 	//砲塔クラス.
-	std::shared_ptr<CCannon>	m_pCannon;
+	std::shared_ptr<CCannon>		m_pCannon;
+	//弾マネージャークラス.
+	//生成や設定はPlayer/COM側で行う.
+	std::shared_ptr<CShotManager>	m_pShotManager;
 
 	//キャラクターの状態.
 	bool m_IsActive;
@@ -111,10 +74,6 @@ protected:
 	//キャラクターの生存フラグ.
 	bool m_IsAlive;
 
-	//戦車の情報.
-	TankTuning m_Tuning;
-
-	//ここから下はいらなかったら消してください
 	//キャラクターの体力.
 	int m_HP;
 	//最大体力.

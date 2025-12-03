@@ -14,9 +14,9 @@ static bool prevA = false;
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス.
 
 //定数宣言.
-static constexpr int TIME = 90.0;
+static constexpr int TIME = 30;
 const float deltaTime = 1.0f / FPS;
-const float DIAMETER = 360.0f;
+const float DIALMETER = 360.0f;
 
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd						( hWnd )
@@ -115,25 +115,24 @@ CGameMain::~CGameMain()
 
 void CGameMain::Update()
 {
+
 	//BGMのループ再生..
 	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
 	//コントローラーの更新.
 	CControllerManager::GetInstance().Update();
 
-	//動的に生成.
-	//アイテムボックス.
-	m_pItemBoxManager->Create();
 	//アイテムの動作..
 	m_pItemBoxManager->Update();
 	// アイテムボックスマネージャーをセット
 	m_pCollisionManager->SetCItemBoxManager(m_pItemBoxManager);
 
+
 //-----メイン演出用-----..
 	
 	//Iconを回転させる..
 	m_Rot += 1.0f * deltaTime;
-	if (m_Rot >= DIAMETER)
+	if (m_Rot >= DIALMETER)
 	{
 		m_Rot = 0.0f;
 	}
@@ -169,7 +168,7 @@ void CGameMain::Update()
 #endif
 	m_pShotManager->Update();
 
-
+#if 1
 	//カメラ追従＆更新.砲塔基準
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -183,7 +182,8 @@ void CGameMain::Update()
 		}
 		m_pCameras[i]->Update();
 	}
-	
+#endif
+
 	//定数宣言..
 	const float PI = 3.14159265358979f;
 	//時計の針の回転..
@@ -234,24 +234,15 @@ void CGameMain::Update()
 
 	//勝敗条件(確認用)..
 	//勝ち..
-	if (controller && controller->CheckConnected())
+	//敗北..
 	{
-		if (GetKey('K') & 0x8000)
+		if (m_Timer->GetRemainingTime() <= 0.0f)
 		{
 			//BGMのループ停止..
 			CSoundManager::Stop(CSoundManager::BGM_Bonus);
 
 			m_SceneType = CSceneType::Result;
 		}
-	}
-	//敗北..
-	//体力がなくなるか.
-	if (GetKey('L') & 0x8000)
-	{
-		//BGMのループ停止..
-		CSoundManager::Stop(CSoundManager::BGM_Bonus);
-
-		m_SceneType = CSceneType::Result;
 	}
 }
 
@@ -295,7 +286,8 @@ void CGameMain::Draw()
 				p->Draw(view, proj, light, paramC);
 			}
 		}
-		m_pCharacterManager->Draw(view, proj, light, paramC);
+
+		//m_pCharacterManager->Draw(view, proj, light, paramC);
 
 //オブジェクトの描画..
 		//弾描画..
@@ -328,6 +320,9 @@ void CGameMain::Draw()
 
 		//背景の表示.
 		m_pBackImgObject->Draw(view, proj, light, paramC);
+
+		//エフェクトもここでやる.
+		CEffect::GetInstance().Draw(view, proj, light, paramC);
 
 //4画面に体力を表示.
 		//前後関係無視..
@@ -390,7 +385,6 @@ void CGameMain::Draw()
 		//キル数の描画..
 		m_pSpriteKillNomber[i]->Draw();
 		CDirectX11::GetInstance().SetDepth(true);
-
 	}
 	//全画面ビューポートに戻す.
 	D3D11_VIEWPORT fullvp = {};
@@ -414,15 +408,15 @@ void CGameMain::Draw()
 	//タイマー描画..
 	m_Timer->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
-
-
-	//エフェクトもここでやる.
-
+	
 }
 
 
 void CGameMain::Init()
 {
+	//キャラにShotManagerを設定.
+	m_pCharacterManager->SetShotManager(m_pShotManager);
+
 	////キャラの情報を設定.
 	//for (size_t i = 0; i < m_pCharacterManager->GetControlPlayer(); ++i)
 	//{
@@ -645,8 +639,6 @@ void CGameMain::Create()
 	// 爆風マネージャーをセット
 	m_pCollisionManager->SetCBlastCollisionManager(m_pBlastManager);
 
-	// ショットマネージャーセット
-	m_pCharacterManager->SetShotManager(m_pShotManager);
 }
 
 HRESULT CGameMain::LoadData()
@@ -680,6 +672,7 @@ HRESULT CGameMain::LoadData()
 		256, 256,		//元画像の幅,高さ..
 		256, 256		//アニメーションをしないので、0でいい..
 	};
+
 	//制限時間の枠の読み込み
 	m_pSprite2DTimerFrame->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE, false);
 	m_pSprite2DTimer->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE, false);
@@ -691,6 +684,7 @@ HRESULT CGameMain::LoadData()
 	m_pSpriteTimerFrame	->AttachSprite(m_pSprite2DTimerFrame);
 	m_pSpriteTimer		->AttachSprite(m_pSprite2DTimer);
 	m_pSpriteTimerArrow	->AttachSprite(m_pSprite2DTimerArrow);
+
 	//HPの分だけアタッチ
 	for (int i = 0; i < HP_MAX; i++)
 	{

@@ -30,15 +30,15 @@ void CCannon::Update()
 
 	//KeyInput();
 
-	CCharacter::Update();
+	CStaticMeshObject::Update();
 
-	auto ray = CCharacter::GetRayY();	//Y軸レイ取得
+	//auto ray = CStaticMeshObject::GetRayY();	//Y軸レイ取得
 }
 
 void CCannon::Draw(
 	D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	CCharacter::Draw(View, Proj, Light, Camera);
+	CStaticMeshObject::Draw(View, Proj, Light, Camera);
 }
 
 void CCannon::Init()
@@ -63,17 +63,17 @@ void CCannon::CreateBounding(std::shared_ptr<CStaticMesh> pCannon)
 void CCannon::Reload(D3DXVECTOR3 pos, float y, bool flag, int index)
 {
 	//クールタイムがインターバルより小さいとき.
-	if (m_ShotCoolTime < m_ShotInterval)
+	if (m_ShotCoolTime >= m_ShotInterval)
 	{
+		//クールタイムのリセット.
+		m_ShotCoolTime = 0;
+
 		return;
 	}
 
 	//弾生成.
-	if (m_pShot == nullptr)
+	if (m_pShot != nullptr)
 	{
 		m_pShot->Create(pos, y, flag, index);
 	}
-
-	//クールタイムのリセット.
-	m_ShotCoolTime = 0;
 }

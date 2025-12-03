@@ -2,13 +2,15 @@
 #include <iostream>
 
 //-----外部クラス-----
+#include "../../../../GameObject/SpriteObject/CSpriteObject.h"	//スプライトオブジェクトクラス.
 #include "../../../../Camera/CCamera.h" //カメラクラス.
-#include "../../../../GameObject/StaticMeshObject/Ground/GroundManager/CGroundManager.h" //地面クラス.
+
+
 
 //-----メッシュクラス-----
 #include "../../../../Assets/Mesh/StaticMesh/CStaticMesh.h" //スタティックメッシュクラス.
 #include "../../../../GameObject/StaticMeshObject/CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス.
-
+#include "../../../../Assets/Sprite/Sprite3D/CSprite3D.h" //地面スプライト.
 
 //======================================================
 //	タイトルの演出.
@@ -30,16 +32,26 @@ public:
 	//読み込み関数.
 	HRESULT LoadData();
 
-public:
-	//スタティックメッシュクラス.
-	std::shared_ptr<CStaticMesh>		m_GroundMesh;		//地面メッシュ.
-	std::shared_ptr<CStaticMesh>		m_BackGroundMesh;	//背景メッシュ.
+	//地面の動き.
+	void MoveGround();
 
-	//カメラクラス変数.
+public:
+	//円周率.
+	const float PI = 3.141592;
+
+	//UVを動かす用.
+	D3DXVECTOR2 m_UV;
+
+	//カメラクラス.
 	std::shared_ptr<CCamera>			m_Camera;
+
+	//スタティックメッシュクラス.
+	std::shared_ptr<CStaticMesh>		m_BackGroundMesh;	//背景メッシュ.
+	//スプライトクラス.
+	std::unique_ptr<CSprite3D>			m_SpriteGround;
+
 	//背景.
 	std::unique_ptr<CStaticMeshObject>	m_pBackImgObject;
-	//地面クラス変数.
-	std::unique_ptr<CGroundManager>		m_Ground;
-
+	//地面クラス.
+	std::unique_ptr<CSpriteObject>		m_SpriteObjGround;
 };

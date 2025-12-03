@@ -44,6 +44,9 @@ void CGameResult::Update()
 	//BGMのループ再生.
 	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
 
+	//コントローラーの取得※0番のみ動かせる.
+	CController* controller = CControllerManager::GetInstance().GetController(0);
+
 
 	//↓-----タイトルでの演出-----↓.
 	m_Key->Update();
@@ -52,7 +55,7 @@ void CGameResult::Update()
 	//↑-----タイトルでの演出-----↑.
 
 
-	if (m_Key->ReleaseInputKey('Z') == true)
+	if (m_Key->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 	{
 		//BGMのループ停止.
 		CSoundManager::Stop(CSoundManager::BGM_Title);

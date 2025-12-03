@@ -75,7 +75,7 @@ bool CXInput::Update()
 			m_state.Gamepad.sThumbLY		= m_TestLY;
 			m_state.Gamepad.sThumbLX		= m_TestLX;
 			m_state.Gamepad.sThumbRX		= m_TestRX;
-			m_state.Gamepad.sThumbRY		= m_TestRX;
+			m_state.Gamepad.sThumbRY		= m_TestRY;
 			m_state.Gamepad.bLeftTrigger	= m_TestLT;
 			m_state.Gamepad.bRightTrigger	= m_TestRT;
 		}
@@ -158,63 +158,56 @@ bool CXInput::IsRepeat( KEY key )
 
 float CXInput::GetLeftStickXNormalized() const
 {
-	//値を取得.
 	float value = static_cast<float>(m_state.Gamepad.sThumbLX);
 
-	//デッドゾーン処理.
 	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
 	if (fabs(value) < DEADZONE)
 	{
 		return 0.0f;
 	}
-	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
 	return value / 32767.0f;
 }
 
 float CXInput::GetLeftStickYNormalized() const
 {
-	//値を取得.
 	float value = static_cast<float>(m_state.Gamepad.sThumbLY);
 
-	//デッドゾーン処理.
-	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE); // ← LEFT に修正
 	if (fabs(value) < DEADZONE)
 	{
 		return 0.0f;
 	}
-	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
 	return value / 32767.0f;
 }
 
 float CXInput::GetRightStickXNormalized() const
 {
-	//値を取得.
-	float value = static_cast<float>(m_state.Gamepad.sThumbLY);
+	//Right XはsThumbRX
+	float value = static_cast<float>(m_state.Gamepad.sThumbRX);
 
-	//デッドゾーン処理.
 	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
 	if (fabs(value) < DEADZONE)
 	{
 		return 0.0f;
 	}
-	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
 	return value / 32767.0f;
 }
 
 float CXInput::GetRightStickYNormalized() const
 {
-	//値を取得.
-	float value = static_cast<float>(m_state.Gamepad.sThumbLX);
+	//RightYはsThumbRY
+	float value = static_cast<float>(m_state.Gamepad.sThumbRY);
 
-	//デッドゾーン処理.
-	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+	const float DEADZONE = static_cast<float>(XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
 	if (fabs(value) < DEADZONE)
 	{
 		return 0.0f;
 	}
-	//範囲補正(-32767.0f～32767.0f → -1.0～1.0).
 	return value / 32767.0f;
 }
+
+
+
 
 float CXInput::GetLeftTriggerNormalized() const
 {
@@ -279,9 +272,10 @@ bool CXInput::UpdateStatus()
 	{
 		m_connect = true;
 
+#ifdef _DEBUG
 		//確認用.
 		std::cout << "PadID" << m_padId << "Connect" << (m_connect ? "YES" : "NO") << std::endl;
-
+#endif
 		return true;
 	}
 	else
@@ -290,9 +284,10 @@ bool CXInput::UpdateStatus()
 		//初期化.
 		ZeroMemory(&m_state, sizeof(m_state));
 
+#ifdef _DEBUG
 		//確認用.
 		std::cout << "PadID" << m_padId << "Connect" << (m_connect ? "YES" : "NO") << std::endl;
-
+#endif
 		return false;
 	}
 }

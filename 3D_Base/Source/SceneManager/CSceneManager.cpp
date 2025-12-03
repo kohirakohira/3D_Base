@@ -16,6 +16,7 @@ CSceneManager::CSceneManager(HWND hWnd )
 		m_CurrentSceneType = CSceneType::Title;
 		Change(std::make_shared<CGameTitle>(m_hWnd));
 	}
+
 }
 
 CSceneManager::~CSceneManager()

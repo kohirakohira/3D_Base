@@ -23,6 +23,7 @@ CController::~CController()
 void CController::Update()
 {
 	m_Connected = m_Pad->Update();
+
 }
 
 //Ú‘±”»’è.

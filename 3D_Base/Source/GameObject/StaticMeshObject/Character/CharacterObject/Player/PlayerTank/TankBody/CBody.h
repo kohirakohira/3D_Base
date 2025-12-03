@@ -1,6 +1,6 @@
 #pragma once
 //-----継承するクラス-----
-#include "GameObject//StaticMeshObject//Character//CCharacter.h" // キャラクタークラス
+#include "GameObject//StaticMeshObject//CStaticMeshObject.h" //スタティックメッシュオブジェクトクラス
 
 //-----外部クラス-----
 #include "GameObject//StaticMeshObject//Character//CharacterObject//Player//PlayerTank//TankCannon//CCannon.h" // 戦車：砲塔クラス
@@ -16,7 +16,7 @@
 class CInputManager;
 
 class CBody
-	: public CCharacter	// キャラクタークラスを継承
+	: public CStaticMeshObject	//スタティックメッシュオブジェクトを継承
 {
 public:
 	// 移動状態
@@ -39,11 +39,6 @@ public:
 	// 初期化関数
 	void Init();
 
-	// パラメータの設定
-	void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; };
-	// パラメータの取得
-	const TankTuning& GetTuning() const override { return m_Tuning; }
-
 	// ラジコン操作
 	void RadioControl();
 
@@ -59,12 +54,11 @@ public:
 	//移動列挙型の設定.
 	void SetMoveState(enMoveState state) { m_MoveState = state; }
 
-protected:
+private:
 	float		m_TurnSpeed;	// 回転速度
 	float		m_MoveSpeed;	// 移動速度
 	enMoveState m_MoveState;	// 移動状態
 
-private:
 	bool		m_Death;			// 死亡
 	int			m_RespawnCoolTime;  // リスポーンクールタイム
 	int			m_RespawnTime;		// リスポーン時間測定

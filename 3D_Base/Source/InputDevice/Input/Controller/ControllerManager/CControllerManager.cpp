@@ -34,8 +34,11 @@ void CControllerManager::Update()
 		}
 	}
 
+#ifdef _DEBUG
 	std::cout << "接続された数->" << m_ConnectedCount << std::endl;
 	std::cout << "切断された数->" << PLAYER_MAX - m_ConnectedCount << std::endl;
+#endif
+
 }
 
 //全コントローラーの切断処理.

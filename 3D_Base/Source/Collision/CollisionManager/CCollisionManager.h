@@ -40,7 +40,7 @@ public:
 	// プレイヤーとプレイヤー当たり判定判別
 	void PlayertoPlayer();
 	// プレイヤーとアイテムボックス
-	void PlayertoItemBox();
+	void CharactertoItemBox();
 	// プレイヤーと弾
 	void PlayertoShot();
 	// 木箱とプレイヤー
@@ -53,6 +53,8 @@ public:
 	void GroundtoItemBox();
 	// 爆風とプレイヤーの当たり判定
 	void PlayertoBlast();
+	//アイテムと木箱.
+	void ItemtoWoodBox();
 
 	//-----------------------
 	// 外部から情報をセット

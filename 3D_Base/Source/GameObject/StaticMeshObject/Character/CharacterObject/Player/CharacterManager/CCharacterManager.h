@@ -23,7 +23,7 @@
 #include "InputDevice/Input/Controller\ControllerManager/CControllerManager.h"
 
 class CCharacterManager
-	: public CCharacter
+	: public CStaticMeshObject
 {
 public:
 	CCharacterManager();
@@ -66,7 +66,6 @@ public:
 
 	//=======プレイヤーを取得=======	
 	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(int index); // 引数あり
-	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(); // 引数なし
 	//============================
 
 	void SwitchActivePlayer(); // 旧コード：動かせるプレイヤーを変更できた
@@ -95,12 +94,9 @@ public:
 	//============================
 
 	//=======パラメータの設定・取得=======
-	void SetTuning(const TankTuning& tuning) override { m_Tuning = tuning; }
-	const TankTuning& GetTuning() const override { return m_Tuning; }
+	void SetTuning(const TankTuning& tuning, int index);
+	const TankTuning& GetTuning(int index) const;
 	//==================================
-
-	// プレイヤークラスをセット
-	void SetCPlayer(std::vector<std::shared_ptr<CPlayer>> pPlayer) { m_pPlayer = pPlayer; }
 
 private:
 
@@ -122,12 +118,13 @@ private:
 	//↓松岡.
 	std::shared_ptr<CBody>					m_pBody;
 	std::shared_ptr<CCannon>				m_pCannon;
-    //std::vector<std::shared_ptr<CPlayer>>	m_pPlayers;
 	std::shared_ptr<CShotManager>			m_ShotManager; //弾マネージャー
+	std::shared_ptr<CComPlayer>				m_pCom;
+	//*仮追加
+	//std::shared_ptr<CComPlayer>				m_pCom;
 
 	//CPlayerとCComPlayerを同一コンテナで管理するための基底に統一
-	std::vector<std::shared_ptr<CCharacterObjectBase>> m_pPlayers;
-	std::vector<std::shared_ptr<CPlayer>> m_pPlayer;
+	std::vector<std::shared_ptr<CCharacterObjectBase>> m_pCharacter;
 
 	int m_ActivePlayerIndex;	// 現在操作中のプレイヤー(デバッグ用)
 

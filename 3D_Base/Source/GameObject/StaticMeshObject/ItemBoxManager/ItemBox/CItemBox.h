@@ -4,6 +4,8 @@
 #include "GameObject//StaticMeshObject//CStaticMeshObject.h" /* 継承クラス || スタティックメッシュオブジェクトクラス */
 #include "GameObject//StaticMeshObject//ItemBoxManager//ItemBoxType//ItemType.h" // アイテムタイプ
 #include "Global.h"
+//エフェクト.
+#include "Assets/Effect/CEffect.h"
 
 ///------------------------------------------------------
 /// アイテムボックス
@@ -32,6 +34,8 @@ public:
 	bool GetGravity() { return IsGravity; }
 	//アイテム情報を渡す用.
 	ItemInfomation GetItem() const { return m_Item; }
+	//アイテム情報を設定する.
+	void SetItem(ItemInfomation item) { m_Item = item; }
 
 	//アイテムの種類を取得する関数.
 	CItemType GetItemInfo() { return m_ItemType; }
@@ -57,12 +61,15 @@ public:
 	// 当たった時の処理
 	void HitPlayer();
 
-	// バウンディングボックスを作成
-	void CreateBounding(std::shared_ptr<CStaticMesh> pItemBox);
+	//エフェクトの始まり終わり.
+	void StartEffect();
 
 protected:
 	//重力があるかないか.
 	bool IsGravity;
+
+	//アイテムの煙.
+	bool ItemFlag;
 
 	//初期速度.
 	float InitialSpeed;
@@ -79,5 +86,9 @@ protected:
 
 	//アイテムの種類.
 	CItemType m_ItemType;
+
+	//エフェクトのインスタンスごとに必要なハンドル
+	//※３つ表示して制御するなら３つ必要になる
+	::EsHandle hEffect;
 
 };

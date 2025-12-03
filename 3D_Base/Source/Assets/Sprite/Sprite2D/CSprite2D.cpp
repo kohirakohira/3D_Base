@@ -409,13 +409,6 @@ void CSprite2D::Render()
 		}
 		else
 		{
-			//定数宣言.
-			const float MOVE_SPEAD = 0.001f;
-
-			//背景の動き.
-			m_UV.x += MOVE_SPEAD;
-			m_UV.y -= MOVE_SPEAD;
-
 			//テクスチャの移動.
 			cb.vUV.x = m_UV.x;
 			cb.vUV.y = m_UV.y;

@@ -4,6 +4,8 @@
 CItemBoxManager::CItemBoxManager()
 	: m_Item			()
 	, m_ItemInfo		()
+	, m_ItemPosInfo		(ITEM_POS::TOP)
+	, m_OldItemPos		(D3DXVECTOR3(0.0f, 0.0f, 0.0f))
 {
 }
 
@@ -13,6 +15,8 @@ CItemBoxManager::~CItemBoxManager()
 
 void CItemBoxManager::Update()
 {
+	//動的生成.
+	Create();
 	for (auto& item : m_Item)
 	{
 		item->Update();
@@ -47,7 +51,18 @@ void CItemBoxManager::Create()
 		//メッシュの設定.
 		item->AttachMesh(m_ItemMesh);
 		//各設定.
-		D3DXVECTOR3 pos = ItemPositionRandom();
+		D3DXVECTOR3 pos = {0.0f, 0.0f, 0.0f};
+		//m_OldItemPosの中身があるなら、位置を取得されたアイテム位置に設定する.
+		if (m_OldItemPos != D3DXVECTOR3(0.0f, 0.0f, 0.0f))
+		{
+			pos = m_OldItemPos;
+			m_OldItemPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		}
+		else
+		{
+			pos = SetItemPosition();
+		}
+		//アイテム情報を更新.
 		item->SetPosition(pos.x, pos.y, pos.z);
 		item->SetRotation(0.0f, 0.0f, 0.0f);
 		item->SetScale(D3DXVECTOR3(0.2f, 0.2f, 0.2f));
@@ -75,12 +90,12 @@ void CItemBoxManager::AttachMesh(std::shared_ptr<CStaticMesh> pMesh)
 	m_ItemMesh = pMesh;
 }
 
-void CItemBoxManager::CreateBounding(std::shared_ptr<CStaticMesh>& pItem)
+void CItemBoxManager::RemoveItem(int index)
 {
-	// バウンディング設定.
-	for (auto& item : m_Item)
+	if (index >= 0 && index < m_Item.size())
 	{
-		item->CreateBounding(pItem);
+		m_OldItemPos = { m_Item[index]->GetPosition().x, 20.0f, m_Item[index]->GetPosition().z };
+		m_Item.erase(m_Item.begin() + index);
 	}
 }
 
@@ -195,13 +210,46 @@ D3DXVECTOR3 CItemBoxManager::ItemPositionRandom()
 	static std::mt19937 gen(rd());
 
 	//範囲設定.
-	std::uniform_real_distribution < float > distX(-25.0f, 25.0f);
-	std::uniform_real_distribution < float > distZ(-25.0f, 25.0f);
+	std::uniform_real_distribution < float > distX(-22.0f, 22.0f);
+	std::uniform_real_distribution < float > distZ(-22.0f, 22.0f);
 
 	//Y軸固定.
 	const float fixedY = 20.0f;
 
 	return D3DXVECTOR3(distX(gen), fixedY, distZ(gen));
+}
+
+//アイテムの位置を設定.
+D3DXVECTOR3 CItemBoxManager::SetItemPosition()
+{
+	//アイテムの位置を固定で設定.
+	D3DXVECTOR3 pos;
+
+	switch (m_ItemPosInfo)
+	{
+	case CItemBoxManager::TOP:
+		pos = { 0.0f, 20.0f, 12.0f };
+		m_ItemPosInfo = ITEM_POS::Down;
+		break;
+	case CItemBoxManager::Down:
+		pos = { 0.0f, 20.0f, -12.0f };
+		m_ItemPosInfo = ITEM_POS::LEFT;
+		break;
+	case CItemBoxManager::LEFT:
+		pos = { -12.0f, 20.0f, 0.0f };
+		m_ItemPosInfo = ITEM_POS::RIGHT;
+		break;
+	case CItemBoxManager::RIGHT:
+		pos = { 12.0f, 20.0f, 0.0f };
+		m_ItemPosInfo = ITEM_POS::TOP;
+		break;
+	case CItemBoxManager::NONE:
+		break;
+	default:
+		break;
+	}
+
+	return pos;
 }
 
 //アイテムの情報を取得する.
@@ -223,5 +271,13 @@ std::shared_ptr<CCollider> CItemBoxManager::GetCollider() const
 	for (auto& item : m_Item)
 	{
 		return item->GetCollider();
+	}
+}
+
+std::shared_ptr<CCollider> CItemBoxManager::GetCollider(int index) const
+{
+	if (index >= 0 && index < m_Item.size())
+	{
+		return m_Item[index]->GetCollider();
 	}
 }
