@@ -284,7 +284,7 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 	//Rotate(input);
 
 	// RB“ü—Í‚ª‚ ‚Á‚½Žž ¨ ƒŠƒ[ƒh
-	if (controller->Down(CXInput::RB, true))
+	if (controller->Repeat(CXInput::RB))
 	{
 		Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
 	}
