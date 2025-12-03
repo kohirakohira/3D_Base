@@ -281,7 +281,8 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 	RotateTurretByPad();
 	//Rotate(input);
 
-	// RB入力があった時 → リロード
+	// RT入力があった時 → リロード
+	//※押し込み具合：50(0～255).
 	if (controller->GetRightTrigger(50) == CController::Trigger::RightTrigger)
 	{
 		Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
