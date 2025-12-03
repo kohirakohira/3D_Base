@@ -17,7 +17,7 @@
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス
 //検証用.
-#include "GameObject//StaticMeshObject//Character//Player//PlayerManager//CPlayerManager.h" // プレイヤーマネージャークラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/Player/CharacterManager/CCharacterManager.h" // キャラクターマネージャークラス
 
 //アイテム.
 #include "GameObject//StaticMeshObject//ItemBoxManager//CItemBoxManager.h" // アイテムボックスマネージャークラス
@@ -112,8 +112,8 @@ public:
 	std::shared_ptr<CStaticMesh>		m_pStaticMesh_TankBodyBlue;
 	std::shared_ptr<CStaticMesh>		m_pStaticMesh_TankCannonBlue;
 
-	//プレイヤーマネージャー.
-	//std::shared_ptr<CPlayerManager> 	m_pPlayerManager;
+	//キャラクターマネージャークラス
+	//std::shared_ptr<CPlayerManager> 	m_pCharacterManager;
 
 
 	//タイマークラス.

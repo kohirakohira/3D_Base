@@ -20,6 +20,7 @@ CSprite3D::CSprite3D()
 	, m_vRotation		()
 	, m_vScale			( 1.0f, 1.0f, 1.0f )
 	, m_UV				( 0.0f, 0.0f )
+	, m_MoveFlag		( false )
 	, m_Alpha			( 1.0f )
 	, m_SpriteState		()
 	, m_PatternNo		()
@@ -348,7 +349,7 @@ void CSprite3D::Render(
 	D3DXMatrixRotationY( &mYaw,		m_vRotation.y );
 	D3DXMatrixRotationX( &mPitch,	m_vRotation.x );
 	D3DXMatrixRotationZ( &mRoll,	m_vRotation.z );
-	mRot = mYaw * mPitch * mRoll;
+	mRot = mPitch * mYaw * mRoll;
 	//※Yaw, Pitch, Roll の掛ける順番を変えると結果も変わる.
 
 	//平行行列（平行移動）.
@@ -390,14 +391,25 @@ void CSprite3D::Render(
 		//カラー.
 		cb.vColor = D3DXVECTOR4( 1.0f, 1.0f, 1.0f, m_Alpha );
 
-		//テクスチャ座標(UV座標)
-		//１マスあたりの割合にパターン番号(マス目)をかけて座標を設定する
-		cb.vUV.x =
-			m_SpriteState.Stride.w / m_SpriteState.Base.w
-			* static_cast<float>(m_PatternNo.x);
-		cb.vUV.y =
-			m_SpriteState.Stride.h / m_SpriteState.Base.h
-			* static_cast<float>(m_PatternNo.y);
+		//テクスチャの動き.
+		if (m_MoveFlag == false)
+		{
+			//テクスチャ座標(UV座標)
+			//１マスあたりの割合にパターン番号(マス目)をかけて座標を設定する
+			cb.vUV.x =
+				m_SpriteState.Stride.w / m_SpriteState.Base.w
+				* static_cast<float>(m_PatternNo.x);
+			cb.vUV.y =
+				m_SpriteState.Stride.h / m_SpriteState.Base.h
+				* static_cast<float>(m_PatternNo.y);
+		}
+		else
+		{
+			//テクスチャの移動.
+			cb.vUV.x = m_UV.x;
+			cb.vUV.y = m_UV.y;
+
+		}
 
 		memcpy_s(pData.pData, pData.RowPitch,
 			(void*)( &cb ), sizeof( cb ) );

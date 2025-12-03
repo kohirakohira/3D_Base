@@ -17,7 +17,7 @@
 #include "GameObject//UI//ChoiceImage//CChoiceImage.h"  // 選択肢クラス
 
 //キーの入力.
-#include "InputDevice//Matuoka//CMultiInputKeyManager.h" // キー入力用
+#include "InputDevice//Key\\CMultiInputManager//CMultiInputKeyManager.h" // キー入力用
 
 #include "Assets//Sprite//Sprite3D//CSprite3D.h" // 3Dスプライトクラス.
 
@@ -71,9 +71,6 @@ public:
 	std::shared_ptr<CUIObject>			m_pSpritePlaySelectImg;
 	std::shared_ptr<CUIObject>			m_pSpriteEndSelectImg;
 
-	//タイトル演出用クラス.
-	std::unique_ptr<CTitleProduction>	m_TitleProduction;
-
 	//シーンタイプ変数.
 	CSceneType m_SceneType;
 
@@ -87,5 +84,7 @@ public:
 //------------------------------------------------------------------------------------------
 //	演出.
 //------------------------------------------------------------------------------------------
+	//タイトル演出用クラス.
+	std::unique_ptr<CTitleProduction>	m_TitleProduction;
 
 };

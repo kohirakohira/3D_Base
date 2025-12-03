@@ -16,6 +16,7 @@ CSceneManager::CSceneManager(HWND hWnd )
 		m_CurrentSceneType = CSceneType::Title;
 		Change(std::make_shared<CGameTitle>(m_hWnd));
 	}
+
 }
 
 CSceneManager::~CSceneManager()
@@ -26,6 +27,9 @@ CSceneManager::~CSceneManager()
 //動作処理.
 void CSceneManager::Update()
 {
+	//コントローラーの入力を常に受け付ける.
+	CControllerManager::GetInstance().Update();
+
 	//シーン切り替え.
 	m_NextType = m_pScene->GetSceneType();
 	if (m_NextType != m_CurrentSceneType)
@@ -75,6 +79,8 @@ void CSceneManager::Draw()
 		////ImGuiの描画.
 		//m_ImguiManager.Render();
 	}
+
+	
 }
 
 //データのロード処理.

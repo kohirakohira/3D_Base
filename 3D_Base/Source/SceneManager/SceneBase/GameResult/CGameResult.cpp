@@ -19,7 +19,7 @@ CGameResult::CGameResult(HWND hWnd)
 	, m_pStaticMeshGround	( nullptr )
 	, m_pStaticMeshCloud	( nullptr )
 
-	, m_pPlayerManager		( nullptr )
+	, m_pCharacterManager		( nullptr )
 	, m_pGround				( nullptr )
 
 	, m_pCamera				( nullptr )
@@ -44,6 +44,9 @@ void CGameResult::Update()
 	//BGMのループ再生.
 	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
 
+	//コントローラーの取得※0番のみ動かせる.
+	CController* controller = CControllerManager::GetInstance().GetController(0);
+
 
 	//↓-----タイトルでの演出-----↓.
 	m_Key->Update();
@@ -52,7 +55,7 @@ void CGameResult::Update()
 	//↑-----タイトルでの演出-----↑.
 
 
-	if (m_Key->ReleaseInputKey('Z') == true)
+	if (m_Key->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 	{
 		//BGMのループ停止.
 		CSoundManager::Stop(CSoundManager::BGM_Title);
@@ -76,7 +79,7 @@ void CGameResult::Draw()
 	m_pCamera->Info();
 
 	//プレイヤーの描画.
-	m_pPlayerManager->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
+	m_pCharacterManager->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
 
 	//地面の描画.
 	m_pGround->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
@@ -97,7 +100,7 @@ void CGameResult::Init()
 	m_pCamera->SetCameraPos(-1.5f, 1.5f, 14.f);
 	m_pCamera->SetLightPos(-1.5f, 2.f, 5.f);
 	//位置の設定.
-	m_pPlayerManager->SetPosition(0.f, 1.f, 6.f);
+	//m_pCharacterManager->SetPosition(0.f, 1.f, 6.f);
 
 	//大きさを設定.
 	m_pSpriteObj->SetPosition(WND_W / 2 - 640, 0.f, 0.f);
@@ -138,7 +141,7 @@ void CGameResult::Create()
 	m_pStaticMeshCloud = std::make_shared<CStaticMesh>();
 
 	//キャラクタークラスのインスタンス作成
-	m_pPlayerManager = std::make_shared<CPlayerManager>();
+	m_pCharacterManager = std::make_shared<CCharacterManager>();
 
 	//地面クラスのインスタンス作成.
 	m_pGround = std::make_shared<CGround>();
@@ -212,7 +215,7 @@ HRESULT CGameResult::LoadData()
 	m_pChoiceIcon->AttachSprite(m_SpriteChoice);
 
 	//キャラクターにアタッチ.
-	m_pPlayerManager->AttachMesh(m_pStaticMeshFighter);
+	m_pCharacterManager->AttachMesh(m_pStaticMeshFighter);
 	m_pGround->AttachMesh(m_pStaticMeshGround);
 
 	return S_OK;

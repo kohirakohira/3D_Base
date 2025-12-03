@@ -1,5 +1,5 @@
 #pragma once
-
+#include <memory>
 #include "Collision//Shape//Volume//BoundingSphere//CBoundingSphere.h"
 
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h"

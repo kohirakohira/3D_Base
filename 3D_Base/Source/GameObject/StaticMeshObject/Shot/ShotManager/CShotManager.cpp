@@ -14,7 +14,7 @@ void CShotManager::Initialize()
 {
 	for (int i = 0; i < ShotMax; ++i)
 	{
-		m_pShots.push_back(std::make_unique<CShot>());
+		m_pShots.push_back(std::make_shared<CShot>());
 	}
 	m_pShots.reserve(ShotMax);
 }
@@ -49,7 +49,10 @@ void CShotManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA
 
 void CShotManager::HitShot()
 {
+#ifdef _DEBUG
 	std::cout << "削除前の弾数: " << m_pShots.size() << std::endl;
+#endif
+
 	// 1. 削除対象の要素を末尾に移動させ、新しい終端イテレータ(it)を取得
 	auto it = std::remove_if(
 		m_pShots.begin(),
@@ -63,11 +66,15 @@ void CShotManager::HitShot()
 	// 2. 新しい終端イテレータ(it)から元の終端までを削除
 	m_pShots.erase(it, m_pShots.end());
 
-	 std::cout << "削除後の弾数: " << m_pShots.size() << std::endl;
+#ifdef _DEBUG
+	std::cout << "削除後の弾数: " << m_pShots.size() << std::endl;
+#endif
+
 }
 
 void CShotManager::Create(const D3DXVECTOR3& pos, float rotY, bool shotFlg, int No)
 {
+
 	// インスタンス生成
 	auto shot = std::make_unique<CShot>();
 

@@ -24,7 +24,6 @@ CGameSettings::CGameSettings(HWND hWnd)
 
 	, m_SpriteConnection			()
 
-
 	, m_pSpriteSettingImg			( nullptr )
 	, m_pSpriteSettingBackGroundImg ( nullptr )
 
@@ -51,19 +50,11 @@ CGameSettings::~CGameSettings()
 //動作関数.
 void CGameSettings::Update()
 {
-	//定数宣言.
-	constexpr float UV_SPEED = 0.001f;
-
-
+	//コントローラーの取得※0番のみ動かせる.
+	CController* controller = CControllerManager::GetInstance().GetController(0);
 
 	//BGMのループ再生.
 	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
-
-	//背景の動かす速度.
-	m_UV.x += UV_SPEED;
-	m_UV.y -= UV_SPEED;
-	//背景の模様を動かす値を設定.
-	m_pSpriteSettingBackGround->SetUVInfomation(m_UV, true);
 
 	//キー入力受付.
 	m_InputKey->Update();
@@ -78,25 +69,28 @@ void CGameSettings::Update()
 	m_pSpriteChoiceImg->Update();
 
 	//シーンの遷移.
-	if (m_InputKey->ReleaseInputKey('Z') == true)
+	//if (controller && controller->CheckConnected())
 	{
-		if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
+		if (m_InputKey->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 		{
-			//BGMの停止.
-			CSoundManager::Stop(CSoundManager::BGM_Title);
+			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
+			{
+				//BGMの停止.
+				CSoundManager::Stop(CSoundManager::BGM_Title);
 
-			m_SceneType = CSceneType::Title;
-			
-			return;
-		}
-		else
-		{
-			//BGMの停止.
-			CSoundManager::Stop(CSoundManager::BGM_Title);
+				m_SceneType = CSceneType::Title;
 
-			m_SceneType = CSceneType::Main;
+				return;
+			}
+			else
+			{
+				//BGMの停止.
+				CSoundManager::Stop(CSoundManager::BGM_Title);
 
-			return;
+				m_SceneType = CSceneType::Main;
+
+				return;
+			}
 		}
 	}
 }
@@ -120,10 +114,17 @@ void CGameSettings::Draw()
 	//画像インスタンスの複製.
 	for (int i = 0; i < IMAGE; i++)
 	{
-		m_SpriteConnectionImg[i]->Draw();
+		//コントローラーの取得
+		if (CControllerManager::GetInstance().GetController(i))
+		{
+			// 準備完了
+			m_SpriteConnectionImg[i]->Draw();
+		}
+		else
+		{
+			//m_SpriteConnectionImg[i]->Draw();
+		}
 	}
-
-
 
 	m_pSpriteYesSelectImg->Draw();
 	m_pSpriteNoSelectImg->Draw();
@@ -332,6 +333,9 @@ HRESULT CGameSettings::LoadData()
 //背景を動かす関数.
 void CGameSettings::MoveBackGround()
 {
+	//定数宣言.
+	const float UV_SPEED = 0.001f;
+
 	m_UV.x += UV_SPEED;
 	m_UV.y -= UV_SPEED;
 	//背景の模様を動かす値を設定.

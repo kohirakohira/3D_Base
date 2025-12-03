@@ -1,33 +1,35 @@
 #pragma once
-#include "GameObject//StaticMeshObject//Character//CCharacter.h" // 継承 || キャラクタークラス
+#include "GameObject//StaticMeshObject//CStaticMeshObject.h" // 継承 
 
 //-----外部クラス-----
 #include "Camera//CCamera.h" //カメラクラス
-#include "InputDevice//Input//CInputManager.h" // 入力受付クラス
+#include "InputDevice//Input//Controller//CController.h" // コントローラークラス
 #include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h"
+
+#include <memory>
 
 /**************************************************
 *	砲塔クラス.
 **/
 class CCannon
-	: public CCharacter	//キャラクタークラスを継承.
+	: public CStaticMeshObject	//スタティックメッシュオブジェクトを継承.
 {
 public:
 	CCannon(int inputID);
-	virtual ~CCannon() override;
+	~CCannon();
 
-	virtual void Initialize(int id);
+	// 更新関数
+	void Update() override;
+	// 描画関数
+	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+	// 初期化関数
+	void Init();
 
-	virtual void Update() override;
-	virtual void Draw(
-		D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
-
+	// 砲塔座標設定
 	void SetCannonPosition(const D3DXVECTOR3& Pos);
 
+	// 砲塔の情報を渡す
 	D3DXVECTOR3 GetCannonPosition() const { return m_vPosition; }
-
-	// 入力クラスを設定
-	void SetInputManager(const std::shared_ptr<CInputManager>& input);
 
 	//プレイヤーが壁に当たると戻す.
 	void PushBack(const D3DXVECTOR3& push);
@@ -38,23 +40,21 @@ public:
 	// 弾クラスの設定
 	void SetShotManager(const std::shared_ptr<CShotManager>& shot) { m_pShot = shot; }
 
-private:
-	// キー入力受付
-	void KeyInput();
+	//弾を作成・リロード・発射関数.
+	void Reload(D3DXVECTOR3 pos, float y, bool flag, int index);
 
-protected:
+private:
 	float		m_TurnSpeed;			// 回転速度
 
 	int			m_ShotCoolTime;			// ショットのクールタイム
 	const int	m_ShotInterval;			// ショットのインターバル
-	std::shared_ptr<CCamera> m_pCamera;
-
-private:
-	// プレイヤーの番号を管理するための変数
-	int 			m_PlayerID;				// 入力ID
-
-	std::shared_ptr<CInputManager>		m_pInput;
 
 	// 弾クラス
 	std::shared_ptr<CShotManager>		m_pShot;
+
+	// プレイヤーの番号を管理するための変数
+	int 			m_PlayerID;				// 入力ID
+
+	// コントローラークラス
+	CController* m_pController;
 };

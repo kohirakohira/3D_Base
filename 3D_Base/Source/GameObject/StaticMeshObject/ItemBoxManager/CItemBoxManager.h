@@ -11,6 +11,17 @@
 class CItemBoxManager
 {
 public:
+	//配置列挙体.
+	enum ITEM_POS
+	{
+		TOP = 0,
+		Down,
+		LEFT,
+		RIGHT,
+
+		NONE = -1
+	};
+public:
 	CItemBoxManager();
 	~CItemBoxManager();
 
@@ -26,11 +37,8 @@ public:
 	//メッシュの設定.
 	void AttachMesh(std::shared_ptr<CStaticMesh> pMesh);
 
-	// バウンディングオブジェクトの作成
-	void CreateBounding(std::shared_ptr<CStaticMesh>& pItem);
-
-	//// コライダーの作成
-	//void CreateCollider();
+	//アイテムの削除(1つだけ).
+	void RemoveItem(int index);
 
 	//位置設定.
 	void SetPosition(float x, float y, float z);
@@ -49,6 +57,9 @@ public:
 	//位置をランダム化.
 	D3DXVECTOR3 ItemPositionRandom();
 
+	//アイテムの位置を設定.
+	D3DXVECTOR3 SetItemPosition();
+
 	//アイテムの情報を取得する.
 	ItemInfomation GetItemInfo(int index);
 
@@ -60,6 +71,7 @@ public:
 
 	//当たり判定の取得.
 	std::shared_ptr<CCollider> GetCollider() const;
+	std::shared_ptr<CCollider> GetCollider(int index) const;
 
 public:
 	//アイテムボックス.
@@ -69,4 +81,8 @@ public:
 	
 	//アイテムの種類.
 	CItemType m_ItemInfo;
+
+	//アイテムの位置固定用.
+	ITEM_POS m_ItemPosInfo;
+	D3DXVECTOR3 m_OldItemPos;
 };

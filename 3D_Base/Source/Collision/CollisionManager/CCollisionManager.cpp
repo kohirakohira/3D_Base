@@ -22,8 +22,8 @@ CCollisionManager::CCollisionManager()
 	// 弾マネージャー
 	, m_pShotManager		()
 
-	// プレイヤーマネージャー
-	, m_pPlayerManager		()
+	// キャラクターマネージャー
+	, m_pCharacterManager		()
 
 	// 爆風当たり判定マネージャー
 	, m_pBlastManager		()
@@ -50,8 +50,8 @@ void CCollisionManager::Update()
 	// プレイヤーとプレイヤー当たり判定判別
 	PlayertoPlayer();
 
-	// プレイヤーとアイテムボックス
-	PlayertoItemBox();
+	// キャラクターとアイテムボックス
+	CharactertoItemBox();
 
 	// プレイヤーと弾
 	PlayertoShot();
@@ -68,19 +68,24 @@ void CCollisionManager::Update()
 	// 地面とアイテムボックス
 	GroundtoItemBox();
 
+	//復活するかも.
+	////アイテムと木箱.
+	//ItemtoWoodBox();
+
 	//爆風とプレイヤーの当たり判定.
 	PlayertoBlast();
 }
 
 void CCollisionManager::WalltoPlayer()
 {
-	// 押し返しの強さ
-	const float pushStrength = m_pPlayerManager->GetTuning().moveSpeed;
-
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
+		// 押し返しの強さ
+		const float pushStrength = m_pCharacterManager->GetTuning(i).moveSpeed;
+
 		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto player = m_pCharacterManager->GetControlPlayer(i);
+		if (!player)continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		// 押し返すための変数
@@ -177,12 +182,14 @@ void CCollisionManager::WalltoShot()
 // プレイヤーとプレイヤー当たり判別
 void CCollisionManager::PlayertoPlayer()
 {
-	const float pushStrength = m_pPlayerManager->GetTuning().moveSpeed;
-
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
+		//押し返す力.
+		const float pushStrength = m_pCharacterManager->GetTuning(i).moveSpeed;
+
 		// プレイヤーAのコライダー取得
-		auto playerA = m_pPlayerManager->GetControlPlayer(i);
+		auto playerA = m_pCharacterManager->GetControlPlayer(i);
+		if (!playerA)continue;
 		auto CollA = playerA->GetBody()->GetCollider();
 
 		for (int j = 0; j < PLAYER_MAX; j++)
@@ -191,7 +198,8 @@ void CCollisionManager::PlayertoPlayer()
 			if (i == j) continue;
 
 			// プレイヤーBのコライダー取得
-			auto playerB = m_pPlayerManager->GetControlPlayer(j);
+			auto playerB = m_pCharacterManager->GetControlPlayer(j);
+			if (!playerB->IsPlayer())continue;
 			auto CollB = playerB->GetBody()->GetCollider();
 
 			if (CollA->CheckCollision(*CollB))
@@ -212,14 +220,15 @@ void CCollisionManager::PlayertoPlayer()
 	}
 }
 
-// プレイヤーとアイテムボックス
-void CCollisionManager::PlayertoItemBox()
+// キャラクターとアイテムボックス
+void CCollisionManager::CharactertoItemBox()
 {
 	for (int PlayerIndex = 0; PlayerIndex < PLAYER_MAX; ++PlayerIndex)
 	{
 		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(PlayerIndex);
-		auto Coll = player->GetBody()->GetCollider();
+		auto chara = m_pCharacterManager->GetControlPlayer(PlayerIndex);
+		if (!chara)continue;
+		auto Coll = chara->GetBody()->GetCollider();
 
 		for (size_t ItemIndex = 0; ItemIndex < m_pItemBoxManager->GetItem().size(); ItemIndex++)
 		{
@@ -231,12 +240,11 @@ void CCollisionManager::PlayertoItemBox()
 				//画面から消す.
 				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
 
-				//無敵処理.
-				//プレイヤーに設定.
-				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_ShieldFlag != false)
-				{
-
-				}
+				////無敵処理.
+				////プレイヤーに設定.
+				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_ShieldFlag == true)
+				//{
+				//}
 
 				//速度設定.
 				//プレイヤーに設定.
@@ -245,30 +253,31 @@ void CCollisionManager::PlayertoItemBox()
 					//プレイヤーの速度を設定.
 					const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 0.03f, 0.03f, 0.3f };
 					//プレイヤーの情報を設定.
-					m_pPlayerManager->SetPlayerTuning(PlayerIndex, Info);
-				}
-
-				//攻撃力設定.
-				//弾に設定.
-				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Power > 0.0f)
-				{
+					m_pCharacterManager->SetPlayerTuning(PlayerIndex, Info);
 
 				}
 
-				//爆風の半径設定.
-				//爆風に設定.
-				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
-				{
-					//半径設定.
-					m_Rad = m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast;
-				}
+				////攻撃力設定.
+				////弾に設定.
+				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Power > 0.0f)
+				//{
+				//}
 
-				//装填時短設定.
-				//弾に設定.
-				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Reload > 0.0f)
-				{
+				////爆風の半径設定.
+				////爆風に設定.
+				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
+				//{
+				//}
 
-				}
+				////装填時短設定.
+				////弾に設定.
+				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Reload > 0.0f)
+				//{
+				//}
+
+				//配列(メモリ上)から消す.
+				m_pItemBoxManager->RemoveItem(ItemIndex);
+
 			}
 		}
 	}
@@ -280,7 +289,8 @@ void CCollisionManager::PlayertoShot()
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		// プレイヤーのコライダー取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto player = m_pCharacterManager->GetControlPlayer(i);
+		if (!player)continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		for (auto& shot : m_pShotManager->GetShot())
@@ -298,7 +308,7 @@ void CCollisionManager::PlayertoShot()
 				shot->HitShot();
 
 				// 仮でここに当たった時の処理を書いている
-				player->HitPlayer();
+				//player->HitPlayer();
 			}
 		}
 	}
@@ -307,107 +317,138 @@ void CCollisionManager::PlayertoShot()
 // 木箱とプレイヤー
 void CCollisionManager::WoodBoxtoPlayer()
 {
-	// 押し返しの強さ
-	const float pushStrength = m_pPlayerManager->GetTuning().moveSpeed;
-
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
+		// 押し返しの強さ
+		const float pushStrength = m_pCharacterManager->GetTuning(i).moveSpeed;
+
 		// i 番のプレイヤーを取得
-		auto player = m_pPlayerManager->GetControlPlayer(i);
-		auto Coll = player->GetBody()->GetCollider();
+		auto chara = m_pCharacterManager->GetControlPlayer(i);
+		if (!chara)continue;
+		auto charaColl = chara->GetBody()->GetCollider();
+		D3DXVECTOR3 charaPos = chara->GetBody()->GetPosition();
 
-		// 押し返すための変数
-		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
 
-		// 車体が壁と接触したとき
-		// 左上
-		if (Coll->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
+		//木箱をまとめて管理.
+		std::shared_ptr<CCollider> woodbox[] = {
+			m_pWoodBoxBottomLeft->GetCollider(),
+			m_pWoodBoxBottomRight->GetCollider(),
+			m_pWoodBoxCenter->GetCollider(),
+			m_pWoodBoxTopLeft->GetCollider(),
+			m_pWoodBoxTopRight->GetCollider()
+		};
+
+		for (auto& box : woodbox)
 		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopLeft->GetPosition();
-
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
+			if (charaColl->CheckCollision(*box))
 			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 右上
-		if (Coll->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopRight->GetPosition();
+				//方向ベクトル.
+				D3DXVECTOR3 dir = charaPos - box->GetPosition();
 
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 中央
-		if (Coll->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxCenter->GetPosition();
+				//長さを計算.
+				float len = D3DXVec3Length(&dir);
 
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 左下
-		if (Coll->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomLeft->GetPosition();
+				if (len > 0.0001f)
+				{
+					//正規化.
+					D3DXVec3Normalize(&dir, &dir);
+					dir *= pushStrength;
 
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
-			}
-		}
-		// 右下
-		if (Coll->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
-		{
-			// 衝突時の押し返し処理例
-			D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomRight->GetPosition();
-
-			// pushベクトルを正規化して押し返しの強さをかける
-			float length = D3DXVec3Length(&push);
-			if (length > 0.0001f)
-			{
-				push /= length;
-				push *= pushStrength;
-				player->GetBody()->PushBack(push);
+					// 壁に当たった時に押し返す
+					chara->GetBody()->PushBack(dir);
+					chara->GetCannon()->PushBack(dir);
+				}
 			}
 		}
 
-		// 押し返しを正規化
-		if (D3DXVec3Length(&push) > 0.f)
 		{
-			D3DXVec3Normalize(&push, &push);
-			push *= pushStrength;
-		}
+			// 車体が壁と接触したとき
+			//// 左上
+			//if (Coll->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
+			//{
+			//	// 衝突時の押し返し処理例
+			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopLeft->GetPosition();
 
-		// 壁に当たった時に押し返す
-		player->GetBody()->PushBack(push);
-		player->GetCannon()->PushBack(push);
+			//	// pushベクトルを正規化して押し返しの強さをかける
+			//	float length = D3DXVec3Length(&push);
+			//	if (length > 0.0001f)
+			//	{
+			//		push /= length;
+			//		push *= pushStrength;
+			//		player->GetBody()->PushBack(push);
+			//	}
+			//}
+			//// 右上
+			//if (Coll->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
+			//{
+			//	// 衝突時の押し返し処理例
+			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopRight->GetPosition();
+
+			//	// pushベクトルを正規化して押し返しの強さをかける
+			//	float length = D3DXVec3Length(&push);
+			//	if (length > 0.0001f)
+			//	{
+			//		push /= length;
+			//		push *= pushStrength;
+			//		player->GetBody()->PushBack(push);
+			//	}
+			//}
+			//// 中央
+			//if (Coll->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
+			//{
+			//	// 衝突時の押し返し処理例
+			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxCenter->GetPosition();
+
+			//	// pushベクトルを正規化して押し返しの強さをかける
+			//	float length = D3DXVec3Length(&push);
+			//	if (length > 0.0001f)
+			//	{
+			//		push /= length;
+			//		push *= pushStrength;
+			//		player->GetBody()->PushBack(push);
+			//	}
+			//}
+			//// 左下
+			//if (Coll->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
+			//{
+			//	// 衝突時の押し返し処理例
+			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomLeft->GetPosition();
+
+			//	// pushベクトルを正規化して押し返しの強さをかける
+			//	float length = D3DXVec3Length(&push);
+			//	if (length > 0.0001f)
+			//	{
+			//		push /= length;
+			//		push *= pushStrength;
+			//		player->GetBody()->PushBack(push);
+			//	}
+			//}
+			//// 右下
+			//if (Coll->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
+			//{
+			//	// 衝突時の押し返し処理例
+			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomRight->GetPosition();
+
+			//	// pushベクトルを正規化して押し返しの強さをかける
+			//	float length = D3DXVec3Length(&push);
+			//	if (length > 0.0001f)
+			//	{
+			//		push /= length;
+			//		push *= pushStrength;
+			//		player->GetBody()->PushBack(push);
+			//	}
+			//}
+			//// 押し返しを正規化
+			//if (D3DXVec3Length(&push) > 0.f)
+			//{
+			//	D3DXVec3Normalize(&push, &push);
+			//	push *= pushStrength;
+			//}
+		}
 	}
 }
+
+
 
 // 木箱と弾
 void CCollisionManager::WoodBoxtoShot()
@@ -507,6 +548,7 @@ void CCollisionManager::GroundtoItemBox()
 		{
 			// アイテムボックスの処理を入れる
 			item->SetGravity(true);
+			item->StartEffect();
 		}
 	}
 }
@@ -517,7 +559,8 @@ void CCollisionManager::PlayertoBlast()
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		//i番目のプレイヤーを取得.
-		auto player = m_pPlayerManager->GetControlPlayer(i);
+		auto player = m_pCharacterManager->GetControlPlayer(i);
+		if (!player)continue;
 		auto Coll = player->GetBody()->GetCollider();
 
 		if (m_pBlastManager->GetBlastFlag() == true)
@@ -531,5 +574,47 @@ void CCollisionManager::PlayertoBlast()
 
 			}
 		}
+	}
+}
+
+//アイテムと木箱.
+void CCollisionManager::ItemtoWoodBox()
+{
+	//アイテム一つ一つの情報.
+	auto item = m_pItemBoxManager->GetItem();
+
+	//木箱とかぶった時のアイテム保持用.
+	std::vector<int> DeleteIndex;
+
+	//木箱をまとめて管理.
+	std::shared_ptr<CCollider> woodbox[] = {
+		m_pWoodBoxBottomLeft->GetCollider(),
+		m_pWoodBoxBottomRight->GetCollider(),
+		m_pWoodBoxCenter->GetCollider(),
+		m_pWoodBoxTopLeft->GetCollider(),
+		m_pWoodBoxTopRight->GetCollider()
+	};
+
+	//当たり判定.
+	for (size_t i = 0; i < item.size(); i++)
+	{
+		//アイテムの当たり判定.
+		auto itemcol = m_pItemBoxManager->GetCollider(i);
+
+		for (auto& box : woodbox)
+		{
+			//各アイテムと各木箱の当たり判定.
+			if (itemcol->CheckCollision(*box))
+			{
+				DeleteIndex.push_back(i);
+				break;
+			}
+		}
+	}
+
+	for (size_t i = 0; i < DeleteIndex.size(); i++)
+	{
+		m_pItemBoxManager->RemoveItem(DeleteIndex[i]);
+		m_pItemBoxManager->Create();
 	}
 }

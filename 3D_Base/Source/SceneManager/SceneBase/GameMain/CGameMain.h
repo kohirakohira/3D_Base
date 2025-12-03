@@ -26,10 +26,9 @@
 
 //-----キャラクター-----.
 #include "GameObject//StaticMeshObject//Character//CCharacter.h" // キャラクタークラス.
-#include "GameObject//StaticMeshObject//Character//Player//PlayerManager//CPlayerManager.h" // プレイヤーマネージャークラス.
+#include "GameObject//StaticMeshObject//Character//CharacterObject//Player//CharacterManager//CCharacterManager.h" // キャラクターマネージャークラス
 #include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h" // 弾クラスマネージャー.
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス.
-#include "GameObject//StaticMeshObject//Character//Player//PlayerTank//TankCannon//CCannon.h" // 戦車：砲塔クラス.
 
 #include "Collision//BlastCollision//BlastCollisionManager//CBlastCollisionManager.h"	//爆風クラス.
 
@@ -47,14 +46,12 @@
 #include "GameObject//UI//Timer//CTimer.h"		  // タイマークラス.
 
 //コントローラー
-#include "XInput.h"
+#include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
 
 #include "Global.h"
 
 //当たり判定.
 #include "Collision/CollisionManager/CCollisionManager.h"
-
-class CXInput;
 
 class CGameMain
 	: public CSceneBase
@@ -173,8 +170,8 @@ public:
 	// スタティックメッシュオブジェクトクラス.
 	std::unique_ptr<CStaticMeshObject>			m_pBackImgObject;
 
-	// プレイヤーマネージャー.
-	std::shared_ptr<CPlayerManager>			m_pPlayerManager;
+	// キャラクターマネージャー
+	std::shared_ptr<CCharacterManager>			m_pCharacterManager;
 
 	// 弾クラスマネージャー.
 	std::shared_ptr<CShotManager>			m_pShotManager;
@@ -225,6 +222,4 @@ public:
 
 	//これは何用？
 	D3DXVECTOR3 push;
-
-	std::shared_ptr<CXInput> m_pPad;
 };

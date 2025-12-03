@@ -4,6 +4,7 @@
 
 //-----ライブラリ-----
 #include <iostream>
+#include <memory>
 
 //-----外部クラス-----
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
@@ -40,14 +41,20 @@ public:
 	// BoxColliderを作成する
 	void CreateBoxCollider(D3DXVECTOR3 min, D3DXVECTOR3 max);
 
+	//戦車の情報を設定.
+	void SetTuning(TankTuning t);
+	TankTuning GetTuning() const { return m_Tuning; }
+
 	//モデルに合わせたバウンディングスフィア作成のラッパー関数
 	HRESULT CreateBSphereForMesh(const CStaticMesh& pMesh) {
 		return m_pBSphere->CreateSphereForMesh(pMesh);
 	}
+#if 1
 	//バウンディングボックス作成のラッパー関数.
 	HRESULT CreateBBoxForMesh(const CStaticMesh& pMesh) {
 		return m_pBBox->CreateBoxForMesh(pMesh);
 	}
+#endif
 
 	std::shared_ptr<CStaticMesh> GetStaticMesh() { return m_pMesh; }
 
@@ -85,5 +92,9 @@ protected:
 	std::shared_ptr<CBoundingBox>		m_pBBox;
 
 	std::shared_ptr<CCollider>			m_pCollider;
+
+	//戦車の情報.
+	TankTuning m_Tuning;
+
 };
 

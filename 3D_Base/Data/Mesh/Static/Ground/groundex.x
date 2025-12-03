@@ -151,7 +151,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\game\\Desktop\\SotsuShin\\3D_Base\\Data\\Mesh\\Static\\Ground\\groundex.bmp";
+    "groundex.bmp";
    }
   }
  }

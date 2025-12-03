@@ -7,7 +7,7 @@
 #include "Game//CGame.h" // ゲームクラス
 
 //ウィンドウを画面中央で起動を有効にする.
-//#define ENABLE_WINDOWS_CENTERING
+#define ENABLE_WINDOWS_CENTERING
 
 //=================================================
 //	定数.
@@ -27,6 +27,7 @@ CMain::CMain()
 	: m_hWnd	( nullptr )
 	, m_pGame	( nullptr )
 {
+#ifdef _DEBUG
 	// コンソールを作成・coutを設定
 	AllocConsole();
 	FILE* fp;
@@ -38,10 +39,11 @@ CMain::CMain()
 	if (hConsole != NULL)
 	{
 		SetWindowPos(hConsole, NULL,
-			1280, 0,      // X, Y 座標
-			600, 400,  // 幅, 高さ
+			1280, 0,		// X, Y 座標
+			600, 400,		// 幅, 高さ
 			SWP_NOZORDER);
 	}
+#endif
 }
 
 
