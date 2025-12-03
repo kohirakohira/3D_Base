@@ -5,9 +5,9 @@ const float MAX_RADIUS = 4.0f;		//”¼Œa‚ÌÅ‘å’l.
 const float MIN_RADIUS = 0.0f;		//”¼Œa‚ÌÅ¬’l.
 
 CBlastCollision::CBlastCollision()
-	: m_Radius			( 0.0f )
-	, m_Bom				( false )
-	, m_RadiusMax		( 0.0f )
+	: m_Radius(0.0f)
+	, m_Bom(false)
+	, m_RadiusMax(0.0f)
 {
 	//‹…‚Ì“–‚½‚è”»’è.
 	m_pCollider = std::make_shared<CSphereCollider>();

@@ -1,7 +1,7 @@
 #include "CBlastCollisionManager.h"
 
 CBlastCollisionManager::CBlastCollisionManager()
-	: m_pBlastCollision				()
+	: m_pBlastCollision()
 {
 }
 
@@ -26,7 +26,6 @@ void CBlastCollisionManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Lig
 {
 	for (auto& blast : m_pBlastCollision)
 	{
-		//”¼Œa‚ğİ’è’†.
 		blast->SetScale(blast->GetBlastRadius());
 		blast->Draw(View, Proj, Light, Camera);
 	}
@@ -116,7 +115,7 @@ void CBlastCollisionManager::SetScale(float xyz, int index)
 {
 	if (index >= 0 && index < m_pBlastCollision.size())
 	{
-		m_pBlastCollision[index]->SetScale(D3DXVECTOR3(xyz, xyz, xyz));
+		m_pBlastCollision[index]->SetScale(xyz);
 	}
 }
 
@@ -130,7 +129,7 @@ void CBlastCollisionManager::SetBlastFlag(bool flg, int index)
 }
 
 //”š”­‚ÌÅ‘å”¼Œaİ’è.
-void CBlastCollisionManager::SetBlastRadiusMax( float rad)
+void CBlastCollisionManager::SetBlastRadiusMax(float rad)
 {
 	for (auto& blast : m_pBlastCollision)
 	{
@@ -150,7 +149,7 @@ bool CBlastCollisionManager::GetBlastFlag()
 //”¼Œa‚Ìæ“¾.
 float CBlastCollisionManager::GetBlastRadius()
 {
-	for(int i = 0; i < m_pBlastCollision.size(); i++)
+	for (int i = 0; i < m_pBlastCollision.size(); i++)
 	{
 		return m_pBlastCollision[i]->GetBlastRadius();
 	}
