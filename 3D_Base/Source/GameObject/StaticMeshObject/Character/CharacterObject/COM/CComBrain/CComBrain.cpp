@@ -183,16 +183,16 @@ void CComBrain::ChangeState(ComCommand::State s)
     m_StateFrames = 0;
 }
 
-// 状態を変える条件（距離と見失いフレームだけを見る）
+// 状態を変える条件
 void CComBrain::EvaluateTransitions(float dist2)
 {
     const bool hasTarget = !m_Target.expired();
 
     //距離しきい値全部距離2で比較
     const float keep = std::max(m_Config.keepDistance, 1.0f);
-    const float attackEnter2 = std::max(keep * 1.05f, 3.0f);    // 攻撃モードに入る半径
-    const float attackExit2 = std::max(keep * 1.25f, 5.0f);     // 攻撃から離脱する半径
-    const float evadeDist2 = keep * keep * 0.60f * 0.60f;       // かなり近づいたら退避
+    const float attackEnter2 = keep * 1.0f;                     // 攻撃モードに入る半径
+    const float attackExit2 = keep * 1.6f;                      // 攻撃から離脱する半径
+    const float evadeDist2 = keep * 0.4f;                       // かなり近づいたら退避
     const int   loseFrames = 120;                               // 2秒で見失い扱い
 
     const float attackEnter2Sq = attackEnter2 * attackEnter2;
@@ -264,7 +264,6 @@ void CComBrain::EvaluateTransitions(float dist2)
         break;
 
     case ComCommand::State::ItemSeek:
-        //今回は簡略化：ターゲットがいなければ探索へ戻る
         if (!hasTarget)
             ChangeState(ComCommand::State::Seek);
         break;
@@ -297,16 +296,32 @@ void CComBrain::TickWander()
 // Seek：ターゲットがいないとき適当にうろつく
 void CComBrain::StepSeek(const ComObservation& obs, ComCommand& cmd)
 {
-    TickWander();
+    //ステージ中心
+    const D3DXVECTOR3 center(0.f, 0.f, 0.f);
 
-    const float cur = obs.selfYaw;
-    const float desired = cur + m_WanderAngle;
+    D3DXVECTOR3 d = center - obs.selfPos;
+    d.y = 0.0f;
+    const float dist2 = d.x * d.x + d.z * d.z;
 
-    cmd.desiredBodyYaw = desired;
-    cmd.moveStep = 1.0f; // 前進したい
+    float desiredYaw = obs.selfYaw;
+
+    //ある程度外側にいたら中心に向かって進む
+    const float centerRadius = 10.0f;   //この距離より外にいたら中心を優先
+    if (dist2 > centerRadius * centerRadius)
+    {
+        desiredYaw = std::atan2f(d.x, d.z);
+    }
+    else
+    {
+        //中心付近ではWanderで探す
+        TickWander();
+        desiredYaw = obs.selfYaw + m_WanderAngle;
+    }
+
+    cmd.desiredBodyYaw = desiredYaw;
+    cmd.moveStep = 1.0f;    
     cmd.aimAtTarget = false;
     cmd.tryFire = false;
-    cmd.state = ComCommand::State::Seek;
 }
 
 // Chase：ターゲットへ向かって詰める
@@ -381,12 +396,12 @@ void CComBrain::StepAttack(const ComObservation& obs, ComCommand& cmd)
     const float keep = m_Config.keepDistance;
     if (dist > keep * 1.2f)
     {
-        //外に出過ぎた → 内側(ターゲット方向)へ
+        //外に出過ぎたら内側
         desiredYaw = toYaw;
     }
     else if (dist < keep * 0.8f)
     {
-        // 内側に入りすぎた → 少し外へ
+        // 内側に入りすぎたら外
         desiredYaw = Wrap(toYaw + D3DX_PI);
     }
 

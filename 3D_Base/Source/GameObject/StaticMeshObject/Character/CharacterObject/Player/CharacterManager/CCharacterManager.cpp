@@ -120,6 +120,19 @@ void CCharacterManager::Init()
 		}
 	}
 
+#if 0
+	// COMプレイヤー同士で参照を共有.
+	for (auto& ch : m_pCharacter)
+	{
+		if (!ch) continue;
+
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(ch))
+		{
+			com->SetPlayersRef(&m_pCharacter);
+		}
+	}
+#endif
+
 }
 //===================
 

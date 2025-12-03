@@ -79,7 +79,7 @@ void CComPlayer::Initialize(int playerId)
 void CComPlayer::SetPlayersRef(const std::vector<std::shared_ptr<CCharacterObjectBase>>* all)
 {
     m_pAllPlayer = all;
-    // Brain 側にも同じ配列を渡す（ターゲット選択用）
+    // Brain 側にも同じ配列を渡
     m_Brain.SetPlayersRef(all);
 }
 
@@ -358,21 +358,33 @@ float CComPlayer::SteerWithAvoid(float curYaw, float desiredYaw, float turnStep)
 
     const D3DXVECTOR3 selfPos = body->GetPosition();
 
+    // ===== 追加: スタック中はベースの目標角度を大きく曲げる =====
+    const int STUCK_TURN_FRAMES = 30;   // 約0.5秒動けなかったら「スタック」とみなす
+    float baseDesired = desiredYaw;
+    if (m_StuckFrames >= STUCK_TURN_FRAMES)
+    {
+        // 奇数IDは左回り・偶数IDは右回りにしておくと、COM同士もばらける
+        const float offset = ((m_PlayerID & 1) ? +1.0f : -1.0f) * D3DX_PI * 0.5f;
+        baseDesired = Wrap(desiredYaw + offset);
+    }
+    // ==============================================
+
     if (!m_pSimpleObstacles || m_pSimpleObstacles->empty())
     {
-        const float d = Wrap(desiredYaw - curYaw);
+        const float d = Wrap(baseDesired - curYaw);
         return Approach(curYaw, curYaw + d, turnStep);
     }
 
     const float angs[3] = { 0.0f, +m_ProbeAngleRad, -m_ProbeAngleRad };
 
-    float bestYaw = desiredYaw;
+    float bestYaw = baseDesired;
     float bestScore = -1e9f;
+    bool  anyFree = false;
 
     for (float a : angs)
     {
-        const float testYaw = desiredYaw + a;
-        float hitD;
+        const float testYaw = baseDesired + a;
+        float hitD = m_ObstacleProbeDist;
         const bool blocked = HasObstacleAheadSimple(
             selfPos, testYaw,
             m_ObstacleProbeDist,
@@ -383,13 +395,15 @@ float CComPlayer::SteerWithAvoid(float curYaw, float desiredYaw, float turnStep)
         if (!blocked)
         {
             score += 1000.0f;
+            anyFree = true;
         }
         else
         {
             score -= (m_ObstacleProbeDist - hitD);
         }
 
-        score -= std::fabs(Wrap(testYaw - desiredYaw)) * 10.0f;
+        // なるべく baseDesired に近い方向を優先
+        score -= std::fabs(Wrap(testYaw - baseDesired)) * 10.0f;
 
         if (score > bestScore)
         {
@@ -398,16 +412,23 @@ float CComPlayer::SteerWithAvoid(float curYaw, float desiredYaw, float turnStep)
         }
     }
 
+    // 3候補すべて障害物で塞がれている場合の最終手段
+    if (!anyFree && m_StuckFrames > 0)
+    {
+        const float offset = ((m_PlayerID & 1) ? +1.0f : -1.0f) * D3DX_PI * 0.5f;
+        bestYaw = Wrap(curYaw + offset);
+    }
+
     const float d = Wrap(bestYaw - curYaw);
     return Approach(curYaw, curYaw + d, turnStep);
 }
 
 //==================================================
-// 安全な前進（分離＋危険ゾーンチェック）
+// 安全な前進
 //==================================================
 void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
 {
-    auto body = m_pBody;
+    auto body = GetBody();
     if (!body) return;
 
     D3DXVECTOR3 pos = body->GetPosition();
@@ -432,13 +453,29 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
     }
     nextPos.y = 0.0f;
 
+    const bool wantsMove = (moveStep > 0.01f);
+
     if (IsInDangerZone(nextPos))
     {
+        // 前に出ると危険なので、その場で向きだけ変える
         body->SetRotation(D3DXVECTOR3(0.0f, nextYaw, 0.0f));
         body->Update();
         SyncCannonToBody();
+
+        // 動きたかったのに動けなかった → スタックカウント
+        if (wantsMove)
+        {
+            ++m_StuckFrames;
+        }
+        else
+        {
+            m_StuckFrames = 0;
+        }
         return;
     }
+
+    // 実際に移動できたのでスタック解除
+    m_StuckFrames = 0;
 
     body->SetRotation(D3DXVECTOR3(0.0f, nextYaw, 0.0f));
     body->SetPosition(nextPos);
@@ -531,6 +568,7 @@ void CComPlayer::TryAutoFire(const ComCommand&)
     auto target = m_Brain.GetTarget().lock();
     if (!target) return;
 
+    // クールダウン中ならまだ撃たない
     if (m_Shot.coolDownFrames > 0)
     {
         --m_Shot.coolDownFrames;
@@ -540,6 +578,7 @@ void CComPlayer::TryAutoFire(const ComCommand&)
     D3DXVECTOR3 muzzle; float yaw;
     ComputeMuzzle(muzzle, yaw);
 
+    // 砲口からターゲットへの方向
     D3DXVECTOR3 to = target->GetPosition() - muzzle;
     to.y = 0.0f;
     const float d2 = to.x * to.x + to.z * to.z;
@@ -548,5 +587,17 @@ void CComPlayer::TryAutoFire(const ComCommand&)
     const float desired = std::atan2f(to.x, to.z);
     const float err = std::fabs(Wrap(desired - yaw));
 
+    // 砲塔の向きがある程度合っていたら撃つ
+    const float maxErr = D3DXToRadian(m_Shot.fireAngleEpsDeg);   // ex. 10°
+    if (err <= maxErr)
+    {
+     /*   manager->(
+            m_PlayerID,
+            muzzle,
+            yaw
+        );*/
+
+        m_Shot.coolDownFrames = m_Shot.maxCoolDown;
+    }
 }
 

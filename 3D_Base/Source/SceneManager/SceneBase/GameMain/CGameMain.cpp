@@ -139,6 +139,13 @@ void CGameMain::Update()
 	
 //-----メイン演出用-----..
 
+		//障害物リスト作成
+	BuildComObstacles();
+
+	//COMに障害物リストを教える
+	m_pCharacterManager->SetComObstacleRef(&m_ComObstacles);
+
+
 	//プレイヤー全員更新.
 	m_pCharacterManager->Update();
 	for (int i = 0; i < PLAYER_MAX; ++i)
@@ -468,11 +475,6 @@ void CGameMain::Init()
 	//壁・木箱・地面・プレイヤーの位置決め
 	SetPosition();
 
-	//障害物リスト作成
-	BuildComObstacles();
-
-	//COMに障害物リストを教える
-	m_pCharacterManager->SetComObstacleRef(&m_ComObstacles);
 
 }
 
@@ -1138,8 +1140,14 @@ void CGameMain::BuildComObstacles()
 			const float diag = std::sqrtf(dx * dx + dz * dz);
 
 			//ちょっとだけ膨らませる
-			ob.radius = diag * 0.01f;
+			ob.radius = diag * 0.5 * 0.5f;
 
 			m_ComObstacles.push_back(ob);
 		};
+
+	addBox(m_pWoodBoxTopLeft);
+	addBox(m_pWoodBoxTopRight);
+	addBox(m_pWoodBoxCenter);
+	addBox(m_pWoodBoxBottomLeft);
+	addBox(m_pWoodBoxBottomRight);
 }

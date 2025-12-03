@@ -145,10 +145,10 @@ private:
     const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer = nullptr;
     std::vector<std::shared_ptr<CItemBox>>* m_pItemBox = nullptr;
 
-    // COM の「頭」
+    //COM の
     CComBrain m_Brain;
 
-    // COM 同士・障害物回避用パラメータ
+    //COM 同士・障害物回避用パラメータ
     float m_AvoidRadius;
     float m_AvoidWeight;
     float m_ObstacleRadius;
@@ -160,6 +160,10 @@ private:
 
     // ショット
     ShotState m_Shot;
+
+    D3DXVECTOR3 m_PrevPos{};
+    bool m_HasPrevPos = false;
+    int m_StuckFrames = 0;  //前進できないフレーム数
 
     // 状態フラグ
     bool m_ComEnabled;

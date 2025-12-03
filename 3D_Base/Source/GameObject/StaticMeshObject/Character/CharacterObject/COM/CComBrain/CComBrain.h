@@ -25,20 +25,20 @@ struct ComObservation
     float       nearestItemDist2 = 1e18f;
 };
 
-// Brain が出す指示
+//フレームでCOMにどう動くかを渡すための行動指示
 struct ComCommand
 {
-    // 本体の向き
+    //本体の向き
     float desiredBodyYaw = 0.0f;
 
-    // 前進量（このフレームで進みたい距離。0 なら止まる）
+    //前進量
     float moveStep = 0.0f;
 
-    // 砲塔関連
-    bool  aimAtTarget = false;   // 砲塔をターゲットに向けるべきか
-    bool  tryFire = false;   // 発射を試みるか
+    //砲塔関連
+    bool  aimAtTarget = false;      //砲塔をターゲットに向けるべきか
+    bool  tryFire = false;          //発射を試みるか
 
-    // 今の状態（デバッグ用に外から見えるように）
+    //今の状態
     enum class State
     {
         Seek,
