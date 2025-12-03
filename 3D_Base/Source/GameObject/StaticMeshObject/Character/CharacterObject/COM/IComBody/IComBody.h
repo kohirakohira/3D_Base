@@ -6,12 +6,12 @@ class IComBody
 {
 public:
 
-	virtual ~IComBody() = default;
+    virtual ~IComBody() = default;
 
-	//読み取り専用な情報
-	virtual D3DXVECTOR3 GetPos() const = 0;
-	virtual float GetYaw() const = 0;
-	virtual float GetTurretYaw() const = 0;
+    //読み取り専用な情報
+    virtual D3DXVECTOR3 GetPos() const = 0;
+    virtual float GetYaw() const = 0;
+    virtual float GetTurretYaw() const = 0;
 
     //速度パラメータ
     virtual float MoveSpeed()      const = 0;
@@ -26,5 +26,5 @@ public:
     virtual void AimTurretAt(const D3DXVECTOR3& targetPos,
         float maxDelta) = 0;
 
-    virtual void TryFireAt(const D3DXVECTOR3& targetPos)
+    virtual void TryFireAt(const D3DXVECTOR3& targetPos);
 };

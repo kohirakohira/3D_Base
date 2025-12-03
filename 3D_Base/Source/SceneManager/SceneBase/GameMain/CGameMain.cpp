@@ -465,7 +465,15 @@ void CGameMain::Init()
 	m_pBackImgObject->SetScale(7.5f, 7.5f, 7.5f);
 	m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
 
+	//壁・木箱・地面・プレイヤーの位置決め
 	SetPosition();
+
+	//障害物リスト作成
+	BuildComObstacles();
+
+	//COMに障害物リストを教える
+	m_pCharacterManager->SetComObstacleRef(&m_ComObstacles);
+
 }
 
 void CGameMain::Destroy()
@@ -1105,4 +1113,33 @@ void CGameMain::EachSettingHitPoint()
 			m_pSpriteHitPoint[i]->SetScale(0.5f, 0.5f, 0.5f);
 		}
 	}
+}
+
+void CGameMain::BuildComObstacles()
+{
+	m_ComObstacles.clear();
+
+	//木箱を全部、円障害物にする
+	auto addBox = [&](const std::shared_ptr<CStaticMeshObject>& box)
+		{
+			if (!box) return;
+
+			CComPlayer::SimpleObstacle ob{};
+
+			//中心
+			ob.pos = box->GetPosition();
+			ob.pos.y = 0.0f;
+
+			//当たり判定用のAABBから半径を求める
+			D3DXVECTOR3 mn = box->GetMinPos();
+			D3DXVECTOR3 mx = box->GetMaxPos();
+			const float dx = mx.x - mn.x;
+			const float dz = mx.z - mn.z;
+			const float diag = std::sqrtf(dx * dx + dz * dz);
+
+			//ちょっとだけ膨らませる
+			ob.radius = diag * 0.01f;
+
+			m_ComObstacles.push_back(ob);
+		};
 }

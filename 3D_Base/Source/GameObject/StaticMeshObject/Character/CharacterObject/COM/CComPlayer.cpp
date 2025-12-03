@@ -217,7 +217,7 @@ ComObservation CComPlayer::BuildObservation() const
 //==================================================
 void CComPlayer::ApplyCommand(const ComCommand& cmd)
 {
-    auto body = m_pBody;
+    auto body = GetBody();
     if (!body) return;
 
     const auto& t = GetTuning();
@@ -225,7 +225,7 @@ void CComPlayer::ApplyCommand(const ComCommand& cmd)
     const float curYaw = body->GetRotation().y;
     const float desiredYaw = cmd.desiredBodyYaw;
 
-    // ステアリング（障害物回避込み）
+    // ステアリング
     const float nextYaw = SteerWithAvoid(curYaw, desiredYaw, t.bodyTurnSpeed);
 
     // 移動量（0～1想定）を実際の距離に変換
@@ -550,29 +550,3 @@ void CComPlayer::TryAutoFire(const ComCommand&)
 
 }
 
-#if 0
-void CComPlayer::StepSeek()
-{
-    auto body = Body();
-    if (!body) return;
-    const auto tuning = GetTuning();
-
-    TickWander();
-
-    const float cur = body->GetRotation().y;
-    const float desired = cur + m_WanderAngle;
-
-    //障害物を考慮した yaw に変換
-    const float next = SteerWithAvoidAABB(cur, desired, tuning.bodyTurnSpeed);
-
-    //COM分離＋障害物を見た上で移動
-    SafeAdvance(next, tuning.moveSpeed);
-
-    if (auto tgt = m_Brain.GetTarget())
-    {
-        TickAimTo(tgt->GetPosition());
-        TryAutoFire();
-    }
-}
-
-#endif

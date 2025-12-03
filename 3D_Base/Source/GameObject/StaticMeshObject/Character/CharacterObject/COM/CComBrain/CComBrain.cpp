@@ -339,7 +339,7 @@ void CComBrain::StepChase(const ComObservation& obs, ComCommand& cmd)
 
     cmd.desiredBodyYaw = desiredYaw;
 
-    // 距離が十分なら 1.0、近すぎなら 0.0 （Body 側で moveSpeed を掛ける想定）
+    // 距離が十分なら 1.0、近すぎなら 0.0
     float stepFactor = 1.0f;
     if (dist <= m_Config.keepDistance)
     {
@@ -372,7 +372,7 @@ void CComBrain::StepAttack(const ComObservation& obs, ComCommand& cmd)
 
     const float toYaw = std::atan2f(dx, dz);
 
-    // 基本は接線方向（左右どちらかに回る）
+    //基本は接線方向
     const int   period = 60;
     const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.0f : -1.0f;
     float desiredYaw = Wrap(toYaw + sign * (D3DX_PI * 0.5f));
@@ -381,7 +381,7 @@ void CComBrain::StepAttack(const ComObservation& obs, ComCommand& cmd)
     const float keep = m_Config.keepDistance;
     if (dist > keep * 1.2f)
     {
-        // 外に出過ぎた → 内側(ターゲット方向)へ
+        //外に出過ぎた → 内側(ターゲット方向)へ
         desiredYaw = toYaw;
     }
     else if (dist < keep * 0.8f)
@@ -436,7 +436,6 @@ void CComBrain::StepEvade(const ComObservation& obs, ComCommand& cmd)
     cmd.state = ComCommand::State::Evade;
 }
 
-// ItemSeek：今回はまだ簡略化しておく
 void CComBrain::StepItemSeek(const ComObservation& obs, ComCommand& cmd)
 {
     //ひとまずSeekと同じ挙動にしておく

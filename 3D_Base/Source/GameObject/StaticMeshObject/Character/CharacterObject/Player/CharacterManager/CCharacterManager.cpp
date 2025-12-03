@@ -549,6 +549,18 @@ const TankTuning& CCharacterManager::GetTuning(int index) const
 	}
 }
 
+//COMに障害物を配る
+void CCharacterManager::SetComObstacleRef(const std::vector<CComPlayer::SimpleObstacle>* obstacles)
+{
+	for (auto& player : m_pCharacter)
+	{
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
+		{
+			com->SetSimpleObstacles(obstacles);
+		}
+	}
+}
+
 //プレイヤーとCOMの自動切り替え.
 void CCharacterManager::SwitchControl()
 {

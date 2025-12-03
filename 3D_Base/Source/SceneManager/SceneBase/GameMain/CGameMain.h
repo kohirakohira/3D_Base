@@ -209,6 +209,13 @@ public:
 	// シーン列挙変数
 	CSceneType		m_SceneType;
 
+	//COM用の簡易障害物
+	std::vector<CComPlayer::SimpleObstacle> m_ComObstacles;
+
+private:
+	//位置・スケールを設定し終わったあとに呼ぶ
+	void BuildComObstacles();
+
 public:		
 	// 変数用
 	// 簡易時間を止める変数

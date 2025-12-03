@@ -98,6 +98,9 @@ public:
 	const TankTuning& GetTuning(int index) const;
 	//==================================
 
+	//COM‚ÉáŠQ•¨‚ğ”z‚é
+	void SetComObstacleRef(const std::vector<CComPlayer::SimpleObstacle>* obstacles);
+
 private:
 
 	struct Area {

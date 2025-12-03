@@ -1,24 +1,27 @@
-// CComBrain.h
 #pragma once
 #include <unordered_map>
 #include <memory>
 
-class CCharacterObjectBase;
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/IComBody/IComBody.h"
 
-// COM が外から渡してくる観測値
+class CCharacterObjectBase;
+class IComBody;
+
+
+//そのフレーム時点でCOMの頭が知ることができる情報
 struct ComObservation
 {
-    D3DXVECTOR3 selfPos;       // 自分の位置（XZ）
-    float       selfYaw;       // 本体のヨー角
+    D3DXVECTOR3 selfPos;                //自分の位置.ワールド座標XZ平面
+    float       selfYaw;                //本体のヨー角
 
-    bool        hasTarget = false;
-    D3DXVECTOR3 targetPos;     // ターゲット位置（有効なときだけ使う）
+    bool        hasTarget = false;      //有効なターゲットがいるか
+    D3DXVECTOR3 targetPos;              //ターゲット位置
 
-    float       dist2 = 0.0f;  // 自分とターゲットの距離^2（hasTarget==true のとき）
-    int         lostSightFrames = 0; // ターゲットを見失ってからのフレーム
-    int         selfPlayerID = -1;   // 自分の PlayerID
+    float       dist2 = 0.0f;           //自分とターゲットの距離2
+    int         lostSightFrames = 0;    //ターゲットを見失ってからのフレーム
+    int         selfPlayerID = -1;      //自分のPlayerID
 
-    // 余裕があれば：一番近いアイテムまでの距離なども足せる
+    //一番近いアイテムまでの距離なども足せる
     float       nearestItemDist2 = 1e18f;
 };
 
@@ -45,6 +48,8 @@ struct ComCommand
         ItemSeek,
     } state = State::Seek;
 };
+
+/*COMの頭脳クラス*/
 
 class CComBrain
 {
