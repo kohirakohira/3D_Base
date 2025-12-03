@@ -54,13 +54,10 @@ void CGameTitle::Update()
 
 //↑-----タイトルでの演出-----↑.
 
-
-
-
 	//ゲーム設定に遷移.
 	//if (controller && controller->CheckConnected())
 	{
-		if (m_KeyInput->ReleaseInputKey('Z') == true /*|| controller->Down(CXInput::A, true)*/)
+		if (m_KeyInput->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 		{
 			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
 			{

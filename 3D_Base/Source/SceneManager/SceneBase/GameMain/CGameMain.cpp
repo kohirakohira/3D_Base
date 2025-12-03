@@ -414,6 +414,9 @@ void CGameMain::Draw()
 
 void CGameMain::Init()
 {
+	//キャラにShotManagerを設定.
+	m_pCharacterManager->SetShotManager(m_pShotManager);
+
 	////キャラの情報を設定.
 	//for (size_t i = 0; i < m_pCharacterManager->GetControlPlayer(); ++i)
 	//{

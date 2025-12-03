@@ -71,7 +71,7 @@ void CGameSettings::Update()
 	//ƒV[ƒ“‚Ì‘JˆÚ.
 	//if (controller && controller->CheckConnected())
 	{
-		if (m_InputKey->ReleaseInputKey('Z') == true /*|| controller->Down(CXInput::A, true)*/)
+		if (m_InputKey->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 		{
 			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
 			{

@@ -282,7 +282,7 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 	//Rotate(input);
 
 	// RB入力があった時 → リロード
-	if (controller->Down(CXInput::RB, true))
+	if (controller->Repeat(CXInput::B))
 	{
 		Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
 	}
@@ -309,6 +309,7 @@ void CPlayer::SyncCannonToBody()
 void CPlayer::SetShotManager(std::shared_ptr<CShotManager> shot)
 {
 	m_pShotManager = shot;
+	m_pCannon->SetShotManager(m_pShotManager);
 }
 
 // プレイヤーのダメージ処理

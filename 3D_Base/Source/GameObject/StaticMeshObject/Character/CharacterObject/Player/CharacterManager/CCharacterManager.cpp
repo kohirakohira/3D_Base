@@ -509,9 +509,16 @@ void CCharacterManager::SetShotManager(std::shared_ptr<CShotManager>& mgr)
 	m_ShotManager = mgr;
 
 	//すでにいる前COMに渡す　
-	for (auto& up : m_pCharacter) {
-		if (auto* com = dynamic_cast<CComPlayer*>(up.get())) {	//CComPlayerなら生のポインタにして渡す.所有権は渡さない
+	for (auto& up : m_pCharacter) 
+	{
+		if (auto* com = dynamic_cast<CComPlayer*>(up.get())) 
+		{	//CComPlayerなら生のポインタにして渡す.所有権は渡さない
 			com->AttachShotManager(m_ShotManager);	//weak_ptrに渡す
+		}
+		else
+		{
+			auto* player = dynamic_cast<CPlayer*>(up.get());
+			player->SetShotManager(m_ShotManager);
 		}
 	}
 }
