@@ -1,14 +1,10 @@
 #include "CBlastCollision.h"
 
-//’è”éŒ¾.
-const float MAX_RADIUS = 4.0f;		//”¼Œa‚ÌÅ‘å’l.
-const float MIN_RADIUS = 0.0f;		//”¼Œa‚ÌÅ¬’l.
-
 CBlastCollision::CBlastCollision()
-	: m_Radius(0.0f)
-	, m_Bom(false)
-	, m_RadiusMax(0.0f)
+	: m_Radius		( 0.0f )
+	, m_Bom			( false )
 {
+	m_RadiusMax = MAX_RADIUS;
 	//‹…‚Ì“–‚½‚è”»’è.
 	m_pCollider = std::make_shared<CSphereCollider>();
 }
@@ -59,7 +55,10 @@ void CBlastCollision::Update()
 //•`‰æˆ—.
 void CBlastCollision::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	CStaticMeshObject::Draw(View, Proj, Light, Camera);
+	if (m_Bom == true)
+	{
+		CStaticMeshObject::Draw(View, Proj, Light, Camera);
+	}
 }
 
 //“–‚½‚Á‚½‚ÌŠÖ”.

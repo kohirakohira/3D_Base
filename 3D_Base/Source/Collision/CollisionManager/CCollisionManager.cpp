@@ -31,7 +31,7 @@ CCollisionManager::CCollisionManager()
 	// アイテムボックスマネージャー
 	, m_pItemBoxManager		()
 
-	, m_Rad					( 4.0f )
+	//, m_Rad					( 4.0f )
 {
 }
 
@@ -263,11 +263,12 @@ void CCollisionManager::CharactertoItemBox()
 				//{
 				//}
 
-				////爆風の半径設定.
-				////爆風に設定.
-				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
-				//{
-				//}
+				//爆風の半径設定.
+				//爆風に設定.
+				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
+				{
+					m_Rad = m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast;
+				}
 
 				////装填時短設定.
 				////弾に設定.
@@ -559,9 +560,9 @@ void CCollisionManager::PlayertoBlast()
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		//i番目のプレイヤーを取得.
-		auto player = m_pCharacterManager->GetControlPlayer(i);
-		if (!player)continue;
-		auto Coll = player->GetBody()->GetCollider();
+		auto chara = m_pCharacterManager->GetControlPlayer(i);
+		if (!chara)continue;
+		auto Coll = chara->GetBody()->GetCollider();
 
 		if (m_pBlastManager->GetBlastFlag() == true)
 		{

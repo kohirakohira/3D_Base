@@ -56,9 +56,6 @@ public:
 	//-----------------------
 	// 外部から情報をセット
 	//-----------------------
-	// 弾(爆風用)をセット
-	void SetStaticBlast(std::shared_ptr<CStaticMesh> pBlast) { m_pStaticBlast = pBlast; }
-
 	// 壁のセット
 	void SetCStageWall(std::shared_ptr<CStageObject> pWallTop,
 					   std::shared_ptr<CStageObject> pWallBottom,

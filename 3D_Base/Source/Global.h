@@ -57,6 +57,10 @@ static const int ShotMax = 100;	// 弾の最大数
 static constexpr int	ITEM_MAX = 4;
 constexpr float			TIME_LIMIT = 3.0f;		//アイテムの制限時間.
 
+//定数宣言.
+constexpr float MAX_RADIUS = 4.0f;		//半径の最大値.
+constexpr float MIN_RADIUS = 0.0f;		//半径の最小値.
+
 //テスト.
 const int IMAGE = 4;
 

@@ -608,7 +608,7 @@ void CGameMain::Create()
 
 	// 当たり判定マネージャーに必要なクラスをセット
 	// 爆風用の弾をセット
-	m_pCollisionManager->SetStaticBlast(m_pStaticMesh_BulletRed);
+	m_pCollisionManager->SetBlastMesh(m_pStaticMesh_BulletRed);
 
 	// 壁をセット
 	m_pCollisionManager->SetCStageWall(m_pWallTop, m_pWallBottom, m_pWallLeft, m_pWallRight);
