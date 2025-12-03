@@ -26,7 +26,6 @@ void CBlastCollisionManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Lig
 {
 	for (auto& blast : m_pBlastCollision)
 	{
-		blast->SetScale(blast->GetBlastRadius());
 		blast->Draw(View, Proj, Light, Camera);
 	}
 }
