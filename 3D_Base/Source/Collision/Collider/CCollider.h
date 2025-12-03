@@ -29,6 +29,9 @@ public:
 	// ’†SÀ•W‚ğİ’è.
 	virtual void SetPosition(const D3DXVECTOR3& pos) = 0;
 
+	// ”¼Œa‚ğİ’è
+	virtual void SetRadius(float radius) = 0;
+
 	//©g‚ÌŒ^‚ª‰½‚ÌŒ^‚©‚ğ•Ô‚·.
 	virtual ColliderType GetColType() const = 0;
 

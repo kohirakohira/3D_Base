@@ -32,7 +32,7 @@ void CShot::Update()
 		// 移動方向に移動速度をかけ合わせたものを座標に反映
 		m_vPosition += m_Shot.m_MoveDirection * m_Shot.m_MoveSpeed * TIME;
 
-		if (m_Shot.m_DisplayTime <= 2.0f)
+		if (m_Shot.m_DisplayTime <= 0.5f)
 		{
 			// 加速度に重力が与えられていく
 			m_Shot.m_Velocity += m_Shot.m_Gravity * TIME;
@@ -73,7 +73,7 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 
 	m_Shot.m_ShotFlag = true;
 	m_Shot.m_Velocity = 0.5f;
-	m_Shot.m_DisplayTime = 3.0f;
+	m_Shot.m_DisplayTime = 1.0f;
 
 	// 弾の進行方向（Z軸を回転させる）
 	m_Shot.m_MoveDirection = D3DXVECTOR3(0.f, 0.f, 1.f);

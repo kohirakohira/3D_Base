@@ -1,12 +1,13 @@
 #include "CBlastCollision.h"
 
 //’è”éŒ¾.
-const float MAX_RADIUS = 2.5f;		//”¼Œa‚ÌÅ‘å’l.
+const float MAX_RADIUS = 4.0f;		//”¼Œa‚ÌÅ‘å’l.
 const float MIN_RADIUS = 0.0f;		//”¼Œa‚ÌÅ¬’l.
 
 CBlastCollision::CBlastCollision()
 	: m_Radius			( 0.0f )
 	, m_Bom				( false )
+	, m_RadiusMax		( 0.0f )
 {
 	//‹…‚Ì“–‚½‚è”»’è.
 	m_pCollider = std::make_shared<CSphereCollider>();
@@ -23,41 +24,36 @@ void CBlastCollision::Update()
 	const float GROWTH_SPEED = 10.0f;	//‘å‚«‚³‚Ìã‚ª‚è•.
 	const float deltaTime = 1.0f / 60.0f;
 
-	// ƒRƒ‰ƒCƒ_[‚ÌÀ•W‚ğXV
-	m_pCollider->SetPosition(m_vPosition);
-
-	if (m_Bom == true)
-	{
 #if 1
-		//”¼Œa‚ğ™X‚É‘å‚«‚­‚·‚é.
-		m_Radius += (GROWTH_SPEED * deltaTime);
+	//”¼Œa‚ğ™X‚É‘å‚«‚­‚·‚é.
+	m_Radius += (GROWTH_SPEED * deltaTime);
 
-		//Å¬’l‚©‚çÅ‘å’l‚Ü‚Å‚µ‚©”½‰f‚³‚ê‚È‚¢.
-		m_Radius = std::clamp(m_Radius, MIN_RADIUS, MAX_RADIUS);
+	//Å¬’l‚©‚çÅ‘å’l‚Ü‚Å‚µ‚©”½‰f‚³‚ê‚È‚¢.
+	m_Radius = std::clamp(m_Radius, MIN_RADIUS, m_RadiusMax);
 
-		//”š”­‚ğ–ß‚·.
-		if (m_Radius >= MAX_RADIUS)
-		{
-			//‰Šú‰».
-			m_Radius = MIN_RADIUS;
-			m_Bom = false;
-		}
+	//”š”­‚ğ–ß‚·.
+	if (m_Radius >= m_RadiusMax)
+	{
+		//‰Šú‰».
+		m_Radius = MIN_RADIUS;
+		m_Bom = false;
+	}
 
 #else
-		//”¼Œa‚ğŒÅ’è.
-		m_Radius = MAX_RADIUS;
+	//”¼Œa‚ğŒÅ’è.
+	m_Radius = MAX_RADIUS;
 #endif
 
-		//“–‚½‚è”»’èİ’è.
-		SetRadius(m_Radius);
-		//”¼Œa‚ğİ’è‚µ‚Ä‚ ‚°‚é.
-		std::shared_ptr<CSphereCollider> m_ShereCollider = std::dynamic_pointer_cast<CSphereCollider>(m_pCollider);
-		m_ShereCollider->SetRadius(m_Radius);
-	}
-	else
-	{
-		return;
-	}
+	//“–‚½‚è”»’èİ’è.
+	m_pCollider->SetRadius(m_Radius);
+	m_pCollider->SetPosition(m_vPosition);
+
+	//”¼Œa‚ğİ’è‚µ‚Ä‚ ‚°‚é.
+	std::shared_ptr<CSphereCollider> m_ShereCollider = std::dynamic_pointer_cast<CSphereCollider>(m_pCollider);
+	m_ShereCollider->SetRadius(m_Radius);
+
+	CStaticMeshObject::Update();
+
 }
 
 //•`‰æˆ—.

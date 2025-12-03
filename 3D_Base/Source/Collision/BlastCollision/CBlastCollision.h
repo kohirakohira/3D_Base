@@ -25,12 +25,16 @@ public:
 
 	//”š”­ƒtƒ‰ƒOİ’è.
 	void SetBlastFlag(bool flg) { m_Bom = flg; }
+	//”š”­‚Ì”¼Œaİ’è.
+	void SetBlastRadius(float rad) { m_RadiusMax = rad; }
 	//”š”­ƒtƒ‰ƒO‚Ìæ“¾.
 	bool GetBlastFlag() { return m_Bom; }
 	//”¼Œa‚Ìæ“¾.
 	float GetBlastRadius() { return m_Radius; }
 
 public:
+	//Å‘å”¼Œa.
+	float m_RadiusMax;
 	//”¼Œa.
 	float	m_Radius;
 	//”š”­ƒtƒ‰ƒO.
