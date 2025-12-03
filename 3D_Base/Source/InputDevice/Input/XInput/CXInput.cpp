@@ -206,9 +206,6 @@ float CXInput::GetRightStickYNormalized() const
 	return value / 32767.0f;
 }
 
-
-
-
 float CXInput::GetLeftTriggerNormalized() const
 {
 	//’l‚ðŽæ“¾.

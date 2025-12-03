@@ -282,7 +282,7 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 	//Rotate(input);
 
 	// RB“ü—Í‚ª‚ ‚Á‚½Žž ¨ ƒŠƒ[ƒh
-	if (controller->Repeat(CXInput::B))
+	if (controller->GetRightTrigger(50) == CController::Trigger::RightTrigger)
 	{
 		Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
 	}
