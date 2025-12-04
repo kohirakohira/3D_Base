@@ -85,9 +85,9 @@ public:
 	void Create();
 
 	// プレイヤーのダメージ処理
-	void PlayerDamage();
+	void Damage();
 	// プレイヤーの死亡処理
-	void PlayerDeath();
+	void Death();
 
 	//プレイヤーが壁に当たる処理をまとめる.
 	void SetPushBack(const D3DXVECTOR3& push);

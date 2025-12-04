@@ -130,9 +130,9 @@ void CPlayer::Update()
 	}
 
 	// ダメージ処理の更新
-	PlayerDamage();
+	Damage();
 	// 死亡処理の更新
-	PlayerDeath();
+	Death();
 
 	//移動とか適用
 	UpdateHumanInputAndMove(m_CurrentInput);
@@ -314,7 +314,7 @@ void CPlayer::SetShotManager(std::shared_ptr<CShotManager> shot)
 }
 
 // プレイヤーのダメージ処理
-void CPlayer::PlayerDamage()
+void CPlayer::Damage()
 {
 	//時間定数宣言.
 	const float TIME = 1.0f / FPS;
@@ -361,7 +361,7 @@ void CPlayer::PlayerDamage()
 	}
 }
 
-void CPlayer::PlayerDeath()
+void CPlayer::Death()
 {
 	//時間定数宣言.
 	const float TIME = 1.0f / FPS;
