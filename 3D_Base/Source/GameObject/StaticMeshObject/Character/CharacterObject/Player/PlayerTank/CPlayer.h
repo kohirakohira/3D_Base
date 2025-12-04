@@ -20,25 +20,6 @@ class CPlayer
 {
 public:
 
-	// 構造体を作成
-	struct Player
-	{
-		int			m_Hp;			// プレイヤーのHP
-		int			m_MaxHp;		// プレイヤーの最大HP
-
-		int			m_MutekiCnt;	// 無敵カウント
-		float		m_MutekiTimer;	// 無敵時間
-
-		float		m_RespawnTimer;	// リスポーン時間
-		
-		bool		m_Draw;			// 描画するかどうか
-
-		bool		m_Damage;		// ダメージを受けたか
-		bool		m_Death;		// 死亡しているか
-		bool		m_Respawn;		// リスポーン
-	};
-	Player m_Player;
-
 	//入力処理構造体.
 	struct PlayerInput
 	{
@@ -84,11 +65,6 @@ public:
 	// インスタンス生成関数
 	void Create();
 
-	// プレイヤーのダメージ処理
-	void Damage();
-	// プレイヤーの死亡処理
-	void Death();
-
 	//プレイヤーが壁に当たる処理をまとめる.
 	void SetPushBack(const D3DXVECTOR3& push);
 
@@ -99,9 +75,9 @@ public:
 	int GetPlayerID() const { return m_PlayerID; }
 
 	//リスポーンフラグの設定継承版
-	void SetRespawnFlag(bool flg) override { m_Respawn = flg; } 
+	void SetRespawnFlag(bool flg) override { m_Chara.m_Respawn = flg; }
 	// リスポーンフラグの取得
-	bool GetRespawnFlag() const override { return m_Respawn; }
+	bool GetRespawnFlag() const override { return m_Chara.m_Respawn; }
 
 	// プレイヤーのコントローラー設定・取得
 	void SetControllerIndex(int index);
@@ -119,9 +95,31 @@ public:
 	//弾マネージャーの設定.
 	void SetShotManager(std::shared_ptr<CShotManager> shot) override ;
 
+	//=====ヒット関数=====
+	virtual void Hit() override;
+	//===================
+
+	//=====ダメージ関数=====
+	void Damage() override;
+	//=====================
+	
+	//=====死亡関数=====
+	void Death() override;
+	//=================
+
+	//===ダメージの設定・取得===
+	virtual void SetDamage(bool flg) override { m_Chara.m_Damage = flg; }
+	virtual bool GetDamage() const override { return m_Chara.m_Damage; }
+	//========================
+
+	//=====死亡の設定・取得=====
+	virtual void SetDeath(bool flg) override { m_Chara.m_Death = flg; }
+	virtual bool GetDeath() const override { return m_Chara.m_Death; }
+	//========================
+
 	//=====無敵の設定・取得=====
-	void SetMuteki(bool flg) override { m_Muteki = flg; }
-	bool GetMuteki() const override { return m_Muteki; }
+	void SetMuteki(bool flg) override { m_Chara.m_Muteki = flg; }
+	bool GetMuteki() const override { return m_Chara.m_Muteki; }
 	//========================
 
 protected:

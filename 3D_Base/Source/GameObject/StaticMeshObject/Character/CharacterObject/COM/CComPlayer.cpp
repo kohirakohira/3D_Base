@@ -70,10 +70,6 @@ CComPlayer::~CComPlayer()
     }
 }
 
-void CComPlayer::OnHit(CCharacterObjectBase* other)
-{
-}
-
 void CComPlayer::Create(int id)
 {
     m_PlayerID = id;
@@ -82,10 +78,21 @@ void CComPlayer::Create(int id)
     m_pBody = std::make_shared<CBody>(id);
     m_pCannon = std::make_shared<CCannon>(id);
 
-    //生存.描画フラグ
-    m_IsAlive = true;
+    // プレイヤーの体力に最大体力を入れる
+    m_Chara.m_Hp = m_Chara.m_MaxHp;
+    // プレイヤーの無敵時間を初期化
+    m_Chara.m_MutekiCnt = 0;
+    m_Chara.m_MutekiTimer = 0.3;
+
+    // プレイヤーのフラグを初期化
+    m_Chara.m_Drawflag = true;
+    m_Chara.m_Damage = false;
+    m_Chara.m_Death = false;
+    m_Chara.m_Respawn = false;
+
+    //継承したものも初期化
     m_IsActive = true;
-    m_Drawflag = true;
+    m_IsAlive = true;
 
     //自分がまだ登録されていなければ、全体リストに登録する
     if (!m_Registered) {
@@ -188,7 +195,7 @@ void CComPlayer::ChangeState(State state)
 {
     m_State = state;
     m_StateFrames = 0;
-} 
+}
 
 // 本体を常にターゲットへ回頭＋前進
 void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
@@ -362,6 +369,11 @@ void CComPlayer::Update()
 {
     CCharacterObjectBase::Update();
 
+    // ダメージ処理の更新
+    Damage();
+    // 死亡処理の更新
+    Death();
+
     SanitizeParams();
 
     if (!m_ComEnabled) { 
@@ -415,7 +427,7 @@ void CComPlayer::Update()
 
 void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-    if (m_Drawflag)
+    if (m_Chara.m_Drawflag)
     {
         m_pBody->Draw(View, Proj, Light, Camera);
         m_pCannon->Draw(View, Proj, Light, Camera);
@@ -923,3 +935,105 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
     if (d < -turnStep) return curYaw - turnStep;
     return curYaw + d;
 }
+
+//=====ヒット関数=====
+void CComPlayer::Hit()
+{
+    // プレイヤーの体力を引く
+    m_Chara.m_Hp--;
+    if (m_Chara.m_Hp <= 0)
+    {
+        // 死亡フラグ有効化
+        m_Chara.m_Death = true;
+    }
+    else
+    {
+        // ダメージフラグ有効化
+        m_Chara.m_Damage = true;
+    }
+}
+//===================
+
+//=====ダメージ関数=====
+void CComPlayer::Damage()
+{
+    //時間定数宣言.
+    const float TIME = 1.0f / FPS;
+
+    if (m_Chara.m_Damage == true)
+    {
+        // 無敵タイマーを減少
+        m_Chara.m_MutekiTimer -= TIME;
+
+        if (m_Chara.m_MutekiTimer <= 0.0f)
+        {
+            // 描画フラグがtrueの時はfalseに
+            // falseの時はtrueにする
+            if (m_Chara.m_Drawflag == true)
+            {
+                m_Chara.m_Drawflag = false;
+            }
+            else
+            {
+                m_Chara.m_Drawflag = true;
+            }
+
+            // 無敵カウントを1つ増やす
+            m_Chara.m_MutekiCnt++;
+
+            // 無敵タイマーを初期化
+            m_Chara.m_MutekiTimer = 0.2f;
+        }
+
+        if (m_Chara.m_MutekiCnt >= 10)
+        {
+            // 描画フラグ有効化
+            m_Chara.m_Drawflag = true;
+
+            // ダメージフラグを無効化
+            m_Chara.m_Damage = false;
+        }
+    }
+    else
+    {
+        // 念のためここでも無敵を初期化する
+        m_Chara.m_MutekiCnt = 0;
+        m_Chara.m_MutekiTimer = 0.2;
+    }
+}
+//=====================
+
+//=====死亡関数=====
+void CComPlayer::Death()
+{
+    //時間定数宣言.
+    const float TIME = 1.0f / FPS;
+
+    if (m_Chara.m_Death == true)
+    {
+        // リスポーンタイムを減少
+        m_Chara.m_RespawnTimer -= TIME;
+
+        // 描画フラグを無効化
+        m_Chara.m_Drawflag = false;
+
+        if (m_Chara.m_RespawnTimer <= 0.0f)
+        {
+            // Hpを初期化
+            m_Chara.m_Hp = m_Chara.m_MaxHp;
+
+            // 描画フラグを有効化
+            m_Chara.m_Drawflag = true;
+
+            // リスポーンタイマーを初期化
+            m_Chara.m_RespawnTimer = 3.0f;
+
+            // リスポーンフラグ有効化
+            m_Chara.m_Respawn = true;
+
+            // 死亡フラグを無効化
+            m_Chara.m_Death = false;
+        }
+    }
+}
+//=================

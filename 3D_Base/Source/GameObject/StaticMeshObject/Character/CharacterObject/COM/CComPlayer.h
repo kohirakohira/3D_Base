@@ -51,9 +51,6 @@ public:
 	D3DXVECTOR3 GetCannonPosition() const override { return m_pCannon->GetPosition(); }
 	float GetCannonYaw() const override { return m_pCannon->GetRotation().y; }
 
-	//当たった時.
-	void OnHit(CCharacterObjectBase* other) override ;
-
 	//プレイヤーかCOMを判定する.
 	bool IsPlayer() const override { return false; }
 
@@ -241,9 +238,31 @@ private:
 
 	bool		m_Respawn;				// リスポーン
 
+	//=====ヒット関数=====
+	virtual void Hit() override;
+	//===================
+
+	//=====ダメージ関数=====
+	void Damage() override;
+	//=====================
+
+	//=====死亡関数=====
+	void Death() override;
+	//=================
+
+	//===ダメージの設定・取得===
+	virtual void SetDamage(bool flg) override { m_Chara.m_Damage = flg; }
+	virtual bool GetDamage() const override { return m_Chara.m_Damage; }
+	//========================
+
+	//=====死亡の設定・取得=====
+	virtual void SetDeath(bool flg) override { m_Chara.m_Death = flg; }
+	virtual bool GetDeath() const override { return m_Chara.m_Death; }
+	//========================
+
 	//=====無敵の設定・取得=====
-	void SetMuteki(bool flg) override { m_Muteki = flg; }
-	bool GetMuteki() const override { return m_Muteki; }
+	void SetMuteki(bool flg) override { m_Chara.m_Muteki = flg; }
+	bool GetMuteki() const override { return m_Chara.m_Muteki; }
 	//========================
 };
 

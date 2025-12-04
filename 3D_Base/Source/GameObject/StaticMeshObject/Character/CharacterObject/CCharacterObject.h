@@ -20,9 +20,27 @@ class CCharacterObjectBase
 	: public CStaticMeshObject // スタティックメッシュオブジェクトクラスを継承.
 {
 public:
-	CCharacterObjectBase(
-		int hp = 2
-	);
+
+	// キャラクター構造体を作成
+	struct Character
+	{
+		int		m_Hp;			// プレイヤーのHP
+		int		m_MaxHp;		// プレイヤーの最大HP
+
+		int		m_MutekiCnt;	// 無敵カウント
+		float	m_MutekiTimer;	// 無敵時間
+
+		float	m_RespawnTimer;	// リスポーン時間
+
+		bool	m_Drawflag;		// 描画フラグ
+		bool	m_Damage;		// ダメージフラグ
+		bool	m_Death;		// 死亡フラグ		
+		bool	m_Muteki;		// 無敵フラグ
+		bool	m_Respawn;		// リスポーンフラグ
+	} m_Chara;
+
+public:
+	CCharacterObjectBase();
 	virtual ~CCharacterObjectBase();
 
 	//動作関数.
@@ -41,9 +59,6 @@ public:
 	virtual D3DXVECTOR3 GetCannonPosition() const = 0;
 	virtual float GetCannonYaw() const = 0;
 
-	//当たった時用.
-	virtual void OnHit(CCharacterObjectBase* other) = 0;
-
 	//プレイヤーかCOMを判定する用.
 	virtual bool IsPlayer() const = 0;
 
@@ -58,6 +73,28 @@ public:
 
 	//弾マネージャーのインスタンス設定.
 	virtual void SetShotManager(std::shared_ptr<CShotManager> shot) = 0;
+
+	//=====ヒット関数=====
+	virtual void Hit() = 0;
+	//===================
+
+	//=====ダメージ関数=====
+	virtual void Damage() = 0;
+	//=====================
+
+	//=====死亡関数=====
+	virtual void Death() = 0;
+	//=================
+
+	//===ダメージの設定・取得===
+	virtual void SetDamage(bool flg) = 0;
+	virtual bool GetDamage() const = 0;
+	//========================
+
+	//=====死亡の設定・取得=====
+	virtual void SetDeath(bool flg) = 0;
+	virtual bool GetDeath() const = 0;
+	//========================
 
 	//=====無敵の設定・取得=====
 	virtual void SetMuteki(bool flg) = 0;
@@ -79,26 +116,6 @@ protected:
 	//キャラクターの生存フラグ.
 	bool m_IsAlive;
 
-	//キャラクターの体力.
-	int m_HP;
-	//最大体力.
-	int m_MaxHP;
-
-	//描画フラグ.
-	bool m_Drawflag;
-
-	//リスポーンフラグ
-	bool m_Respawn;
-
 	//操作権があるか
 	bool m_HasControl;	
-
-	//死亡しているか
-	bool m_Death;
-
-	//ダメージフラグ
-	bool m_Damage;
-
-	// 無敵フラグ
-	bool m_Muteki;
 };

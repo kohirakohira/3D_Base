@@ -100,7 +100,6 @@ void CCharacterManager::Init()
 		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
 		{
 			com->SetPlayersRef(&m_pCharacter);
-
 		}
 	}
 

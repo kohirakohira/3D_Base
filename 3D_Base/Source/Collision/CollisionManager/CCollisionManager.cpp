@@ -308,8 +308,8 @@ void CCollisionManager::PlayertoShot()
 
 				shot->HitShot();
 
-				// ‰¼‚Å‚±‚±‚É“–‚½‚Á‚½Žž‚Ìˆ—‚ð‘‚¢‚Ä‚¢‚é
-				//chara->HitPlayer();
+				// “–‚½‚Á‚½Žž‚Ìˆ—
+				chara->Hit();
 			}
 		}
 	}

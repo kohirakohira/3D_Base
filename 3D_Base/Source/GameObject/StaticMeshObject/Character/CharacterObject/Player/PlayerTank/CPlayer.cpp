@@ -56,18 +56,6 @@ CPlayer::CPlayer()
 	, m_HasControl		( false )
 	, m_ControllerIndex	()
 {
-	//プレイヤー初期値.
-	m_Player = {
-		0,		// プレイヤーの体力
-		2,		// プレイヤーの最大体力
-		0,		// 無敵カウント
-		0.3f,	// 無敵時間
-		3.0f,	// リスポーン時間
-		true,	// 描画するかどうか
-		false,	// ダメージを受けたか
-		false,	// 死亡しているか
-		false,	// リスポーン
-	};
 }
 
 CPlayer::~CPlayer() = default;
@@ -84,21 +72,18 @@ void CPlayer::Init(int id)
 	m_pCannon = std::make_shared<CCannon>(id);
 
 	// プレイヤーの体力に最大体力を入れる
-	m_Player.m_Hp = m_Player.m_MaxHp;
+	m_Chara.m_Hp = m_Chara.m_MaxHp;
 	// プレイヤーの無敵時間を初期化
-	m_Player.m_MutekiCnt = 0;
-	m_Player.m_MutekiTimer = 0.3;
+	m_Chara.m_MutekiCnt = 0;
+	m_Chara.m_MutekiTimer = 0.3;
+
 	// プレイヤーのフラグを初期化
-	m_Player.m_Draw	   = true;
-	m_Player.m_Damage  = false;
-	m_Player.m_Death   = false;
-	m_Player.m_Respawn = false;
+	m_Chara.m_Drawflag = true;
+	m_Chara.m_Damage  = false;
+	m_Chara.m_Death   = false;
+	m_Chara.m_Respawn = false;
 
 	//継承したものも初期化
-	m_Drawflag = true;
-	m_Damage = false;
-	m_Death = false;
-	m_Respawn = false;
 	m_IsActive = true;
 	m_IsAlive = true;
 }
@@ -143,7 +128,7 @@ void CPlayer::Update()
 
 void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-	if (m_Player.m_Draw == true)
+	if (m_Chara.m_Drawflag == true)
 	{
 		m_pBody->Draw(View, Proj, Light, Camera);
 		m_pCannon->Draw(View, Proj, Light, Camera);
@@ -313,101 +298,122 @@ void CPlayer::SetShotManager(std::shared_ptr<CShotManager> shot)
 	m_pCannon->SetShotManager(m_pShotManager);
 }
 
-// プレイヤーのダメージ処理
+//=====ヒット関数=====
+void CPlayer::Hit()
+{
+	// プレイヤーの体力を引く
+	m_Chara.m_Hp--;
+	if (m_Chara.m_Hp < 0)
+	{
+		// 死亡フラグ有効化
+		m_Chara.m_Death = true;
+	}
+	else
+	{
+		// ダメージフラグ有効化
+		m_Chara.m_Damage = true;
+	}
+}
+//===================
+
+//=====ダメージ関数=====
 void CPlayer::Damage()
 {
 	//時間定数宣言.
 	const float TIME = 1.0f / FPS;
 
-	if (m_Player.m_Damage == true)
+	if (m_Chara.m_Damage == true)
 	{
 		// 無敵タイマーを減少
-		m_Player.m_MutekiTimer -= TIME;
+		m_Chara.m_MutekiTimer -= TIME;
 
-		if (m_Player.m_MutekiTimer <= 0.0f)
+		if (m_Chara.m_MutekiTimer <= 0.0f)
 		{
 			// 描画フラグがtrueの時はfalseに
 			// falseの時はtrueにする
-			if (m_Player.m_Draw == true)
+			if (m_Chara.m_Drawflag == true)
 			{
-				m_Player.m_Draw = false;
+				m_Chara.m_Drawflag = false;
 			}
 			else
 			{
-				m_Player.m_Draw = true;
+				m_Chara.m_Drawflag = true;
 			}
 
 			// 無敵カウントを1つ増やす
-			m_Player.m_MutekiCnt++;
+			m_Chara.m_MutekiCnt++;
 
 			// 無敵タイマーを初期化
-			m_Player.m_MutekiTimer = 0.2f;
+			m_Chara.m_MutekiTimer = 0.2f;
 		}
 
-		if (m_Player.m_MutekiCnt >= 10)
+		if (m_Chara.m_MutekiCnt >= 10)
 		{
 			// 描画フラグ有効化
-			m_Player.m_Draw = true;
+			m_Chara.m_Drawflag = true;
 
 			// ダメージフラグを無効化
-			m_Player.m_Damage = false;
+			m_Chara.m_Damage = false;
 		}
 	}
 	else
 	{
 		// 念のためここでも無敵を初期化する
-		m_Player.m_MutekiCnt = 0;
-		m_Player.m_MutekiTimer = 0.2;
+		m_Chara.m_MutekiCnt = 0;
+		m_Chara.m_MutekiTimer = 0.2;
 	}
 }
+//=====================
 
+//=====死亡関数=====
 void CPlayer::Death()
 {
 	//時間定数宣言.
 	const float TIME = 1.0f / FPS;
 
-	if (m_Player.m_Death == true)
+	if (m_Chara.m_Death == true)
 	{
 		// リスポーンタイムを減少
-		m_Player.m_RespawnTimer -= TIME;
+		m_Chara.m_RespawnTimer -= TIME;
 		
 		// 描画フラグを無効化
-		m_Player.m_Draw = false;
+		m_Chara.m_Drawflag = false;
 
-		if (m_Player.m_RespawnTimer <= 0.0f)
+		if (m_Chara.m_RespawnTimer <= 0.0f)
 		{		
 			// Hpを初期化
-			m_Player.m_Hp = m_Player.m_MaxHp;
+			m_Chara.m_Hp = m_Chara.m_MaxHp;
 
 			// 描画フラグを有効化
-			m_Player.m_Draw = true;
+			m_Chara.m_Drawflag = true;
 
 			// リスポーンタイマーを初期化
-			m_Player.m_RespawnTimer = 3.0f;
+			m_Chara.m_RespawnTimer = 3.0f;
 
 			// リスポーンフラグ有効化
-			m_Player.m_Respawn = true;
+			m_Chara.m_Respawn = true;
 
 			// 死亡フラグを無効化
-			m_Player.m_Death = false;
+			m_Chara.m_Death = false;
 		}
 	}
 }
+//=================
 
 //// プレイヤーが爆風と当たった時の処理
 //void CPlayer::HitPlayer()
 //{
 //	// プレイヤーの体力を引く
-//	m_Player.m_Hp--;
-//	if (m_Player.m_Hp <= 0)
+//	m_Chara.m_Hp--;
+//	if (m_Chara.m_Hp <= 0)
 //	{
 //		// 死亡フラグ有効化
-//		m_Player.m_Death = true;
+//		m_Chara.m_Death = true;
 //	}
 //	else
 //	{
 //		// ダメージフラグ有効化
-//		m_Player.m_Damage = true;
+//		m_Chara.m_Damage = true;
 //	}
 //}
 //
