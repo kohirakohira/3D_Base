@@ -118,8 +118,8 @@ float CComPlayer::Approach(float cur, float goal, float step)
     auto tuning = GetTuning();
 
     const float d = goal - cur;
-    if (d > tuning.moveSpeed)  return cur + tuning.moveSpeed;
-    if (d < - tuning.moveSpeed) return cur - tuning.moveSpeed;
+    if (d > step)  return cur + step;
+    if (d < - step) return cur - step;
     return goal;
 }
 
