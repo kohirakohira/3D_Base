@@ -24,6 +24,10 @@
 class CComPlayer : public CCharacterObjectBase
 {
 public:
+
+    //定数宣言
+    const  float TIME = 1.f / FPS;
+
     CComPlayer();
     ~CComPlayer() override;
 
@@ -37,6 +41,15 @@ public:
 
     // 当たり判定など
     void OnHit(CCharacterObjectBase* other) override;
+
+    //ヒット時の処理
+    void Hit();
+
+    //ダメージ処理
+    void Damage();
+
+    //死亡処理
+    void Death();
 
     // ----- CCharacterObjectBase のインターフェース実装 -----
     std::shared_ptr<CBody>       GetBody() const override { return m_pBody; }
@@ -87,7 +100,7 @@ public:
         m_pSimpleObstacles = obstacles;
     }
 
-    // Brain に直接アクセスしたい時用（デバッグなど）
+    // Brain に直接アクセスしたい時用
     CComBrain& Brain() { return m_Brain; }
     const CComBrain& Brain() const { return m_Brain; }
 
@@ -95,13 +108,13 @@ private:
     // 内部ショット状態
     struct ShotState
     {
-        int   coolDownFrames = 0;      // クールダウン残りフレーム
-        int   maxCoolDown = 120;    // クールダウン時間
-        float fireAngleEpsDeg = 10.0f;  // この角度以内なら発射
-        float muzzleOffsetZ = 1.0f;   // 砲口のオフセット
+        int   coolDownFrames = 0;           // クールダウン残りフレーム
+        int   maxCoolDown = 120;            // クールダウン時間
+        float fireAngleEpsDeg = 10.0f;      // この角度以内なら発射
+        float muzzleOffsetZ = 1.0f;         // 砲口のオフセット
     };
 
-    // パラメータの安全化
+    //パラメータの安全化
     void SanitizeParams();
 
     // Brain に渡す観測値を作る
@@ -146,7 +159,7 @@ private:
     std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;
     std::shared_ptr<CComUtility> m_pUtility;
 
-    //COM の
+    //COMの頭クラス
     CComBrain m_Brain;
 
     //COM 同士・障害物回避用パラメータ

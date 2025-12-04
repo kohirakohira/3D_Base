@@ -60,9 +60,9 @@ void CComPlayer::Initialize(int playerId)
     if (!m_pBody)   m_pBody = std::make_shared<CBody>(playerId);
     if (!m_pCannon) m_pCannon = std::make_shared<CCannon>(playerId);
 
-    m_IsAlive = true;
-    m_IsActive = true;
-    m_Drawflag = true;
+    m_Character.m_IsAlive = true;
+    m_Character.m_IsActive = true;
+    m_Character.m_Drawflag = true;
 
     SanitizeParams();
 
@@ -88,21 +88,22 @@ void CComPlayer::SetPlayersRef(const std::vector<std::shared_ptr<CCharacterObjec
 //==================================================
 void CComPlayer::SanitizeParams()
 {
-    //auto& t = GetTuning();
+    const TankTuning& tuning = GetTuning();
 
     //if (t.moveSpeed <= 0.0f) t.moveSpeed = 0.05f;
     //if (t.bodyTurnSpeed <= 0.0f) t.bodyTurnSpeed = 0.03f;
     //if (t.turretTurnSpeed <= 0.0f) t.turretTurnSpeed = 0.03f;
     //if (t.cannonHeight <= 0.0f) t.cannonHeight = 0.5f;
 
-    //if (m_AvoidRadius < 0.0f) m_AvoidRadius = 0.0f;
-    //if (m_AvoidWeight < 0.0f) m_AvoidWeight = 0.0f;
-    //if (m_ObstacleRadius <= 0.0f) m_ObstacleRadius = 3.0f;
-    //if (m_ObstacleProbeDist <= 0.0f) m_ObstacleProbeDist = 8.0f;
-    //if (m_ObstacleProbeStep <= 0.0f) m_ObstacleProbeStep = 0.5f;
-    //if (m_ProbeAngleRad <= 0.0f) m_ProbeAngleRad = D3DXToRadian(25.0f);
+    if (m_AvoidRadius < 0.0f)           m_AvoidRadius = 0.0f;
+    if (m_AvoidWeight < 0.0f)           m_AvoidWeight = 0.0f;
+    if (m_ObstacleRadius <= 0.0f)       m_ObstacleRadius = 3.0f;
+    if (m_ObstacleProbeDist <= 0.0f)    m_ObstacleProbeDist = 8.0f;
+    if (m_ObstacleProbeStep <= 0.0f)    m_ObstacleProbeStep = 0.5f;
+    if (m_ProbeAngleRad <= 0.0f)        m_ProbeAngleRad = D3DXToRadian(25.0f);
 }
 
+//便利関数に移動した
 #if 0
 float CComPlayer::Wrap(float a)
 {
@@ -151,7 +152,6 @@ void CComPlayer::Update()
     // COM 無効時は見た目だけ更新
     if (!m_ComEnabled)
     {
-        // ここはプロジェクトの実装に合わせて CStaticMeshObject::Update() などに変えてOK
         if (m_pBody)   m_pBody->Update();
         if (m_pCannon) m_pCannon->Update();
         return;
@@ -174,7 +174,7 @@ void CComPlayer::Update()
 
 void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
-    if (!m_Drawflag) return;
+    if (m_Character.m_Drawflag == false) return;
 
     if (m_pBody)   m_pBody->Draw(View, Proj, Light, Camera);
     if (m_pCannon) m_pCannon->Draw(View, Proj, Light, Camera);
@@ -183,7 +183,7 @@ void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& 
 //ダメージ処理
 void CComPlayer::OnHit(CCharacterObjectBase* )
 {
-    // HP 減少・リスポーン処理などがあればここに書く
+    Hit();
 }
 
 //==================================================
@@ -228,7 +228,7 @@ void CComPlayer::ApplyCommand(const ComCommand& cmd)
     // ステアリング
     const float nextYaw = SteerWithAvoid(curYaw, desiredYaw, t.bodyTurnSpeed);
 
-    // 移動量（0～1想定）を実際の距離に変換
+    // 移動量を実際の距離に変換
     float moveStep = std::max(0.0f, cmd.moveStep) * t.moveSpeed;
 
     // 安全に前進
@@ -359,7 +359,7 @@ float CComPlayer::SteerWithAvoid(float curYaw, float desiredYaw, float turnStep)
     const D3DXVECTOR3 selfPos = body->GetPosition();
 
     //止まったらベースの角度をあげる
-    const int STUCK_TURN_FRAMES = 30;   // 約0.5秒動けなかったら「スタック」とみなす
+    const int STUCK_TURN_FRAMES = 30;   //一定時間動けなかった場合はスタックとみなす
     float baseDesired = desiredYaw;
     if (m_StuckFrames >= STUCK_TURN_FRAMES)
     {
@@ -462,7 +462,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
         body->Update();
         SyncCannonToBody();
 
-        // 動きたかったのに動けなかった → スタックカウント
+        // 動きたかったのに動けなかったらスタックカウント
         if (wantsMove)
         {
             ++m_StuckFrames;
@@ -600,4 +600,109 @@ void CComPlayer::TryAutoFire(const ComCommand&)
         m_Shot.coolDownFrames = m_Shot.maxCoolDown;
     }
 }
+
+//COMヒット時の処理
+void CComPlayer::Hit()
+{
+    //プレイヤーの体力を減らす
+    m_Character.m_HP--;
+
+    if (m_Character.m_HP < 0)
+    {
+        //死亡
+        m_Character.m_Death = true;
+    }
+    else
+    {
+        //ダメージ
+        m_Character.m_Damage = true;
+    }
+}
+
+#if 1
+//=====ダメージ関数=====
+void CComPlayer::Damage()
+{
+    //時間定数宣言.
+    const float TIME = 1.0f / FPS;
+
+    if (m_Character.m_Damage == true)
+    {
+        // 無敵タイマーを減少
+        m_Character.m_MutekiTimer -= TIME;
+
+        if (m_Character.m_MutekiTimer <= 0.0f)
+        {
+            // 描画フラグがtrueの時はfalseに
+            // falseの時はtrueにする
+            if (m_Character.m_Drawflag == true)
+            {
+                m_Character.m_Drawflag = false;
+            }
+            else
+            {
+                m_Character.m_Drawflag = true;
+            }
+
+            // 無敵カウントを1つ増やす
+            m_Character.m_MutekiCnt++;
+
+            // 無敵タイマーを初期化
+            m_Character.m_MutekiTimer = 0.2f;
+        }
+
+        if (m_Character.m_MutekiCnt >= 10)
+        {
+            // 描画フラグ有効化
+            m_Character.m_Drawflag = true;
+
+            // ダメージフラグを無効化
+            m_Character.m_Damage = false;
+        }
+    }
+    else
+    {
+        // 念のためここでも無敵を初期化する
+        m_Character.m_MutekiCnt = 0;
+        m_Character.m_MutekiTimer = 0.2;
+    }
+}
+//=====================
+
+//=====死亡関数=====
+void CComPlayer::Death()
+{
+    //時間定数宣言.
+    const float TIME = 1.0f / FPS;
+
+    if (m_Character.m_Death == true)
+    {
+        // リスポーンタイムを減少
+        m_Character.m_RespawnTimer -= TIME;
+
+        // 描画フラグを無効化
+        m_Character.m_Drawflag = false;
+
+        if (m_Character.m_RespawnTimer <= 0.0f)
+        {
+            // Hpを初期化
+            m_Character.m_HP = m_Character.m_MaxHP;
+
+            // 描画フラグを有効化
+            m_Character.m_Drawflag = true;
+
+            // リスポーンタイマーを初期化
+            m_Character.m_RespawnTimer = 3.0f;
+
+            // リスポーンフラグ有効化
+            m_Character.m_Respawn = true;
+
+            // 死亡フラグを無効化
+            m_Character.m_Death = false;
+        }
+    }
+}
+//=================
+
+#endif
 

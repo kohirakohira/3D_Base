@@ -96,12 +96,12 @@ void CPlayer::Init(int id)
 	m_Player.m_Respawn = false;
 
 	//åpè≥ÇµÇΩÇ‡ÇÃÇ‡èâä˙âª
-	m_Drawflag = true;
-	m_Damage = false;
-	m_Death = false;
-	m_Respawn = false;
-	m_IsActive = true;
-	m_IsAlive = true;
+	m_Character.m_Drawflag = true;
+	m_Character.m_Damage = false;
+	m_Character.m_Death = false;
+	m_Character.m_Respawn = false;
+	m_Character.m_IsActive = true;
+	m_Character.m_IsAlive = true;
 }
 
 void CPlayer::SetPushBack(const D3DXVECTOR3& push)

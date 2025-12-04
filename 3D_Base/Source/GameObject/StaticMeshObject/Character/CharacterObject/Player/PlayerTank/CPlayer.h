@@ -100,9 +100,9 @@ public:
 	int GetPlayerID() const { return m_PlayerID; }
 
 	//リスポーンフラグの設定継承版
-	void SetRespawnFlag(bool flg) override { m_Respawn = flg; } 
+	void SetRespawnFlag(bool flg) override { m_Character.m_Respawn = flg; } 
 	// リスポーンフラグの取得
-	bool GetRespawnFlag() const override { return m_Respawn; }
+	bool GetRespawnFlag() const override { return m_Character.m_Respawn; }
 
 	// プレイヤーのコントローラー設定・取得
 	void SetControllerIndex(int index);

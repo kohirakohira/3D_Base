@@ -20,6 +20,27 @@ class CCharacterObjectBase
 	: public CStaticMeshObject // スタティックメッシュオブジェクトクラスを継承.
 {
 public:
+
+	//キャラクター共通処理
+	struct Character
+	{
+								
+		bool	m_IsActive;		//キャラクターの状態.
+		bool	m_IsAlive;		//キャラクターが生存しているか.
+		int		m_HP;			//キャラクターの体力.
+		int		m_MaxHP;		//キャラクターの最大体力.
+		bool	m_Drawflag;		//描画ができるか.
+		bool	m_Respawn;		//リスポーンするか.
+		float	m_RespawnTimer;	//リスポーンするまでの時間.
+		bool	m_HasControl;	//操作権があるか.
+		bool	m_Death;		//キャラクターが死亡しているか.
+		bool	m_Damage;		//ダメージを受けたかどうか.	
+		float	m_MutekiTimer;	//無敵時間.
+		bool	m_Muteki;		//無敵かどうか.
+		float	m_MutekiCnt;	//無敵時間のカウント.
+
+	};
+
 	CCharacterObjectBase(
 		int hp = 2
 	);
@@ -68,31 +89,8 @@ protected:
 	//生成や設定はPlayer/COM側で行う.
 	std::shared_ptr<CShotManager>	m_pShotManager;
 
-	//キャラクターの状態.
-	bool m_IsActive;
-
-	//キャラクターの生存フラグ.
-	bool m_IsAlive;
-
-	//キャラクターの体力.
-	int m_HP;
-	//最大体力.
-	int m_MaxHP;
-
-	//描画フラグ.
-	bool m_Drawflag;
-
-	//リスポーンフラグ
-	bool m_Respawn;
-
-	//操作権があるか
-	bool m_HasControl;	
-
-	//死亡しているか
-	bool m_Death;
-
-	//ダメージフラグ
-	bool m_Damage;
+	//キャラクター共通処理
+	Character m_Character;
 
 	//プレイヤーID.デフォルト-1
 	int m_PlayerID;

@@ -120,7 +120,7 @@ void CCharacterManager::Init()
 		}
 	}
 
-#if 0
+#if 1
 	// COMプレイヤー同士で参照を共有.
 	for (auto& ch : m_pCharacter)
 	{
@@ -180,15 +180,6 @@ void CCharacterManager::Update()
 		{
 			if (com->IsComEnabled())
 			{
-				////COMが追いかけるターゲットを設定
-				//if (target && target != self)
-				//{
-				//	com->SetTarget(target);    // プレイヤーを追いかける
-				//}
-				//else
-				//{
-				//	com->ClearTarget();
-				//}
 
 				//AIとしてのUpdate
 				com->Update();
