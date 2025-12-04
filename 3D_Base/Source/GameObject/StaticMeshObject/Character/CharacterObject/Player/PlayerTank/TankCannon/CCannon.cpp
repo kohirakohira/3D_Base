@@ -23,10 +23,7 @@ CCannon::~CCannon()
 
 void CCannon::Update()
 {
-	if (m_ShotCoolTime < m_ShotInterval)
-	{
-		m_ShotCoolTime++;
-	}
+	m_ShotCoolTime++;
 
 	//KeyInput();
 
@@ -63,17 +60,15 @@ void CCannon::CreateBounding(std::shared_ptr<CStaticMesh> pCannon)
 void CCannon::Reload(D3DXVECTOR3 pos, float y, bool flag, int index)
 {
 	//クールタイムがインターバルより小さいとき.
-	if (m_ShotCoolTime < m_ShotInterval)
+	if (m_ShotCoolTime >= m_ShotInterval)
 	{
-		return;
-	}
+		//弾生成.
+		if (m_pShot != nullptr)
+		{
+			m_pShot->Create(pos, y, flag, index);
 
-	//弾生成.
-	if (m_pShot == nullptr)
-	{
-		m_pShot->Create(pos, y, flag, index);
+			//クールタイムのリセット.
+			m_ShotCoolTime = 0;
+		}
 	}
-
-	//クールタイムのリセット.
-	m_ShotCoolTime = 0;
 }

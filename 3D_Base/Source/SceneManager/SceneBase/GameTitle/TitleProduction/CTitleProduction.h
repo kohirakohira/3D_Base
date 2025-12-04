@@ -5,6 +5,8 @@
 #include "../../../../GameObject/SpriteObject/CSpriteObject.h"	//スプライトオブジェクトクラス.
 #include "../../../../Camera/CCamera.h" //カメラクラス.
 
+
+
 //-----メッシュクラス-----
 #include "../../../../Assets/Mesh/StaticMesh/CStaticMesh.h" //スタティックメッシュクラス.
 #include "../../../../GameObject/StaticMeshObject/CStaticMeshObject.h" // スタティックメッシュオブジェクトクラス.
@@ -30,9 +32,15 @@ public:
 	//読み込み関数.
 	HRESULT LoadData();
 
+	//地面の動き.
+	void MoveGround();
+
 public:
 	//円周率.
 	const float PI = 3.141592;
+
+	//UVを動かす用.
+	D3DXVECTOR2 m_UV;
 
 	//カメラクラス.
 	std::shared_ptr<CCamera>			m_Camera;
@@ -46,8 +54,4 @@ public:
 	std::unique_ptr<CStaticMeshObject>	m_pBackImgObject;
 	//地面クラス.
 	std::unique_ptr<CSpriteObject>		m_SpriteObjGround;
-
-public:
-	float rad;
-
 };

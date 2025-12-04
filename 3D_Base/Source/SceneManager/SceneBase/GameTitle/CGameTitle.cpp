@@ -54,9 +54,6 @@ void CGameTitle::Update()
 
 //↑-----タイトルでの演出-----↑.
 
-
-
-
 	//ゲーム設定に遷移.
 	//if (controller && controller->CheckConnected())
 	{
@@ -74,6 +71,9 @@ void CGameTitle::Update()
 
 				//ゲーム設定に遷移.
 				m_SceneType = CSceneType::Setting;
+
+				//コンソール文字を消す.
+				system("cls");
 			}
 			else
 			{
@@ -84,6 +84,9 @@ void CGameTitle::Update()
 				CSoundManager::PlaySE(CSoundManager::SE_Click);
 
 				DrawFlag = true;
+
+				//コンソール文字を消す.
+				system("cls");
 
 				//ゲームを終了させる.
 				PostMessage(m_hWnd, WM_CLOSE, 0, 0);

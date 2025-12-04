@@ -159,8 +159,6 @@ void CPlayer::Create()
 	//インスタンス生成(BodyとCannon).
 	m_pBody = std::make_shared<CBody>(m_PlayerID);
 	m_pCannon = std::make_shared<CCannon>(m_PlayerID);
-	//弾マネージャー.
-	m_pShotManager = std::make_shared<CShotManager>();
 }
 
 #if 1
@@ -283,8 +281,9 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 	RotateTurretByPad();
 	//Rotate(input);
 
-	// RB入力があった時 → リロード
-	if (controller->Repeat(CXInput::RB))
+	// RT入力があった時 → リロード
+	//※押し込み具合：50(0～255).
+	if (controller->GetRightTrigger(50) == CController::Trigger::RightTrigger)
 	{
 		Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
 	}
@@ -305,6 +304,13 @@ void CPlayer::SyncCannonToBody()
 	D3DXVECTOR3 pos = GetBody()->GetPosition();
 	pos.y += m_Tuning.cannonHeight;			// 砲塔の高さオフセット
 	GetCannon()->SetPosition(pos);			// 位置を同期
+}
+
+//弾マネージャーの設定.
+void CPlayer::SetShotManager(std::shared_ptr<CShotManager> shot)
+{
+	m_pShotManager = shot;
+	m_pCannon->SetShotManager(m_pShotManager);
 }
 
 // プレイヤーのダメージ処理

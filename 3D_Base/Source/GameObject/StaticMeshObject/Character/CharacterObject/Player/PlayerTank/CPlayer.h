@@ -116,6 +116,9 @@ public:
 	// 砲塔と車体の同期
 	void SyncCannonToBody();
 
+	//弾マネージャーの設定.
+	void SetShotManager(std::shared_ptr<CShotManager> shot) override ;
+
 protected:
 
 	CController* 	m_Controller;

@@ -51,7 +51,7 @@ public:
 	void SetLightAtten(float kc, float kl, float kq) { m_Light.Atten = D3DXVECTOR3(kc, kl, kq); }
 
 	const D3DXVECTOR3& GetPosition() const { return m_Position; }
-
+	void SetCameraPosition(D3DXVECTOR3 pos) { m_Position = pos; }
 public:
 	//\‘¢‘Ìİ’è•Ï”.
 	CAMERA			m_Camera;

@@ -8,7 +8,7 @@ CTitleProduction::CTitleProduction()
 	, m_SpriteObjGround		( nullptr )
 	, m_pBackImgObject		( nullptr )
 
-	, rad					( 0.0f )
+	, m_UV					( 0.0f, 0.0f )
 {
 }
 
@@ -21,18 +21,7 @@ void CTitleProduction::Update()
 {
 	//カメラの動作.
 	m_Camera->Update();
-
-	//地面回転.
-	rad--;
-	if (rad >= 360.0f)
-	{
-		rad = 0.0f;
-	}
-	D3DXVECTOR3 angle = {0.0f, 0.0f, 0.0f};
-	angle.x = rad * PI / 180.0f;
-	angle.y = rad * PI / 180.0f;
-	angle.z = rad * PI / 180.0f;
-	m_SpriteObjGround->SetRotation(angle.x, angle.y, angle.z);
+	//m_Camera->FreeMove();
 
 }
 
@@ -41,6 +30,9 @@ void CTitleProduction::Draw()
 {
 	//カメラの情報更新.
 	m_Camera->Info();
+
+	//地面を動かす.
+	MoveGround();
 
 	//地面を描画する.
 	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
@@ -77,19 +69,23 @@ void CTitleProduction::Init()
 	//カメラの設定.
 	m_Camera->SetLightPos(0.0f, 100.0f, 100.0f);	//位置設定.
 	m_Camera->SetLightColor(1.0f, 1.0f, 1.0f);		//色の設定.
-	m_Camera->SetLightIntensity(900.0f);			//ライトの強さ.
-	m_Camera->SetLightRange(1000.0f);				//ライトの長さ.
+	m_Camera->SetLightIntensity(1000.0f);			//ライトの強さ.
+	m_Camera->SetLightRange(10000.0f);				//ライトの長さ.
 	m_Camera->SetLightAtten(0.0f, 0.0f, 0.1);		//ライトの減衰.
 	m_Camera->SetCameraPos(0.0f, 100.0f, 0.0f);		//カメラ位置の設定.
 
 	//地面の設定.
+	D3DXVECTOR3 angle = { 0.0f, 0.0f, 0.0f };
+	angle.x = 90.0f * PI / 180.0f;
+	angle.y = 45.0f * PI / 180.0f;
+	m_SpriteObjGround->SetRotation(angle);
 	m_SpriteObjGround->SetPosition(0.0f, -100.0f, 200.0f);
-	m_SpriteObjGround->SetScale(1.0f, 1.0f, 1.0f);
+	m_SpriteObjGround->SetScale(3.0f, 3.0f, 3.0f);
 
 	//背景の初期化.
 	m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
 	m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
-	m_pBackImgObject->SetScale(28.0f, 28.0f, 28.0f);
+	m_pBackImgObject->SetScale(50.0f, 50.0f, 50.0f);
 }
 
 //読み込み関数.
@@ -115,4 +111,16 @@ HRESULT CTitleProduction::LoadData()
 	m_pBackImgObject->AttachMesh(m_BackGroundMesh);
 
 	return S_OK;
+}
+
+//地面の動き.
+void CTitleProduction::MoveGround()
+{
+	//定数宣言.
+	const float UV_SPEED = 0.001f;
+
+	m_UV.x = 0.0f;
+	m_UV.y += UV_SPEED;
+
+	m_SpriteGround->SetUVInfomation( m_UV, true );
 }
