@@ -137,13 +137,13 @@ private:
 	//‰ñ”ğ‘¤‚ÉŒÅ’èù‰ñ‚ğ¬‚º‚é
 	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
 
-	void SafeAdvance(float nextYaw, float moveStep);
+	void SafeAdvance(float nextYaw, float step);
 
 	bool FollowPath(float turnStep, float moveStep);
 
 	// ƒwƒ‹ƒp
 	static float Wrap(float rad);                         //[-ƒÎ,ƒÎ]‚É³‹K‰»
-	static float Approach(float cur, float goal, float step);
+	float Approach(float cur, float goal, float step);
 	static D3DXVECTOR3 ForwardFromYaw(float yaw);         //(sin(yaw),0,cos(yaw))
 	static float PI() { return D3DX_PI; }
 	static float TWO_PI() { return D3DX_PI * 2.0f; }

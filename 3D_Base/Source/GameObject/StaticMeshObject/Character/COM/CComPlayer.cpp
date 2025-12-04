@@ -91,10 +91,12 @@ void CComPlayer::Initialize(int id)
 void CComPlayer::SanitizeParams()
 {
     auto& tuning = GetTuning();
+#if 0
     if (tuning.moveSpeed <= 0.0f)           tuning.moveSpeed;
     if (tuning.bodyTurnSpeed <= 0.0f)       tuning.bodyTurnSpeed;
     if (tuning.cannonHeight <= 0.0f)        tuning.cannonHeight;
     if (tuning.turretTurnSpeed <= 0.0f)     tuning.turretTurnSpeed;
+#endif
     if (m_AvoidRadius < 0.0f)               m_AvoidRadius = 0.0f;
     if (m_AvoidWeight < 0.0f)               m_AvoidWeight = 0.0f;
     if (m_AttacRadius < 0.0f)               m_AttacRadius = 10.0f;
@@ -113,9 +115,11 @@ float CComPlayer::Wrap(float a)
 //一方向にstepだけ近づける
 float CComPlayer::Approach(float cur, float goal, float step)
 {
+    auto tuning = GetTuning();
+
     const float d = goal - cur;
-    if (d > step)  return cur + step;
-    if (d < -step) return cur - step;
+    if (d > tuning.moveSpeed)  return cur + tuning.moveSpeed;
+    if (d < - tuning.moveSpeed) return cur - tuning.moveSpeed;
     return goal;
 }
 
@@ -127,6 +131,8 @@ D3DXVECTOR3 CComPlayer::ForwardFromYaw(float yaw)
 //COMの正面方向に、一定距離以内に障害物があるか
 bool CComPlayer::HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const
 {
+    auto Tuning = GetTuning();
+
     outHitDist = probeDist;
     if (!m_pSimpleObstacles || m_pSimpleObstacles->empty()) return false;   //障害物リストがない
 
@@ -426,17 +432,19 @@ void CComPlayer::Update()
     case State::Seek:     StepSeek();     break;
     case State::Chase:    StepChase();    break;
     case State::Attack:   StepAttack();   break;
-    case State::Evade:  StepEvade();    break; 
-    case State::ItemSeek: StepItemSeek(); break;
+    case State::Evade:    StepEvade();    break; 
+    //case State::ItemSeek: StepItemSeek(); break;
     }
     ++m_StateFrames;
 }
 
 
-void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
+void CComPlayer::SafeAdvance(float nextYaw, float step)
 {
     auto body = Body();
     if (!body) return;
+
+    auto tuning = GetTuning();
 
     D3DXVECTOR3 pos = body->GetPosition();
     pos.y = 0.0f;
@@ -447,7 +455,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
     ComputeSeparation(pos, sep, nearest);
 
     // 次の候補位置を計算
-    D3DXVECTOR3 nextPos = pos + ForwardFromYaw(nextYaw) * moveStep;
+    D3DXVECTOR3 nextPos = pos + ForwardFromYaw(nextYaw) * tuning.moveSpeed;
     nextPos.x += sep.x * 0.02f;
     nextPos.z += sep.z * 0.02f;
     nextPos.y = 0.0f;
@@ -477,8 +485,29 @@ void CComPlayer::StepSeek()
     if (!body) return;
     const auto tuning = GetTuning();
 
-    // Wander 更新を入れる
-    TickWander();
+    //ステージの中心
+    const D3DXVECTOR3 center(0.f, 0.f, 0.f);
+
+    //位置・回転取得
+    D3DXVECTOR3 pos = body->GetPosition();
+    const float yaw = body->GetRotation().y;
+    D3DXVECTOR3 d = center - pos;
+
+    const float dist2 = d.x * d.x + d.z * d.z;
+    float distYaw = yaw;
+
+    //ある程度外側にいたら中心に向かって進む
+    const float centerRadius = 10.0f;           //この距離より外にいたら中心を優先
+    if (dist2 > centerRadius * centerRadius)
+    {
+        distYaw = std::atan2f(d.x, d.z);
+    }
+    else
+    {
+        //中心付近ではWanderで探す
+        TickWander();
+        distYaw = yaw + m_WanderAngle;
+    }
 
     const float cur = body->GetRotation().y;
     const float desired = cur + m_WanderAngle;
@@ -490,18 +519,26 @@ void CComPlayer::StepSeek()
     {
         TickAimTo(m_pTarget->GetPosition());
         TryAutoFire();
+        SyncCannonToBody();
     }
 }
 
 
 void CComPlayer::StepChase()
 {
-    auto body = Body(); if (!body || !m_pTarget) { StepSeek(); return; }
+    auto body = Body(); 
+
+    if (!body || !m_pTarget)
+    {
+        StepSeek();
+        return;
+    }
     const auto t = GetTuning();
 
     const D3DXVECTOR3 self = body->GetPosition();
     const D3DXVECTOR3 tp = m_pTarget->GetPosition();
     const float cur = body->GetRotation().y;
+
 
     //目標へ向く角度
     float desired = std::atan2f((tp - self).x, (tp - self).z);
@@ -519,9 +556,48 @@ void CComPlayer::StepChase()
     TryAutoFire();
 }
 
+//void CComBrain::StepSeek(const ComObservation& obs, ComCommand& cmd)
+//{
+//    //ステージ中心
+//    const D3DXVECTOR3 center(0.f, 0.f, 0.f);
+//
+//    D3DXVECTOR3 d = center - obs.selfPos;
+//    d.y = 0.0f;
+//    const float dist2 = d.x * d.x + d.z * d.z;
+//
+//    float desiredYaw = obs.selfYaw;
+//
+//    //ある程度外側にいたら中心に向かって進む
+//    const float centerRadius = 10.0f;           //この距離より外にいたら中心を優先
+//    if (dist2 > centerRadius * centerRadius)
+//    {
+//        desiredYaw = std::atan2f(d.x, d.z);
+//    }
+//    else
+//    {
+//        //中心付近ではWanderで探す
+//        TickWander();
+//        desiredYaw = obs.selfYaw + m_WanderAngle;
+//    }
+//
+//    cmd.desiredBodyYaw = desiredYaw;
+//    cmd.moveStep = 1.0f;
+//    cmd.aimAtTarget = false;
+//    cmd.tryFire = false;
+//}
+
+
 void CComPlayer::StepAttack()
 {
-    auto body = Body(); if (!body || !m_pTarget) { StepSeek(); return; }
+    auto body = Body();
+
+    //bodyもターゲットもないなら探索
+    if (!body || m_pTarget)
+    {
+        StepSeek();
+        return;
+    }
+
     const auto t = GetTuning();
 
     const D3DXVECTOR3 self = body->GetPosition();
