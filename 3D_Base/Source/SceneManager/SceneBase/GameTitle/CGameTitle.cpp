@@ -60,6 +60,7 @@ void CGameTitle::Update()
 	//ƒQ[ƒ€Ý’è‚É‘JˆÚ.
 	//if (controller && controller->CheckConnected())
 	{
+
 		if (m_KeyInput->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 		{
 			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
@@ -74,6 +75,16 @@ void CGameTitle::Update()
 
 				//ƒQ[ƒ€Ý’è‚É‘JˆÚ.
 				m_SceneType = CSceneType::Setting;
+			}
+
+			if (m_KeyInput->ReleaseInputKey('Z') == true)
+			{
+				if (m_pSpriteChoiceImg->GetSelectedFlag() == true)
+				{
+					DrawFlag = true;
+					
+					m_SceneType = CSceneType::Setting;
+				}
 			}
 			else
 			{

@@ -14,8 +14,8 @@
 //COM ‚Ì“ª
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComBrain/CComBrain.h"
 
-// D3DX
-#include <d3dx9math.h>
+//•Ö—˜ŠÖ”ƒNƒ‰ƒX
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComUtility/CComUtility.h"
 
 // STL
 #include <memory>
@@ -142,8 +142,9 @@ private:
 
     // ŠÇ—Œn
     std::weak_ptr<CShotManager> m_pShotManager;
-    const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer = nullptr;
-    std::vector<std::shared_ptr<CItemBox>>* m_pItemBox = nullptr;
+    const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;
+    std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;
+    std::shared_ptr<CComUtility> m_pUtility;
 
     //COM ‚Ì
     CComBrain m_Brain;

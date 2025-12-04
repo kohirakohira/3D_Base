@@ -1,11 +1,17 @@
 #pragma once
+
+//ライブラリ
 #include <unordered_map>
 #include <memory>
+#include <algorithm>
+#include <cmath>
 
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/IComBody/IComBody.h"
+#include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"
 
 class CCharacterObjectBase;
 class IComBody;
+class CComUtility;
 
 
 //そのフレーム時点でCOMの頭が知ることができる情報
@@ -49,7 +55,7 @@ struct ComCommand
     } state = State::Seek;
 };
 
-/*COMの頭脳クラス*/
+/*COMの頭クラス*/
 
 class CComBrain
 {
@@ -93,7 +99,7 @@ private:
     int   m_LostSightFrames;
 
     std::weak_ptr<CCharacterObjectBase> m_Target;
-    const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer = nullptr;
+    const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;
 
     std::unordered_map<int, int> m_TargetBlackList;
     int   m_BlackListTime;
@@ -103,6 +109,13 @@ private:
 
     int   m_RetargetIntervalFrames;
     int   m_RetargetTimer;
+
+    //便利関数クラス
+    std::shared_ptr<CComUtility> m_pUtility;
+
+    //アイテムクラス
+    std::shared_ptr<CItemBox> m_pItemBox;
+    const std::vector<std::shared_ptr<CItemBox>>* m_pAllItem;
 
 private:
     // 内部処理

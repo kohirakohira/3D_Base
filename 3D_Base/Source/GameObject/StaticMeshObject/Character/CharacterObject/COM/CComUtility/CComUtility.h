@@ -6,6 +6,8 @@
 //COM共通ヘッダー
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/ComCommon/ComCommon.h"
 
+class CStaticMeshObject;
+
 //ライブラリ
 #include <memory>
 
@@ -31,4 +33,11 @@ public:
     static bool IsInDangerZone(const ComWorldContext& world,
         const D3DXVECTOR3& pos,
         float selfRadius);
+
+    //[-π,π] に正規化
+    float Wrap(float a);
+
+    //一つの方向のstepに近づける
+    //float Approach(float cur, float goal, const TankTuning& tuning);
+    float Approach(float cur, float goal, float step);
 };

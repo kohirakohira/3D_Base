@@ -3,13 +3,16 @@
 // COM 共通キャラのベース
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
-#include <algorithm>
-#include <cmath>
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComUtility/CComUtility.h"
+
+#include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"
+
 
 //====================
 // ユーティリティ
 //====================
 
+#if 0
 // [-π,π] に正規化
 float CComBrain::Wrap(float a)
 {
@@ -27,25 +30,25 @@ float CComBrain::Approach(float cur, float goal, float step)
     if (d < -step) return cur - step;
     return goal;
 }
+#endif
 
-//====================
-// コンストラクタ
-//====================
 
 CComBrain::CComBrain()
-    : m_Config()
-    , m_State(ComCommand::State::Seek)
-    , m_StateFrames(0)
-    , m_LostSightFrames(0)
-    , m_Target()
-    , m_pAllPlayer(nullptr)
-    , m_BlackListTime(120)            // ざっくり 2 秒くらい無視 (60fps 前提)
-    , m_CurrentTargetDist2(1e9f)
-    , m_WanderAngle(0.0f)
-    , m_RetargetIntervalFrames(120)   // 2 秒ごとにターゲット見直し
-    , m_RetargetTimer(0)
+    : m_Config                  ()
+    , m_State                   ( ComCommand::State::Seek )
+    , m_StateFrames             ( 0 )
+    , m_LostSightFrames         ( 0 )
+    , m_Target                  ()
+    , m_pAllPlayer              ( nullptr )
+    , m_BlackListTime           ( 120 )          
+    , m_CurrentTargetDist2      ( 1e9f )
+    , m_WanderAngle             ( 0.0f )
+    , m_RetargetIntervalFrames  ( 120 )   // 2 秒ごとにターゲット見直し
+    , m_RetargetTimer           ( 0 )
+    , m_pUtility                ( nullptr )
+    , m_pAllItem                ()
 {
-    // Config のデフォルト値（必要ならここで上書き）
+    // Config のデフォルト値
     m_Config.keepDistance = 9.0f;
     m_Config.attackRadius = 10.0f;
     m_Config.seekRadius = 5.0f;
@@ -56,10 +59,7 @@ CComBrain::CComBrain()
     m_Config.stickinessRatio = 0.8f;
 }
 
-//====================
-// ブラックリスト系
-//====================
-
+//狙う敵の判定
 bool CComBrain::IsBlacklisted(int id) const
 {
     auto it = m_TargetBlackList.find(id);
@@ -306,7 +306,7 @@ void CComBrain::StepSeek(const ComObservation& obs, ComCommand& cmd)
     float desiredYaw = obs.selfYaw;
 
     //ある程度外側にいたら中心に向かって進む
-    const float centerRadius = 10.0f;   //この距離より外にいたら中心を優先
+    const float centerRadius = 10.0f;           //この距離より外にいたら中心を優先
     if (dist2 > centerRadius * centerRadius)
     {
         desiredYaw = std::atan2f(d.x, d.z);
@@ -324,7 +324,7 @@ void CComBrain::StepSeek(const ComObservation& obs, ComCommand& cmd)
     cmd.tryFire = false;
 }
 
-// Chase：ターゲットへ向かって詰める
+// Chase：ターゲットへ向かって移動
 void CComBrain::StepChase(const ComObservation& obs, ComCommand& cmd)
 {
     auto target = m_Target.lock();
@@ -345,11 +345,11 @@ void CComBrain::StepChase(const ComObservation& obs, ComCommand& cmd)
 
     float desiredYaw = std::atan2f(dx, dz);
 
-    // 近づきすぎたときは少し横移動成分を混ぜる
+    // 近づきすぎたときは少し横移動を混ぜる
     if (dist < m_Config.keepDistance * 0.9f)
     {
-        const float side = ((m_StateFrames / 60) % 2 == 0) ? +1.0f : -1.0f;
-        desiredYaw = Wrap(desiredYaw + side * (D3DX_PI * 0.5f));
+            const float side = ((m_StateFrames / 60) % 2 == 0) ? +1.0f : -1.0f;
+            desiredYaw = m_pUtility->Wrap(desiredYaw + side * (D3DX_PI * 0.5f));
     }
 
     cmd.desiredBodyYaw = desiredYaw;
@@ -390,7 +390,7 @@ void CComBrain::StepAttack(const ComObservation& obs, ComCommand& cmd)
     //基本は接線方向
     const int   period = 60;
     const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.0f : -1.0f;
-    float desiredYaw = Wrap(toYaw + sign * (D3DX_PI * 0.5f));
+    float desiredYaw = m_pUtility->Wrap(toYaw + sign * (D3DX_PI * 0.5f));
 
     // 半径がズレたら少し修正
     const float keep = m_Config.keepDistance;
@@ -402,7 +402,7 @@ void CComBrain::StepAttack(const ComObservation& obs, ComCommand& cmd)
     else if (dist < keep * 0.8f)
     {
         // 内側に入りすぎたら外
-        desiredYaw = Wrap(toYaw + D3DX_PI);
+        desiredYaw = m_pUtility->Wrap(toYaw + D3DX_PI);
     }
 
     cmd.desiredBodyYaw = desiredYaw;
@@ -433,7 +433,7 @@ void CComBrain::StepEvade(const ComObservation& obs, ComCommand& cmd)
     const float len2 = away.x * away.x + away.z * away.z;
     if (len2 <= 1e-6f)
     {
-        // 同一点に近すぎる場合は何もしないでその場で砲塔だけ回すなど
+        // 同一点に近すぎる場合は何もしないでその場で砲塔だけ回す
         cmd.desiredBodyYaw = obs.selfYaw;
         cmd.moveStep = 0.0f;
         cmd.aimAtTarget = true;
@@ -445,22 +445,59 @@ void CComBrain::StepEvade(const ComObservation& obs, ComCommand& cmd)
     const float desiredYaw = std::atan2f(away.x, away.z);
 
     cmd.desiredBodyYaw = desiredYaw;
-    cmd.moveStep = 1.0f;    // しっかり逃げる
+    cmd.moveStep = 1.0f;        // しっかり逃げる
     cmd.aimAtTarget = true;    // 逃げながらもこちらを向いて撃ちたい
     cmd.tryFire = true;
     cmd.state = ComCommand::State::Evade;
 }
 
+//アイテムの探索・取得
 void CComBrain::StepItemSeek(const ComObservation& obs, ComCommand& cmd)
 {
+    if (!m_pAllItem)
+    {
+        m_Target.reset();
+        return;
+    }
+
+    //自分のワールド座標
+    const D3DXVECTOR3 selfPos = obs.selfPos;
+
+    std::shared_ptr<CItemBox> best;
+    float bestD2 = 1e9f;
+
+    if (m_pItemBox->IsActive() == true)
+    {
+        //一番近いアイテムを探す
+        for (auto& p : *m_pAllItem)
+        {
+            D3DXVECTOR3 pos = m_pItemBox->GetPosition();
+            pos.y = 0.0f;
+            D3DXVECTOR3 d = pos - selfPos;
+            d.y = 0.0f;
+
+            const float d2 = d.x * d.x + d.z * d.z;
+            if (d2 < bestD2)
+            {
+                bestD2 = d2;
+                best = p;
+            }
+        }
+    } 
+
+    //アイテムがなければターゲットもなし
+    if (!best || m_pItemBox->IsActive() == false)
+    {
+        m_pItemBox.reset();
+        m_CurrentTargetDist2 = 1e9;
+    }
+
+#if 0
     //ひとまずSeekと同じ挙動にしておく
     StepSeek(obs, cmd);
     cmd.state = ComCommand::State::ItemSeek;
+#endif
 }
-
-//====================
-// メイン Update
-//====================
 
 void CComBrain::Update(const ComObservation& obs, ComCommand& outCmd)
 {

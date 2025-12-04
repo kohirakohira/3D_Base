@@ -16,25 +16,26 @@ std::vector<CComPlayer*>& CComPlayer::Instances()
 // コンストラクタ / デストラクタ
 //==================================================
 CComPlayer::CComPlayer()
-    : m_pBody()
-    , m_pCannon()
-    , m_pShotManager()
-    , m_pAllPlayer(nullptr)
-    , m_pItemBox(nullptr)
-    , m_Brain()
-    , m_AvoidRadius(10.0f)
-    , m_AvoidWeight(2.0f)
-    , m_ObstacleRadius(3.0f)
-    , m_ObstacleProbeDist(8.0f)
-    , m_ObstacleProbeStep(0.5f)
-    , m_ProbeAngleRad(D3DXToRadian(25.0f))
-    , m_pSimpleObstacles(nullptr)
-    , m_Shot()
-    , m_ComEnabled(true)
-    , m_HasControl(false)
-    , m_Respawn(false)
-    , m_Registered(false)
-    , m_PlayerID(-1)
+    : m_pBody                       ()
+    , m_pCannon                     ()
+    , m_pShotManager                ()
+    , m_pAllPlayer                  ( nullptr )
+    , m_pItemBox                    ( nullptr )
+    , m_Brain                       ()
+    , m_AvoidRadius                 ( 10.0f )
+    , m_AvoidWeight                 ( 2.0f )
+    , m_ObstacleRadius              ( 3.0f )
+    , m_ObstacleProbeDist           ( 8.0f )
+    , m_ObstacleProbeStep           ( 0.5f )
+    , m_ProbeAngleRad(D3DXToRadian  ( 25.0f ))
+    , m_pSimpleObstacles            ( nullptr )
+    , m_Shot                        ()
+    , m_ComEnabled                  ( true )
+    , m_HasControl                  ( false )
+    , m_Respawn                     ( false )
+    , m_Registered                  ( false )
+    , m_PlayerID                    ( -1 )
+    , m_pUtility                   ( nullptr )
 {
 }
 
@@ -55,11 +56,10 @@ void CComPlayer::Initialize(int playerId)
 {
     m_PlayerID = playerId;
 
-    // 車体・砲塔生成（コンストラクタ引数は既存設計に合わせて修正）
+    //車体と砲塔生成
     if (!m_pBody)   m_pBody = std::make_shared<CBody>(playerId);
     if (!m_pCannon) m_pCannon = std::make_shared<CCannon>(playerId);
 
-    // ベースクラスのフラグ（名前はプロジェクトに合わせて修正）
     m_IsAlive = true;
     m_IsActive = true;
     m_Drawflag = true;
@@ -103,9 +103,7 @@ void CComPlayer::SanitizeParams()
     //if (m_ProbeAngleRad <= 0.0f) m_ProbeAngleRad = D3DXToRadian(25.0f);
 }
 
-//==================================================
-// ユーティリティ
-//==================================================
+#if 0
 float CComPlayer::Wrap(float a)
 {
     const float TWO_PI = D3DX_PI * 2.0f;
@@ -121,6 +119,7 @@ float CComPlayer::Approach(float cur, float goal, float step)
     if (d < -step) return cur - step;
     return goal;
 }
+#endif
 
 D3DXVECTOR3 CComPlayer::ForwardFromYaw(float yaw)
 {
@@ -181,6 +180,7 @@ void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& 
     if (m_pCannon) m_pCannon->Draw(View, Proj, Light, Camera);
 }
 
+//ダメージ処理
 void CComPlayer::OnHit(CCharacterObjectBase* )
 {
     // HP 減少・リスポーン処理などがあればここに書く
@@ -231,11 +231,11 @@ void CComPlayer::ApplyCommand(const ComCommand& cmd)
     // 移動量（0～1想定）を実際の距離に変換
     float moveStep = std::max(0.0f, cmd.moveStep) * t.moveSpeed;
 
-    // 安全に前進（COM同士の分離＋危険ゾーンチェック）
+    // 安全に前進
     SafeAdvance(nextYaw, moveStep);
 
     // 砲塔の向き
-    auto target = m_Brain.GetTarget().lock();   // ← CComBrain に GetTarget() を追加しておく
+    auto target = m_Brain.GetTarget().lock();   
     if (cmd.aimAtTarget && target)
     {
         AimTurretAt(target->GetPosition());
@@ -294,7 +294,7 @@ void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
 }
 
 //==================================================
-// 障害物との簡易チェック（前方）
+// 障害物とのチェック
 //==================================================
 bool CComPlayer::HasObstacleAheadSimple(const D3DXVECTOR3& selfPos,
     float yaw,
@@ -329,7 +329,7 @@ bool CComPlayer::HasObstacleAheadSimple(const D3DXVECTOR3& selfPos,
 }
 
 //==================================================
-// 危険ゾーン判定（中に入っていたら危険）
+// 危険ゾーン判定
 //==================================================
 bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
 {
@@ -358,21 +358,21 @@ float CComPlayer::SteerWithAvoid(float curYaw, float desiredYaw, float turnStep)
 
     const D3DXVECTOR3 selfPos = body->GetPosition();
 
-    // ===== 追加: スタック中はベースの目標角度を大きく曲げる =====
+    //止まったらベースの角度をあげる
     const int STUCK_TURN_FRAMES = 30;   // 約0.5秒動けなかったら「スタック」とみなす
     float baseDesired = desiredYaw;
     if (m_StuckFrames >= STUCK_TURN_FRAMES)
     {
         // 奇数IDは左回り・偶数IDは右回りにしておくと、COM同士もばらける
         const float offset = ((m_PlayerID & 1) ? +1.0f : -1.0f) * D3DX_PI * 0.5f;
-        baseDesired = Wrap(desiredYaw + offset);
+        baseDesired = m_pUtility->Wrap(desiredYaw + offset);
     }
     // ==============================================
 
     if (!m_pSimpleObstacles || m_pSimpleObstacles->empty())
     {
-        const float d = Wrap(baseDesired - curYaw);
-        return Approach(curYaw, curYaw + d, turnStep);
+        const float d = m_pUtility->Wrap(baseDesired - curYaw);
+        return m_pUtility->Approach(curYaw, curYaw + d, turnStep);
     }
 
     const float angs[3] = { 0.0f, +m_ProbeAngleRad, -m_ProbeAngleRad };
@@ -403,7 +403,7 @@ float CComPlayer::SteerWithAvoid(float curYaw, float desiredYaw, float turnStep)
         }
 
         // なるべく baseDesired に近い方向を優先
-        score -= std::fabs(Wrap(testYaw - baseDesired)) * 10.0f;
+        score -= std::fabs(m_pUtility->Wrap(testYaw - baseDesired)) * 10.0f;
 
         if (score > bestScore)
         {
@@ -416,11 +416,11 @@ float CComPlayer::SteerWithAvoid(float curYaw, float desiredYaw, float turnStep)
     if (!anyFree && m_StuckFrames > 0)
     {
         const float offset = ((m_PlayerID & 1) ? +1.0f : -1.0f) * D3DX_PI * 0.5f;
-        bestYaw = Wrap(curYaw + offset);
+        bestYaw = m_pUtility->Wrap(curYaw + offset);
     }
 
-    const float d = Wrap(bestYaw - curYaw);
-    return Approach(curYaw, curYaw + d, turnStep);
+    const float d = m_pUtility->Wrap(bestYaw - curYaw);
+    return m_pUtility->Approach(curYaw, curYaw + d, turnStep);
 }
 
 //==================================================
@@ -520,7 +520,7 @@ void CComPlayer::AimTurretAt(const D3DXVECTOR3& targetPos)
 
     const float desired = std::atan2f(to.x, to.z);
     float yaw = cannon->GetRotation().y;
-    yaw = Approach(yaw, yaw + Wrap(desired - yaw), t.turretTurnSpeed);
+    yaw = m_pUtility->Approach(yaw, yaw + m_pUtility->Wrap(desired - yaw), t.turretTurnSpeed);
 
     cannon->SetPosition(base);
     cannon->SetRotation(D3DXVECTOR3(0.0f, yaw, 0.0f));
@@ -585,10 +585,10 @@ void CComPlayer::TryAutoFire(const ComCommand&)
     if (d2 <= 1e-6f) return;
 
     const float desired = std::atan2f(to.x, to.z);
-    const float err = std::fabs(Wrap(desired - yaw));
+    const float err = std::fabs(m_pUtility->Wrap(desired - yaw));
 
     // 砲塔の向きがある程度合っていたら撃つ
-    const float maxErr = D3DXToRadian(m_Shot.fireAngleEpsDeg);   // ex. 10°
+    const float maxErr = D3DXToRadian(m_Shot.fireAngleEpsDeg);   
     if (err <= maxErr)
     {
      /*   manager->(
