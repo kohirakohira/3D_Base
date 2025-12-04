@@ -40,7 +40,9 @@ public:
 	//大きさの設定.
 	void SetScale(float xyz, int index);
 	//爆発フラグ設定.
-	void SetBlastFlag(bool flg,  int index);
+	void SetBlastFlag(bool flg, int index);
+	//爆発の最大半径設定.
+	void SetBlastRadiusMax(float rad);
 	//爆発フラグの取得.
 	bool GetBlastFlag();
 	//半径の取得.

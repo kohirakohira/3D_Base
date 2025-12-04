@@ -30,6 +30,8 @@ CCollisionManager::CCollisionManager()
 
 	// アイテムボックスマネージャー
 	, m_pItemBoxManager		()
+
+	//, m_Rad					( 4.0f )
 {
 }
 
@@ -72,17 +74,6 @@ void CCollisionManager::Update()
 
 	//爆風とプレイヤーの当たり判定.
 	PlayertoBlast();
-}
-
-HRESULT CCollisionManager::LoadData()
-{
-//--------------------------------------------------------------------------.
-// 	   メッシュの読み込み
-//--------------------------------------------------------------------------.
-	// 爆風
-	m_pStaticBlast->Init(_T("Data\\Mesh\\Static\\Bullet\\Red\\Ball.x"));
-
-	return S_OK;
 }
 
 void CCollisionManager::WalltoPlayer()
@@ -145,6 +136,8 @@ void CCollisionManager::WalltoShot()
 				true,
 				m_pStaticBlast);
 
+			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+
 			m_pShotManager->HitShot();
 		}
 		if (shot->GetCollider()->CheckCollision(*m_pWallBottom->GetCollider()))
@@ -154,6 +147,8 @@ void CCollisionManager::WalltoShot()
 				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
+
+			m_pBlastManager->SetBlastRadiusMax(m_Rad);
 
 			m_pShotManager->HitShot();
 		}
@@ -165,6 +160,8 @@ void CCollisionManager::WalltoShot()
 				true,
 				m_pStaticBlast);
 
+			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+
 			m_pShotManager->HitShot();
 		}
 		if (shot->GetCollider()->CheckCollision(*m_pWallRight->GetCollider()))
@@ -174,6 +171,8 @@ void CCollisionManager::WalltoShot()
 				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
+
+			m_pBlastManager->SetBlastRadiusMax(m_Rad);
 
 			m_pShotManager->HitShot();
 		}
@@ -264,11 +263,12 @@ void CCollisionManager::CharactertoItemBox()
 				//{
 				//}
 
-				////爆風の半径設定.
-				////爆風に設定.
-				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
-				//{
-				//}
+				//爆風の半径設定.
+				//爆風に設定.
+				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
+				{
+					m_Rad = m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast;
+				}
 
 				////装填時短設定.
 				////弾に設定.
@@ -303,6 +303,8 @@ void CCollisionManager::PlayertoShot()
 					shot->GetPosition(),
 					true,
 					m_pStaticBlast);
+
+				m_pBlastManager->SetBlastRadiusMax(m_Rad);
 
 				shot->HitShot();
 
@@ -463,6 +465,8 @@ void CCollisionManager::WoodBoxtoShot()
 				true,
 				m_pStaticBlast);
 
+			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+
 			shot->HitShot();
 		}
 		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
@@ -472,6 +476,8 @@ void CCollisionManager::WoodBoxtoShot()
 				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
+
+			m_pBlastManager->SetBlastRadiusMax(m_Rad);
 
 			shot->HitShot();
 		}
@@ -483,6 +489,8 @@ void CCollisionManager::WoodBoxtoShot()
 				true,
 				m_pStaticBlast);
 
+			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+
 			shot->HitShot();
 		}
 		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
@@ -493,6 +501,8 @@ void CCollisionManager::WoodBoxtoShot()
 				true,
 				m_pStaticBlast);
 
+			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+
 			shot->HitShot();
 		}
 		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
@@ -502,6 +512,8 @@ void CCollisionManager::WoodBoxtoShot()
 				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
+
+			m_pBlastManager->SetBlastRadiusMax(m_Rad);
 
 			shot->HitShot();
 		}
@@ -520,6 +532,9 @@ void CCollisionManager::GroundtoShot()
 				shot->GetPosition(),
 				true,
 				m_pStaticBlast);
+
+			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+
 			shot->HitShot();
 		}
 	}
@@ -545,9 +560,9 @@ void CCollisionManager::PlayertoBlast()
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		//i番目のプレイヤーを取得.
-		auto player = m_pCharacterManager->GetControlPlayer(i);
-		if (!player)continue;
-		auto Coll = player->GetBody()->GetCollider();
+		auto chara = m_pCharacterManager->GetControlPlayer(i);
+		if (!chara)continue;
+		auto Coll = chara->GetBody()->GetCollider();
 
 		if (m_pBlastManager->GetBlastFlag() == true)
 		{
@@ -555,6 +570,9 @@ void CCollisionManager::PlayertoBlast()
 			if (Coll->CheckCollision(*m_pBlastManager->GetCollider()))
 			{
 				m_pBlastManager->HitBlast(i);
+
+				std::cout << "当たった" << std::endl;
+
 			}
 		}
 	}

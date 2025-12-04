@@ -26,9 +26,6 @@ public:
 	//動作関数..
 	void Update();
 
-	// データの読み込み
-	HRESULT LoadData();
-
 	//-----------------------
 	// それぞれの判定関数
 	//-----------------------
@@ -59,9 +56,6 @@ public:
 	//-----------------------
 	// 外部から情報をセット
 	//-----------------------
-	// 弾(爆風用)をセット
-	void SetStaticBlast(std::shared_ptr<CStaticMesh> pBlast) { m_pStaticBlast = pBlast; }
-
 	// 壁のセット
 	void SetCStageWall(std::shared_ptr<CStageObject> pWallTop,
 					   std::shared_ptr<CStageObject> pWallBottom,
@@ -102,6 +96,10 @@ public:
 
 	// アイテムボックスマネージャーのセット
 	void SetCItemBoxManager(std::shared_ptr<CItemBoxManager> pItemBox) { m_pItemBoxManager = pItemBox; }
+
+	//メッシュの設定.
+	void SetBlastMesh(std::shared_ptr<CStaticMesh> mesh) { m_pStaticBlast = mesh; }
+
 private:
 	// 爆風用のメッシュ
 	std::shared_ptr<CStaticMesh>		m_pStaticBlast;			// 爆風のメッシュ
@@ -133,4 +131,7 @@ private:
 
 	// アイテムボックスマネージャークラス
 	std::shared_ptr<CItemBoxManager>	m_pItemBoxManager;
+
+	//最大半径.
+	float m_Rad;
 };

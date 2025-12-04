@@ -49,6 +49,8 @@
 #include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
 
 #include "Global.h"
+
+//当たり判定.
 #include "Collision/CollisionManager/CCollisionManager.h"
 
 class CGameMain
@@ -201,7 +203,6 @@ public:
 
 	// アイテムボックスマネージャークラス
 	std::shared_ptr<CItemBoxManager>	m_pItemBoxManager;
-
 
 	// 当たり判定マネージャー
 	std::shared_ptr<CCollisionManager> m_pCollisionManager;
