@@ -41,31 +41,35 @@ CGameResult::~CGameResult()
 
 void CGameResult::Update()
 {
-	//BGMのループ再生.
-	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
-
 	//コントローラーの取得※0番のみ動かせる.
 	CController* controller = CControllerManager::GetInstance().GetController(0);
 
+	// コントローラーの繰り上げ処理を呼び出し
+	CControllerManager::GetInstance().Reoderring();
 
+	//BGMのループ再生.
+	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
 	//↓-----タイトルでの演出-----↓.
 	m_Key->Update();
 
 
 	//↑-----タイトルでの演出-----↑.
 
-
-	if (m_Key->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
+		//シーンの遷移.
+	if (controller && controller->CheckConnected())
 	{
-		//BGMのループ停止.
-		CSoundManager::Stop(CSoundManager::BGM_Title);
+		if (m_Key->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
+		{
+			//BGMのループ停止.
+			CSoundManager::Stop(CSoundManager::BGM_Title);
 
-		//SEの再生.
-		CSoundManager::PlaySE(CSoundManager::SE_Click);
+			//SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Click);
 
-		DrawFlag = true;
+			DrawFlag = true;
 
-		m_SceneType = CSceneType::Title;
+			m_SceneType = CSceneType::Title;
+		}
 	}
 }
 

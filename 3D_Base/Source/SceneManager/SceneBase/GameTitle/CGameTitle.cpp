@@ -38,6 +38,9 @@ void CGameTitle::Update()
 	//コントローラーの取得※0番のみ動かせる.
 	CController* controller = CControllerManager::GetInstance().GetController(0);
 
+	// コントローラーの繰り上げ処理を呼び出し
+	CControllerManager::GetInstance().Reoderring();
+
 	//BGMのループ再生.
 	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
 
@@ -55,7 +58,7 @@ void CGameTitle::Update()
 //↑-----タイトルでの演出-----↑.
 
 	//ゲーム設定に遷移.
-	//if (controller && controller->CheckConnected())
+	if (controller && controller->CheckConnected())
 	{
 		if (m_KeyInput->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 		{

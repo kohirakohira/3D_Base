@@ -65,6 +65,11 @@ public:
 	//全コントローラーの切断処理.
 	void AllControllerAmputation();
 
+	//=====コントローラーの繰り上げ処理=====
+	void Reoderring();
+	//===================================
+
+
 private:
 	//メンバ変数.
 	std::vector<std::unique_ptr<CController>>	m_Controller;	//全プレイヤー.

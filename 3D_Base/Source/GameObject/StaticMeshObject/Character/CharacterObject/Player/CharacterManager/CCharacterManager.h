@@ -98,6 +98,11 @@ public:
 	const TankTuning& GetTuning(int index) const;
 	//==================================
 
+	//=====–³“G‚Ìİ’èEæ“¾=====
+	void SetMuteki(int index, bool flg);
+	void GetMuteki(int index);
+	//========================
+
 private:
 
 	struct Area {

@@ -45,7 +45,7 @@ void CCollisionManager::Update()
 	WalltoPlayer();
 
 	// 壁と弾の当たり判定
-	WalltoShot();
+	//WalltoShot();
 
 	// プレイヤーとプレイヤー当たり判定判別
 	PlayertoPlayer();
@@ -60,10 +60,10 @@ void CCollisionManager::Update()
 	WoodBoxtoPlayer();
 
 	// 木箱と弾
-	WoodBoxtoShot();
+	//WoodBoxtoShot();
 
 	// 地面と弾
-	GroundtoShot();
+	//GroundtoShot();
 
 	// 地面とアイテムボックス
 	GroundtoItemBox();
@@ -84,9 +84,9 @@ void CCollisionManager::WalltoPlayer()
 		const float pushStrength = m_pCharacterManager->GetTuning(i).moveSpeed;
 
 		// i 番のプレイヤーを取得
-		auto player = m_pCharacterManager->GetControlPlayer(i);
-		if (!player)continue;
-		auto Coll = player->GetBody()->GetCollider();
+		auto chara = m_pCharacterManager->GetControlPlayer(i);
+		if (!chara)continue;
+		auto Coll = chara->GetBody()->GetCollider();
 
 		// 押し返すための変数
 		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
@@ -117,8 +117,8 @@ void CCollisionManager::WalltoPlayer()
 		}
 
 		// 壁に当たった時に押し返す
-		player->GetBody()->PushBack(push);
-		player->GetCannon()->PushBack(push);
+		chara->GetBody()->PushBack(push);
+		chara->GetCannon()->PushBack(push);
 	}
 }
 
@@ -188,9 +188,9 @@ void CCollisionManager::PlayertoPlayer()
 		const float pushStrength = m_pCharacterManager->GetTuning(i).moveSpeed;
 
 		// プレイヤーAのコライダー取得
-		auto playerA = m_pCharacterManager->GetControlPlayer(i);
-		if (!playerA)continue;
-		auto CollA = playerA->GetBody()->GetCollider();
+		auto charaA = m_pCharacterManager->GetControlPlayer(i);
+		if (!charaA)continue;
+		auto CollA = charaA->GetBody()->GetCollider();
 
 		for (int j = 0; j < PLAYER_MAX; j++)
 		{
@@ -198,14 +198,14 @@ void CCollisionManager::PlayertoPlayer()
 			if (i == j) continue;
 
 			// プレイヤーBのコライダー取得
-			auto playerB = m_pCharacterManager->GetControlPlayer(j);
-			if (!playerB->IsPlayer())continue;
-			auto CollB = playerB->GetBody()->GetCollider();
+			auto charaB = m_pCharacterManager->GetControlPlayer(j);
+			if (!charaB->IsPlayer())continue;
+			auto CollB = charaB->GetBody()->GetCollider();
 
 			if (CollA->CheckCollision(*CollB))
 			{
 				// 衝突時の押し返し処理例
-				D3DXVECTOR3 push = playerA->GetBody()->GetPosition() - playerB->GetBody()->GetPosition();
+				D3DXVECTOR3 push = charaA->GetBody()->GetPosition() - charaB->GetBody()->GetPosition();
 
 				// pushベクトルを正規化して押し返しの強さをかける
 				float length = D3DXVec3Length(&push);
@@ -213,7 +213,7 @@ void CCollisionManager::PlayertoPlayer()
 				{
 					push /= length;
 					push *= pushStrength;
-					playerA->GetBody()->PushBack(push);
+					charaA->GetBody()->PushBack(push);
 				}
 			}
 		}
@@ -290,26 +290,26 @@ void CCollisionManager::PlayertoShot()
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		// プレイヤーのコライダー取得
-		auto player = m_pCharacterManager->GetControlPlayer(i);
-		if (!player)continue;
-		auto Coll = player->GetBody()->GetCollider();
+		auto chara = m_pCharacterManager->GetControlPlayer(i);
+		if (!chara)continue;
+		auto Coll = chara->GetBody()->GetCollider();
 
 		for (auto& shot : m_pShotManager->GetShot())
 		{
 			if (shot->GetCollider()->CheckCollision(*Coll))
 			{
-				//動的に作成.
-				m_pBlastManager->Create(
-					shot->GetPosition(),
-					true,
-					m_pStaticBlast);
+				////動的に作成.
+				//m_pBlastManager->Create(
+				//	shot->GetPosition(),
+				//	true,
+				//	m_pStaticBlast);
 
-				m_pBlastManager->SetBlastRadiusMax(m_Rad);
+				//m_pBlastManager->SetBlastRadiusMax(m_Rad);
 
 				shot->HitShot();
 
 				// 仮でここに当たった時の処理を書いている
-				//player->HitPlayer();
+				//chara->HitPlayer();
 			}
 		}
 	}

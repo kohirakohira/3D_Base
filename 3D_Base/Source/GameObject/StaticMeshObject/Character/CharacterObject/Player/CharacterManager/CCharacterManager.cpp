@@ -512,7 +512,8 @@ void CCharacterManager::SetShotManager(std::shared_ptr<CShotManager>& mgr)
 	for (auto& up : m_pCharacter) 
 	{
 		if (auto* com = dynamic_cast<CComPlayer*>(up.get())) 
-		{	//CComPlayerなら生のポインタにして渡す.所有権は渡さない
+		{	
+			//CComPlayerなら生のポインタにして渡す.所有権は渡さない
 			com->AttachShotManager(m_ShotManager);	//weak_ptrに渡す
 		}
 		else
@@ -529,7 +530,6 @@ void CCharacterManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::share
 	m_pBody = body;
 	m_pCannon = cannon;	
 	
-	
 #if 0
 	for (auto& player : m_pCharacter)
 	{
@@ -539,6 +539,7 @@ void CCharacterManager::SetBodyAndCannon(std::shared_ptr<CBody> body, std::share
 #endif
 }
 
+//=======パラメータ設定用=======
 void CCharacterManager::SetPlayerTuningAll(const TankTuning& t)
 {
 	for (auto& chara : m_pCharacter)chara->SetTuning(t);
@@ -551,7 +552,9 @@ void CCharacterManager::SetPlayerTuning(int idx, const TankTuning& t)
 	std::cout << m_pCharacter[idx]->GetBody()->GetTuning().moveSpeed << std::endl;
 
 }
+//============================
 
+//=======パラメータの設定・取得=======
 void CCharacterManager::SetTuning(const TankTuning& tuning, int index)
 {
 	if (index >= 0 && index < m_pCharacter.size())
@@ -564,9 +567,28 @@ const TankTuning& CCharacterManager::GetTuning(int index) const
 {
 	if (index >= 0 && index < m_pCharacter.size())
 	{
-		return m_pCharacter[index]->GetBody()->GetTuning();;
+		return m_pCharacter[index]->GetBody()->GetTuning();
 	}
 }
+//==================================
+
+//=====無敵の設定・取得=====
+void CCharacterManager::SetMuteki(int index, bool flg)
+{
+	if (index >= 0 && index < m_pCharacter.size())
+	{
+		m_pCharacter[index]->SetMuteki(flg);
+	}
+}
+
+void CCharacterManager::GetMuteki(int index)
+{
+	if (index >= 0 && index < m_pCharacter.size())
+	{
+		m_pCharacter[index]->GetMuteki();
+	}
+}
+//========================
 
 //プレイヤーとCOMの自動切り替え.
 void CCharacterManager::SwitchControl()

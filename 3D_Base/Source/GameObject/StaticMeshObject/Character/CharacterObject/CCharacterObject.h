@@ -59,7 +59,10 @@ public:
 	//弾マネージャーのインスタンス設定.
 	virtual void SetShotManager(std::shared_ptr<CShotManager> shot) = 0;
 
-	// 無敵フラグの取得
+	//=====無敵の設定・取得=====
+	virtual void SetMuteki(bool flg) = 0;
+	virtual bool GetMuteki() const = 0;
+	//========================
 
 protected:
 	//車体クラス.

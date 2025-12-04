@@ -240,6 +240,11 @@ private:
 	int m_PlayerID = -1;
 
 	bool		m_Respawn;				// リスポーン
+
+	//=====無敵の設定・取得=====
+	void SetMuteki(bool flg) override { m_Muteki = flg; }
+	bool GetMuteki() const override { return m_Muteki; }
+	//========================
 };
 
 

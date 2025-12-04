@@ -119,6 +119,11 @@ public:
 	//弾マネージャーの設定.
 	void SetShotManager(std::shared_ptr<CShotManager> shot) override ;
 
+	//=====無敵の設定・取得=====
+	void SetMuteki(bool flg) override { m_Muteki = flg; }
+	bool GetMuteki() const override { return m_Muteki; }
+	//========================
+
 protected:
 
 	CController* 	m_Controller;

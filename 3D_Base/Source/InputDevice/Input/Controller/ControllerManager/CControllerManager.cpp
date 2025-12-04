@@ -38,7 +38,6 @@ void CControllerManager::Update()
 	std::cout << "接続された数->" << m_ConnectedCount << std::endl;
 	std::cout << "切断された数->" << PLAYER_MAX - m_ConnectedCount << std::endl;
 #endif
-
 }
 
 //全コントローラーの切断処理.
@@ -50,3 +49,34 @@ void CControllerManager::AllControllerAmputation()
 	}
 	m_ConnectedCount = 0;
 }
+
+//=====コントローラーの繰り上げ処理=====
+void CControllerManager::Reoderring()
+{
+	int nextSlot = 0;
+
+	for (int index = 0; index < PLAYER_MAX; ++index)
+	{
+		CController* ctrl = m_Controller[index].get();
+
+		// 接続されていないコントローラーは無視
+		if (!ctrl->CheckConnected())
+		{
+			continue;
+		}
+
+		// すでに正しい位置にいる
+		if (index == nextSlot)
+		{
+			nextSlot++;
+			continue;
+		}
+
+		// --- 繰り上げを行う ---
+		// swap で unique_ptr の入れ替えを行う
+		std::swap(m_Controller[index], m_Controller[nextSlot]);
+
+		nextSlot++;
+	}
+}
+//===================================
