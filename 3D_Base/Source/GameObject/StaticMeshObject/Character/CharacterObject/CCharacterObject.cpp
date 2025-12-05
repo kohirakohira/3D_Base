@@ -40,16 +40,19 @@ void CCharacterObjectBase::Update()
 void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
 	// ¶‘¶ƒtƒ‰ƒO‚â•`‰æƒtƒ‰ƒO‚Å‘Šú return
-	if (!m_IsAlive || !m_Chara.m_Drawflag) {
+	if (!m_IsAlive || !m_Chara.m_Drawflag) 
+	{
 		return;
 	}
 
 #if 1
 	// ŽÔ‘Ì‚Æ–C“ƒ‚ð‚Ü‚Æ‚ß‚Ä•`‰æ
-	if (m_pBody) {
+	if (m_pBody) 
+	{
 		m_pBody->Draw(View, Proj, Light, Camera);
 	}
-	if (m_pCannon) {
+	if (m_pCannon)
+	{
 		m_pCannon->Draw(View, Proj, Light, Camera);
 	}
 #endif
