@@ -14,7 +14,7 @@ static bool prevA = false;
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス.
 
 //定数宣言.
-static constexpr int TIME = 60;
+static constexpr int TIME = 99;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 
@@ -100,6 +100,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, time							( 0.0f )
 
 	, m_pBlastManager				( nullptr )
+
 	, m_pCollisionManager			( nullptr )
 
 {
@@ -127,6 +128,8 @@ void CGameMain::Update()
 	// アイテムボックスマネージャーをセット
 	m_pCollisionManager->SetCItemBoxManager(m_pItemBoxManager);
 
+	//爆風の更新処理.
+	m_pBlastManager->Update();
 
 //-----メイン演出用-----..
 	
@@ -216,9 +219,6 @@ void CGameMain::Update()
 	m_pWallBottom->Update();
 	m_pWallLeft->Update();
 	m_pWallRight->Update();
-
-	//爆風の動作処理.
-	m_pBlastManager->Update();
 
 	// 木箱の更新
 	m_pWoodBoxTopLeft->Update();
@@ -318,7 +318,7 @@ void CGameMain::Draw()
 		//アイテムボックスの描画.
 		m_pItemBoxManager->Draw(view, proj, light, paramC);
 
-		//爆風の表示.
+		//爆風の描画.
 		m_pBlastManager->Draw(view, proj, light, paramC);
 
 		//背景の表示.
@@ -590,9 +590,6 @@ void CGameMain::Create()
 	// 地面
 	m_pGround = std::make_shared<CStageObject>();
 
-	//爆発クラスのインスタンス生成.
-	m_pBlastManager = std::make_shared<CBlastCollisionManager>();
-
 	//アイテムマネージャークラスのインスタンス生成..
 	m_pWoodBoxTopLeft = std::make_shared<CStageObject>();
 	m_pWoodBoxTopRight = std::make_shared<CStageObject>();
@@ -606,27 +603,8 @@ void CGameMain::Create()
 	// 当たり判定マネージャークラスのインスタンス生成
 	m_pCollisionManager = std::make_shared<CCollisionManager>();
 
-	// 当たり判定マネージャーに必要なクラスをセット
-	// 爆風用の弾をセット
-	m_pCollisionManager->SetBlastMesh(m_pStaticMesh_BulletRed);
-
-	// 壁をセット
-	m_pCollisionManager->SetCStageWall(m_pWallTop, m_pWallBottom, m_pWallLeft, m_pWallRight);
-	
-	// 地面をセット
-	m_pCollisionManager->SetCStageGround(m_pGround);
-	
-	// 木箱をセット
-	m_pCollisionManager->SetCStageWoodBox(m_pWoodBoxTopLeft, m_pWoodBoxTopRight, m_pWoodBoxCenter, m_pWoodBoxBottomLeft, m_pWoodBoxBottomRight);
-	
-	// 弾をセット
-	m_pCollisionManager->SetCShotManager(m_pShotManager);
-	
-	// キャラクターマネージャーをセット
-	m_pCollisionManager->SetCPlayerManager(m_pCharacterManager);
-	
-	// 爆風マネージャーをセット
-	m_pCollisionManager->SetCBlastCollisionManager(m_pBlastManager);
+	//爆風マネージャークラスのインスタンス生成.
+	m_pBlastManager = std::make_shared<CBlastManager>();
 
 }
 
@@ -800,10 +778,6 @@ HRESULT CGameMain::LoadData()
 			break;
 		}
 	}
-
-	//爆風のメッシュ設定.
-	m_pCollisionManager->SetBlastMesh(m_pStaticMesh_BulletRed);
-
 	//弾メッシュ情報を持たせる.
 	m_pShotManager->AttachMeshToPlayerShot(BulletKinds::Mesh_1, m_pStaticMesh_BulletRed);
 	m_pShotManager->AttachMeshToPlayerShot(BulletKinds::Mesh_2, m_pStaticMesh_BulletYellow);
@@ -834,6 +808,28 @@ HRESULT CGameMain::LoadData()
 
 	//背景画像を設定.
 	m_pBackImgObject->AttachMesh(m_pStaticMeshBackImg);
+
+	// 当たり判定マネージャーに必要なクラスをセット
+	// 爆風用の弾をセット
+	m_pCollisionManager->SetBlastMesh(m_pStaticMesh_BulletRed);
+
+	// 壁をセット
+	m_pCollisionManager->SetCStageWall(m_pWallTop, m_pWallBottom, m_pWallLeft, m_pWallRight);
+
+	// 地面をセット
+	m_pCollisionManager->SetCStageGround(m_pGround);
+
+	// 木箱をセット
+	m_pCollisionManager->SetCStageWoodBox(m_pWoodBoxTopLeft, m_pWoodBoxTopRight, m_pWoodBoxCenter, m_pWoodBoxBottomLeft, m_pWoodBoxBottomRight);
+
+	// 弾をセット
+	m_pCollisionManager->SetCShotManager(m_pShotManager);
+
+	// キャラクターマネージャーをセット
+	m_pCollisionManager->SetCPlayerManager(m_pCharacterManager);
+
+	//爆風マネージャーを設定.
+	m_pCollisionManager->SetCBlastManager(m_pBlastManager);
 
 	// バウンディングの作成
 	CreateBounding();

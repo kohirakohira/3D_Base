@@ -3,6 +3,7 @@
 //-----ライブラリ-----
 #include <vector>
 #include <memory>
+#include <ranges>
 
 //-----外部クラス-----
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス
@@ -11,8 +12,8 @@
 #include "GameObject//StaticMeshObject//StageObject//CStageObject.h"
 #include "GameObject/StaticMeshObject/Character/CharacterObject/Player/CharacterManager/CCharacterManager.h"
 
-#include "Collision/BlastCollision/BlastCollisionManager/CBlastCollisionManager.h"
 #include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"
+#include "../../GameObject/StaticMeshObject/BlastManager/CBlastManager.h"
 
 //===================================
 //	コリジョンマネージャークラス
@@ -91,14 +92,17 @@ public:
 	// キャラクターマネージャーのセット
 	void SetCPlayerManager(std::shared_ptr<CCharacterManager> pPlayer) { m_pCharacterManager = pPlayer; }
 
-	// 爆風当たり判定マネージャーのセット
-	void SetCBlastCollisionManager(std::shared_ptr<CBlastCollisionManager> pBlast) { m_pBlastManager = pBlast; }
-
 	// アイテムボックスマネージャーのセット
 	void SetCItemBoxManager(std::shared_ptr<CItemBoxManager> pItemBox) { m_pItemBoxManager = pItemBox; }
 
+	//爆風マネージャーの設定.
+	void SetCBlastManager(std::shared_ptr<CBlastManager> blast) { m_pBlastManager = blast; }
+
 	//メッシュの設定.
 	void SetBlastMesh(std::shared_ptr<CStaticMesh> mesh) { m_pStaticBlast = mesh; }
+
+	//アイテムの設定.
+	void SetItemInfomation(int Itemindex, int Playerindex);
 
 private:
 	// 爆風用のメッシュ
@@ -126,12 +130,16 @@ private:
 	// キャラクターマネージャー
 	std::shared_ptr<CCharacterManager>		m_pCharacterManager;
 
-	// 爆風当たり判定マネージャー
-	std::shared_ptr<CBlastCollisionManager> m_pBlastManager;
-
 	// アイテムボックスマネージャークラス
 	std::shared_ptr<CItemBoxManager>	m_pItemBoxManager;
 
+	//爆風マネージャークラス.
+	std::shared_ptr<CBlastManager>		m_pBlastManager;
+
 	//最大半径.
-	float m_Rad;
+	std::array<float, 2> m_Rad;
+
+	//秒数.
+	float m_Speed;
+
 };

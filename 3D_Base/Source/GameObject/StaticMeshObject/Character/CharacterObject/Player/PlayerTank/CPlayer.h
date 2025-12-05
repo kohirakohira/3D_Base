@@ -122,6 +122,11 @@ public:
 	bool GetMuteki() const override { return m_Chara.m_Muteki; }
 	//========================
 
+	//============アイテムの設定・取得============
+	void SetItemFlag(bool item) override { m_Chara.m_ItemFlag = item; }
+	bool GetItemFlag() const override { return m_Chara.m_ItemFlag; }
+	//============================================
+
 protected:
 
 	CController* 	m_Controller;

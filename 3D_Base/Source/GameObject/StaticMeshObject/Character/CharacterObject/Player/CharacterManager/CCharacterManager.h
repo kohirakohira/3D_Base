@@ -101,7 +101,12 @@ public:
 	//=====無敵の設定・取得=====
 	void SetMuteki(int index, bool flg);
 	void GetMuteki(int index);
-	//========================
+	//==========================
+
+	//============アイテム設定・取得=============
+	void SetItemFlag(bool item, int index);
+	bool GetItemFlag(int index) const;
+	//===========================================
 
 private:
 
@@ -125,8 +130,8 @@ private:
 	std::shared_ptr<CCannon>				m_pCannon;
 	std::shared_ptr<CShotManager>			m_ShotManager; //弾マネージャー
 	std::shared_ptr<CComPlayer>				m_pCom;
-	//*仮追加
-	//std::shared_ptr<CComPlayer>				m_pCom;
+	//アイテムを取得したかどうか.
+	bool ItemFlag;
 
 	//CPlayerとCComPlayerを同一コンテナで管理するための基底に統一
 	std::vector<std::shared_ptr<CCharacterObjectBase>> m_pCharacter;

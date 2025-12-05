@@ -65,6 +65,7 @@ void CCannon::Reload(D3DXVECTOR3 pos, float y, bool flag, int index)
 		//弾生成.
 		if (m_pShot != nullptr)
 		{
+			//弾の生成.
 			m_pShot->Create(pos, y, flag, index);
 
 			//クールタイムのリセット.
