@@ -169,7 +169,7 @@ void CCharacterManager::Update()
 				//COMが追いかけるターゲットを設定
 				if (target && target != self)
 				{
-					com->SetTarget(target);    // プレイヤーを追いかける
+					//com->SetTarget(target);    // プレイヤーを追いかける
 				}
 				else
 				{
