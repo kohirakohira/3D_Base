@@ -1139,7 +1139,7 @@ void CGameMain::BuildComObstacles()
 {
 	m_ComObstacles.clear();
 
-#if 0
+#if 1
 	auto addObstacle = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
 		{
 			if (!obj) return;
