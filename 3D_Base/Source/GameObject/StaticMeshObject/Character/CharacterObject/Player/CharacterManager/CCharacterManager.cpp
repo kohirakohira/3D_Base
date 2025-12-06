@@ -119,20 +119,6 @@ void CCharacterManager::Init()
 			}
 		}
 	}
-
-#if 1
-	// COMプレイヤー同士で参照を共有.
-	for (auto& ch : m_pCharacter)
-	{
-		if (!ch) continue;
-
-		if (auto com = std::dynamic_pointer_cast<CComPlayer>(ch))
-		{
-			com->SetPlayersRef(&m_pCharacter);
-		}
-	}
-#endif
-
 }
 //===================
 
@@ -180,7 +166,11 @@ void CCharacterManager::Update()
 		{
 			if (com->IsComEnabled())
 			{
-
+				////ターゲットをCOMに渡す
+				//if (target && target != self)
+				//{
+				//	com->SetTarget(target);
+				//}
 				//AIとしてのUpdate
 				com->Update();
 			}
@@ -565,6 +555,18 @@ void CCharacterManager::SetComObstacleRef(const std::vector<CComPlayer::SimpleOb
 	}
 }
 
+void CCharacterManager::SetNavGridRef(CNavGrid* navGrid)
+{
+	for (auto& player : m_pCharacter)
+	{
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
+		{
+			com->SetNavGrid(navGrid);
+		}
+	}
+}
+
+//プレイヤーとCOMの自動切り替え.
 //プレイヤーとCOMの自動切り替え.
 void CCharacterManager::SwitchControl()
 {
@@ -572,7 +574,7 @@ void CCharacterManager::SwitchControl()
 	{
 		//コントローラーの接続状態を確認.
 		CController* ctrl = CControllerManager::GetInstance().GetController(No);
-		//接続出来てる？を判定する用.
+		//接続出来てる?を判定する用.
 		bool Connected = false;
 		//判定中.
 		if (ctrl)
@@ -582,12 +584,12 @@ void CCharacterManager::SwitchControl()
 
 		if (!ctrl)
 		{
-			return;
+			continue;
 		}
 
 		//現在のプレイヤー情報を取得.
 		std::shared_ptr<CCharacterObjectBase> current = nullptr;	//CCharacterObjectBase
-		//プレイヤーリストの範囲内なら、その番号のプレイヤーを取得.
+		//プレイヤーリストは範囲内なら、その番号のプレイヤーを取得.
 		if (No < static_cast<int>(m_pCharacter.size()))
 		{
 			current = m_pCharacter[No];
@@ -601,7 +603,7 @@ void CCharacterManager::SwitchControl()
 		}
 
 		//状態が一致している場合はスキップ.
-		//例：padあり->プレイヤー・padなし->COMの状態があっているとき.
+		//例:padあり->プレイヤー・padなし->COMの状態があっているとき.
 		if ((Connected == true && isCom != true) || (Connected != true && isCom == true))
 		{
 			//変更する必要なし.
@@ -660,10 +662,9 @@ void CCharacterManager::SwitchControl()
 				newCOM->SetPosition(current->GetPosition());
 			}
 
-			//COMどうしで参照を共有できるようにする
 			newCOM->SetPlayersRef(&m_pCharacter);
 
-			//すでにShotManagerが設定されていればCOMにもつける
+			//すでにShotManagerが設定されていればCOMにも渡す
 			if (m_ShotManager)
 			{
 				newCOM->AttachShotManager(m_ShotManager);
@@ -674,7 +675,6 @@ void CCharacterManager::SwitchControl()
 		}
 	}
 }
-
 // 関数の中がプレイヤー座標と中身が同じ、この関数必要？
 void CCharacterManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 {
@@ -682,5 +682,16 @@ void CCharacterManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 	{
 		m_pCharacter[index]->GetBody()->SetPosition(push);
 		m_pCharacter[index]->GetCannon()->SetPosition(push);
+	}
+}
+
+void CCharacterManager::SetSimpleObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles)
+{
+	for (auto& player : m_pCharacter)
+	{
+		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
+		{
+			com->SetSimpleObstacles(obstacles);
+		}
 	}
 }

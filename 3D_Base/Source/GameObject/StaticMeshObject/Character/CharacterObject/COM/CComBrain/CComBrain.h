@@ -7,12 +7,11 @@
 #include <cmath>
 
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/IComBody/IComBody.h"
-#include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"
 
 class CCharacterObjectBase;
 class IComBody;
 class CComUtility;
-
+class CNavGrid;
 
 //そのフレーム時点でCOMの頭が知ることができる情報
 struct ComObservation
@@ -62,14 +61,14 @@ class CComBrain
 public:
     struct Config
     {
-        float keepDistance = 9.0f;
-        float attackRadius = 10.0f;
-        float seekRadius = 5.0f;
-        float avoidRadius = 10.0f;
-        float avoidWeight = 2.0f;
-        float fireAngleEpsDeg = 10.0f;
-        float forgetDistance = 60.0f;
-        float stickinessRatio = 0.8f;
+        float keepDistance = 9.0f;      //ターゲットとの戦闘距離
+        float attackRadius = 10.0f;     //攻撃モードに入る距離
+        float seekRadius = 5.0f;        //探索中のときどの範囲に敵がいたら追いかけるか    
+        float avoidRadius = 10.0f;      //COM同士の分離
+        float avoidWeight = 2.0f;       //分離側の重み
+        float fireAngleEpsDeg = 10.0f;  //角度誤差の許容範囲
+        float forgetDistance = 60.0f;   //どの距離でターゲットを追うのをやめるか
+        float stickinessRatio = 0.8f;   //ターゲットの乗り換えのしにくさ
     };
 
     CComBrain();
@@ -85,11 +84,25 @@ public:
     // ターゲットへの弱参照
     std::weak_ptr<CCharacterObjectBase> GetTarget() const { return m_Target; }
 
-    // ターゲット候補リスト（全プレイヤー）を渡す
+    // ターゲット候補リストを渡す
     void SetPlayersRef(const std::vector<std::shared_ptr<CCharacterObjectBase>>* allPlayers)
     {
         m_pAllPlayer = allPlayers;
     }
+
+    //外部からターゲットを設定できるように
+    void SetTarget(std::shared_ptr<CCharacterObjectBase> target)
+    {
+        m_Target = target;
+    }
+
+    //Configを取得
+    const Config& GetConfig() const { return m_Config; }
+
+    //個別に取得したい場合
+    float GetKeepDistance() const { return m_Config.keepDistance; }
+
+    void SetNavGrid(CNavGrid* navGrid) { m_pNavGrid = navGrid; }
 
 private:
     Config m_Config;
@@ -113,9 +126,14 @@ private:
     //便利関数クラス
     std::shared_ptr<CComUtility> m_pUtility;
 
-    //アイテムクラス
-    std::shared_ptr<CItemBox> m_pItemBox;
-    const std::vector<std::shared_ptr<CItemBox>>* m_pAllItem;
+    //ナビゲーション
+    CNavGrid* m_pNavGrid = nullptr;
+
+    //安定化用のメンバ変数
+    int m_CircleDirection = 1;           // 周回方向
+    float m_LastDecidedYaw = 0.0f;       // 最後に決定した方向
+    int m_DecisionCooldown = 0;          // 方向決定のクールダウン
+    static constexpr int DECISION_INTERVAL = 15;  // 方向を再評価する間隔（フレーム）
 
 private:
     // 内部処理
@@ -136,4 +154,12 @@ private:
     void TickBlacklist();
     bool IsBlacklisted(int id) const;
     void Blacklist(int id);
+
+    //戦術判断
+    bool IsDirectionSafe(const D3DXVECTOR3& from, float yaw, float checkDist) const;
+    float EvaluatePosition(const D3DXVECTOR3& pos, const D3DXVECTOR3& targetPos) const;
+    D3DXVECTOR3 FindBestAttackPosition(const D3DXVECTOR3& selfPos, const D3DXVECTOR3& targetPos) const;
+    D3DXVECTOR3 FindSafeEscapeDirection(const D3DXVECTOR3& selfPos, const D3DXVECTOR3& threatPos) const;
+
+    float StabilizeDirection(float newYaw, float currentYaw);
 };

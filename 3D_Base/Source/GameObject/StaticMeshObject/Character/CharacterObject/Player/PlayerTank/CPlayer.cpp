@@ -52,7 +52,6 @@ static inline float Deadzone(float v, float z)
 CPlayer::CPlayer()
 	: m_Controller( nullptr )
 
-	, m_PlayerID		()
 	, m_HasControl		( false )
 	, m_KeyBoad			( true )
 	, m_ControllerIndex	()
@@ -77,6 +76,7 @@ void CPlayer::Init(int id)
 {
 	// プレイヤーIDにそれぞれのID番号を入れる
 	m_PlayerID = id;
+	CCharacterObjectBase::m_PlayerID = id;	//基底クラスにも反映
 
 	m_Controller = CControllerManager::GetInstance().GetController(m_PlayerID);
 

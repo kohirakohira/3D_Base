@@ -475,7 +475,13 @@ void CGameMain::Init()
 	//壁・木箱・地面・プレイヤーの位置決め
 	SetPosition();
 
+	BuildComObstacles();
 
+	// ナビゲーショングリッド初期化
+	m_pNavGrid->Initialize(-28.0f, 28.0f, -28.0f, 28.0f, 1.0f);
+	BuildNavGrid();
+	// COMにナビグリッドを設定
+	m_pCharacterManager->SetNavGridRef(m_pNavGrid.get());
 }
 
 void CGameMain::Destroy()
@@ -623,6 +629,9 @@ void CGameMain::Create()
 
 	// 当たり判定マネージャークラスのインスタンス生成
 	m_pCollisionManager = std::make_shared<CCollisionManager>();
+
+	// ナビゲーショングリッド作成
+	m_pNavGrid = std::make_shared<CNavGrid>();
 
 	// 当たり判定マネージャーに必要なクラスをセット
 	// 爆風用の弾をセット
@@ -1117,30 +1126,72 @@ void CGameMain::EachSettingHitPoint()
 	}
 }
 
+void CGameMain::BuildNavGrid()
+{
+	m_pNavGrid->ClearObstacles();
+
+	// 木箱を障害物として追加（マージン付き）
+	auto addBoxObstacle = [&](const std::shared_ptr<CStageObject>& box)
+		{
+			if (!box) return;
+
+			D3DXVECTOR3 pos = box->GetPosition();
+			D3DXVECTOR3 mn = box->GetMinPos();
+			D3DXVECTOR3 mx = box->GetMaxPos();
+			D3DXVECTOR3 scale = box->GetScale();
+
+			D3DXVECTOR3 worldMin(
+				pos.x + mn.x * scale.x,
+				0,
+				pos.z + mn.z * scale.z
+			);
+			D3DXVECTOR3 worldMax(
+				pos.x + mx.x * scale.x,
+				0,
+				pos.z + mx.z * scale.z
+			);
+
+			// 戦車のサイズ分のマージン
+			const float TANK_MARGIN = 2.0f;
+			m_pNavGrid->AddObstacleAABB(worldMin, worldMax, TANK_MARGIN);
+		};
+
+	addBoxObstacle(m_pWoodBoxTopLeft);
+	addBoxObstacle(m_pWoodBoxTopRight);
+	addBoxObstacle(m_pWoodBoxCenter);
+	addBoxObstacle(m_pWoodBoxBottomLeft);
+	addBoxObstacle(m_pWoodBoxBottomRight);
+
+}
+
 void CGameMain::BuildComObstacles()
 {
+#if 1
+
 	m_ComObstacles.clear();
 
-	//木箱を全部、円障害物にする
 	auto addBox = [&](const std::shared_ptr<CStaticMeshObject>& box)
 		{
 			if (!box) return;
 
 			CComPlayer::SimpleObstacle ob{};
 
-			//中心
+			// 中心
 			ob.pos = box->GetPosition();
 			ob.pos.y = 0.0f;
 
-			//当たり判定用のAABBから半径を求める
+			// AABBから半径を求める
 			D3DXVECTOR3 mn = box->GetMinPos();
 			D3DXVECTOR3 mx = box->GetMaxPos();
-			const float dx = mx.x - mn.x;
-			const float dz = mx.z - mn.z;
-			const float diag = std::sqrtf(dx * dx + dz * dz);
 
-			//ちょっとだけ膨らませる
-			ob.radius = diag * 0.5 * 0.5f;
+			// スケールを考慮
+			D3DXVECTOR3 scale = box->GetScale();
+
+			const float halfX = (mx.x - mn.x) * 0.5f * scale.x;
+			const float halfZ = (mx.z - mn.z) * 0.5f * scale.z;
+
+			//大きい方を半径として使う
+			ob.radius = std::max(halfX, halfZ) + 1.5f; 
 
 			m_ComObstacles.push_back(ob);
 		};
@@ -1150,4 +1201,8 @@ void CGameMain::BuildComObstacles()
 	addBox(m_pWoodBoxCenter);
 	addBox(m_pWoodBoxBottomLeft);
 	addBox(m_pWoodBoxBottomRight);
+
+	// COMに設定
+	m_pCharacterManager->SetSimpleObstacles(&m_ComObstacles);
+#endif
 }

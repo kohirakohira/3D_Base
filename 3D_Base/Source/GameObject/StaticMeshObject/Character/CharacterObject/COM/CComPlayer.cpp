@@ -34,7 +34,6 @@ CComPlayer::CComPlayer()
     , m_HasControl                  ( false )
     , m_Respawn                     ( false )
     , m_Registered                  ( false )
-    , m_PlayerID                    ( -1 )
     , m_pUtility                   ( nullptr )
 {
 }
@@ -55,6 +54,7 @@ CComPlayer::~CComPlayer()
 void CComPlayer::Initialize(int playerId)
 {
     m_PlayerID = playerId;
+    CCharacterObjectBase::m_PlayerID = playerId;
 
     //車体と砲塔生成
     if (!m_pBody)   m_pBody = std::make_shared<CBody>(playerId);
@@ -83,6 +83,13 @@ void CComPlayer::SetPlayersRef(const std::vector<std::shared_ptr<CCharacterObjec
     m_Brain.SetPlayersRef(all);
 }
 
+void CComPlayer::SetNavGrid(CNavGrid* navGrid)
+{
+    m_pNavGrid = navGrid;
+    m_Brain.SetNavGrid(navGrid);
+
+}
+
 //==================================================
 // パラメータの安全化
 //==================================================
@@ -103,8 +110,7 @@ void CComPlayer::SanitizeParams()
     if (m_ProbeAngleRad <= 0.0f)        m_ProbeAngleRad = D3DXToRadian(25.0f);
 }
 
-//便利関数に移動した
-#if 0
+#if 1
 float CComPlayer::Wrap(float a)
 {
     const float TWO_PI = D3DX_PI * 2.0f;
@@ -163,15 +169,14 @@ void CComPlayer::Update()
         return;
     }
 
-    //観測値を作成して Brain に渡す
+    // 観測値を作成して Brain に渡す
     ComObservation obs = BuildObservation();
     ComCommand     cmd;
-    m_Brain.Update(obs, cmd);
+    m_Brain.Update(obs, cmd);  //Brain がここでターゲットを探す
 
-    //指示を体の動きに反映
+    // 指示を体の動きに反映
     ApplyCommand(cmd);
 }
-
 void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
     if (m_Character.m_Drawflag == false) return;
@@ -221,21 +226,84 @@ void CComPlayer::ApplyCommand(const ComCommand& cmd)
     if (!body) return;
 
     const auto& t = GetTuning();
-
+    const auto& brainCfg = m_Brain.GetConfig();
     const float curYaw = body->GetRotation().y;
-    const float desiredYaw = cmd.desiredBodyYaw;
 
-    // ステアリング
-    const float nextYaw = SteerWithAvoid(curYaw, desiredYaw, t.bodyTurnSpeed);
-
-    // 移動量を実際の距離に変換
+    float desiredYaw = cmd.desiredBodyYaw;
     float moveStep = std::max(0.0f, cmd.moveStep) * t.moveSpeed;
 
-    // 安全に前進
-    SafeAdvance(nextYaw, moveStep);
+    //経路探索を使うのは Chase 状態のみ
+    // Attack/Evade はリアクティブな動きなので経路探索には向かない
+    const bool usePathfinding = m_pNavGrid &&
+        cmd.moveStep > 0.01f &&
+        (cmd.state == ComCommand::State::Chase ||
+            cmd.state == ComCommand::State::Seek);
+
+    if (usePathfinding)
+    {
+        // 一定間隔で経路を再計算
+        if (--m_PathRecalcTimer <= 0)
+        {
+            auto target = m_Brain.GetTarget().lock();
+            if (target)
+            {
+                D3DXVECTOR3 goalPos = target->GetPosition();
+                goalPos.y = 0;
+
+                D3DXVECTOR3 selfPos = body->GetPosition();
+                selfPos.y = 0;
+                D3DXVECTOR3 toTarget = goalPos - selfPos;
+                float dist = std::sqrtf(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
+
+                if (dist > brainCfg.keepDistance)
+                {
+                    D3DXVECTOR3 dir = toTarget / dist;
+                    goalPos = goalPos - dir * brainCfg.keepDistance;
+                }
+
+                RecalculatePath(goalPos);
+            }
+            m_PathRecalcTimer = PATH_RECALC_INTERVAL;
+        }
+
+        // 経路に沿って移動
+        FollowPath(cmd, desiredYaw, moveStep);
+    }
+    else
+    {
+        // 経路探索を使わない状態では、タイマーをリセット
+        m_PathRecalcTimer = 0;
+        m_CurrentPath.found = false;
+    }
+
+    // ステアリング
+    float nextYaw;
+    if (usePathfinding && m_CurrentPath.found)
+    {
+        // 経路が有効なら単純にその方向へ
+        const float d = Wrap(desiredYaw - curYaw);
+        nextYaw = Approach(curYaw, curYaw + d, t.bodyTurnSpeed);
+    }
+    else
+    {
+        //経路がない場合は従来の障害物回避を使用
+        nextYaw = SteerWithAvoid(curYaw, desiredYaw, t.bodyTurnSpeed);
+    }
+
+    //移動方法も分ける
+    if (usePathfinding && m_CurrentPath.found)
+    {
+        // 経路探索時: 経路は障害物を避けているはずなので簡易移動
+        SafeAdvanceWithPath(nextYaw, moveStep);
+    }
+    else
+    {
+        //経路がない場合: 従来の SafeAdvance を使用
+        SafeAdvance(nextYaw, moveStep);
+    }
 
     // 砲塔の向き
-    auto target = m_Brain.GetTarget().lock();   
+    auto target = m_Brain.GetTarget().lock();
     if (cmd.aimAtTarget && target)
     {
         AimTurretAt(target->GetPosition());
@@ -250,6 +318,40 @@ void CComPlayer::ApplyCommand(const ComCommand& cmd)
     {
         TryAutoFire(cmd);
     }
+}
+// SafeAdvance を簡略化したバージョン
+void CComPlayer::SafeAdvanceWithPath(float nextYaw, float moveStep)
+{
+    auto body = GetBody();
+    if (!body) return;
+
+    D3DXVECTOR3 pos = body->GetPosition();
+    pos.y = 0.0f;
+
+    // COM 同士の分離
+    D3DXVECTOR3 sep(0, 0, 0);
+    float nearest = 1e9f;
+    ComputeSeparation(pos, sep, nearest);
+
+    D3DXVECTOR3 nextPos = pos + ForwardFromYaw(nextYaw) * moveStep;
+
+    if (sep.x != 0.0f || sep.z != 0.0f)
+    {
+        const float len = std::sqrtf(sep.x * sep.x + sep.z * sep.z);
+        if (len > 1e-6f)
+        {
+            sep.x /= len; sep.z /= len;
+            nextPos.x += sep.x * m_AvoidWeight * 0.1f;
+            nextPos.z += sep.z * m_AvoidWeight * 0.1f;
+        }
+    }
+    nextPos.y = 0.0f;
+
+    // 経路探索使用時は IsInDangerZone チェック不要
+    body->SetRotation(D3DXVECTOR3(0.0f, nextYaw, 0.0f));
+    body->SetPosition(nextPos);
+    body->Update();
+    SyncCannonToBody();
 }
 
 //==================================================
@@ -365,14 +467,14 @@ float CComPlayer::SteerWithAvoid(float curYaw, float desiredYaw, float turnStep)
     {
         // 奇数IDは左回り・偶数IDは右回りにしておくと、COM同士もばらける
         const float offset = ((m_PlayerID & 1) ? +1.0f : -1.0f) * D3DX_PI * 0.5f;
-        baseDesired = m_pUtility->Wrap(desiredYaw + offset);
+        baseDesired = Wrap(desiredYaw + offset);
     }
     // ==============================================
 
     if (!m_pSimpleObstacles || m_pSimpleObstacles->empty())
     {
-        const float d = m_pUtility->Wrap(baseDesired - curYaw);
-        return m_pUtility->Approach(curYaw, curYaw + d, turnStep);
+        const float d = Wrap(baseDesired - curYaw);
+        return Approach(curYaw, curYaw + d, turnStep);
     }
 
     const float angs[3] = { 0.0f, +m_ProbeAngleRad, -m_ProbeAngleRad };
@@ -403,7 +505,7 @@ float CComPlayer::SteerWithAvoid(float curYaw, float desiredYaw, float turnStep)
         }
 
         // なるべく baseDesired に近い方向を優先
-        score -= std::fabs(m_pUtility->Wrap(testYaw - baseDesired)) * 10.0f;
+        score -= std::fabs(Wrap(testYaw - baseDesired)) * 10.0f;
 
         if (score > bestScore)
         {
@@ -416,11 +518,11 @@ float CComPlayer::SteerWithAvoid(float curYaw, float desiredYaw, float turnStep)
     if (!anyFree && m_StuckFrames > 0)
     {
         const float offset = ((m_PlayerID & 1) ? +1.0f : -1.0f) * D3DX_PI * 0.5f;
-        bestYaw = m_pUtility->Wrap(curYaw + offset);
+        bestYaw = Wrap(curYaw + offset);
     }
 
-    const float d = m_pUtility->Wrap(bestYaw - curYaw);
-    return m_pUtility->Approach(curYaw, curYaw + d, turnStep);
+    const float d = Wrap(bestYaw - curYaw);
+    return Approach(curYaw, curYaw + d, turnStep);
 }
 
 //==================================================
@@ -520,7 +622,7 @@ void CComPlayer::AimTurretAt(const D3DXVECTOR3& targetPos)
 
     const float desired = std::atan2f(to.x, to.z);
     float yaw = cannon->GetRotation().y;
-    yaw = m_pUtility->Approach(yaw, yaw + m_pUtility->Wrap(desired - yaw), t.turretTurnSpeed);
+    yaw = Approach(yaw, yaw + Wrap(desired - yaw), t.turretTurnSpeed);
 
     cannon->SetPosition(base);
     cannon->SetRotation(D3DXVECTOR3(0.0f, yaw, 0.0f));
@@ -585,7 +687,7 @@ void CComPlayer::TryAutoFire(const ComCommand&)
     if (d2 <= 1e-6f) return;
 
     const float desired = std::atan2f(to.x, to.z);
-    const float err = std::fabs(m_pUtility->Wrap(desired - yaw));
+    const float err = std::fabs(Wrap(desired - yaw));
 
     // 砲塔の向きがある程度合っていたら撃つ
     const float maxErr = D3DXToRadian(m_Shot.fireAngleEpsDeg);   
@@ -598,6 +700,77 @@ void CComPlayer::TryAutoFire(const ComCommand&)
         );*/
 
         m_Shot.coolDownFrames = m_Shot.maxCoolDown;
+    }
+}
+
+void CComPlayer::FollowPath(const ComCommand& cmd, float& outYaw, float& outMoveStep)
+{
+    auto body = m_pBody;
+    if (!body)
+    {
+        outYaw = cmd.desiredBodyYaw;
+        // outMoveStep は変更しない
+        return;
+    }
+
+    D3DXVECTOR3 selfPos = body->GetPosition();
+    selfPos.y = 0;
+
+    // 経路がない、または無効な場合
+    if (!m_CurrentPath.found ||
+        m_CurrentWaypointIndex >= static_cast<int>(m_CurrentPath.waypoints.size()))
+    {
+        // 直接目標に向かう
+        outYaw = cmd.desiredBodyYaw;
+        // outMoveStep は変更しない
+        return;
+    }
+
+    // 現在のウェイポイント
+    D3DXVECTOR3 wp = m_CurrentPath.waypoints[m_CurrentWaypointIndex];
+    wp.y = 0;
+
+    D3DXVECTOR3 toWp = wp - selfPos;
+    float dist = std::sqrtf(toWp.x * toWp.x + toWp.z * toWp.z);
+
+    // ウェイポイントに十分近づいたら次へ
+    const float WAYPOINT_REACH_DIST = 1.5f;
+    if (dist < WAYPOINT_REACH_DIST)
+    {
+        m_CurrentWaypointIndex++;
+
+        // 最後のウェイポイントに到達
+        if (m_CurrentWaypointIndex >= static_cast<int>(m_CurrentPath.waypoints.size()))
+        {
+            outYaw = cmd.desiredBodyYaw;
+            // outMoveStep は変更しない
+            return;
+        }
+
+        // 次のウェイポイントを取得
+        wp = m_CurrentPath.waypoints[m_CurrentWaypointIndex];
+        wp.y = 0;
+        toWp = wp - selfPos;
+    }
+
+    // ウェイポイントに向かう角度だけ更新
+    outYaw = std::atan2f(toWp.x, toWp.z);
+    // ★ outMoveStep は変更しない！入力値
+}
+void CComPlayer::RecalculatePath(const D3DXVECTOR3& goal)
+{
+    if (!m_pNavGrid) return;
+
+    D3DXVECTOR3 selfPos = m_pBody ? m_pBody->GetPosition() : D3DXVECTOR3(0, 0, 0);
+    selfPos.y = 0;
+
+    m_CurrentPath = m_pNavGrid->FindPath(selfPos, goal);
+    m_CurrentWaypointIndex = 0;
+
+    if (m_CurrentPath.found && m_CurrentPath.waypoints.size() > 1)
+    {
+        // 最初のウェイポイントはスキップ
+        m_CurrentWaypointIndex = 1;
     }
 }
 

@@ -51,6 +51,9 @@
 #include "Global.h"
 #include "Collision/CollisionManager/CCollisionManager.h"
 
+//グリッドクラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CNavGrid/CNavGrid.h"
+
 class CGameMain
 	: public CSceneBase
 {
@@ -94,6 +97,8 @@ public:
 	void EachSettingKillNumber();
 	// 倒した数画像の設定
 	void EachSettingHitPoint();
+
+	void BuildNavGrid();
 
 public:		
 	// クラス用
@@ -211,6 +216,9 @@ public:
 
 	//COM用の簡易障害物
 	std::vector<CComPlayer::SimpleObstacle> m_ComObstacles;
+
+	//ナビゲーション
+	std::shared_ptr<CNavGrid> m_pNavGrid;
 
 private:
 	//位置・スケールを設定し終わったあとに呼ぶ

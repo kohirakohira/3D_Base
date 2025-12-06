@@ -101,6 +101,10 @@ public:
 	//COMに障害物を配る
 	void SetComObstacleRef(const std::vector<CComPlayer::SimpleObstacle>* obstacles);
 
+	//外部に渡すナビゲーション情報
+	void SetNavGridRef(CNavGrid* navGrid);
+	void SetSimpleObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles);
+
 private:
 
 	struct Area {

@@ -17,6 +17,9 @@
 //便利関数クラス
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComUtility/CComUtility.h"
 
+//ナビグリッドクラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CNavGrid/CNavGrid.h"
+
 // STL
 #include <memory>
 #include <vector>
@@ -24,9 +27,6 @@
 class CComPlayer : public CCharacterObjectBase
 {
 public:
-
-    //定数宣言
-    const  float TIME = 1.f / FPS;
 
     CComPlayer();
     ~CComPlayer() override;
@@ -55,6 +55,33 @@ public:
     std::shared_ptr<CBody>       GetBody() const override { return m_pBody; }
     std::shared_ptr<CCannon>     GetCannon() const override { return m_pCannon; }
     std::shared_ptr<CShotManager>GetShotManager() const override { return m_pShotManager.lock(); }
+
+    D3DXVECTOR3 GetPosition() const override
+    {
+        if (m_pBody) return m_pBody->GetPosition();
+        return D3DXVECTOR3(0, 0, 0);
+    }
+
+    //位置設定
+    void SetPosition(const D3DXVECTOR3& pos) override
+    {
+        if (m_pBody)   m_pBody->SetPosition(pos);
+        if (m_pCannon) m_pCannon->SetPosition(pos);
+    }
+
+    //回転取得
+    D3DXVECTOR3 GetRotation() const override
+    {
+        if (m_pBody) return m_pBody->GetRotation();
+        return D3DXVECTOR3(0, 0, 0);
+    }
+
+    //回転設定
+    void SetRotation(const D3DXVECTOR3& rot) override
+    {
+        if (m_pBody) m_pBody->SetRotation(rot);
+    }
+
 
     D3DXVECTOR3 GetCannonPosition() const override;
     float       GetCannonYaw() const override;
@@ -104,6 +131,9 @@ public:
     CComBrain& Brain() { return m_Brain; }
     const CComBrain& Brain() const { return m_Brain; }
 
+    //ナビゲーショングリッドを設定
+    void SetNavGrid(CNavGrid* navGrid);
+
 private:
     // 内部ショット状態
     struct ShotState
@@ -148,6 +178,8 @@ private:
     void ComputeMuzzle(D3DXVECTOR3& outPos, float& outYaw) const;
     void TryAutoFire(const ComCommand& cmd);
 
+
+
 private:
     // 見た目
     std::shared_ptr<CBody>   m_pBody;
@@ -184,5 +216,17 @@ private:
     bool m_HasControl;
     bool m_Respawn;
     bool m_Registered;
-    int  m_PlayerID;
+
+    //経路探索関連
+    CNavGrid* m_pNavGrid = nullptr;
+    PathResult               m_CurrentPath;
+    int                      m_CurrentWaypointIndex = 0;
+    int                      m_PathRecalcTimer = 0;
+    static constexpr int     PATH_RECALC_INTERVAL = 30;  // 0.5秒ごとに再計算
+
+    private:
+        // 経路追従
+        void FollowPath(const ComCommand& cmd, float& outYaw, float& outMoveStep);
+        void RecalculatePath(const D3DXVECTOR3& goal);
+        void SafeAdvanceWithPath(float nextYaw, float moveStep);
 };

@@ -80,6 +80,35 @@ public:
 	//プレイヤー取得
 	int GetPlayerID() { return m_PlayerID; }
 
+	//位置取得
+	virtual D3DXVECTOR3 GetPosition() const
+	{
+		if (m_pBody) return m_pBody->GetPosition();
+		return m_vPosition;  // フォールバック（CGameObjectのメンバ）
+	}
+
+	//位置設定
+	virtual void SetPosition(const D3DXVECTOR3& pos)
+	{
+		if (m_pBody)   m_pBody->SetPosition(pos);
+		if (m_pCannon) m_pCannon->SetPosition(pos);
+		m_vPosition = pos;  // CGameObjectのメンバにも設定
+	}
+
+	//回転取得
+	virtual D3DXVECTOR3 GetRotation() const
+	{
+		if (m_pBody) return m_pBody->GetRotation();
+		return m_vRotation;  // フォールバック
+	}
+
+	//追加: 回転設定
+	virtual void SetRotation(const D3DXVECTOR3& rot)
+	{
+		if (m_pBody) m_pBody->SetRotation(rot);
+		m_vRotation = rot;
+	}
+
 protected:
 	//車体クラス.
 	std::shared_ptr<CBody>			m_pBody;

@@ -33,11 +33,12 @@ public:
     static bool IsInDangerZone(const ComWorldContext& world,
         const D3DXVECTOR3& pos,
         float selfRadius);
-
+#if 0
     //[-ƒÎ,ƒÎ] ‚É³‹K‰»
     float Wrap(float a);
 
     //ˆê‚Â‚Ì•ûŒü‚Ìstep‚É‹ß‚Ã‚¯‚é
     //float Approach(float cur, float goal, const TankTuning& tuning);
     float Approach(float cur, float goal, float step);
+#endif
 };

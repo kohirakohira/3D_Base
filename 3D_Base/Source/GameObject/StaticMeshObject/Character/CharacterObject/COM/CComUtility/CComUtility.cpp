@@ -1,5 +1,6 @@
 #include "CComUtility.h"
 
+#if 0
 // [-ƒÎ,ƒÎ] ‚É³‹K‰»
 float CComUtility::Wrap(float a)
 {
@@ -19,5 +20,6 @@ float CComUtility::Approach(float cur, float goal, float step)
     return goal;
 
 }
+#endif
 
 
