@@ -621,7 +621,7 @@ HRESULT CGameMain::LoadData()
 		return E_FAIL;
 	}
 
-	//タイマー画像のスプライト設定
+	//タイマー画像のスプライト設定.
 	CSprite2D::SPRITE_STATE WH_SIZE = {
 		1920, 1080,		//描画幅,高さ..
 		1920, 1080,		//元画像の幅,高さ..
