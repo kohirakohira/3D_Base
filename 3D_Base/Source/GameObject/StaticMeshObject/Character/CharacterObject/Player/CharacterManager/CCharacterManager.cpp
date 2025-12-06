@@ -604,6 +604,26 @@ bool CCharacterManager::GetItemFlag(int index) const
 		return m_pCharacter[index]->GetItemFlag();
 	}
 }
+
+void CCharacterManager::SetComObstacles(const std::vector<std::shared_ptr<CBoxCollider>>* obstacles)
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		auto player = GetControlPlayer(i);
+		if (!player) continue;
+
+		// COMプレイヤーの場合のみ設定
+		if (!player->IsPlayer())
+		{
+			// CComPlayerにキャスト
+			CComPlayer* com = dynamic_cast<CComPlayer*>(player.get());
+			if (com)
+			{
+				com->SetBoxColliders(obstacles);
+			}
+		}
+	}
+}
 //===========================================
 
 //プレイヤーとCOMの自動切り替え.

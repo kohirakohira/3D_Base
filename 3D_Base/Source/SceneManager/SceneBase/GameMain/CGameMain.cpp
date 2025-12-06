@@ -831,6 +831,8 @@ HRESULT CGameMain::LoadData()
 	//爆風マネージャーを設定.
 	m_pCollisionManager->SetCBlastManager(m_pBlastManager);
 
+	m_pCharacterManager->SetShotManager(m_pShotManager);
+
 	// バウンディングの作成
 	CreateBounding();
 
@@ -959,6 +961,12 @@ void CGameMain::CreateBounding()
 	////当たり判定設定.
 	//m_pBlastManager->CreateSpehreCollider(m_pBlastManager->GetBlastRadius());
 
+	// プレイヤーの初期座標設定
+	m_pCharacterManager->SetStartPosition();
+
+	BuildObstacleColliders();
+	m_pCharacterManager->SetComObstacles(&m_ObstacleColliders);
+
 }
 
 //画面をグリッドに分割したとき、idx番目のマスに対応する.
@@ -1086,4 +1094,38 @@ void CGameMain::EachSettingHitPoint()
 			m_pSpriteHitPoint[i]->SetScale(-0.5f, 0.5f, 0.5f);
 		}
 	}
+}
+
+void CGameMain::BuildObstacleColliders()
+{
+	m_ObstacleColliders.clear();
+
+	// 壁のBoxColliderを追加
+	if (m_pWallTop && m_pWallTop->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallTop->GetBoxCollider());
+
+	if (m_pWallBottom && m_pWallBottom->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallBottom->GetBoxCollider());
+
+	if (m_pWallLeft && m_pWallLeft->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallLeft->GetBoxCollider());
+
+	if (m_pWallRight && m_pWallRight->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallRight->GetBoxCollider());
+
+	// 木箱のBoxColliderを追加
+	if (m_pWoodBoxTopLeft && m_pWoodBoxTopLeft->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxTopLeft->GetBoxCollider());
+
+	if (m_pWoodBoxTopRight && m_pWoodBoxTopRight->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxTopRight->GetBoxCollider());
+
+	if (m_pWoodBoxCenter && m_pWoodBoxCenter->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxCenter->GetBoxCollider());
+
+	if (m_pWoodBoxBottomLeft && m_pWoodBoxBottomLeft->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxBottomLeft->GetBoxCollider());
+
+	if (m_pWoodBoxBottomRight && m_pWoodBoxBottomRight->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxBottomRight->GetBoxCollider());
 }
