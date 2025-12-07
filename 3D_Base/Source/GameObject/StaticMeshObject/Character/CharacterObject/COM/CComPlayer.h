@@ -286,6 +286,17 @@ private:
 	float m_WanderRadius;           // 中央からこの範囲内を徘徊（デフォルト 15.0）
 	float m_CenterPullStrength;     // 中央への引き寄せ強度（デフォルト 0.3）
 
+
+
+#if 1
+	//bool    m_WantsItem;            // アイテムを欲しているか
+	//float   m_ItemSeekPriority;     // アイテム優先度（HP低下時など上昇）
+
+	//// private セクションに追加する関数
+	//void CheckItemCollision();      // アイテムとの衝突判定
+	//bool ShouldSeekItem() const;    // アイテムを探すべきか判定
+	//void ApplyItemEffect(const ItemInfomation& info);   // アイテム効果適用
+#endif
 	//=====ヒット関数=====
 	virtual void Hit() override;
 	//===================
