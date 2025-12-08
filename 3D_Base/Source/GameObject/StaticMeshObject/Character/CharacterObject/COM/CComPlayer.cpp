@@ -372,6 +372,7 @@ inline float CComPlayer::AngleError(float fromYaw, const D3DXVECTOR3& fromPos, c
     return std::fabs(error);
 }
 
+#if 1
 void CComPlayer::Update()
 {
     CCharacterObjectBase::Update();
@@ -431,6 +432,61 @@ void CComPlayer::Update()
 
     //実行
     switch (m_State) {
+    //case State::Seek:     StepSeek();     break;
+    //case State::Chase:    StepChase();    break;
+    case State::Attack:   StepAttack();   break;
+    //case State::Evade:    StepEvade();    break;
+    //case State::ItemSeek: StepItemSeek(); break;
+    }
+    ++m_StateFrames;
+}
+#endif
+#if 0
+void CComPlayer::Update()
+{
+    SanitizeParams();
+
+    auto tuning = GetTuning();
+
+    FollowPath(tuning.turretTurnSpeed, tuning.moveSpeed);
+
+    TickBlacklist();
+
+    auto body = GetBody();
+    auto cannon = GetCannon();
+    if (!body) {
+        if (cannon) cannon->CStaticMeshObject::Update();
+        return;
+    }
+
+    //定期リターゲット
+    if (--m_RetargetTimer <= 0 || !m_pTarget) {
+        MakeFixedTimeTarget();
+        m_RetargetTimer = m_RetargetInterval;
+    }
+
+    //距離を計算
+    float dist2 = 1e18f;
+    if (m_pTarget) {
+        const D3DXVECTOR3 d = m_pTarget->GetPosition() - body->GetPosition();
+        dist2 = d.x * d.x + d.z * d.z;
+        m_LostSightFrames = 0;
+    }
+    else {
+        ++m_LostSightFrames;
+    }
+
+    D3DXVECTOR3 pos = body->GetPosition();
+    body->SetPosition(pos.x, pos.y = 0, pos.z);
+
+    float itemD2;
+    //NearestItemDist2(itemD2);
+
+    //状態遷移はここだけで行う
+    EvaluateTransitions(dist2);
+
+    //実行
+    switch (m_State) {
     case State::Seek:     StepSeek();     break;
     case State::Chase:    StepChase();    break;
     case State::Attack:   StepAttack();   break;
@@ -439,6 +495,38 @@ void CComPlayer::Update()
     }
     ++m_StateFrames;
 }
+#endif
+
+#if 0
+bool CComPlayer::FollowPath(float turnStep, float moveSte)
+{
+    auto body = GetBody();
+    if (!body) return false;
+
+    const D3DXVECTOR3 pos = body->GetPosition();
+    //常に見続ける
+    while (!m_Path.empty())
+    {
+        D3DXVECTOR3 w = m_Path.front(); //先頭要素
+        float dx = w.x - pos.x;
+        float dz = w.z - pos.z;
+
+        if (dx * dx + pos.z * pos.z > m_LookAheadSkep * m_LookAheadSkep)
+        {
+            m_Path.pop_front();
+        }
+        else break;
+    }
+    if (m_Path.empty()) return false;
+
+    const D3DXVECTOR3 w = m_Path.front();
+    float cur = body->GetRotation().y;
+    float d = std::atan2f(w.x - pos.x, w.z - pos.z);
+
+
+}
+
+#endif
 
 void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {

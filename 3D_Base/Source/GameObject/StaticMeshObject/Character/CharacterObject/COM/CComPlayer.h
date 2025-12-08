@@ -202,6 +202,8 @@ private:
 	//‰ñ”ğ‘¤‚ÉŒÅ’èù‰ñ‚ğ¬‚º‚é
 	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
 
+	bool FollowPath(float turnStep, float moveSte);
+
 	//========================================
 	// ˆÀ‘S‚È‘Oiˆ
 	//========================================
