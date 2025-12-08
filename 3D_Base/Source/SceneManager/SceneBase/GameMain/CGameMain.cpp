@@ -604,6 +604,9 @@ void CGameMain::Create()
 	//爆風マネージャークラスのインスタンス生成.
 	m_pBlastManager = std::make_shared<CBlastManager>();
 
+	//COMの障害物判定
+	BuildComObstacles();
+
 }
 
 HRESULT CGameMain::LoadData()
@@ -619,7 +622,7 @@ HRESULT CGameMain::LoadData()
 		return E_FAIL;
 	}
 
-	//タイマー画像のスプライト設定
+	//タイマー画像のスプライト設定.
 	CSprite2D::SPRITE_STATE WH_SIZE = {
 		1920, 1080,		//描画幅,高さ..
 		1920, 1080,		//元画像の幅,高さ..
@@ -829,6 +832,8 @@ HRESULT CGameMain::LoadData()
 	//爆風マネージャーを設定.
 	m_pCollisionManager->SetCBlastManager(m_pBlastManager);
 
+	m_pCharacterManager->SetShotManager(m_pShotManager);
+
 	// バウンディングの作成
 	CreateBounding();
 
@@ -889,6 +894,11 @@ void CGameMain::SetPosition()
 
 	// プレイヤーの初期座標設定
 	m_pCharacterManager->SetStartPosition();
+
+	//COMに渡す障害物の情報
+	BuildComObstacles();
+	m_pCharacterManager->SetComObstacles(&m_ComObstacles);
+
 }
 
 void CGameMain::CreateBounding()
@@ -956,6 +966,12 @@ void CGameMain::CreateBounding()
 	//m_pBlastManager->CreateBSphereForMesh(m_pStaticMesh_BulletRed);
 	////当たり判定設定.
 	//m_pBlastManager->CreateSpehreCollider(m_pBlastManager->GetBlastRadius());
+
+	// プレイヤーの初期座標設定
+	m_pCharacterManager->SetStartPosition();
+
+	//BuildObstacleColliders();
+	//m_pCharacterManager->SetComObstacles(&m_ObstacleColliders);
 
 }
 
@@ -1084,4 +1100,95 @@ void CGameMain::EachSettingHitPoint()
 			m_pSpriteHitPoint[i]->SetScale(-0.5f, 0.5f, 0.5f);
 		}
 	}
+}
+
+#if 0
+void CGameMain::BuildObstacleColliders()
+{
+	m_ObstacleColliders.clear();
+
+	// 壁のBoxColliderを追加
+	if (m_pWallTop && m_pWallTop->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallTop->GetBoxCollider());
+
+	if (m_pWallBottom && m_pWallBottom->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallBottom->GetBoxCollider());
+
+	if (m_pWallLeft && m_pWallLeft->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallLeft->GetBoxCollider());
+
+	if (m_pWallRight && m_pWallRight->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallRight->GetBoxCollider());
+
+	// 木箱のBoxColliderを追加
+	if (m_pWoodBoxTopLeft && m_pWoodBoxTopLeft->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxTopLeft->GetBoxCollider());
+
+	if (m_pWoodBoxTopRight && m_pWoodBoxTopRight->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxTopRight->GetBoxCollider());
+
+	if (m_pWoodBoxCenter && m_pWoodBoxCenter->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxCenter->GetBoxCollider());
+
+	if (m_pWoodBoxBottomLeft && m_pWoodBoxBottomLeft->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxBottomLeft->GetBoxCollider());
+
+	if (m_pWoodBoxBottomRight && m_pWoodBoxBottomRight->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxBottomRight->GetBoxCollider());
+}
+#endif
+
+
+void CGameMain::BuildComObstacles()
+{
+	m_ComObstacles.clear();
+
+#if 1
+	auto addObstacle = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
+		{
+			if (!obj) return;
+			CComPlayer::SimpleObstacle o;
+			o.pos = obj->GetPosition();
+			o.pos.y = 0.0f;      // 上から見た判定なので Y は 0
+			o.radius = radius;
+			m_ComObstacles.push_back(o);
+		};
+
+	// 壁は広いので大きめの半径
+	addObstacle(m_pWallTop, 12.0f);
+	addObstacle(m_pWallBottom, 12.0f);
+	addObstacle(m_pWallLeft, 12.0f);
+	addObstacle(m_pWallRight, 12.0f);
+
+	// 木箱は小さめの障害物
+	addObstacle(m_pWoodBoxTopLeft, 4.0f);
+	addObstacle(m_pWoodBoxTopRight, 4.0f);
+	addObstacle(m_pWoodBoxCenter, 4.0f);
+	addObstacle(m_pWoodBoxBottomLeft, 4.0f);
+	addObstacle(m_pWoodBoxBottomRight, 4.0f);
+#endif
+
+	auto addObject = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
+		{
+			if (!obj) return;
+			CComPlayer::SimpleObstacle object;
+			object.pos = obj->GetPosition();
+			object.pos.y = 0.0f;
+			object.radius = radius;
+			m_ComObstacles.push_back(object);
+		};
+
+	//木箱5個
+	addObject(m_pWoodBoxBottomLeft, 3.0f);
+	addObject(m_pWoodBoxBottomRight, 3.0f);
+	addObject(m_pWoodBoxCenter, 3.0f);
+	addObject(m_pWoodBoxTopLeft, 3.0f);
+	addObject(m_pWoodBoxTopRight, 3.0f);
+
+	//壁
+	addObject(m_pWallLeft, 12.f);
+	addObject(m_pWallRight, 12.f);
+	addObject(m_pWallTop, 12.f);
+	addObject(m_pWallBottom, 12.f);
+
 }

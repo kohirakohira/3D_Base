@@ -45,6 +45,22 @@ public:
 	// 半径の設定(Boxでは使わない)
 	void SetRadius(float radius) override {};
 
+	// OBBの中心点を取得
+	const D3DXVECTOR3& GetCenter() const { return m_OBB.CenterPos; }
+
+	// OBBの半分のサイズを取得
+	const D3DXVECTOR3& GetHalfExtents() const { return m_OBB.HarfLength; }
+
+	// AABB近似のMin/Maxを取得（回転なしの場合に正確）
+	D3DXVECTOR3 GetAABBMin() const
+	{
+		return m_OBB.CenterPos - m_OBB.HarfLength;
+	}
+	D3DXVECTOR3 GetAABBMax() const
+	{
+		return m_OBB.CenterPos + m_OBB.HarfLength;
+	}
+
 private:
 	// OBB同士の判定
 	static bool CheckCollisionOBBtoOBB(const OBB* A, const OBB* B);

@@ -210,6 +210,15 @@ public:
 	// シーン列挙変数
 	CSceneType		m_SceneType;
 
+private:
+	std::vector<std::shared_ptr<CBoxCollider>> m_ObstacleColliders;
+	std::vector<CComPlayer::SimpleObstacle> m_ComObstacles;
+
+	//障害物リスト
+	void BuildObstacleColliders();
+
+	void BuildComObstacles();
+
 public:		
 	// 変数用
 	// 簡易時間を止める変数

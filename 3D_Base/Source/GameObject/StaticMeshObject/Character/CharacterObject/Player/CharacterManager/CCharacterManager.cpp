@@ -187,7 +187,7 @@ void CCharacterManager::Update()
 				//COMが追いかけるターゲットを設定
 				if (target && target != self)
 				{
-					com->SetTarget(target);    // プレイヤーを追いかける
+					//com->SetTarget(target);    // プレイヤーを追いかける
 				}
 				else
 				{
@@ -622,6 +622,28 @@ bool CCharacterManager::GetItemFlag(int index) const
 		return m_pCharacter[index]->GetItemFlag();
 	}
 }
+
+#if 0
+void CCharacterManager::SetComObstacles(const std::vector<std::shared_ptr<CBoxCollider>>* obstacles)
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		auto player = GetControlPlayer(i);
+		if (!player) continue;
+
+		// COMプレイヤーの場合のみ設定
+		if (!player->IsPlayer())
+		{
+			// CComPlayerにキャスト
+			CComPlayer* com = dynamic_cast<CComPlayer*>(player.get());
+			if (com)
+			{
+				com->SetBoxColliders(obstacles);
+			}
+		}
+	}
+}
+#endif
 //===========================================
 
 //プレイヤーとCOMの自動切り替え.
@@ -736,5 +758,17 @@ void CCharacterManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 	{
 		m_pCharacter[index]->GetBody()->SetPosition(push);
 		m_pCharacter[index]->GetCannon()->SetPosition(push);
+	}
+}
+
+
+void CCharacterManager::SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles)
+{
+	for (auto& up : m_pCharacter)
+	{
+		if (auto* com = dynamic_cast<CComPlayer*>(up.get()))
+		{
+			//com->SetSimpleObstacles(obstacles);
+		}
 	}
 }

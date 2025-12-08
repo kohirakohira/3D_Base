@@ -68,7 +68,7 @@ public:
 	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(int index); // 引数あり
 	//============================
 
-	void SwitchActivePlayer(); // 旧コード：動かせるプレイヤーを変更できた
+	void SwitchActivePlayer(); //動かせるプレイヤーを変更できた
 
 	//プレイヤーの位置と回転を取得.引数には各プレイヤーを入れる
 	D3DXVECTOR3 GetPosition(int index)const;
@@ -107,6 +107,11 @@ public:
 	void SetItemFlag(bool item, int index);
 	bool GetItemFlag(int index) const;
 	//===========================================
+
+	//void SetComObstacles(const std::vector<std::shared_ptr<CBoxCollider>>* obstacles);
+
+	//障害物リストを渡す
+	void SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles);
 
 private:
 

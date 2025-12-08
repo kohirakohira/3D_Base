@@ -108,6 +108,34 @@ public:
 	virtual bool GetItemFlag() const = 0;
 	//================================================
 
+	virtual D3DXVECTOR3 GetPosition() const 
+	{
+		if (m_pBody) return m_pBody->GetPosition();
+		return D3DXVECTOR3(0, 0, 0);
+	}
+
+	//位置設定
+	virtual void SetPosition(const D3DXVECTOR3& pos) 
+	{
+		if (m_pBody)   m_pBody->SetPosition(pos);
+		if (m_pCannon) m_pCannon->SetPosition(pos);
+	}
+
+	//回転取得
+	virtual D3DXVECTOR3 GetRotation() const 
+	{
+		if (m_pBody) return m_pBody->GetRotation();
+		return D3DXVECTOR3(0, 0, 0);
+	}
+
+	//回転設定
+	virtual void SetRotation(const D3DXVECTOR3& rot) 
+	{
+		if (m_pBody) m_pBody->SetRotation(rot);
+	}
+
+	int GetPlayerID() { return m_PlayerID; }
+
 protected:
 	//車体クラス.
 	std::shared_ptr<CBody>			m_pBody;
@@ -125,4 +153,7 @@ protected:
 
 	//操作権があるか
 	bool m_HasControl;	
+
+	//プレイヤーID
+	int m_PlayerID;
 };
