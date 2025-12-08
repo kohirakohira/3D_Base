@@ -372,7 +372,7 @@ inline float CComPlayer::AngleError(float fromYaw, const D3DXVECTOR3& fromPos, c
     return std::fabs(error);
 }
 
-#if 1
+#if 0
 void CComPlayer::Update()
 {
     CCharacterObjectBase::Update();
@@ -432,18 +432,23 @@ void CComPlayer::Update()
 
     //実行
     switch (m_State) {
-    //case State::Seek:     StepSeek();     break;
-    //case State::Chase:    StepChase();    break;
+    case State::Seek:     StepSeek();     break;
+    case State::Chase:    StepChase();    break;
     case State::Attack:   StepAttack();   break;
-    //case State::Evade:    StepEvade();    break;
-    //case State::ItemSeek: StepItemSeek(); break;
+    case State::Evade:    StepEvade();    break;
+    case State::ItemSeek: StepItemSeek(); break;
     }
     ++m_StateFrames;
 }
 #endif
-#if 0
+#if 1
 void CComPlayer::Update()
 {
+    // ダメージ処理の更新
+    Damage();
+    // 死亡処理の更新
+    Death();
+
     SanitizeParams();
 
     auto tuning = GetTuning();
