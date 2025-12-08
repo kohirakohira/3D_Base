@@ -53,7 +53,8 @@ CComPlayer::CComPlayer()
     , m_MapCenter(D3DXVECTOR3(0.0f, 0.0f, 0.0f))  // マップ中央
     , m_WanderRadius(15.0f)                        // 15m以内を徘徊
     , m_CenterPullStrength(0.3f)                   // 引き寄せ強度
-    , m_pSimpleObstacles( nullptr )
+    , m_pSimpleObstacles(nullptr)
+    , m_LookAheadSkep       ( 2.0f )
     //========================================
     // 障害物回避パラメータ
     //========================================
@@ -502,7 +503,7 @@ void CComPlayer::Update()
 }
 #endif
 
-#if 0
+#if 1
 bool CComPlayer::FollowPath(float turnStep, float moveSte)
 {
     auto body = GetBody();

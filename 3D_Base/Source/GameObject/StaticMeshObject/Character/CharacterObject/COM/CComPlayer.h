@@ -26,6 +26,7 @@
 #include <limits>
 #include <unordered_set>
 #include <memory>
+#include <deque>
 
 
 class CComPlayer
@@ -248,7 +249,8 @@ private:
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;			//障害物のBoxColliderリスト
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
 	const std::vector<SimpleObstacle>* m_pSimpleObstacles;						//障害物情報
-	//std::shared_ptr<CShotManager> m_pShotManager;									//ショットマネージャーの弱参照
+	std::deque<D3DXVECTOR3> m_Path;	//ワールド座標WP列
+
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
@@ -306,6 +308,7 @@ private:
 	float m_ObstacleProbeStep = 0.5f;								// 何メートル刻みでチェックするか
 	float m_ObstacleRadius = 1.5f;									// 自分の半径
 	float m_ProbeAngleRad = D3DXToRadian(25.0f);					// 左右にどれくらい首を振るか
+	float m_LookAheadSkep;
 
 
 #if 0
