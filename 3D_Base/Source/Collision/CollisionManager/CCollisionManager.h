@@ -136,8 +136,8 @@ private:
 	//爆風マネージャークラス.
 	std::shared_ptr<CBlastManager>		m_pBlastManager;
 
-	//最大半径.
-	std::array<float, 2> m_Rad;
+	//アイテムの取得フラグ.
+	bool m_BlastFlag;
 
 	//秒数.
 	float m_Speed;

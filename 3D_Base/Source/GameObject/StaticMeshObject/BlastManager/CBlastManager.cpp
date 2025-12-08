@@ -2,6 +2,8 @@
 
 CBlastManager::CBlastManager()
 	: m_Blast			( )
+	, m_NormalRadius	( 4.0f )
+	, m_MaxRadius		( 10.0f )
 {
 }
 
@@ -10,7 +12,7 @@ CBlastManager::~CBlastManager()
 }
 
 //インスタンス生成.
-void CBlastManager::Create(const D3DXVECTOR3& pos, float maxRad, std::shared_ptr<CStaticMesh> mesh, float s)
+void CBlastManager::Create(const D3DXVECTOR3& pos, bool isRad, std::shared_ptr<CStaticMesh> mesh, float s)
 {
 	//インスタンス生成.
 	auto blast = std::make_shared<CBlast>();
@@ -20,7 +22,14 @@ void CBlastManager::Create(const D3DXVECTOR3& pos, float maxRad, std::shared_ptr
 	//秒数の設定.
 	blast->SetSpeed(s);
 	//最大半径の設定.
-	blast->SetMaxRadius(maxRad);
+	if (isRad != true)
+	{
+		blast->SetMaxRadius(m_NormalRadius);
+	}
+	else
+	{
+		blast->SetMaxRadius(m_MaxRadius);
+	}
 	//初期位置.
 	blast->SetPosition(pos);
 	//爆発開始フラグ.

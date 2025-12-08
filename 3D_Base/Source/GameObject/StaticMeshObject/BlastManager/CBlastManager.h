@@ -16,7 +16,7 @@ public:
 	~CBlastManager();
 
 	//インスタンス生成.
-	void Create(const D3DXVECTOR3& pos, float maxRad, std::shared_ptr<CStaticMesh> mesh, float s);
+	void Create(const D3DXVECTOR3& pos, bool isRad, std::shared_ptr<CStaticMesh> mesh, float s);
 
 	//更新処理.
 	void Update();
@@ -24,6 +24,12 @@ public:
 	//描画処理.
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera);
 	
+public:
+	//通常の大きさ.
+	float m_NormalRadius;
+	//アイテム取得時の大きさ.
+	float m_MaxRadius;
+
 private:
 	std::vector <std::shared_ptr<CBlast>>		m_Blast;
 };

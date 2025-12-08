@@ -113,12 +113,12 @@ struct TankTuning
 //アイテム効果の構造体.
 struct ItemInfomation
 {
-	bool	m_ShieldFlag;				//シールドを張っているかどうか.
-	float	m_Speed;					//プレイヤーの速度変更用.
-	float	m_Power;					//プレイヤーの攻撃変更用.
-	float	m_Blast;					//プレイヤーの爆風増加変更用.
-	bool	m_Reflection;				//プレイヤーの反射変更用.
-	float	m_Reload;					//プレイヤーのリロード間隔変更用.
+	bool		m_ShieldFlag;				//シールドを張っているかどうか.
+	float		m_Speed;					//プレイヤーの速度変更用.
+	float		m_Power;					//プレイヤーの攻撃変更用.
+	bool		m_Blast;					//プレイヤーの爆風増加変更用.
+	bool		m_Reflection;				//プレイヤーの反射変更用.
+	float		m_Reload;					//プレイヤーのリロード間隔変更用.
 
 	//コンストラクタ.
 	ItemInfomation()

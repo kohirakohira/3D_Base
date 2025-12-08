@@ -607,23 +607,6 @@ void CCharacterManager::GetMuteki(int index)
 }
 //========================
 
-//============アイテム設定・取得=============
-void CCharacterManager::SetItemFlag(bool item, int index)
-{
-	if (index >= 0 && index < m_pCharacter.size())
-	{
-		m_pCharacter[index]->SetItemFlag(item);
-	}
-}
-bool CCharacterManager::GetItemFlag(int index) const
-{
-	if (index >= 0 && index < m_pCharacter.size())
-	{
-		return m_pCharacter[index]->GetItemFlag();
-	}
-}
-//===========================================
-
 //プレイヤーとCOMの自動切り替え.
 void CCharacterManager::SwitchControl()
 {

@@ -87,7 +87,6 @@ void CPlayer::Init(int id)
 	m_Chara.m_Damage  = false;
 	m_Chara.m_Death   = false;
 	m_Chara.m_Respawn = false;
-	m_Chara.m_ItemFlag = false;
 
 	//Œp³‚µ‚½‚à‚Ì‚à‰Šú‰»
 	m_IsActive = true;

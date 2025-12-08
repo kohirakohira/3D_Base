@@ -37,8 +37,6 @@ public:
 		bool	m_Death;		// 死亡フラグ		
 		bool	m_Muteki;		// 無敵フラグ
 		bool	m_Respawn;		// リスポーンフラグ
-
-		bool	m_ItemFlag;		//アイテムの取得フラグ.
 	} m_Chara;
 
 public:
@@ -102,11 +100,6 @@ public:
 	virtual void SetMuteki(bool flg) = 0;
 	virtual bool GetMuteki() const = 0;
 	//========================
-
-	//==============アイテムの設定・取得==============
-	virtual void SetItemFlag(bool item) = 0;
-	virtual bool GetItemFlag() const = 0;
-	//================================================
 
 protected:
 	//車体クラス.

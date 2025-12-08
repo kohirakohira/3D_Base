@@ -103,11 +103,6 @@ public:
 	void GetMuteki(int index);
 	//==========================
 
-	//============アイテム設定・取得=============
-	void SetItemFlag(bool item, int index);
-	bool GetItemFlag(int index) const;
-	//===========================================
-
 private:
 
 	struct Area {

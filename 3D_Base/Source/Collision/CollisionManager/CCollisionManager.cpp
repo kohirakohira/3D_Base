@@ -31,7 +31,8 @@ CCollisionManager::CCollisionManager()
 	//爆風マネージャー.
 	, m_pBlastManager		()
 
-	, m_Rad					{ 5.0f , 0.0f }
+	, m_BlastFlag			( false )
+
 	, m_Speed				( 15.0f )
 {
 }
@@ -143,24 +144,12 @@ void CCollisionManager::WalltoShot()
 				for (size_t i = 0; i < PLAYER_MAX; i++)
 				{
 					//爆風の動的生成.
-					if (m_pCharacterManager->GetItemFlag(i) == false)
-					{
-						m_pBlastManager->Create(
-							shot->GetPosition(),
-							m_Rad.front(),
-							m_pStaticBlast,
-							m_Speed
-						);
-					}
-					else
-					{
-						m_pBlastManager->Create(
-							shot->GetPosition(),
-							m_Rad.back(),
-							m_pStaticBlast,
-							m_Speed
-						);
-					}
+					m_pBlastManager->Create(
+						shot->GetPosition(),
+						m_BlastFlag,
+						m_pStaticBlast,
+						m_Speed
+					);
 				}
 
 				m_pShotManager->HitShot();
@@ -281,9 +270,6 @@ void CCollisionManager::CharactertoItemBox()
 				//画面から消す.
 				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
 
-				//アイテムの取得フラグ設定.
-				chara->SetItemFlag(true);
-
 				SetItemInfomation(ItemIndex, PlayerIndex);
 
 			}
@@ -308,25 +294,12 @@ void CCollisionManager::PlayertoShot()
 		{
 			if (shot->GetCollider()->CheckCollision(*Coll))
 			{
-				//爆風の動的生成.
-				if (chara->GetItemFlag() == false)
-				{
-					m_pBlastManager->Create(
-						shot->GetPosition(),
-						m_Rad.front(),
-						m_pStaticBlast,
-						m_Speed
-					);
-				}
-				else
-				{
-					m_pBlastManager->Create(
-						shot->GetPosition(),
-						m_Rad.back(),
-						m_pStaticBlast,
-						m_Speed
-					);
-				}
+				m_pBlastManager->Create(
+					shot->GetPosition(),
+					m_BlastFlag,
+					m_pStaticBlast,
+					m_Speed
+				);
 
 				shot->HitShot();
 
@@ -495,24 +468,12 @@ void CCollisionManager::WoodBoxtoShot()
 				for (size_t i = 0; i < PLAYER_MAX; i++)
 				{
 					//爆風の動的生成.
-					if (m_pCharacterManager->GetItemFlag(i) == false)
-					{
-						m_pBlastManager->Create(
-							shot->GetPosition(),
-							m_Rad.front(),
-							m_pStaticBlast,
-							m_Speed
-						);
-					}
-					else
-					{
-						m_pBlastManager->Create(
-							shot->GetPosition(),
-							m_Rad.back(),
-							m_pStaticBlast,
-							m_Speed
-						);
-					}
+					m_pBlastManager->Create(
+						shot->GetPosition(),
+						m_BlastFlag,
+						m_pStaticBlast,
+						m_Speed
+					);
 				}
 
 				shot->HitShot();
@@ -594,24 +555,12 @@ void CCollisionManager::GroundtoShot()
 			for (size_t i = 0; i < PLAYER_MAX; i++)
 			{
 				//爆風の動的生成.
-				if (m_pCharacterManager->GetItemFlag(i) == false)
-				{
-					m_pBlastManager->Create(
-						shot->GetPosition(),
-						m_Rad.front(),
-						m_pStaticBlast,
-						m_Speed
-					);
-				}
-				else
-				{
-					m_pBlastManager->Create(
-						shot->GetPosition(),
-						m_Rad.back(),
-						m_pStaticBlast,
-						m_Speed
-					);
-				}
+				m_pBlastManager->Create(
+					shot->GetPosition(),
+					m_BlastFlag,
+					m_pStaticBlast,
+					m_Speed
+				);
 			}
 
 			shot->HitShot();
@@ -720,7 +669,7 @@ void CCollisionManager::SetItemInfomation(int Itemindex, int Playerindex)
 	//爆風に設定.
 	if (m_pItemBoxManager->GetItemInfo(Itemindex).m_Blast > 0.0f)
 	{
-		m_Rad.back() = m_pItemBoxManager->GetItemInfo(Itemindex).m_Blast;
+		m_BlastFlag = m_pItemBoxManager->GetItemInfo(Itemindex).m_Blast;
 	}
 
 	//装填時短設定.
