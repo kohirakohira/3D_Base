@@ -122,6 +122,7 @@ void CComPlayer::CreateCollider()
 void CComPlayer::SetShotManager(std::shared_ptr<CShotManager> shot)
 {
     m_pShotManager = shot;
+    m_pCannon->SetShotManager(m_pShotManager);
 }
 
 //不正値を防ぐ
@@ -658,6 +659,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
     SyncCannonToBody();
 }
 
+#if 0
 //========================================
 // 探索処理
 //========================================
@@ -743,6 +745,7 @@ void CComPlayer::StepAttack()
     TryAutoFire();
 }
 
+#endif
 //========================================
 // 退避処理
 //========================================
@@ -789,7 +792,7 @@ void CComPlayer::StepEvade()
     }
 }
 
-#if 0
+#if 1
 //過去のStepSeek
 void CComPlayer::StepSeek()
 {
@@ -1099,7 +1102,7 @@ void CComPlayer::EvaluateTransitions(float dist2)
 }
 
 //========================================
-// ターゲット選定（有効化）
+// ターゲット選定
 //========================================
 void CComPlayer::MakeFixedTimeTarget()
 {
@@ -1156,6 +1159,7 @@ void CComPlayer::MakeFixedTimeTarget()
 // COM弾発射処理
 void CComPlayer::TryAutoFire()
 {
+    
     if (!m_pShotManager || !m_pTarget) return;
 
     if (m_ShotState.m_ShotCD > 0)
@@ -1176,6 +1180,7 @@ void CComPlayer::TryAutoFire()
     const float err = std::fabs(Wrap(desired - yaw));
 
     if (err <= ToRad(m_ShotState.FireAngleEpsDeg)) {
+        m_pCannon->Reload(m_pCannon->GetPosition(), m_pCannon->GetRotation().y, true, m_PlayerID);
         //m_pShotManager->SetReload(static_cast<BulletKinds>(m_PlayerID), muzzle, yaw);
         m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
     }

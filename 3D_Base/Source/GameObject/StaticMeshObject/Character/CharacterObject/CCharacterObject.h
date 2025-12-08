@@ -142,6 +142,7 @@ protected:
 	//砲塔クラス.
 	std::shared_ptr<CCannon>		m_pCannon;
 	//弾マネージャークラス.
+	std::shared_ptr<CShotManager>	m_pShotManager;
 
 	//キャラクターの状態.
 	bool m_IsActive;

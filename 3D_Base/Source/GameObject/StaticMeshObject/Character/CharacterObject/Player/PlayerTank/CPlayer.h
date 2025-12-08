@@ -48,7 +48,7 @@ public:
 	// 外部のクラスに情報を渡す
 	std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
 	std::shared_ptr<CCannon> GetCannon() const override { return m_pCannon; }
-	std::shared_ptr<CShotManager>GetShotManager() const override { return ; }
+	std::shared_ptr<CShotManager>GetShotManager() const override { return m_pShotManager; }
 
 	//砲塔の位置取得.
 	D3DXVECTOR3 GetCannonPosition() const { return m_pCannon->GetPosition(); }
