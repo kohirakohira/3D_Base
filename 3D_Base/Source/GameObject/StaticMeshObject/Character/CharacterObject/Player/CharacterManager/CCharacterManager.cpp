@@ -605,6 +605,7 @@ bool CCharacterManager::GetItemFlag(int index) const
 	}
 }
 
+#if 0
 void CCharacterManager::SetComObstacles(const std::vector<std::shared_ptr<CBoxCollider>>* obstacles)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
@@ -624,6 +625,7 @@ void CCharacterManager::SetComObstacles(const std::vector<std::shared_ptr<CBoxCo
 		}
 	}
 }
+#endif
 //===========================================
 
 //ƒvƒŒƒCƒ„[‚ÆCOM‚ÌŽ©“®Ø‚è‘Ö‚¦.
