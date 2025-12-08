@@ -215,8 +215,6 @@ private:
 	std::vector<CComPlayer::SimpleObstacle> m_ComObstacles;
 
 	//障害物リスト
-	void BuildObstacleColliders();
-
 	void BuildComObstacles();
 
 public:		

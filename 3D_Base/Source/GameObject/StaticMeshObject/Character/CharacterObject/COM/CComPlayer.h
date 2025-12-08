@@ -160,7 +160,6 @@ private:
 		Chase,		//追跡
 		Attack,		//攻撃
 		Evade,		//離脱
-		ItemSeek,	//アイテム探索
 	};
 
 	//関数
@@ -316,16 +315,6 @@ private:
 	float m_ProbeAngleRad = D3DXToRadian(25.0f);					// 左右にどれくらい首を振るか
 	float m_LookAheadSkep;
 
-
-#if 0
-	//bool    m_WantsItem;            // アイテムを欲しているか
-	//float   m_ItemSeekPriority;     // アイテム優先度（HP低下時など上昇）
-
-	//// private セクションに追加する関数
-	//void CheckItemCollision();      // アイテムとの衝突判定
-	//bool ShouldSeekItem() const;    // アイテムを探すべきか判定
-	//void ApplyItemEffect(const ItemInfomation& info);   // アイテム効果適用
-#endif
 	//=====ヒット関数=====
 	virtual void Hit() override;
 	//===================

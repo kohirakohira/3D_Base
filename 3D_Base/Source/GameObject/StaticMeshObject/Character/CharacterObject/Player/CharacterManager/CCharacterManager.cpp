@@ -767,7 +767,7 @@ void CCharacterManager::SetComObstacles(const std::vector<CComPlayer::SimpleObst
 	{
 		if (auto* com = dynamic_cast<CComPlayer*>(up.get()))
 		{
-			//com->SetSimpleObstacles(obstacles);
+			com->SetSimpleObstacles(obstacles);
 		}
 	}
 }
