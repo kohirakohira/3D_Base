@@ -24,6 +24,9 @@ public:
 	//•`‰æˆ—.
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera);
 	
+	//”š•—ˆê‚Â‚ğæ“¾.
+	std::shared_ptr<CBlast> GetBlast(int index);
+
 public:
 	//’Êí‚Ì‘å‚«‚³.
 	float m_NormalRadius;

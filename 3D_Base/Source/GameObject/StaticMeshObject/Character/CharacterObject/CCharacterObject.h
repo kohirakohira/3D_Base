@@ -101,6 +101,26 @@ public:
 	virtual bool GetMuteki() const = 0;
 	//========================
 
+	//=====プレイヤーの爆風フラグの設定・取得=====
+	virtual void SetBlastFlag(bool flg) = 0;
+	virtual bool GetBlastFlag() = 0;
+	//============================================
+
+	//位置の取得.
+	virtual D3DXVECTOR3 GetPosition() const = 0;
+
+	//位置設定
+	virtual void SetPosition(const D3DXVECTOR3& pos) = 0;
+
+	//回転取得
+	virtual D3DXVECTOR3 GetRotation() const = 0;
+
+	//回転設定
+	virtual void SetRotation(const D3DXVECTOR3& rot) = 0;
+
+	//プレイヤーのインデックス番号の取得.
+	virtual int GetPlayerID() = 0;
+
 protected:
 	//車体クラス.
 	std::shared_ptr<CBody>			m_pBody;
@@ -108,6 +128,9 @@ protected:
 	std::shared_ptr<CCannon>		m_pCannon;
 	//弾マネージャークラス.
 	std::shared_ptr<CShotManager>	m_pShotManager;
+
+	//爆風のフラグ.
+	bool m_BlastFlag;
 
 	//キャラクターの状態.
 	bool m_IsActive;

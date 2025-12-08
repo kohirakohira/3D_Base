@@ -22,7 +22,7 @@ void CBlastManager::Create(const D3DXVECTOR3& pos, bool isRad, std::shared_ptr<C
 	//•b”‚ÌÝ’è.
 	blast->SetSpeed(s);
 	//Å‘å”¼Œa‚ÌÝ’è.
-	if (isRad != true)
+	if (isRad == false)
 	{
 		blast->SetMaxRadius(m_NormalRadius);
 	}
@@ -62,5 +62,14 @@ void CBlastManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMER
 	for (auto& blast : m_Blast)
 	{
 		blast->Draw(View, Proj, Light, Camera);
+	}
+}
+
+//”š•—ˆê‚Â‚ðŽæ“¾.
+std::shared_ptr<CBlast> CBlastManager::GetBlast(int index)
+{
+	if (index >= 0 && index < m_Blast.size())
+	{
+		return m_Blast[index];
 	}
 }

@@ -67,6 +67,7 @@ CComPlayer::CComPlayer()
     //, m_WantsItem(false)
     //, m_ItemSeekPriority(0.3f)      // 30%の確率でアイテム優先
 {
+    m_BlastFlag = false;
 }
 
 //そのCOM自身を削除する処理
@@ -1452,6 +1453,16 @@ void CComPlayer::Death()
             m_Chara.m_Death = false;
         }
     }
+}
+
+void CComPlayer::SetBlastFlag(bool flg)
+{
+    m_BlastFlag = flg;
+}
+
+bool CComPlayer::GetBlastFlag()
+{
+    return m_BlastFlag;
 }
 
 void CComPlayer::FindNearestTarget()

@@ -732,3 +732,19 @@ void CCharacterManager::SetComObstacles(const std::vector<CComPlayer::SimpleObst
 		}
 	}
 }
+
+void CCharacterManager::SetBlastFlag(int index, bool flg)
+{
+	if (index >= 0 && index < m_pCharacter.size())
+	{
+		m_pCharacter[index]->SetBlastFlag(flg);
+	}
+}
+
+bool CCharacterManager::GetBlastFlag(int index)
+{
+	if (index >= 0 && index < m_pCharacter.size())
+	{
+		return m_pCharacter[index]->GetBlastFlag();;
+	}
+}

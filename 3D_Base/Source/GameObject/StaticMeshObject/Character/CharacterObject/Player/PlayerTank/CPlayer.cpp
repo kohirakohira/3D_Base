@@ -58,6 +58,8 @@ CPlayer::CPlayer()
 
 	, m_Key					()
 {
+	m_BlastFlag = false;
+
 	//ÉLÅ[ÇÃê∂ê¨.
 	m_Key = std::make_unique<CMultiInputKeyManager>();
 	m_Key->SetKey({ 'W', 'A', 'S', 'D', 'Z', VK_LEFT, VK_RIGHT });
@@ -511,4 +513,14 @@ void CPlayer::CreateCollider()
 {
 	m_pBody->CreateBoxCollider(m_pBody->GetMinPos(), m_pBody->GetMaxPos());
 	m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
+}
+
+void CPlayer::SetBlastFlag(bool flg)
+{
+	m_BlastFlag = flg;
+}
+
+bool CPlayer::GetBlastFlag()
+{
+	return m_BlastFlag;
 }

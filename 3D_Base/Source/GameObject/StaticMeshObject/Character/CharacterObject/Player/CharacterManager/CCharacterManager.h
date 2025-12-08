@@ -103,6 +103,14 @@ public:
 	void GetMuteki(int index);
 	//==========================
 
+	//障害物リストを渡す.
+	void SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles);
+
+	//=====プレイヤーの爆風フラグの設定・取得=====
+	void SetBlastFlag(int index, bool flg);
+	bool GetBlastFlag(int index);
+	//============================================
+
 private:
 
 	struct Area {

@@ -124,6 +124,41 @@ public:
 	bool GetMuteki() const override { return m_Chara.m_Muteki; }
 	//========================
 
+	//=====プレイヤーの爆風フラグの設定・取得=====
+	void SetBlastFlag(bool flg);
+	bool GetBlastFlag();
+	//============================================
+
+	//位置の取得.
+	D3DXVECTOR3 GetPosition() const override
+	{
+		if (m_pBody) return m_pBody->GetPosition();
+		return D3DXVECTOR3(0, 0, 0);
+	}
+
+	//位置設定
+	void SetPosition(const D3DXVECTOR3& pos) override
+	{
+		if (m_pBody)   m_pBody->SetPosition(pos);
+		if (m_pCannon) m_pCannon->SetPosition(pos);
+	}
+
+	//回転取得
+	D3DXVECTOR3 GetRotation() const override
+	{
+		if (m_pBody) return m_pBody->GetRotation();
+		return D3DXVECTOR3(0, 0, 0);
+	}
+
+	//回転設定
+	void SetRotation(const D3DXVECTOR3& rot) override
+	{
+		if (m_pBody) m_pBody->SetRotation(rot);
+	}
+
+	//プレイヤーのインデックス番号の取得.
+	int GetPlayerID() { return m_PlayerID; }
+
 protected:
 
 	CController* 	m_Controller;

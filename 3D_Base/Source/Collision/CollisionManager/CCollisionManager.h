@@ -136,9 +136,6 @@ private:
 	//爆風マネージャークラス.
 	std::shared_ptr<CBlastManager>		m_pBlastManager;
 
-	//アイテムの取得フラグ.
-	bool m_BlastFlag;
-
 	//秒数.
 	float m_Speed;
 

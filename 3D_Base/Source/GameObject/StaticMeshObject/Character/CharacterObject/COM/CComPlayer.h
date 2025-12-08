@@ -103,6 +103,7 @@ public:
 	//弾マネージャーの設定.
 	void SetShotManager(std::shared_ptr<CShotManager> shot) override;
 
+	//位置の取得.
 	D3DXVECTOR3 GetPosition() const override
 	{
 		if (m_pBody) return m_pBody->GetPosition();
@@ -128,6 +129,9 @@ public:
 	{
 		if (m_pBody) m_pBody->SetRotation(rot);
 	}
+
+	//プレイヤーのインデックス番号の取得.
+	int GetPlayerID() { return m_PlayerID; }
 
 	void FindNearestTarget();
 
@@ -331,6 +335,11 @@ private:
 	void SetMuteki(bool flg) override { m_Chara.m_Muteki = flg; }
 	bool GetMuteki() const override { return m_Chara.m_Muteki; }
 	//========================
+
+	//=====プレイヤーの爆風フラグの設定・取得=====
+	void SetBlastFlag(bool flg);
+	bool GetBlastFlag();
+	//============================================
 
 };
 
