@@ -24,7 +24,7 @@ CComPlayer::CComPlayer()
     , m_Registered(false)
     , m_StateFrames(0)
     , m_SeekRadius(5.0f)
-    , m_AttacRadius(10.0f)
+    , m_AttacRadius(100.0f)    //仮設定で大きい値.元は10.f
     , m_FireConeDeg(10.0f)
     , m_ClosenessRadius(1.f)     //近くにしすぎない
     , m_EvadeDuration(60)
@@ -67,7 +67,7 @@ CComPlayer::CComPlayer()
     //, m_WantsItem(false)
     //, m_ItemSeekPriority(0.3f)      // 30%の確率でアイテム優先
 {
-    m_BlastFlag = false;
+    //m_BlastFlag = false;
 }
 
 //そのCOM自身を削除する処理
@@ -752,6 +752,7 @@ void CComPlayer::StepAttack()
 //========================================
 void CComPlayer::StepEvade()
 {
+#if 0
     std::shared_ptr<CBody> body = GetBody();
     if (!body) return;
 
@@ -791,12 +792,17 @@ void CComPlayer::StepEvade()
             cannon->CStaticMeshObject::Update();
         }
     }
+#endif
 }
 
-#if 1
+/*
+* 動かす時は、コメントアウトしたところを解除してもらったら動かせます。
+*/
+
 //過去のStepSeek
 void CComPlayer::StepSeek()
 {
+#if 1
     auto body = GetBody();
     if (!body) return;
     const auto tuning = GetTuning();
@@ -807,29 +813,30 @@ void CComPlayer::StepSeek()
     //位置・回転取得
     D3DXVECTOR3 pos = body->GetPosition();
     const float yaw = body->GetRotation().y;
-    D3DXVECTOR3 d = center - pos;
+    //D3DXVECTOR3 d = center - pos;
 
-    const float dist2 = d.x * d.x + d.z * d.z;
-    float distYaw = yaw;
+    //const float dist2 = d.x * d.x + d.z * d.z;
+    //float distYaw = yaw;
 
-    //ある程度外側にいたら中心に向かって進む
-    const float centerRadius = 10.0f;           //この距離より外にいたら中心を優先
-    if (dist2 > centerRadius * centerRadius)
-    {
-        distYaw = std::atan2f(d.x, d.z);
-    }
-    else
-    {
-        //中心付近ではWanderで探す
-        TickWander(tuning.bodyTurnSpeed,tuning.moveSpeed);
-        distYaw = yaw + m_WanderAngle;
-    }
+    //一旦止めている
+    ////ある程度外側にいたら中心に向かって進む
+    //const float centerRadius = 10.0f;           //この距離より外にいたら中心を優先
+    //if (dist2 > centerRadius * centerRadius)
+    //{
+    //    distYaw = std::atan2f(d.x, d.z);
+    //}
+    //else
+    //{
+    //    //中心付近ではWanderで探す
+    //    TickWander(tuning.bodyTurnSpeed,tuning.moveSpeed);
+    //    distYaw = yaw + m_WanderAngle;
+    //}
 
-    const float cur = body->GetRotation().y;
-    const float desired = cur + m_WanderAngle;
+    //const float cur = body->GetRotation().y;
+    //const float desired = cur + m_WanderAngle;
 
-    const float next = SteerWithAvoidAABB(cur, desired, tuning.bodyTurnSpeed);
-    SafeAdvance(next, tuning.moveSpeed);
+    //const float next = SteerWithAvoidAABB(cur, desired, tuning.bodyTurnSpeed);
+    //SafeAdvance(next, tuning.moveSpeed);
 
     if (m_pTarget)
     {
@@ -837,10 +844,12 @@ void CComPlayer::StepSeek()
         //TryAutoFire();
         SyncCannonToBody();
     }
+#endif
 }
 
 void CComPlayer::StepChase()
 {
+#if 1
     auto body = GetBody();
 
     if (!body || !m_pTarget)
@@ -855,20 +864,21 @@ void CComPlayer::StepChase()
     const float cur = body->GetRotation().y;
 
 
-    //目標へ向く角度
-    float desired = std::atan2f((tp - self).x, (tp - self).z);
+    ////目標へ向く角度
+    //float desired = std::atan2f((tp - self).x, (tp - self).z);
 
-    // 近づき過ぎないようKeepDistance 付近では少し横移動を入れる
-    const float dist = DistXZ(self, tp);
-    if (dist < m_KeepDistance * 0.9f) {
-        desired = Wrap(desired + (D3DX_PI * 0.5f) * ((m_StateFrames / 60) % 2 ? +1.f : -1.f));
-    }
+    //// 近づき過ぎないようKeepDistance 付近では少し横移動を入れる
+    //const float dist = DistXZ(self, tp);
+    //if (dist < m_KeepDistance * 0.9f) {
+    //    desired = Wrap(desired + (D3DX_PI * 0.5f) * ((m_StateFrames / 60) % 2 ? +1.f : -1.f));
+    //}
 
-    const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
-    SafeAdvance(next, t.moveSpeed);
+    //const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
+    //SafeAdvance(next, t.moveSpeed);
 
     TickAimTo(tp);
     TryAutoFire();
+#endif
 }
 
 void CComPlayer::StepAttack()
@@ -888,31 +898,29 @@ void CComPlayer::StepAttack()
     const D3DXVECTOR3 tp = m_pTarget->GetPosition();
     const float cur = body->GetRotation().y;
 
-    // 基本は周回
-    const int   period = 60;
-    const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
-    const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
+    //// 基本は周回
+    //const int   period = 60;
+    //const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
+    //const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
 
-    // 接線方向
-    float desired = Wrap(toYaw + sign * (D3DX_PI * 0.5f));
+    //// 接線方向
+    //float desired = Wrap(toYaw + sign * (D3DX_PI * 0.5f));
 
-    // 半径誤差補正
-    const float dist = DistXZ(self, tp);
-    if (dist > m_KeepDistance * 1.2f) {
-        desired = toYaw; // 外れすぎたら寄る
-    }
-    else if (dist < m_KeepDistance * 0.8f) {
-        desired = Wrap(toYaw + D3DX_PI); // 近すぎたら離れる
-    }
+    //// 半径誤差補正
+    //const float dist = DistXZ(self, tp);
+    //if (dist > m_KeepDistance * 1.2f) {
+    //    desired = toYaw; // 外れすぎたら寄る
+    //}
+    //else if (dist < m_KeepDistance * 0.8f) {
+    //    desired = Wrap(toYaw + D3DX_PI); // 近すぎたら離れる
+    //}
 
-    const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
-    SafeAdvance(next, t.moveSpeed);
+    //const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
+    //SafeAdvance(next, t.moveSpeed);
 
     TickAimTo(tp);
     TryAutoFire();
 }
-
-#endif
 
 // アイテム取得
 void CComPlayer::StepItemSeek()
@@ -1455,14 +1463,16 @@ void CComPlayer::Death()
     }
 }
 
+//追加してもらったけど、エラーはいたので一旦コメントアウト中
 void CComPlayer::SetBlastFlag(bool flg)
 {
-    m_BlastFlag = flg;
+    //m_BlastFlag = flg;
 }
 
 bool CComPlayer::GetBlastFlag()
 {
-    return m_BlastFlag;
+    //return m_BlastFlag;
+    return false;
 }
 
 void CComPlayer::FindNearestTarget()
