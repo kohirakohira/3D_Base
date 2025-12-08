@@ -54,6 +54,7 @@ CComPlayer::CComPlayer()
     , m_WanderRadius(15.0f)                        // 15m以内を徘徊
     , m_CenterPullStrength(0.3f)                   // 引き寄せ強度
     , m_pSimpleObstacles( nullptr )
+    , m_ObstacleRadius  ( 2.0f )    
     //========================================
     // 障害物回避パラメータ
     //========================================
@@ -1321,6 +1322,140 @@ void CComPlayer::TickWander(float turnStep, float moveStep)
     //========================================
     SafeAdvance(nextYaw, moveStep);
 }
+
+#if 1
+//危険ゾーン判定
+bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
+{
+    if (!m_pSimpleObstacles) return false;
+
+    for (const auto& z : *m_pSimpleObstacles)
+    {
+        const float dx = pos.x - z.pos.x;
+        const float dz = pos.z - z.pos.z;
+        const float r = z.radius + m_ObstacleRadius; // 自分の大きさも足す
+        if (dx * dx + dz * dz < r * r)
+        {
+            return true; // 危険ゾーンに入っている
+        }
+    }
+    return false;
+}
+
+float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep)
+{
+    auto body = GetBody();
+    if (!body) return curYaw;
+
+    const D3DXVECTOR3 selfPos = body->GetPosition();
+
+    //障害物情報がなければ、純粋にdesiredYawへ寄せるだけ
+    if (!m_pSimpleObstacles || m_pSimpleObstacles->empty())
+    {
+        const float d = Wrap(desiredYaw - curYaw);
+        return Approach(curYaw, curYaw + d, turnStep);
+    }
+
+    // 3本の仮想レイを試す：正面、少し左、少し右
+    const float angs[3] = { 0.f, +m_ProbeAngleRad, -m_ProbeAngleRad };
+
+    float bestYaw = desiredYaw;
+    float bestScore = -1e9f;
+
+    for (float a : angs)
+    {
+        const float testYaw = desiredYaw + a;
+        float hitD;
+        const bool blocked = HasObstacleAheadSimple(
+            selfPos, testYaw,
+            m_ObstacleProbeDist,
+            m_ObstacleProbeStep,
+            hitD);
+
+        // スコア設計：
+        //  - 障害物がない方向
+        //  - desired からあまり外れない方向を優先
+        float score = 0.0f;
+        if (!blocked)
+        {
+            score += 1000.0f; // ぶつからない方向
+        }
+        else
+        {
+            // ぶつかる場合も、近いよりは遠くでぶつかる方向をマシとする
+            score -= (m_ObstacleProbeDist - hitD);
+        }
+
+        // desired からのズレはなるべく小さくしたい
+        score -= std::fabs(Wrap(testYaw - desiredYaw)) * 10.0f;
+
+        if (score > bestScore)
+        {
+            bestScore = score;
+            bestYaw = testYaw;
+        }
+    }
+
+    // 最終的に選ばれた bestYaw に向かうよう、curYaw を turnStep 分だけ近づける
+    const float d = Wrap(bestYaw - curYaw);
+    return Approach(curYaw, curYaw + d, turnStep);
+}
+
+void CComPlayer::SafeAdvance(float nextYaw, float step)
+{
+    auto body = GetBody();
+    if (!body) return;
+
+    auto tuning = GetTuning();
+
+    D3DXVECTOR3 pos = body->GetPosition();
+    pos.y = 0.0f;
+
+    // COM 同士の分離
+    D3DXVECTOR3 sep(0, 0, 0);
+    float nearest = 1e9f;
+    ComputeSeparation(pos, sep, nearest);
+
+    // 次の候補位置を計算
+    D3DXVECTOR3 nextPos = pos + ForwardFromYaw(nextYaw) * tuning.moveSpeed;
+    nextPos.x += sep.x * 0.02f;
+    nextPos.z += sep.z * 0.02f;
+    nextPos.y = 0.0f;
+
+    //ここで危険ゾーン判定
+    if (IsInDangerZone(nextPos))
+    {
+        //今の向きのまま、そのフレームは前進しない
+        body->SetRotation({ 0.f, nextYaw, 0.f });
+        body->CStaticMeshObject::Update();
+        SyncCannonToBody();
+        return;
+    }
+
+    // 実際に移動する
+    body->SetRotation({ 0.f, nextYaw, 0.f });
+    body->SetPosition(nextPos);
+    body->CStaticMeshObject::Update();
+    SyncCannonToBody();
+}
+
+void CComPlayer::TickWander()
+{
+    const float WanderDelta = 0.10f;
+    const float WanderClamp = 0.6f;
+
+    // たまにだけ方向を揺らす
+    if ((std::rand() & 31) == 0) // 1/32フレームぐらい
+    {
+        const float sign = (std::rand() & 1) ? +1.f : -1.f;
+        m_WanderAngle += sign * WanderDelta;
+        if (m_WanderAngle > WanderClamp) m_WanderAngle = WanderClamp;
+        if (m_WanderAngle < -WanderClamp) m_WanderAngle = -WanderClamp;
+    }
+}
+
+#endif
+
 // IDがリストに登録されているか判定
 bool CComPlayer::IsBlacklisted(int id) const
 {

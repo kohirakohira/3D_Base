@@ -175,6 +175,7 @@ private:
 	void TickChaseTo(const D3DXVECTOR3& targetPos);						//追尾
 	void TickAimTo(const D3DXVECTOR3& targetPos);						//砲塔追尾
 	void TickWander(float turnStep, float moveStep);
+	void TickWander();													//引数なし
 	void Blacklist(int id) { m_TargetBlackList[id] = m_BlackListTime; }	//一定時間ターゲットにしない
 	bool IsBlacklisted(int id) const;									//IDがリストに登録されているか判定.読み取り専用
 	void TickBlacklist();												//フレームごとにブラックリストを更新
@@ -292,7 +293,7 @@ private:
 	float		m_AvoidMaxFrames;		// 最大回避フレーム
 	float		m_BodyRadius;			// 自機の半径
 
-
+	float		m_ObstacleRadius;		// 自分大きさ
 	bool		m_Respawn;				// リスポーン
 
 	D3DXVECTOR3 m_MapCenter;        // マップの中央座標（デフォルト 0,0,0）
