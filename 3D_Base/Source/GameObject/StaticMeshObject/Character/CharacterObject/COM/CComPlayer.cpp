@@ -373,75 +373,6 @@ inline float CComPlayer::AngleError(float fromYaw, const D3DXVECTOR3& fromPos, c
     return std::fabs(error);
 }
 
-#if 0
-void CComPlayer::Update()
-{
-    CCharacterObjectBase::Update();
-
-    // ダメージ処理の更新
-    Damage();
-    // 死亡処理の更新
-    Death();
-
-    SanitizeParams();
-
-    if (!m_ComEnabled) {
-        SyncCannonToBody(); //COM無効なら止めて砲塔追従だけ
-        return;
-    }
-
-    TickBlacklist();
-
-    auto body = GetBody();
-    auto cannon = GetCannon();
-    if (!body) {
-        if (cannon) cannon->CStaticMeshObject::Update();
-        return;
-    }
-
-    //障害物の乗り込み対策.yを0で固定
-    auto pos = body->GetPosition();
-    body->SetPosition(pos.x, 0.0f, pos.z);
-
-    //定期リターゲット
-    if (--m_RetargetTimer <= 0 || !m_pTarget) {
-        MakeFixedTimeTarget();
-        m_RetargetTimer = m_RetargetInterval;
-    }
-
-    //距離を計算
-    float dist2 = 1e18f;
-    if (m_pTarget) {
-        const D3DXVECTOR3 d = m_pTarget->GetPosition() - body->GetPosition();
-        dist2 = d.x * d.x + d.z * d.z;
-        m_LostSightFrames = 0;
-    }
-    else {
-        ++m_LostSightFrames;
-    }
-
-    //if (--m_RetargetItemTimer <= 0) {
-    //    MakeItemTarget();
-    //    m_RetargetItemTimer = m_RetargetItemInterval;
-    //}
-
-    ////アイテムとの衝突判定
-    //CheckItemCollision();
-
-    //状態遷移はここだけで行う
-    EvaluateTransitions(dist2);
-
-    //実行
-    switch (m_State) {
-    case State::Seek:     StepSeek();     break;
-    case State::Chase:    StepChase();    break;
-    case State::Attack:   StepAttack();   break;
-    case State::Evade:    StepEvade();    break;
-    case State::ItemSeek: StepItemSeek(); break;
-    }
-    ++m_StateFrames;
-}
-#endif
 #if 1
 void CComPlayer::Update()
 {
@@ -961,7 +892,7 @@ void CComPlayer::StepSeek()
     if (m_pTarget)
     {
         TickAimTo(m_pTarget->GetPosition());
-        //TryAutoFire();
+        TryAutoFire();
         SyncCannonToBody();
     }
 }
@@ -1135,98 +1066,6 @@ void CComPlayer::EvaluateTransitions(float dist2)
         break;
     }
 
-#if 0
-    const float attackEnter2 = Sqr(std::max(m_KeepDistance * 1.05f, 3.f));
-    const float attackExit2 = Sqr(std::max(m_KeepDistance * 1.25f, 5.f));
-    const float evadeDist2 = Sqr(m_KeepDistance * 0.60f);
-    const int   loseFrames = 120;
-
-    // アイテムターゲットの有効性チェック
-    auto itemTarget = m_pItemTarget.lock();
-    bool hasValidItem = itemTarget && itemTarget->IsActive() && itemTarget->GetGravity();
-
-    switch (m_State) {
-    case State::Seek:
-        // アイテムがあり、取りに行くべきなら
-        if (hasValidItem && ShouldSeekItem()) {
-            ChangeState(State::ItemSeek);
-        }
-        else if (m_pTarget) {
-            ChangeState(State::Chase);
-        }
-        break;
-
-    case State::Chase:
-        if (!m_pTarget) {
-            ChangeState(State::Seek);
-            break;
-        }
-        // アイテムが近くにあり、余裕があれば取りに行く
-        if (hasValidItem && dist2 > attackEnter2 * 2.0f && ShouldSeekItem()) {
-            ChangeState(State::ItemSeek);
-            break;
-        }
-        if (dist2 <= evadeDist2) {
-            ChangeState(State::Evade);
-            break;
-        }
-        if (dist2 <= attackEnter2) {
-            ChangeState(State::Attack);
-            break;
-        }
-        break;
-
-    case State::Attack:
-        if (!m_pTarget) {
-            ChangeState(State::Seek);
-            break;
-        }
-        if (dist2 < evadeDist2) {
-            ChangeState(State::Evade);
-            break;
-        }
-        if (dist2 > attackExit2) {
-            ChangeState(State::Chase);
-            break;
-        }
-        break;
-
-    case State::Evade:
-        if (!m_pTarget) {
-            ChangeState(State::Seek);
-            break;
-        }
-        if (dist2 >= attackEnter2) {
-            ChangeState(State::Chase);
-            break;
-        }
-        else if (dist2 >= evadeDist2) {
-            ChangeState(State::Attack);
-            break;
-        }
-        if (m_LostSightFrames > loseFrames) {
-            ChangeState(State::Seek);
-        }
-        break;
-
-    case State::ItemSeek:
-        // アイテムがなくなったら別の状態へ
-        if (!hasValidItem) {
-            if (m_pTarget) {
-                ChangeState(State::Chase);
-            }
-            else {
-                ChangeState(State::Seek);
-            }
-            break;
-        }
-        // 敵が近すぎたら戦闘優先
-        if (m_pTarget && dist2 <= evadeDist2) {
-            ChangeState(State::Evade);
-        }
-        break;
-    }
-#endif
 }
 
 //========================================
@@ -1282,6 +1121,64 @@ void CComPlayer::MakeFixedTimeTarget()
         m_CurTargetDist2 = 1e9f;
     }
 }
+
+#if 0
+void CComPlayer::MakeFixedTimeTarget()
+{
+    if (!m_pAllPlayer) return;
+    auto body = GetBody();
+    if (!body) return;
+
+    const D3DXVECTOR3 self = body->GetPosition();
+
+    std::shared_ptr<CCharacterObjectBase> best;
+    float bestD2 = 1e9f;
+
+    for (auto& p : *m_pAllPlayer) {
+        if (!p) continue;
+        if (p->GetPlayerID() == m_PlayerID) continue; // 自分は除外
+        if (IsBlacklisted(p->GetPlayerID())) continue;
+
+        const float d2 = DistXZ(self, p->GetPosition());
+        if (d2 < bestD2) 
+        {   bestD2 = d2;
+            best = p;
+        }
+    }
+
+    if (!best) {
+        m_pTarget.reset();
+        m_CurTargetDist2 = 1e9f;
+        return;
+    }
+
+    if (!m_pTarget) {
+        m_pTarget = best;
+        m_CurTargetDist2 = bestD2;
+        return;
+    }
+
+    //近いターゲット
+    const float curD2 = DistXZ(self, m_pTarget->GetPosition());
+    if (best.get() != m_pTarget.get() && bestD2 < curD2 * m_StickinessRatio) {
+        m_pTarget = best;
+        m_CurTargetDist2 = bestD2;
+    }
+    else {
+        m_CurTargetDist2 = curD2;
+    }
+
+    //遠くなったら忘れさせる
+    const float forget2 = m_ForgetDistance * m_ForgetDistance;
+    if (m_CurTargetDist2 > forget2) {
+        Blacklist(m_pTarget->GetPlayerID());
+        m_pTarget.reset();
+        m_CurTargetDist2 = 1e9f;
+    }
+}
+#endif
+
+
 
 #if 1
 // COM弾発射処理
