@@ -867,7 +867,7 @@ void CComPlayer::StepChase()
     SafeAdvance(next, t.moveSpeed);
 
     TickAimTo(tp);
-    //TryAutoFire();
+    TryAutoFire();
 }
 
 void CComPlayer::StepAttack()
