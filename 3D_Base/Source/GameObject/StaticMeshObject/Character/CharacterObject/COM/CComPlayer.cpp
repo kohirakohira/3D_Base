@@ -659,6 +659,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
     SyncCannonToBody();
 }
 
+//Œ»ó‚Ì’Tõ.UŒ‚
 #if 0
 //========================================
 // ’Tõˆ—
