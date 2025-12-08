@@ -181,7 +181,8 @@ HRESULT CGameResult::LoadData()
 	};
 	//タイトル画像のスプライト設定.
 	CSprite2D::SPRITE_STATE SELECT_SIZE = {
-		256, 96,		//描画幅,高さ.
+		256, 
+		6,		//描画幅,高さ.
 		256, 96,		//元画像の幅,高さ.
 		256, 96			//アニメーションをしないので、0でいい.
 	};
