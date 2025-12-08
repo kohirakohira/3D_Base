@@ -26,6 +26,7 @@
 #include <limits>
 #include <unordered_set>
 #include <memory>
+#include <deque>
 
 
 class CComPlayer
@@ -35,7 +36,7 @@ public:
 
 	struct SimpleObstacle
 	{
-		D3DXVECTOR3 pos;	
+		D3DXVECTOR3 pos;
 		float radius;
 	};
 
@@ -84,6 +85,9 @@ public:
 	void SetComEnabled(bool enabled) { m_ComEnabled = enabled; }
 	bool IsComEnabled() const { return m_ComEnabled; }
 
+	//キャラクターマネージャーで使うよう
+	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
+
 	//プレイヤーを取得する.読み取り専用
 	void SetPlayersRef(const std::vector<std::shared_ptr<CCharacterObjectBase>>* all) { m_pAllPlayer = all; }
 
@@ -103,7 +107,6 @@ public:
 	//弾マネージャーの設定.
 	void SetShotManager(std::shared_ptr<CShotManager> shot) override;
 
-	//位置の取得.
 	D3DXVECTOR3 GetPosition() const override
 	{
 		if (m_pBody) return m_pBody->GetPosition();
@@ -129,9 +132,6 @@ public:
 	{
 		if (m_pBody) m_pBody->SetRotation(rot);
 	}
-
-	//プレイヤーのインデックス番号の取得.
-	int GetPlayerID() { return m_PlayerID; }
 
 	void FindNearestTarget();
 
@@ -160,7 +160,6 @@ private:
 		Chase,		//追跡
 		Attack,		//攻撃
 		Evade,		//離脱
-		ItemSeek,	//アイテム探索
 	};
 
 	//関数
@@ -171,11 +170,11 @@ private:
 	void StepEvade();													//離脱処理
 	void StepItemSeek();												//アイテム探索処理
 	void TryAutoFire();													//COMの弾発射処理
-	void MakeItemTarget();
 	void SanitizeParams();												//パラメータ調整
 	void TickChaseTo(const D3DXVECTOR3& targetPos);						//追尾
 	void TickAimTo(const D3DXVECTOR3& targetPos);						//砲塔追尾
-	void TickWander(float turnStep, float moveStep);
+	//void TickWander(float turnStep, float moveStep);
+	void TickWander();													//引数なし
 	void Blacklist(int id) { m_TargetBlackList[id] = m_BlackListTime; }	//一定時間ターゲットにしない
 	bool IsBlacklisted(int id) const;									//IDがリストに登録されているか判定.読み取り専用
 	void TickBlacklist();												//フレームごとにブラックリストを更新
@@ -202,6 +201,8 @@ private:
 	//回避側に固定旋回を混ぜる
 	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
 
+	bool FollowPath(float turnStep, float moveSte);
+
 	//========================================
 	// 安全な前進処
 	//========================================
@@ -212,6 +213,9 @@ private:
 	//========================================
 	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
 
+	bool HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const;
+
+	float NearestItemDist2(float& outDist2) const;
 
 	// ヘルパ
 	static float Wrap(float rad);                         //[-π,π]に正規化
@@ -245,7 +249,8 @@ private:
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;			//障害物のBoxColliderリスト
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
 	const std::vector<SimpleObstacle>* m_pSimpleObstacles;						//障害物情報
-	//std::shared_ptr<CShotManager> m_pShotManager;									//ショットマネージャーの弱参照
+	std::deque<D3DXVECTOR3> m_Path;	//ワールド座標WP列
+
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
@@ -276,23 +281,27 @@ private:
 	std::unordered_map<int, int> m_TargetBlackList;	//キーは相手のID.値は残りフレーム数
 	int m_BlackListTime;							//何秒無視するか
 
+	//アイテムが消えたので一旦消さずに放置
+#if 0
 	//アイテム
 	int		m_RetargetItemTimer;		//アイテムタイマー
 	int		m_RetargetItemInterval;		//アイテム探索インターバル 
 	float	m_ItemGetRadius;			//範囲内なら狙う
 	float	m_ItemPickUpRaius;			//以下なら取得.最終的には当たり判定でやる
 	ComShotState m_ShotState;
+#endif
+
+	ComShotState m_ShotState;			//COMのショット情報
 
 	//========================================
 	// 障害物回避パラメータ
 	//========================================
-	float		m_ProbeAngleRad;		// 探査角度（左右に振る角度）
+	//float		m_ProbeAngleRad;		// 探査角度（左右に振る角度）
 	float		m_ProbeDist;			// 探査距離
 	float		m_AvoidHoldFrames;		// 回避を維持するフレーム数
 	int			m_AvoidSide;			// 回避方向（+1:右, -1:左, 0:未決定）
 	float		m_AvoidMaxFrames;		// 最大回避フレーム
 	float		m_BodyRadius;			// 自機の半径
-
 
 	bool		m_Respawn;				// リスポーン
 
@@ -300,15 +309,12 @@ private:
 	float m_WanderRadius;           // 中央からこの範囲内を徘徊（デフォルト 15.0）
 	float m_CenterPullStrength;     // 中央への引き寄せ強度（デフォルト 0.3）
 
-#if 1
-	//bool    m_WantsItem;            // アイテムを欲しているか
-	//float   m_ItemSeekPriority;     // アイテム優先度（HP低下時など上昇）
+	float m_ObstacleProbeDist = 8.0f;								// 何メートル先まで見るか
+	float m_ObstacleProbeStep = 0.5f;								// 何メートル刻みでチェックするか
+	float m_ObstacleRadius = 1.5f;									// 自分の半径
+	float m_ProbeAngleRad = D3DXToRadian(25.0f);					// 左右にどれくらい首を振るか
+	float m_LookAheadSkep;
 
-	//// private セクションに追加する関数
-	//void CheckItemCollision();      // アイテムとの衝突判定
-	//bool ShouldSeekItem() const;    // アイテムを探すべきか判定
-	//void ApplyItemEffect(const ItemInfomation& info);   // アイテム効果適用
-#endif
 	//=====ヒット関数=====
 	virtual void Hit() override;
 	//===================
@@ -336,12 +342,8 @@ private:
 	bool GetMuteki() const override { return m_Chara.m_Muteki; }
 	//========================
 
-	//=====プレイヤーの爆風フラグの設定・取得=====
-	void SetBlastFlag(bool flg);
-	bool GetBlastFlag();
-	//============================================
+	void SetBlastFlag(bool flg) override{} ;
+	bool GetBlastFlag() override { return m_BlastFlag; }
 
+	int GetPlayerID() override { return m_PlayerID; } 
 };
-
-
-
