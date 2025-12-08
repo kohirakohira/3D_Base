@@ -32,6 +32,13 @@ class CComPlayer
 	: public CCharacterObjectBase
 {
 public:
+
+	struct SimpleObstacle
+	{
+		D3DXVECTOR3 pos;	
+		float radius;
+	};
+
 	CComPlayer();
 	~CComPlayer() override;
 

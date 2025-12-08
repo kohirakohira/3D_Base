@@ -1096,6 +1096,7 @@ void CGameMain::EachSettingHitPoint()
 	}
 }
 
+#if 0
 void CGameMain::BuildObstacleColliders()
 {
 	m_ObstacleColliders.clear();
@@ -1128,4 +1129,60 @@ void CGameMain::BuildObstacleColliders()
 
 	if (m_pWoodBoxBottomRight && m_pWoodBoxBottomRight->GetBoxCollider())
 		m_ObstacleColliders.push_back(m_pWoodBoxBottomRight->GetBoxCollider());
+}
+#endif
+
+
+void CGameMain::BuildComObstacles()
+{
+	m_ComObstacles.clear();
+
+#if 1
+	auto addObstacle = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
+		{
+			if (!obj) return;
+			CComPlayer::SimpleObstacle o;
+			o.pos = obj->GetPosition();
+			o.pos.y = 0.0f;      // 上から見た判定なので Y は 0
+			o.radius = radius;
+			m_ComObstacles.push_back(o);
+		};
+
+	// 壁は広いので大きめの半径
+	addObstacle(m_pWallTop, 12.0f);
+	addObstacle(m_pWallBottom, 12.0f);
+	addObstacle(m_pWallLeft, 12.0f);
+	addObstacle(m_pWallRight, 12.0f);
+
+	// 木箱は小さめの障害物
+	addObstacle(m_pWoodBoxTopLeft, 4.0f);
+	addObstacle(m_pWoodBoxTopRight, 4.0f);
+	addObstacle(m_pWoodBoxCenter, 4.0f);
+	addObstacle(m_pWoodBoxBottomLeft, 4.0f);
+	addObstacle(m_pWoodBoxBottomRight, 4.0f);
+#endif
+
+	auto addObject = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
+		{
+			if (!obj) return;
+			CComPlayer::SimpleObstacle object;
+			object.pos = obj->GetPosition();
+			object.pos.y = 0.0f;
+			object.radius = radius;
+			m_ComObstacles.push_back(object);
+		};
+
+	//木箱5個
+	addObject(m_pWoodBoxBottomLeft, 3.0f);
+	addObject(m_pWoodBoxBottomRight, 3.0f);
+	addObject(m_pWoodBoxCenter, 3.0f);
+	addObject(m_pWoodBoxTopLeft, 3.0f);
+	addObject(m_pWoodBoxTopRight, 3.0f);
+
+	//壁
+	addObject(m_pWallLeft, 12.f);
+	addObject(m_pWallRight, 12.f);
+	addObject(m_pWallTop, 12.f);
+	addObject(m_pWallBottom, 12.f);
+
 }

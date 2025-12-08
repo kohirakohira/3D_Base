@@ -212,9 +212,12 @@ public:
 
 private:
 	std::vector<std::shared_ptr<CBoxCollider>> m_ObstacleColliders;
+	std::vector<CComPlayer::SimpleObstacle> m_ComObstacles;
 
 	//障害物リスト
 	void BuildObstacleColliders();
+
+	void BuildComObstacles();
 
 public:		
 	// 変数用
