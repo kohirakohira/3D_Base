@@ -45,10 +45,10 @@ CComPlayer::CComPlayer()
     , m_CurTargetDist2(std::numeric_limits<float>::infinity())
     , m_pItemBox(nullptr)
     , m_pItemTarget()
-    , m_RetargetItemTimer(0)
-    , m_RetargetItemInterval(30)
-    , m_ItemGetRadius(20.f)
-    , m_ItemPickUpRaius(1.f)
+    //, m_RetargetItemTimer(0)
+    //, m_RetargetItemInterval(30)
+    //, m_ItemGetRadius(20.f)
+    //, m_ItemPickUpRaius(1.f)
     , m_pBoxCollider(nullptr)
     , m_MapCenter(D3DXVECTOR3(0.0f, 0.0f, 0.0f))  // ƒ}ƒbƒv’†‰›
     , m_WanderRadius(15.0f)                        // 15mˆÈ“à‚ðœpœj
@@ -486,7 +486,7 @@ void CComPlayer::Update()
     body->SetPosition(pos.x, pos.y = 0, pos.z);
 
     float itemD2;
-    //NearestItemDist2(itemD2);
+    NearestItemDist2(itemD2);
 
     //ó‘Ô‘JˆÚ‚Í‚±‚±‚¾‚¯‚Ås‚¤
     EvaluateTransitions(dist2);
@@ -502,6 +502,35 @@ void CComPlayer::Update()
     ++m_StateFrames;
 }
 #endif
+
+float CComPlayer::NearestItemDist2(float& outDist2) const
+{
+    //‘å‚«‚¢’l
+    outDist2 = 1e18f;
+    if (!m_pItemBox) return outDist2;
+
+    auto body = GetBody();
+    if (!body)
+    {
+        return outDist2;
+    }
+    const D3DXVECTOR3 self = body->GetPosition();
+    for (auto& box : *m_pItemBox)
+    {
+        if (!box) continue;
+        if (!box->IsActive()) continue;
+
+        const D3DXVECTOR3 dist = box->GetPosition() - self;
+
+        const float d2 = dist.x * dist.x + dist.z * dist.z;
+        if (d2 < outDist2)
+        {
+            outDist2 = d2;
+        }
+        return outDist2;
+    }
+}
+
 
 #if 1
 bool CComPlayer::FollowPath(float turnStep, float moveSte)
@@ -966,7 +995,7 @@ void CComPlayer::StepChase()
     SafeAdvance(next, t.moveSpeed);
 
     TickAimTo(tp);
-    //TryAutoFire();
+    TryAutoFire();
 }
 
 void CComPlayer::StepAttack()
@@ -1318,71 +1347,71 @@ void CComPlayer::TransitionTo(State state)
 //========================================
 // œpœj“®ì
 //========================================
-void CComPlayer::TickWander(float turnStep, float moveStep)
-{
-    auto body = GetBody();
-    if (!body) return;
-
-    const D3DXVECTOR3 pos = body->GetPosition();
-    float curYaw = body->GetRotation().y;
-
-    //========================================
-    // ’†‰›‚©‚ç‚Ì‹——£‚Æ•ûŒü‚ðŒvŽZ
-    //========================================
-    D3DXVECTOR3 toCenter = m_MapCenter - pos;  // ’†‰›‚Ö‚ÌƒxƒNƒgƒ‹
-    toCenter.y = 0.0f;
-    const float distFromCenter = std::sqrtf(toCenter.x * toCenter.x + toCenter.z * toCenter.z);
-
-    // ’†‰›‚Ö‚ÌŠp“x
-    float centerYaw = std::atan2f(toCenter.x, toCenter.z);
-
-    //========================================
-    // Šî–{‚ÌœpœjŠp“x
-    //========================================
-    const float WanderDelta = 0.08f;
-    const float WanderClamp = 0.6f;
-
-    int randomBit = std::rand() & 1;
-    if (randomBit != 0) {
-        m_WanderAngle += WanderDelta;
-    }
-    else {
-        m_WanderAngle -= WanderDelta;
-    }
-    m_WanderAngle = ClampF(m_WanderAngle, -WanderClamp, WanderClamp);
-
-    //========================================
-    // –Ú•W•ûŒü‚ÌŒˆ’è
-    //========================================
-    float desiredYaw;
-
-    if (distFromCenter > m_WanderRadius) {
-        // ’†‰›‚©‚ç—£‚ê‚·‚¬ ’†‰›‚ÉŒü‚©‚¤
-        desiredYaw = centerYaw;
-    }
-    else if (distFromCenter > m_WanderRadius * 0.5f) {
-        // ‚â‚â‰“‚¢  œpœj‚µ‚Â‚Â’†‰›‚É­‚µˆø‚«Šñ‚¹‚é
-        desiredYaw = curYaw + m_WanderAngle;
-
-        // ’†‰›‚Ö‚Ìˆø‚«Šñ‚¹‚ð‰Á‚¦‚é
-        float pullAmount = Wrap(centerYaw - curYaw) * m_CenterPullStrength;
-        desiredYaw += pullAmount;
-    }
-    else {
-        // ’†‰›•t‹ß  Ž©—R‚Éœpœj
-        desiredYaw = curYaw + m_WanderAngle;
-    }
-
-    //========================================
-    // áŠQ•¨‰ñ”ð‚ð“K—p
-    //========================================
-    float nextYaw = SteerWithAvoidAABB(curYaw, desiredYaw, turnStep);
-
-    //========================================
-    // ˆÀ‘S‚É‘Oi
-    //========================================
-    SafeAdvance(nextYaw, moveStep);
-}
+//void CComPlayer::TickWander(float turnStep, float moveStep)
+//{
+//    auto body = GetBody();
+//    if (!body) return;
+//
+//    const D3DXVECTOR3 pos = body->GetPosition();
+//    float curYaw = body->GetRotation().y;
+//
+//    //========================================
+//    // ’†‰›‚©‚ç‚Ì‹——£‚Æ•ûŒü‚ðŒvŽZ
+//    //========================================
+//    D3DXVECTOR3 toCenter = m_MapCenter - pos;  // ’†‰›‚Ö‚ÌƒxƒNƒgƒ‹
+//    toCenter.y = 0.0f;
+//    const float distFromCenter = std::sqrtf(toCenter.x * toCenter.x + toCenter.z * toCenter.z);
+//
+//    // ’†‰›‚Ö‚ÌŠp“x
+//    float centerYaw = std::atan2f(toCenter.x, toCenter.z);
+//
+//    //========================================
+//    // Šî–{‚ÌœpœjŠp“x
+//    //========================================
+//    const float WanderDelta = 0.08f;
+//    const float WanderClamp = 0.6f;
+//
+//    int randomBit = std::rand() & 1;
+//    if (randomBit != 0) {
+//        m_WanderAngle += WanderDelta;
+//    }
+//    else {
+//        m_WanderAngle -= WanderDelta;
+//    }
+//    m_WanderAngle = ClampF(m_WanderAngle, -WanderClamp, WanderClamp);
+//
+//    //========================================
+//    // –Ú•W•ûŒü‚ÌŒˆ’è
+//    //========================================
+//    float desiredYaw;
+//
+//    if (distFromCenter > m_WanderRadius) {
+//        // ’†‰›‚©‚ç—£‚ê‚·‚¬ ’†‰›‚ÉŒü‚©‚¤
+//        desiredYaw = centerYaw;
+//    }
+//    else if (distFromCenter > m_WanderRadius * 0.5f) {
+//        // ‚â‚â‰“‚¢  œpœj‚µ‚Â‚Â’†‰›‚É­‚µˆø‚«Šñ‚¹‚é
+//        desiredYaw = curYaw + m_WanderAngle;
+//
+//        // ’†‰›‚Ö‚Ìˆø‚«Šñ‚¹‚ð‰Á‚¦‚é
+//        float pullAmount = Wrap(centerYaw - curYaw) * m_CenterPullStrength;
+//        desiredYaw += pullAmount;
+//    }
+//    else {
+//        // ’†‰›•t‹ß  Ž©—R‚Éœpœj
+//        desiredYaw = curYaw + m_WanderAngle;
+//    }
+//
+//    //========================================
+//    // áŠQ•¨‰ñ”ð‚ð“K—p
+//    //========================================
+//    float nextYaw = SteerWithAvoidAABB(curYaw, desiredYaw, turnStep);
+//
+//    //========================================
+//    // ˆÀ‘S‚É‘Oi
+//    //========================================
+//    SafeAdvance(nextYaw, moveStep);
+//}
 
 #if 1
 //ŠëŒ¯ƒ][ƒ“”»’è
@@ -1568,44 +1597,6 @@ void CComPlayer::TickBlacklist()
         else {
             ++it;
         }
-    }
-}
-
-void CComPlayer::MakeItemTarget()
-{
-    if (!m_pItemBox)
-    {
-        m_pItemTarget.reset();
-        return;
-    }
-
-    auto body = GetBody();
-    if (!body)
-    {
-        m_pItemTarget.reset();
-        return;
-    }
-    const D3DXVECTOR3 self = body->GetPosition();
-    std::shared_ptr<CItemBox> best;
-    float DistD2 = 1e18f;
-
-    for (auto& box : *m_pItemBox)
-    {
-        if (!box || !box->IsActive()) continue;
-        const D3DXVECTOR3 dist = box->GetPosition() - self;
-        const float d2 = dist.x * dist.x + dist.z * dist.z;
-
-        if (d2 < DistD2) {
-            DistD2 = d2;
-            best = box;
-        }
-    }
-
-    if (best && DistD2 <= (m_ItemGetRadius * m_ItemGetRadius)) {
-        m_pItemTarget = best;
-    }
-    else {
-        m_pItemTarget.reset();
     }
 }
 

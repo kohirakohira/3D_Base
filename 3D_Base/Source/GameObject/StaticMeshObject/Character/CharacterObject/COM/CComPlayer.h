@@ -171,11 +171,10 @@ private:
 	void StepEvade();													//離脱処理
 	void StepItemSeek();												//アイテム探索処理
 	void TryAutoFire();													//COMの弾発射処理
-	void MakeItemTarget();
 	void SanitizeParams();												//パラメータ調整
 	void TickChaseTo(const D3DXVECTOR3& targetPos);						//追尾
 	void TickAimTo(const D3DXVECTOR3& targetPos);						//砲塔追尾
-	void TickWander(float turnStep, float moveStep);
+	//void TickWander(float turnStep, float moveStep);
 	void TickWander();													//引数なし
 	void Blacklist(int id) { m_TargetBlackList[id] = m_BlackListTime; }	//一定時間ターゲットにしない
 	bool IsBlacklisted(int id) const;									//IDがリストに登録されているか判定.読み取り専用
@@ -216,6 +215,8 @@ private:
 	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
 
 	bool HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const;
+
+	float NearestItemDist2(float& outDist2) const;
 
 	// ヘルパ
 	static float Wrap(float rad);                         //[-π,π]に正規化
@@ -281,12 +282,17 @@ private:
 	std::unordered_map<int, int> m_TargetBlackList;	//キーは相手のID.値は残りフレーム数
 	int m_BlackListTime;							//何秒無視するか
 
+	//アイテムが消えたので一旦消さずに放置
+#if 0
 	//アイテム
 	int		m_RetargetItemTimer;		//アイテムタイマー
 	int		m_RetargetItemInterval;		//アイテム探索インターバル 
 	float	m_ItemGetRadius;			//範囲内なら狙う
 	float	m_ItemPickUpRaius;			//以下なら取得.最終的には当たり判定でやる
 	ComShotState m_ShotState;
+#endif
+
+	ComShotState m_ShotState;			//COMのショット情報
 
 	//========================================
 	// 障害物回避パラメータ
