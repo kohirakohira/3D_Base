@@ -77,9 +77,6 @@ public:
 	void SetComEnabled(bool enabled) { m_ComEnabled = enabled; }
 	bool IsComEnabled() const { return m_ComEnabled; }
 
-	//キャラクターマネージャーで使うよう
-	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
-
 	//プレイヤーを取得する.読み取り専用
 	void SetPlayersRef(const std::vector<std::shared_ptr<CCharacterObjectBase>>* all) { m_pAllPlayer = all; }
 
