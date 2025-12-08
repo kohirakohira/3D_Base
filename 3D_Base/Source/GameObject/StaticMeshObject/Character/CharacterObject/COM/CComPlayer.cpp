@@ -54,11 +54,9 @@ CComPlayer::CComPlayer()
     , m_WanderRadius(15.0f)                        // 15mˆÈ“à‚ğœpœj
     , m_CenterPullStrength(0.3f)                   // ˆø‚«Šñ‚¹‹­“x
     , m_pSimpleObstacles( nullptr )
-    , m_ObstacleRadius  ( 2.0f )    
     //========================================
     // áŠQ•¨‰ñ”ğƒpƒ‰ƒ[ƒ^
     //========================================
-    , m_ProbeAngleRad(D3DXToRadian(25.0f))  // 25“x
     , m_ProbeDist(8.0f)                  // 8ƒ[ƒgƒ‹æ‚Ü‚Å’T¸
     , m_AvoidHoldFrames(0.0f)
     , m_AvoidSide(0)
@@ -516,6 +514,7 @@ bool CComPlayer::SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXV
 //========================================
 // ŠëŒ¯ƒ][ƒ“”»’è
 //========================================
+#if 0
 bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
 {
     if (!m_pBoxCollider || m_pBoxCollider->empty()) return false;
@@ -547,9 +546,11 @@ bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
     }
     return false;
 }
+#endif
 //========================================
 // áŠQ•¨‰ñ”ğ‚ğŠÜ‚Ş‰ñ“ªˆ—
 //========================================
+#if 0
 float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep)
 {
     auto body = GetBody();
@@ -602,10 +603,11 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
     if (d < -turnStep) return curYaw - turnStep;
     return curYaw + d;
 }
-
+#endif
 //========================================
 // ˆÀ‘S‚È‘Oiˆ—
 //========================================
+#if 0
 void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
 {
     auto body = GetBody();
@@ -659,7 +661,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
     // –C“ƒ‚ğÔ‘Ì‚É’Ç”ö
     SyncCannonToBody();
 }
-
+#endif
 //Œ»ó‚Ì’Tõ.UŒ‚
 #if 0
 //========================================
@@ -822,7 +824,8 @@ void CComPlayer::StepSeek()
     else
     {
         //’†S•t‹ß‚Å‚ÍWander‚Å’T‚·
-        TickWander(tuning.bodyTurnSpeed,tuning.moveSpeed);
+        TickWander();
+        //TickWander(tuning.bodyTurnSpeed,tuning.moveSpeed);
         distYaw = yaw + m_WanderAngle;
     }
 
@@ -1189,42 +1192,6 @@ void CComPlayer::TryAutoFire()
 }
 #endif
 
-//‘O‚ÌTryAutoFire
-#if 0
-//COM’e”­Ëˆ—
-void CComPlayer::TryAutoFire()
-{
-    auto body = GetBody();
-
-    auto manager = m_pShotManager;
-    if (!manager || !m_pTarget) return;
-
-    if (m_ShotState.m_ShotCD > 0)
-    {
-        --m_ShotState.m_ShotCD;
-        return;
-    }
-
-    D3DXVECTOR3 muzzle; float yaw = 0.f;
-    ComputeMuzzle(muzzle, yaw);
-
-    D3DXVECTOR3 to = m_pTarget->GetPosition() - muzzle;
-    to.y = 0.0f;
-    const float d2 = to.x * to.x + to.z * to.z;
-    if (d2 <= 1e-6f) return;
-
-    const float desired = std::atan2f(to.x, to.z);
-    const float err = std::fabs(Wrap(desired - yaw));
-
-    //‚Ü‚¸‚ÍL‚ß‚É
-    if (err <= ToRad(m_ShotState.FireAngleEpsDeg)) {
-        //manager->(BulletKinds::Mesh_2, muzzle, yaw);
-        manager->Create(body->GetPosition(), body->GetRotation().y, true, 1);
-        m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
-    }
-}
-
-#endif
 
 // –C“ƒ‚ÆÔ‘Ì‚Ì“¯Šú
 void CComPlayer::SyncCannonToBody()
@@ -1400,6 +1367,39 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
     const float d = Wrap(bestYaw - curYaw);
     return Approach(curYaw, curYaw + d, turnStep);
 }
+
+//COM‚Ì³–Ê•ûŒü‚ÉAˆê’è‹——£ˆÈ“à‚ÉáŠQ•¨‚ª‚ ‚é‚©
+bool CComPlayer::HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const
+{
+    auto Tuning = GetTuning();
+
+    outHitDist = probeDist;
+    if (!m_pSimpleObstacles || m_pSimpleObstacles->empty()) return false;   //áŠQ•¨ƒŠƒXƒg‚ª‚È‚¢
+
+    //©g‚Ì”¼Œa‚ğæ“¾
+    const float selfR = m_ObstacleRadius;
+
+    for (float d = step; d <= probeDist; d += step)
+    {
+        D3DXVECTOR3 p = selfPos + ForwardFromYaw(yaw) * d;
+        p.y = 0.0f;
+
+        for (const auto& ob : *m_pSimpleObstacles)
+        {
+            D3DXVECTOR3 v = p - ob.pos;
+            v.y = 0.0f;
+            const float dist2 = v.x * v.x + v.z * v.z;
+            const float r = selfR + ob.radius;   // ©•ª{áŠQ•¨‚ÌˆÀ‘S‹——£
+            if (dist2 <= r * r)
+            {
+                outHitDist = d;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 
 void CComPlayer::SafeAdvance(float nextYaw, float step)
 {

@@ -1103,42 +1103,6 @@ void CGameMain::EachSettingHitPoint()
 	}
 }
 
-#if 0
-void CGameMain::BuildObstacleColliders()
-{
-	m_ObstacleColliders.clear();
-
-	// 壁のBoxColliderを追加
-	if (m_pWallTop && m_pWallTop->GetBoxCollider())
-		m_ObstacleColliders.push_back(m_pWallTop->GetBoxCollider());
-
-	if (m_pWallBottom && m_pWallBottom->GetBoxCollider())
-		m_ObstacleColliders.push_back(m_pWallBottom->GetBoxCollider());
-
-	if (m_pWallLeft && m_pWallLeft->GetBoxCollider())
-		m_ObstacleColliders.push_back(m_pWallLeft->GetBoxCollider());
-
-	if (m_pWallRight && m_pWallRight->GetBoxCollider())
-		m_ObstacleColliders.push_back(m_pWallRight->GetBoxCollider());
-
-	// 木箱のBoxColliderを追加
-	if (m_pWoodBoxTopLeft && m_pWoodBoxTopLeft->GetBoxCollider())
-		m_ObstacleColliders.push_back(m_pWoodBoxTopLeft->GetBoxCollider());
-
-	if (m_pWoodBoxTopRight && m_pWoodBoxTopRight->GetBoxCollider())
-		m_ObstacleColliders.push_back(m_pWoodBoxTopRight->GetBoxCollider());
-
-	if (m_pWoodBoxCenter && m_pWoodBoxCenter->GetBoxCollider())
-		m_ObstacleColliders.push_back(m_pWoodBoxCenter->GetBoxCollider());
-
-	if (m_pWoodBoxBottomLeft && m_pWoodBoxBottomLeft->GetBoxCollider())
-		m_ObstacleColliders.push_back(m_pWoodBoxBottomLeft->GetBoxCollider());
-
-	if (m_pWoodBoxBottomRight && m_pWoodBoxBottomRight->GetBoxCollider())
-		m_ObstacleColliders.push_back(m_pWoodBoxBottomRight->GetBoxCollider());
-}
-#endif
-
 
 void CGameMain::BuildComObstacles()
 {

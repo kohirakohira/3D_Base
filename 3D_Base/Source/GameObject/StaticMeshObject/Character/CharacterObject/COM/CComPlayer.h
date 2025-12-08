@@ -212,6 +212,7 @@ private:
 	//========================================
 	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
 
+	bool HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const;
 
 	// ヘルパ
 	static float Wrap(float rad);                         //[-π,π]に正規化
@@ -286,21 +287,26 @@ private:
 	//========================================
 	// 障害物回避パラメータ
 	//========================================
-	float		m_ProbeAngleRad;		// 探査角度（左右に振る角度）
+	//float		m_ProbeAngleRad;		// 探査角度（左右に振る角度）
 	float		m_ProbeDist;			// 探査距離
 	float		m_AvoidHoldFrames;		// 回避を維持するフレーム数
 	int			m_AvoidSide;			// 回避方向（+1:右, -1:左, 0:未決定）
 	float		m_AvoidMaxFrames;		// 最大回避フレーム
 	float		m_BodyRadius;			// 自機の半径
 
-	float		m_ObstacleRadius;		// 自分大きさ
 	bool		m_Respawn;				// リスポーン
 
 	D3DXVECTOR3 m_MapCenter;        // マップの中央座標（デフォルト 0,0,0）
 	float m_WanderRadius;           // 中央からこの範囲内を徘徊（デフォルト 15.0）
 	float m_CenterPullStrength;     // 中央への引き寄せ強度（デフォルト 0.3）
 
-#if 1
+	float m_ObstacleProbeDist = 8.0f;								// 何メートル先まで見るか
+	float m_ObstacleProbeStep = 0.5f;								// 何メートル刻みでチェックするか
+	float m_ObstacleRadius = 1.5f;									// 自分の半径
+	float m_ProbeAngleRad = D3DXToRadian(25.0f);					// 左右にどれくらい首を振るか
+
+
+#if 0
 	//bool    m_WantsItem;            // アイテムを欲しているか
 	//float   m_ItemSeekPriority;     // アイテム優先度（HP低下時など上昇）
 
