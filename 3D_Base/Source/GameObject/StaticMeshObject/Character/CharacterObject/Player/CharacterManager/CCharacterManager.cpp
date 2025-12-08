@@ -400,7 +400,7 @@ void CCharacterManager::SetStartPosition()
 		else if (index == 1)
 		{
 			pos = D3DXVECTOR3(-offset, 0.0f, offset);
-			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f);
+			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f);
 			sca = D3DXVECTOR3(1.8f, 1.8f, 1.8f);
 
 		}
