@@ -531,7 +531,7 @@ void CCharacterManager::SetShotManager(std::shared_ptr<CShotManager>& mgr)
 		if (auto* com = dynamic_cast<CComPlayer*>(up.get())) 
 		{	
 			//CComPlayerなら生のポインタにして渡す.所有権は渡さない
-			com->AttachShotManager(m_ShotManager);	//weak_ptrに渡す
+			com->SetShotManager(m_ShotManager);	//weak_ptrに渡す
 		}
 		else
 		{
@@ -742,7 +742,7 @@ void CCharacterManager::SwitchControl()
 			//すでにShotManagerが設定されていればCOMにもつける
 			if (m_ShotManager)
 			{
-				newCOM->AttachShotManager(m_ShotManager);
+				newCOM->SetShotManager(m_ShotManager);
 			}
 
 			//プレイヤーからCOMに入れ替え.

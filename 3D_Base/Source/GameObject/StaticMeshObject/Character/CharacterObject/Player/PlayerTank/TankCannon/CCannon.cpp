@@ -25,8 +25,6 @@ void CCannon::Update()
 {
 	m_ShotCoolTime++;
 
-	//KeyInput();
-
 	CStaticMeshObject::Update();
 
 	//auto ray = CStaticMeshObject::GetRayY();	//YŽ²ƒŒƒCŽæ“¾

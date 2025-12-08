@@ -122,6 +122,7 @@ void CComPlayer::CreateCollider()
 void CComPlayer::SetShotManager(std::shared_ptr<CShotManager> shot)
 {
     m_pShotManager = shot;
+    m_pCannon->SetShotManager(m_pShotManager);
 }
 
 //ХsР│ТlВЁЦhВо
