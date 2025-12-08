@@ -833,7 +833,7 @@ void CComPlayer::StepSeek()
     if (m_pTarget)
     {
         TickAimTo(m_pTarget->GetPosition());
-        TryAutoFire();
+        //TryAutoFire();
         SyncCannonToBody();
     }
 }
@@ -867,7 +867,7 @@ void CComPlayer::StepChase()
     SafeAdvance(next, t.moveSpeed);
 
     TickAimTo(tp);
-    TryAutoFire();
+    //TryAutoFire();
 }
 
 void CComPlayer::StepAttack()
