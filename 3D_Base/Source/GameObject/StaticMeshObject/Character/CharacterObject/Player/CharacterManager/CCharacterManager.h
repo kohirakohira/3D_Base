@@ -68,7 +68,7 @@ public:
 	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(int index); // 引数あり
 	//============================
 
-	void SwitchActivePlayer(); // 旧コード：動かせるプレイヤーを変更できた
+	void SwitchActivePlayer(); //動かせるプレイヤーを変更できた
 
 	//プレイヤーの位置と回転を取得.引数には各プレイヤーを入れる
 	D3DXVECTOR3 GetPosition(int index)const;

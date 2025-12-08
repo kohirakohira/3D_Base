@@ -187,7 +187,7 @@ void CCharacterManager::Update()
 				//COMが追いかけるターゲットを設定
 				if (target && target != self)
 				{
-					com->SetTarget(target);    // プレイヤーを追いかける
+					//com->SetTarget(target);    // プレイヤーを追いかける
 				}
 				else
 				{
@@ -719,5 +719,17 @@ void CCharacterManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 	{
 		m_pCharacter[index]->GetBody()->SetPosition(push);
 		m_pCharacter[index]->GetCannon()->SetPosition(push);
+	}
+}
+
+
+void CCharacterManager::SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles)
+{
+	for (auto& up : m_pCharacter)
+	{
+		if (auto* com = dynamic_cast<CComPlayer*>(up.get()))
+		{
+			//com->SetSimpleObstacles(obstacles);
+		}
 	}
 }

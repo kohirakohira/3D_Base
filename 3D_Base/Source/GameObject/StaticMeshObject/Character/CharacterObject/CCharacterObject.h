@@ -118,4 +118,7 @@ protected:
 
 	//‘€ìŒ ‚ª‚ ‚é‚©
 	bool m_HasControl;	
+
+	//ƒvƒŒƒCƒ„[ID
+	int m_PlayerID;
 };
