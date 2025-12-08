@@ -720,7 +720,7 @@ void CCharacterManager::SwitchControl()
 			//‚·‚Å‚ÉShotManager‚ªİ’è‚³‚ê‚Ä‚¢‚ê‚ÎCOM‚É‚à‚Â‚¯‚é
 			if (m_ShotManager)
 			{
-				newCOM->AttachShotManager(m_ShotManager);
+				newCOM->SetShotManager(m_ShotManager);
 			}
 
 			//ƒvƒŒƒCƒ„[‚©‚çCOM‚É“ü‚ê‘Ö‚¦.

@@ -220,7 +220,7 @@ void CPlayer::Move(const PlayerInput& input)
 
 		if (m_Key->InputKey('S') == true)
 		{
-			m_pBody->SetMoveState(CBody::Forward);
+			m_pBody->SetMoveState(CBody::Backward);
 		}
 
 		if (m_Key->InputKey('A') == true)
@@ -228,7 +228,7 @@ void CPlayer::Move(const PlayerInput& input)
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 		}
 
-		if (m_Key->InputKey('A') == true)
+		if (m_Key->InputKey('D') == true)
 		{
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 		}

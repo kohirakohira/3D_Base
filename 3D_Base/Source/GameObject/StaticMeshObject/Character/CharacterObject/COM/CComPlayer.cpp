@@ -564,7 +564,7 @@ void CComPlayer::StepEvade()
 
         //ˆÊ’u‚Æ‚©‰ñ“]”½‰f‚Ì’¼Œã‚É“¯Šú
         SyncCannonToBody();
-        //TryAutoFire();  //“¦‚°‚È‚ª‚ç”­ŽË
+        TryAutoFire();  //“¦‚°‚È‚ª‚ç”­ŽË
 
         body->CStaticMeshObject::Update();
 
