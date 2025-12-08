@@ -530,8 +530,7 @@ void CCharacterManager::SetShotManager(std::shared_ptr<CShotManager>& mgr)
 	{
 		if (auto* com = dynamic_cast<CComPlayer*>(up.get())) 
 		{	
-			//CComPlayer‚È‚ç¶‚Ìƒ|ƒCƒ“ƒ^‚É‚µ‚Ä“n‚·.Š—LŒ ‚Í“n‚³‚È‚¢
-			com->AttachShotManager(m_ShotManager);	//weak_ptr‚É“n‚·
+			com->SetShotManager(m_ShotManager);	
 		}
 		else
 		{
