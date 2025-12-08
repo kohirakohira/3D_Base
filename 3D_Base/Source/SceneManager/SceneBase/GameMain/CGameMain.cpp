@@ -607,6 +607,7 @@ void CGameMain::Create()
 	//COMの障害物判定
 	BuildComObstacles();
 
+	m_pCharacterManager->SetShotManager(m_pShotManager);
 }
 
 HRESULT CGameMain::LoadData()

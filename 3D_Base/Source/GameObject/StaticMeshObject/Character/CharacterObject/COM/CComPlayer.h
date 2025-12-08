@@ -241,6 +241,7 @@ private:
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;			//障害物のBoxColliderリスト
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
 	const std::vector<SimpleObstacle>* m_pSimpleObstacles;						//障害物情報
+	//std::shared_ptr<CShotManager> m_pShotManager;									//ショットマネージャーの弱参照
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効

@@ -659,6 +659,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float moveStep)
     SyncCannonToBody();
 }
 
+#if 0
 //========================================
 // ’Tõˆ—
 //========================================
@@ -744,6 +745,7 @@ void CComPlayer::StepAttack()
     TryAutoFire();
 }
 
+#endif
 //========================================
 // ‘Þ”ðˆ—
 //========================================
@@ -790,7 +792,7 @@ void CComPlayer::StepEvade()
     }
 }
 
-#if 0
+#if 1
 //‰ß‹Ž‚ÌStepSeek
 void CComPlayer::StepSeek()
 {
@@ -831,7 +833,7 @@ void CComPlayer::StepSeek()
     if (m_pTarget)
     {
         TickAimTo(m_pTarget->GetPosition());
-        TryAutoFire();
+        //TryAutoFire();
         SyncCannonToBody();
     }
 }
@@ -1100,7 +1102,7 @@ void CComPlayer::EvaluateTransitions(float dist2)
 }
 
 //========================================
-// ƒ^[ƒQƒbƒg‘I’èi—LŒø‰»j
+// ƒ^[ƒQƒbƒg‘I’è
 //========================================
 void CComPlayer::MakeFixedTimeTarget()
 {
@@ -1153,9 +1155,11 @@ void CComPlayer::MakeFixedTimeTarget()
     }
 }
 
+#if 1
 // COM’e”­ŽËˆ—
 void CComPlayer::TryAutoFire()
 {
+    
     if (!m_pShotManager || !m_pTarget) return;
 
     if (m_ShotState.m_ShotCD > 0)
@@ -1176,10 +1180,49 @@ void CComPlayer::TryAutoFire()
     const float err = std::fabs(Wrap(desired - yaw));
 
     if (err <= ToRad(m_ShotState.FireAngleEpsDeg)) {
+        m_pCannon->Reload(m_pCannon->GetPosition(), m_pCannon->GetRotation().y, true, m_PlayerID);
         //m_pShotManager->SetReload(static_cast<BulletKinds>(m_PlayerID), muzzle, yaw);
         m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
     }
 }
+#endif
+
+//‘O‚ÌTryAutoFire
+#if 0
+//COM’e”­ŽËˆ—
+void CComPlayer::TryAutoFire()
+{
+    auto body = GetBody();
+
+    auto manager = m_pShotManager;
+    if (!manager || !m_pTarget) return;
+
+    if (m_ShotState.m_ShotCD > 0)
+    {
+        --m_ShotState.m_ShotCD;
+        return;
+    }
+
+    D3DXVECTOR3 muzzle; float yaw = 0.f;
+    ComputeMuzzle(muzzle, yaw);
+
+    D3DXVECTOR3 to = m_pTarget->GetPosition() - muzzle;
+    to.y = 0.0f;
+    const float d2 = to.x * to.x + to.z * to.z;
+    if (d2 <= 1e-6f) return;
+
+    const float desired = std::atan2f(to.x, to.z);
+    const float err = std::fabs(Wrap(desired - yaw));
+
+    //‚Ü‚¸‚ÍL‚ß‚É
+    if (err <= ToRad(m_ShotState.FireAngleEpsDeg)) {
+        //manager->(BulletKinds::Mesh_2, muzzle, yaw);
+        manager->Create(body->GetPosition(), body->GetRotation().y, true, 1);
+        m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
+    }
+}
+
+#endif
 
 // –C“ƒ‚ÆŽÔ‘Ì‚Ì“¯Šú
 void CComPlayer::SyncCannonToBody()

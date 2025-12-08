@@ -107,7 +107,6 @@ protected:
 	//砲塔クラス.
 	std::shared_ptr<CCannon>		m_pCannon;
 	//弾マネージャークラス.
-	//生成や設定はPlayer/COM側で行う.
 	std::shared_ptr<CShotManager>	m_pShotManager;
 
 	//キャラクターの状態.
