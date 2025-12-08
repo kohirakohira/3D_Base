@@ -122,6 +122,7 @@ void CGameMain::Update()
 
 	//コントローラーの更新.
 	CControllerManager::GetInstance().Update();
+	CController* controller = CControllerManager::GetInstance().GetController(0);
 
 	//アイテムの動作..
 	m_pItemBoxManager->Update();
@@ -175,10 +176,10 @@ void CGameMain::Update()
 	//カメラ追従＆更新.砲塔基準
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		if (auto player = m_pCharacterManager->GetControlPlayer(i))
+		if (auto chara = m_pCharacterManager->GetControlPlayer(i))
 		{
-			const D3DXVECTOR3 camPos = player->GetCannon()->GetPosition();	//砲塔の位置.
-			float yaw = player->GetCannon()->GetRotation().y;	//砲塔の向きY.
+			const D3DXVECTOR3 camPos = chara->GetCannon()->GetPosition();	//砲塔の位置.
+			float yaw = chara->GetCannon()->GetRotation().y;	//砲塔の向きY.
 
 			m_pCameras[i]->SetTargetPos(camPos);
 			m_pCameras[i]->SetTargetRotY(yaw);
@@ -196,20 +197,19 @@ void CGameMain::Update()
 	float angle = time * (PI / 180);
 	m_pSpriteTimerArrow->SetRotation(0.f, D3DXToRadian(180.0f), -angle);
 
-	const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
+	//const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
 
-	if (nowC && !prevC)
-	{
-		m_pCharacterManager->SwitchActivePlayer();
-	}
-	prevC = nowC;
+	//if (nowC && !prevC)
+	//{
+	//	m_pCharacterManager->SwitchActivePlayer();
+	//}
+	//prevC = nowC;
 
-
-	// Cキー押されたら操作プレイヤー切り替え
-	if (GetAsyncKeyState('C') & 0x0001)
-	{
-		m_pCharacterManager->SwitchActivePlayer();
-	}
+	//// Cキー押されたら操作プレイヤー切り替え
+	//if (GetAsyncKeyState('C') & 0x0001)
+	//{
+	//	m_pCharacterManager->SwitchActivePlayer();
+	//}
 
 	// 当たり判定の更新
 	m_pCollisionManager->Update();
@@ -232,8 +232,6 @@ void CGameMain::Update()
 
 	// 当たり判定の更新
 	m_pCollisionManager->Update();
-
-	CController* controller = CControllerManager::GetInstance().GetController(0);
 
 	//勝敗条件(確認用)..
 	//勝ち..

@@ -48,9 +48,6 @@ void CChoiceImage::MoveChoiceImg()
 		//ÉLÅ[ÇÃìÆçÏ.
 		KeyUpdate();
 	}
-
-
-
 }
 
 void CChoiceImage::ControllerUpdate()

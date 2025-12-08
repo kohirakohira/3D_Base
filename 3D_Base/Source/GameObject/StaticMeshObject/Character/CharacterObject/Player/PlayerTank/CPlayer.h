@@ -14,6 +14,8 @@
 
 //コントローラークラス.
 #include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
+//キークラス.
+#include "InputDevice/Key/CMultiInputManager/CMultiInputKeyManager.h"
 
 class CPlayer
 	: public CCharacterObjectBase
@@ -139,5 +141,5 @@ protected:
 private:
 	///TankTuning m_Tune{};
 	std::shared_ptr<CInputManager> m_pInput;
-
+	std::unique_ptr<CMultiInputKeyManager> m_Key;
 };

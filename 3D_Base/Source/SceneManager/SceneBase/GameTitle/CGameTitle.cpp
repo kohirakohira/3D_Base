@@ -58,9 +58,9 @@ void CGameTitle::Update()
 //↑-----タイトルでの演出-----↑.
 
 	//ゲーム設定に遷移.
-	if (controller && controller->CheckConnected())
+	if (controller && controller->CheckConnected() == true || m_KeyInput != nullptr)
 	{
-		if (m_KeyInput->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
+		if (m_KeyInput->ReleaseInputKey('Z') == true || controller && controller->Down(CXInput::A, true))
 		{
 			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
 			{

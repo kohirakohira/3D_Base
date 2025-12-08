@@ -10,6 +10,7 @@ CCharacterManager::CCharacterManager()
 	, m_pCharacter			()
 	, m_ActivePlayerIndex	( 0 )
 	, m_pCom				()
+	, ItemFlag				( false )
 {
 	//m_pCom = std::make_shared<CComPlayer>();
 }
@@ -44,6 +45,23 @@ void CCharacterManager::Init()
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
+		//プレイヤー0は固定で人間操作にする.
+		if (i == 0)
+		{
+			auto player = std::make_shared<CPlayer>();
+			player->Init(i);
+			player->SetControllerIndex(0);
+			player->SetHasControl(true);
+
+			if (!m_pBody || !m_pCannon)
+			{
+				SetBodyAndCannon(player->GetBody(), player->GetCannon());
+			}
+
+			m_pCharacter.push_back(player);
+			continue;
+		}
+
 		// コントローラーの接続状態を確認
 		CController* ctrl = CControllerManager::GetInstance().GetController(i);
 		bool connected = false;
@@ -126,7 +144,7 @@ void CCharacterManager::Init()
 void CCharacterManager::Update()
 {
 	//pad の接続状態に応じてPlayer.COMを入れ替える
-	SwitchControl();
+	//SwitchControl();
 
 	const int count = static_cast<int>(m_pCharacter.size());
 	if (count <= 0) return;

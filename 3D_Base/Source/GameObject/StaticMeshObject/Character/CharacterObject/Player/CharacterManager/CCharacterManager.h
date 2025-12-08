@@ -130,6 +130,7 @@ private:
 	std::shared_ptr<CCannon>				m_pCannon;
 	std::shared_ptr<CShotManager>			m_ShotManager; //弾マネージャー
 	std::shared_ptr<CComPlayer>				m_pCom;
+	
 	//アイテムを取得したかどうか.
 	bool ItemFlag;
 
