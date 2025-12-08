@@ -606,6 +606,9 @@ void CGameMain::Create()
 	//爆風マネージャークラスのインスタンス生成.
 	m_pBlastManager = std::make_shared<CBlastManager>();
 
+	//COMの障害物判定
+	BuildComObstacles();
+
 }
 
 HRESULT CGameMain::LoadData()
@@ -893,6 +896,11 @@ void CGameMain::SetPosition()
 
 	// プレイヤーの初期座標設定
 	m_pCharacterManager->SetStartPosition();
+
+	//COMに渡す障害物の情報
+	BuildComObstacles();
+	m_pCharacterManager->SetComObstacles(&m_ComObstacles);
+
 }
 
 void CGameMain::CreateBounding()
@@ -964,8 +972,8 @@ void CGameMain::CreateBounding()
 	// プレイヤーの初期座標設定
 	m_pCharacterManager->SetStartPosition();
 
-	BuildObstacleColliders();
-	m_pCharacterManager->SetComObstacles(&m_ObstacleColliders);
+	//BuildObstacleColliders();
+	//m_pCharacterManager->SetComObstacles(&m_ObstacleColliders);
 
 }
 

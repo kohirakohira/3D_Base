@@ -740,3 +740,15 @@ void CCharacterManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 		m_pCharacter[index]->GetCannon()->SetPosition(push);
 	}
 }
+
+
+void CCharacterManager::SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles)
+{
+	for (auto& up : m_pCharacter)
+	{
+		if (auto* com = dynamic_cast<CComPlayer*>(up.get()))
+		{
+			//com->SetSimpleObstacles(obstacles);
+		}
+	}
+}

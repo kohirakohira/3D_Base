@@ -108,8 +108,10 @@ public:
 	bool GetItemFlag(int index) const;
 	//===========================================
 
-	// COMプレイヤーに障害物リストを設定
-	void SetComObstacles(const std::vector<std::shared_ptr<CBoxCollider>>* obstacles);
+	//void SetComObstacles(const std::vector<std::shared_ptr<CBoxCollider>>* obstacles);
+
+	//障害物リストを渡す
+	void SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles);
 
 private:
 
