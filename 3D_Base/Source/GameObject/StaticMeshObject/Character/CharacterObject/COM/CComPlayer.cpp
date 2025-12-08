@@ -511,7 +511,7 @@ bool CComPlayer::SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXV
 
 
 //========================================
-// 危険ゾーン判定（OBB対応版）
+// 危険ゾーン判定
 //========================================
 bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
 {

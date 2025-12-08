@@ -93,9 +93,7 @@ public:
 	//マネージャーからアイテムの参照
 	void SetItemBox(std::vector<std::shared_ptr<CItemBox>>* item) { m_pItemBox = item; }
 
-	//========================================
-	// 障害物用のBoxColliderリストを設定（修正：実装を追加）
-	//========================================
+	//障害物用のBOXセット
 	void SetBoxColliders(const std::vector<std::shared_ptr<CBoxCollider>>* colliders)
 	{
 		m_pBoxCollider = colliders;
@@ -135,6 +133,12 @@ public:
 	}
 
 	void FindNearestTarget();
+
+	void SetSimpleObstacles(const std::vector<SimpleObstacle>* obstacles)
+	{
+		m_pSimpleObstacles = obstacles;
+	}
+
 
 private:
 	//構造体
@@ -198,7 +202,7 @@ private:
 	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
 
 	//========================================
-	// 安全な前進処理（障害物を考慮）
+	// 安全な前進処
 	//========================================
 	void SafeAdvance(float nextYaw, float moveStep);
 
@@ -239,6 +243,7 @@ private:
 	std::weak_ptr<CItemBox> m_pItemTarget;										//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;			//障害物のBoxColliderリスト
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
+	const std::vector<SimpleObstacle>* m_pSimpleObstacles;						//障害物情報
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
@@ -292,8 +297,6 @@ private:
 	D3DXVECTOR3 m_MapCenter;        // マップの中央座標（デフォルト 0,0,0）
 	float m_WanderRadius;           // 中央からこの範囲内を徘徊（デフォルト 15.0）
 	float m_CenterPullStrength;     // 中央への引き寄せ強度（デフォルト 0.3）
-
-
 
 #if 1
 	//bool    m_WantsItem;            // アイテムを欲しているか
