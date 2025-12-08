@@ -14,7 +14,7 @@ static bool prevA = false;
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス.
 
 //定数宣言.
-static constexpr int TIME = 99;
+static constexpr int TIME = 10;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 
@@ -93,7 +93,7 @@ CGameMain::CGameMain(HWND hWnd)
 
 	, m_pGround						( nullptr )
 	
-	,m_pItemBoxManager				( nullptr )
+	, m_pItemBoxManager				( nullptr )
 
 	, m_Rot							( 0.0f )
 
@@ -124,10 +124,12 @@ void CGameMain::Update()
 	CControllerManager::GetInstance().Update();
 	CController* controller = CControllerManager::GetInstance().GetController(0);
 
+#ifdef ENABLE_ITEMS
 	//アイテムの動作..
 	m_pItemBoxManager->Update();
 	// アイテムボックスマネージャーをセット
 	m_pCollisionManager->SetCItemBoxManager(m_pItemBoxManager);
+#endif//#ifdef ENABLE_ITEMS
 
 	//爆風の更新処理.
 	m_pBlastManager->Update();
@@ -313,8 +315,12 @@ void CGameMain::Draw()
 		//// 地面の描画
 		//m_pGround->Draw(view, proj, light, paramC);
 
+#ifdef ENABLE_ITEMS
+
 		//アイテムボックスの描画.
 		m_pItemBoxManager->Draw(view, proj, light, paramC);
+
+#endif//#ifdef ENABLE_ITEMS
 
 		//爆風の描画.
 		m_pBlastManager->Draw(view, proj, light, paramC);
@@ -595,8 +601,12 @@ void CGameMain::Create()
 	m_pWoodBoxBottomLeft = std::make_shared<CStageObject>();
 	m_pWoodBoxBottomRight = std::make_shared<CStageObject>();
 
+#ifdef ENABLE_ITEMS
+
 	// アイテムマネージャークラスのインスタンス生成
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
+
+#endif//#ifdef ENABLE_ITEMS
 
 	// 当たり判定マネージャークラスのインスタンス生成
 	m_pCollisionManager = std::make_shared<CCollisionManager>();
@@ -789,8 +799,12 @@ HRESULT CGameMain::LoadData()
 	//スタティックメッシュを設定
 	m_pStage->AttachMesh(m_pStaticMeshStage);
 
+#ifdef ENABLE_ITEMS
+
 	//アイテムボックスマネージャーにメッシュを設定
 	m_pItemBoxManager->AttachMesh(m_pStaticMeshItemBox);
+
+#endif//#ifdef ENABLE_ITEMS
 
 	//壁にメッシュを設定
 	m_pWallTop->AttachMesh(m_pStaticMeshWallW);

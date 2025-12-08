@@ -50,8 +50,8 @@ void CCollisionManager::Update()
 	// プレイヤーとプレイヤー当たり判定判別
 	PlayertoPlayer();
 
-	// キャラクターとアイテムボックス
-	CharactertoItemBox();
+	//// キャラクターとアイテムボックス
+	//CharactertoItemBox();
 
 	// プレイヤーと弾
 	PlayertoShot();
@@ -65,8 +65,8 @@ void CCollisionManager::Update()
 	// 地面と弾
 	GroundtoShot();
 
-	// 地面とアイテムボックス
-	GroundtoItemBox();
+	//// 地面とアイテムボックス
+	//GroundtoItemBox();
 
 	//復活するかも.
 	////アイテムと木箱.
@@ -292,7 +292,7 @@ void CCollisionManager::PlayertoShot()
 				//爆風の動的生成.
 				m_pBlastManager->Create(
 					shot->GetPosition(),
-					m_pCharacterManager->GetBlastFlag(i),
+					chara->GetBlastFlag(),
 					m_pStaticBlast,
 					m_Speed
 				);
