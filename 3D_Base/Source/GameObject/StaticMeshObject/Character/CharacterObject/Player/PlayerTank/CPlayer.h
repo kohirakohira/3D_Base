@@ -88,7 +88,7 @@ public:
 		return D3DXVECTOR3(0, 0, 0);
 	}
 
-	//ˆÊ’uÝ’è
+	//ˆÊ’uÝ’è.
 	void SetPosition(const D3DXVECTOR3& pos) override
 	{
 		if (m_pBody)   m_pBody->SetPosition(pos);
