@@ -4,7 +4,7 @@
 #include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
 
 CBody::CBody(int inputID)
-	: m_TurnSpeed			(0.01f)	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
+	: m_TurnSpeed			(0.01f)
 	, m_MoveSpeed			(0.1f)
 	, m_MoveState			(enMoveState::Stop)
 	, m_Death				(false)

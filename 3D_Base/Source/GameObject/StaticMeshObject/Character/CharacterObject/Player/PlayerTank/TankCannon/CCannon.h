@@ -28,9 +28,6 @@ public:
 	// 砲塔座標設定
 	void SetCannonPosition(const D3DXVECTOR3& Pos);
 
-	// 砲塔の情報を渡す
-	D3DXVECTOR3 GetCannonPosition() const { return m_vPosition; }
-
 	//プレイヤーが壁に当たると戻す.
 	void PushBack(const D3DXVECTOR3& push);
 

@@ -51,29 +51,10 @@ public:
 	std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
 	//砲塔の取得.
 	std::shared_ptr<CCannon>GetCannon() const override { return m_pCannon; }
-	//弾マネージャーの取得.
-	std::shared_ptr<CShotManager>GetShotManager() const override { return m_pShotManager; }
-
-	//砲塔の位置取得.
-	D3DXVECTOR3 GetCannonPosition() const override { return m_pCannon->GetPosition(); }
-	float GetCannonYaw() const override { return m_pCannon->GetRotation().y; }
-
-	//プレイヤーかCOMを判定する.
-	bool IsPlayer() const override { return false; }
-
-	//操作可能かどうか.
-	void SetHasControl(bool enable) override { m_HasControl = enable; }
-	bool HasControl() const override { return m_HasControl; }
 
 	void Create(int id);
 
 	static std::vector<CComPlayer*>& Instances();
-
-	//リスポーンフラグの取得
-	bool GetRespawnFlag() const { return m_Respawn; }
-	//リスポーンフラグの設定
-	void SetRespawnFlag(bool flg) override { m_Respawn = flg; };
-
 
 	//追尾対象の設定
 	void SetTarget(std::shared_ptr<CCharacterObjectBase> actor) { m_pTarget = std::move(actor); }
@@ -99,9 +80,6 @@ public:
 	int GetPlayerID() const { return m_PlayerID; }
 
 	void CreateCollider();
-
-	//弾マネージャーの設定.
-	void SetShotManager(std::shared_ptr<CShotManager> shot) override;
 
 	//位置の取得.
 	D3DXVECTOR3 GetPosition() const override
@@ -309,38 +287,6 @@ private:
 	//bool ShouldSeekItem() const;    // アイテムを探すべきか判定
 	//void ApplyItemEffect(const ItemInfomation& info);   // アイテム効果適用
 #endif
-	//=====ヒット関数=====
-	virtual void Hit() override;
-	//===================
-
-	//=====ダメージ関数=====
-	void Damage() override;
-	//=====================
-
-	//=====死亡関数=====
-	void Death() override;
-	//=================
-
-	//===ダメージの設定・取得===
-	virtual void SetDamage(bool flg) override { m_Chara.m_Damage = flg; }
-	virtual bool GetDamage() const override { return m_Chara.m_Damage; }
-	//========================
-
-	//=====死亡の設定・取得=====
-	virtual void SetDeath(bool flg) override { m_Chara.m_Death = flg; }
-	virtual bool GetDeath() const override { return m_Chara.m_Death; }
-	//========================
-
-	//=====無敵の設定・取得=====
-	void SetMuteki(bool flg) override { m_Chara.m_Muteki = flg; }
-	bool GetMuteki() const override { return m_Chara.m_Muteki; }
-	//========================
-
-	//=====プレイヤーの爆風フラグの設定・取得=====
-	void SetBlastFlag(bool flg);
-	bool GetBlastFlag();
-	//============================================
-
 };
 
 

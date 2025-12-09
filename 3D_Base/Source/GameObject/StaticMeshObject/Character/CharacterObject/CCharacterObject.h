@@ -48,62 +48,51 @@ public:
 	//描画関数.
 	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override = 0;
 
-	//車体の取得.
-	virtual std::shared_ptr<CBody> GetBody() const { return m_pBody; }	//砲塔の取得.
-	virtual std::shared_ptr<CCannon> GetCannon() const = 0;
-	//弾マネージャーの取得.
-	virtual std::shared_ptr<CShotManager> GetShotManager() const = 0;
+	//戦車の取得.
+	virtual std::shared_ptr<CBody> GetBody() const { return m_pBody; }	// 車体の取得
+	virtual std::shared_ptr<CCannon> GetCannon() const { return m_pCannon; } // 砲塔の取得
 
-	//砲塔の位置取得.
-	virtual D3DXVECTOR3 GetCannonPosition() const = 0;
-	virtual float GetCannonYaw() const { return m_pCannon->GetRotation().y; }
-
-	//プレイヤーかCOMを判定する用.
-	virtual bool IsPlayer() const = 0;
+	//プレイヤーかCOMを判定する.
+	virtual bool IsPlayer() const { return false; }
 
 	//操作可能かどうか.
-	virtual void SetHasControl(bool enable) = 0;
-	virtual bool HasControl() const = 0;
+	virtual void SetHasControl(bool enable) { m_HasControl = enable; }
+	virtual bool HasControl() const { return m_HasControl; }
 
-	//リスポーンフラグの取得
-	virtual bool GetRespawnFlag() const = 0;
-	//リスポーンフラグの設定
-	virtual void SetRespawnFlag(bool flg) = 0;
+	//リスポーンフラグの設定継承版
+	virtual void SetRespawnFlag(bool flg) { m_Chara.m_Respawn = flg; }
+	// リスポーンフラグの取得
+	virtual bool GetRespawnFlag() const { return m_Chara.m_Respawn; }
 
 	//弾マネージャーのインスタンス設定.
-	virtual void SetShotManager(std::shared_ptr<CShotManager> shot) = 0;
+	virtual void SetShotManager(std::shared_ptr<CShotManager> shot);
 
 	//=====ヒット関数=====
-	virtual void Hit() = 0;
+	virtual void Hit();
 	//===================
 
 	//=====ダメージ関数=====
-	virtual void Damage() = 0;
+	virtual void Damage();
 	//=====================
 
 	//=====死亡関数=====
-	virtual void Death() = 0;
+	virtual void Death();
 	//=================
 
 	//===ダメージの設定・取得===
-	virtual void SetDamage(bool flg) = 0;
-	virtual bool GetDamage() const = 0;
+	virtual void SetDamage(bool flg) { m_Chara.m_Damage = flg; }
+	virtual bool GetDamage() const { return m_Chara.m_Damage; }
 	//========================
 
 	//=====死亡の設定・取得=====
-	virtual void SetDeath(bool flg) = 0;
-	virtual bool GetDeath() const = 0;
+	virtual void SetDeath(bool flg) { m_Chara.m_Death = flg; }
+	virtual bool GetDeath() const { return m_Chara.m_Death; }
 	//========================
 
 	//=====無敵の設定・取得=====
-	virtual void SetMuteki(bool flg) = 0;
-	virtual bool GetMuteki() const = 0;
+	void SetMuteki(bool flg) { m_Chara.m_Muteki = flg; }
+	bool GetMuteki() const { return m_Chara.m_Muteki; }
 	//========================
-
-	//=====プレイヤーの爆風フラグの設定・取得=====
-	virtual void SetBlastFlag(bool flg) = 0;
-	virtual bool GetBlastFlag() = 0;
-	//============================================
 
 	//位置の取得.
 	virtual D3DXVECTOR3 GetPosition() const = 0;

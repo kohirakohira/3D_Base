@@ -119,13 +119,6 @@ void CComPlayer::CreateCollider()
     m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
 }
 
-//弾マネージャーの設定.
-void CComPlayer::SetShotManager(std::shared_ptr<CShotManager> shot)
-{
-    m_pShotManager = shot;
-    m_pCannon->SetShotManager(m_pShotManager);
-}
-
 //不正値を防ぐ
 void CComPlayer::SanitizeParams()
 {
@@ -1388,92 +1381,6 @@ void CComPlayer::MakeItemTarget()
     }
 }
 
-//=====ヒット関数=====
-void CComPlayer::Hit()
-{
-    // プレイヤーの体力を引く
-    m_Chara.m_Hp--;
-    if (m_Chara.m_Hp <= 0)
-    {
-        // 死亡フラグ有効化
-        m_Chara.m_Death = true;
-    }
-    else
-    {
-        // ダメージフラグ有効化
-        m_Chara.m_Damage = true;
-    }
-}
-
-//=====ダメージ関数=====
-void CComPlayer::Damage()
-{
-    const float TIME = 1.0f / FPS;
-
-    if (m_Chara.m_Damage == true)
-    {
-        m_Chara.m_MutekiTimer -= TIME;
-
-        if (m_Chara.m_MutekiTimer <= 0.0f)
-        {
-            if (m_Chara.m_Drawflag == true)
-            {
-                m_Chara.m_Drawflag = false;
-            }
-            else
-            {
-                m_Chara.m_Drawflag = true;
-            }
-
-            m_Chara.m_MutekiCnt++;
-            m_Chara.m_MutekiTimer = 0.2f;
-        }
-
-        if (m_Chara.m_MutekiCnt >= 10)
-        {
-            m_Chara.m_Drawflag = true;
-            m_Chara.m_Damage = false;
-        }
-    }
-    else
-    {
-        m_Chara.m_MutekiCnt = 0;
-        m_Chara.m_MutekiTimer = 0.2;
-    }
-}
-
-//=====死亡関数=====
-void CComPlayer::Death()
-{
-    const float TIME = 1.0f / FPS;
-
-    if (m_Chara.m_Death == true)
-    {
-        m_Chara.m_RespawnTimer -= TIME;
-        m_Chara.m_Drawflag = false;
-
-        if (m_Chara.m_RespawnTimer <= 0.0f)
-        {
-            m_Chara.m_Hp = m_Chara.m_MaxHp;
-            m_Chara.m_Drawflag = true;
-            m_Chara.m_RespawnTimer = 3.0f;
-            m_Chara.m_Respawn = true;
-            m_Chara.m_Death = false;
-        }
-    }
-}
-
-//追加してもらったけど、エラーはいたので一旦コメントアウト中
-void CComPlayer::SetBlastFlag(bool flg)
-{
-    //m_BlastFlag = flg;
-}
-
-bool CComPlayer::GetBlastFlag()
-{
-    //return m_BlastFlag;
-    return false;
-}
 
 void CComPlayer::FindNearestTarget()
 {

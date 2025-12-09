@@ -48,7 +48,6 @@ public:
 	// 外部のクラスに情報を渡す
 	std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
 	std::shared_ptr<CCannon> GetCannon() const override { return m_pCannon; }
-	std::shared_ptr<CShotManager>GetShotManager() const override { return m_pShotManager; }
 
 	//砲塔の位置取得.
 	D3DXVECTOR3 GetCannonPosition() const { return m_pCannon->GetPosition(); }
@@ -56,13 +55,6 @@ public:
 
 	//当たった時用.
 	void OnHit(CCharacterObjectBase* other);
-
-	// プレイヤーかCOMを識別
-	bool IsPlayer() const override { return true; }
-
-	//操作可能かどうか.
-	void SetHasControl(bool enable) { m_HasControl = enable; }
-	bool HasControl() const { return m_HasControl; }
 
 	// インスタンス生成関数
 	void Create();
@@ -76,11 +68,6 @@ public:
 	// PlayerIDをCOMに渡す
 	int GetPlayerID() const { return m_PlayerID; }
 
-	//リスポーンフラグの設定継承版
-	void SetRespawnFlag(bool flg) override { m_Chara.m_Respawn = flg; }
-	// リスポーンフラグの取得
-	bool GetRespawnFlag() const override { return m_Chara.m_Respawn; }
-
 	// プレイヤーのコントローラー設定・取得
 	void SetControllerIndex(int index);
 	int GetControllerIndex() const { return m_ControllerIndex; }
@@ -93,41 +80,6 @@ public:
 
 	// 砲塔と車体の同期
 	void SyncCannonToBody();
-
-	//弾マネージャーの設定.
-	void SetShotManager(std::shared_ptr<CShotManager> shot) override ;
-
-	//=====ヒット関数=====
-	virtual void Hit() override;
-	//===================
-
-	//=====ダメージ関数=====
-	void Damage() override;
-	//=====================
-	
-	//=====死亡関数=====
-	void Death() override;
-	//=================
-
-	//===ダメージの設定・取得===
-	virtual void SetDamage(bool flg) override { m_Chara.m_Damage = flg; }
-	virtual bool GetDamage() const override { return m_Chara.m_Damage; }
-	//========================
-
-	//=====死亡の設定・取得=====
-	virtual void SetDeath(bool flg) override { m_Chara.m_Death = flg; }
-	virtual bool GetDeath() const override { return m_Chara.m_Death; }
-	//========================
-
-	//=====無敵の設定・取得=====
-	void SetMuteki(bool flg) override { m_Chara.m_Muteki = flg; }
-	bool GetMuteki() const override { return m_Chara.m_Muteki; }
-	//========================
-
-	//=====プレイヤーの爆風フラグの設定・取得=====
-	void SetBlastFlag(bool flg);
-	bool GetBlastFlag();
-	//============================================
 
 	//位置の取得.
 	D3DXVECTOR3 GetPosition() const override
