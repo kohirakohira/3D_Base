@@ -49,15 +49,14 @@ public:
 	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override = 0;
 
 	//車体の取得.
-	virtual std::shared_ptr<CBody> GetBody() const = 0;
-	//砲塔の取得.
+	virtual std::shared_ptr<CBody> GetBody() const { return m_pBody; }	//砲塔の取得.
 	virtual std::shared_ptr<CCannon> GetCannon() const = 0;
 	//弾マネージャーの取得.
 	virtual std::shared_ptr<CShotManager> GetShotManager() const = 0;
 
 	//砲塔の位置取得.
 	virtual D3DXVECTOR3 GetCannonPosition() const = 0;
-	virtual float GetCannonYaw() const = 0;
+	virtual float GetCannonYaw() const { return m_pCannon->GetRotation().y; }
 
 	//プレイヤーかCOMを判定する用.
 	virtual bool IsPlayer() const = 0;
