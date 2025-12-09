@@ -16,8 +16,8 @@
 #include "GameObject//UI//ImageObject//CImageObject.h"	// 画像オブジェクトクラス
 #include "GameObject//UI//CUIObject//CUIObject.h"		// UIオブジェクトクラス
 
-#include "GameObject//UI//ChoiceImage//CChoiceImage.h"  // 選択肢クラス
-#include "GameObject//UI//SelectIcon//CSelectIcon.h"	// 選択アイコンクラス
+#include "GameObject//UI//CUIObject//ChoiceImage//CChoiceImage.h"  // 選択肢クラス
+#include "GameObject//UI//CUIObject//SelectIcon//CSelectIcon.h"	// 選択アイコンクラス
 
 #include "Assets//Sprite//Sprite2D//CSprite2D.h" // 2Dスプライトクラス.
 

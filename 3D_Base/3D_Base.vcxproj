@@ -194,6 +194,7 @@
     <ClCompile Include="Source\Assets\Effect\CEffect.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\StageObject\CStageObject.cpp" />
+    <ClCompile Include="Source\GameObject\UI\CUIObject\TimerImage\TimerImage.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\CController.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameMain\CGameMain.cpp" />
@@ -225,10 +226,10 @@
     <ClCompile Include="Source\GameObject\CGameObject.cpp" />
     <ClCompile Include="Source\GameObject\SpriteObject\CSpriteObject.cpp" />
     <ClCompile Include="Source\GameObject\SpriteObject\Explosion\CExplosion.cpp" />
-    <ClCompile Include="Source\GameObject\UI\ChoiceImage\CChoiceImage.cpp" />
+    <ClCompile Include="Source\GameObject\UI\CUIObject\ChoiceImage\CChoiceImage.cpp" />
     <ClCompile Include="Source\GameObject\UI\CUIObject\CUIObject.cpp" />
     <ClCompile Include="Source\GameObject\UI\ImageObject\CImageObject.cpp" />
-    <ClCompile Include="Source\GameObject\UI\SelectIcon\CSelectIcon.cpp" />
+    <ClCompile Include="Source\GameObject\UI\CUIObject\SelectIcon\CSelectIcon.cpp" />
     <ClCompile Include="Source\GameObject\UI\Timer\CTimer.cpp" />
     <ClCompile Include="Source\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -267,6 +268,7 @@
     <ClInclude Include="Source\Assets\Effect\CEffect.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\StageObject\CStageObject.h" />
+    <ClInclude Include="Source\GameObject\UI\CUIObject\TimerImage\TimerImage.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\CController.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameMain\CGameMain.h" />
@@ -299,10 +301,10 @@
     <ClInclude Include="Source\GameObject\CGameObject.h" />
     <ClInclude Include="Source\GameObject\SpriteObject\CSpriteObject.h" />
     <ClInclude Include="Source\GameObject\SpriteObject\Explosion\CExplosion.h" />
-    <ClInclude Include="Source\GameObject\UI\ChoiceImage\CChoiceImage.h" />
+    <ClInclude Include="Source\GameObject\UI\CUIObject\ChoiceImage\CChoiceImage.h" />
     <ClInclude Include="Source\GameObject\UI\CUIObject\CUIObject.h" />
     <ClInclude Include="Source\GameObject\UI\ImageObject\CImageObject.h" />
-    <ClInclude Include="Source\GameObject\UI\SelectIcon\CSelectIcon.h" />
+    <ClInclude Include="Source\GameObject\UI\CUIObject\SelectIcon\CSelectIcon.h" />
     <ClInclude Include="Source\GameObject\UI\Timer\CTimer.h" />
     <ClInclude Include="Source\Global.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\ItemBoxType\ItemType.h" />

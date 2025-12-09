@@ -60,10 +60,10 @@
     <ClCompile Include="Source\GameObject\CGameObject.cpp" />
     <ClCompile Include="Source\GameObject\SpriteObject\CSpriteObject.cpp" />
     <ClCompile Include="Source\GameObject\SpriteObject\Explosion\CExplosion.cpp" />
-    <ClCompile Include="Source\GameObject\UI\ChoiceImage\CChoiceImage.cpp" />
+    <ClCompile Include="Source\GameObject\UI\CUIObject\ChoiceImage\CChoiceImage.cpp" />
     <ClCompile Include="Source\GameObject\UI\CUIObject\CUIObject.cpp" />
     <ClCompile Include="Source\GameObject\UI\ImageObject\CImageObject.cpp" />
-    <ClCompile Include="Source\GameObject\UI\SelectIcon\CSelectIcon.cpp" />
+    <ClCompile Include="Source\GameObject\UI\CUIObject\SelectIcon\CSelectIcon.cpp" />
     <ClCompile Include="Source\GameObject\UI\Timer\CTimer.cpp" />
     <ClCompile Include="Source\stdafx.cpp" />
     <ClCompile Include="Source\Vector3.cpp" />
@@ -83,6 +83,7 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\BlastManager\Blast\CBlast.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\BlastManager\CBlastManager.cpp" />
+    <ClCompile Include="Source\GameObject\UI\CUIObject\TimerImage\TimerImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -130,10 +131,10 @@
     <ClInclude Include="Source\GameObject\CGameObject.h" />
     <ClInclude Include="Source\GameObject\SpriteObject\CSpriteObject.h" />
     <ClInclude Include="Source\GameObject\SpriteObject\Explosion\CExplosion.h" />
-    <ClInclude Include="Source\GameObject\UI\ChoiceImage\CChoiceImage.h" />
+    <ClInclude Include="Source\GameObject\UI\CUIObject\ChoiceImage\CChoiceImage.h" />
     <ClInclude Include="Source\GameObject\UI\CUIObject\CUIObject.h" />
     <ClInclude Include="Source\GameObject\UI\ImageObject\CImageObject.h" />
-    <ClInclude Include="Source\GameObject\UI\SelectIcon\CSelectIcon.h" />
+    <ClInclude Include="Source\GameObject\UI\CUIObject\SelectIcon\CSelectIcon.h" />
     <ClInclude Include="Source\GameObject\UI\Timer\CTimer.h" />
     <ClInclude Include="Source\Global.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\ItemBoxType\ItemType.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\BlastManager\Blast\CBlast.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\BlastManager\CBlastManager.h" />
+    <ClInclude Include="Source\GameObject\UI\CUIObject\TimerImage\TimerImage.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />

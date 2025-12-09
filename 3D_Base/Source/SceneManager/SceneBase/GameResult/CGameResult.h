@@ -32,9 +32,9 @@
 #include "GameObject//UI//CUIObject//CUIObject.h"		// UIオブジェクトクラス
 
 //選択画像.
-#include "GameObject//UI//SelectIcon//CSelectIcon.h"	// 選択アイコンクラス
+#include "GameObject//UI//CUIObject//SelectIcon//CSelectIcon.h"	// 選択アイコンクラス
 //選択肢.
-#include "GameObject//UI//ChoiceImage//CChoiceImage.h"  // 選択肢クラス
+#include "GameObject//UI//CUIObject//ChoiceImage//CChoiceImage.h"  // 選択肢クラス
 
 
 

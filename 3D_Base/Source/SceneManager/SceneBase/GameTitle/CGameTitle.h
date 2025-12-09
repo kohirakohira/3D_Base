@@ -14,7 +14,7 @@
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス
 
 #include "GameObject//UI//CUIObject//CUIObject.h"		// UIオブジェクトクラス
-#include "GameObject//UI//ChoiceImage//CChoiceImage.h"  // 選択肢クラス
+#include "GameObject//UI//CUIObject//ChoiceImage//CChoiceImage.h"  // 選択肢クラス
 
 //キーの入力.
 #include "InputDevice//Key\\CMultiInputManager//CMultiInputKeyManager.h" // キー入力用

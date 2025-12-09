@@ -194,8 +194,7 @@ void CGameMain::Update()
 	const float PI = 3.14159265358979f;
 	//時計の針の回転..
 	float remaining = m_Timer->GetRemainingTime();
-	float totle = 90.f;
-	time = (remaining / totle) * 360;
+	time = (remaining / TIME) * 360;
 	float angle = time * (PI / 180);
 	m_pSpriteTimerArrow->SetRotation(0.f, D3DXToRadian(180.0f), -angle);
 
