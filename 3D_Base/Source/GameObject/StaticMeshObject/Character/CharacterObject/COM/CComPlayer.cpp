@@ -660,14 +660,31 @@ void CComPlayer::StepChase()
     const D3DXVECTOR3 tp = m_pTarget->GetPosition();
     const float cur = body->GetRotation().y;
 
+    //========================================
+    // 複数敵チェック
+    //========================================
+    D3DXVECTOR3 clusterCenter;
+    int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
 
-    //目標へ向く角度
-    float desired = std::atan2f((tp - self).x, (tp - self).z);
+    float desired;
 
-    // 近づき過ぎないようKeepDistance 付近では少し横移動を入れる
-    const float dist = DistXZ(self, tp);
-    if (dist < m_KeepDistance * 0.9f) {
-        desired = Wrap(desired + (D3DX_PI * 0.5f) * ((m_StateFrames / 60) % 2 ? +1.f : -1.f));
+    if (nearbyCount >= m_MultiEnemyThreshold)
+    {
+        //囲まれているなら逃げつつ攻める
+        desired = ComputeBlendedDirection(self, tp, clusterCenter,
+            m_EscapeWeight, m_ApproachWeight);
+    }
+    else
+    {
+        //通常の追跡
+        desired = std::atan2f((tp - self).x, (tp - self).z);
+
+        //近づき過ぎないようKeepDistance付近では少し横移動を入れる
+        const float dist = DistXZ(self, tp);
+        if (dist < m_KeepDistance * 0.9f)
+        {
+            desired = Wrap(desired + (D3DX_PI * 0.5f) * ((m_StateFrames / 60) % 2 ? +1.f : -1.f));
+        }
     }
 
     const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
@@ -676,12 +693,10 @@ void CComPlayer::StepChase()
     TickAimTo(tp);
     TryAutoFire();
 }
-
 void CComPlayer::StepAttack()
 {
     auto body = GetBody();
 
-    //bodyもターゲットもないなら探索
     if (!body || !m_pTarget)
     {
         StepSeek();
@@ -694,21 +709,41 @@ void CComPlayer::StepAttack()
     const D3DXVECTOR3 tp = m_pTarget->GetPosition();
     const float cur = body->GetRotation().y;
 
-    // 基本は周回
-    const int   period = 60;
-    const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
-    const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
+    //========================================
+    // 複数敵チェック
+    //========================================
+    D3DXVECTOR3 clusterCenter;
+    int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
 
-    // 接線方向
-    float desired = Wrap(toYaw + sign * (D3DX_PI * 0.5f));
+    float desired;
 
-    // 半径誤差補正
-    const float dist = DistXZ(self, tp);
-    if (dist > m_KeepDistance * 1.2f) {
-        desired = toYaw; // 外れすぎたら寄る
+    if (nearbyCount >= m_MultiEnemyThreshold)
+    {
+        //囲まれているなら逃げつつ攻める
+        desired = ComputeBlendedDirection(self, tp, clusterCenter,
+            m_EscapeWeight * 0.8f,      //攻撃時は逃げを弱める
+            m_ApproachWeight * 1.2f);   //攻めを強める
     }
-    else if (dist < m_KeepDistance * 0.8f) {
-        desired = Wrap(toYaw + D3DX_PI); // 近すぎたら離れる
+    else
+    {
+        // 通常の周回攻撃
+        const int   period = 60;
+        const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
+        const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
+
+        // 接線方向
+        desired = Wrap(toYaw + sign * (D3DX_PI * 0.5f));
+
+        // 半径誤差補正
+        const float dist = DistXZ(self, tp);
+        if (dist > m_KeepDistance * 1.2f)
+        {
+            desired = toYaw; // 外れすぎたら寄る
+        }
+        else if (dist < m_KeepDistance * 0.8f)
+        {
+            desired = Wrap(toYaw + D3DX_PI); // 近すぎたら離れる
+        }
     }
 
     const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
@@ -717,7 +752,6 @@ void CComPlayer::StepAttack()
     TickAimTo(tp);
     TryAutoFire();
 }
-
 #endif
 
 // アイテム取得
@@ -811,11 +845,9 @@ void CComPlayer::MakeFixedTimeTarget()
 }
 
 
-#if 1
-// COM弾発射処理
 void CComPlayer::TryAutoFire()
 {
-
+    // CShotManagerが有効か確認
     if (!m_pShotManager || !m_pTarget) return;
 
     if (m_ShotState.m_ShotCD > 0)
@@ -836,12 +868,11 @@ void CComPlayer::TryAutoFire()
     const float err = std::fabs(Wrap(desired - yaw));
 
     if (err <= ToRad(m_ShotState.FireAngleEpsDeg)) {
-        m_pCannon->Reload(m_pCannon->GetPosition(), m_pCannon->GetRotation().y, true, m_PlayerID);
+        // CCannon経由ではなく、直接CShotManagerを呼ぶ
+        m_pShotManager->Create(muzzle, yaw, true, m_PlayerID);
         m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
     }
-}
-#endif
-
+} 
 
 // 砲塔と車体の同期
 void CComPlayer::SyncCannonToBody()
@@ -904,7 +935,7 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
         return Approach(curYaw, curYaw + d, turnStep);
     }
 
-    // 3本の仮想レイを試す：正面、少し左、少し右
+    //3本の仮想レイを試す：正面、少し左、少し右
     const float angs[3] = { 0.f, +m_ProbeAngleRad, -m_ProbeAngleRad };
 
     float bestYaw = desiredYaw;
@@ -944,7 +975,7 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
         }
     }
 
-    // 最終的に選ばれた bestYaw に向かうよう、curYaw を turnStep 分だけ近づける
+    // 最終的に選ばれたbestYawに向かうよう、curYawをturnStep分だけ近づける
     const float d = Wrap(bestYaw - curYaw);
     return Approach(curYaw, curYaw + d, turnStep);
 }
@@ -992,35 +1023,108 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
     D3DXVECTOR3 pos = body->GetPosition();
     pos.y = 0.0f;
 
+    const float curYaw = body->GetRotation().y;
+
     // COM 同士の分離
     D3DXVECTOR3 sep(0, 0, 0);
     float nearest = 1e9f;
     ComputeSeparation(pos, sep, nearest);
 
-    // 次の候補位置を計算
-    D3DXVECTOR3 nextPos = pos + ForwardFromYaw(nextYaw) * tuning.moveSpeed;
-    nextPos.x += sep.x * 0.02f;
-    nextPos.z += sep.z * 0.02f;
-    nextPos.y = 0.0f;
+    // 試す角度オフセット
+    const float offsets[] = { 0.f, +0.4f, -0.4f, +0.8f, -0.8f, +D3DX_PI * 0.5f, -D3DX_PI * 0.5f, D3DX_PI };
 
-    //ここで危険ゾーン判定
-    if (IsInDangerZone(nextPos))
+    float safeYaw = nextYaw;
+    bool foundSafe = false;
+
+    // 安全な方向を探す
+    for (float offset : offsets)
     {
-        //今の向きのまま、そのフレームは前進しない
-        body->SetRotation({ 0.f, nextYaw, 0.f });
+        float tryYaw = nextYaw + offset;
+
+        D3DXVECTOR3 nextPos = pos + ForwardFromYaw(tryYaw) * step;
+        nextPos.x += sep.x * 0.02f;
+        nextPos.z += sep.z * 0.02f;
+        nextPos.y = 0.0f;
+
+        if (!IsInDangerZone(nextPos))
+        {
+            safeYaw = tryYaw;
+            foundSafe = true;
+            break;
+        }
+    }
+
+    //========================================
+    // 滑らかに回転
+    //========================================
+    float targetYaw = foundSafe ? safeYaw : nextYaw;
+    float smoothYaw = Approach(curYaw, curYaw + Wrap(targetYaw - curYaw), tuning.bodyTurnSpeed);
+
+    // 回転を先に反映
+    body->SetRotation({ 0.f, smoothYaw, 0.f });
+
+    //========================================
+    // 移動判定
+    //========================================
+    if (!foundSafe)
+    {
+        // 安全な方向が見つからない → 回転だけして停止
         body->CStaticMeshObject::Update();
         SyncCannonToBody();
         return;
     }
 
-    // 実際に移動する
-    body->SetRotation({ 0.f, nextYaw, 0.f });
-    body->SetPosition(nextPos);
+    // 安全な方向との角度差
+    float angleDiffToSafe = std::fabs(Wrap(safeYaw - smoothYaw));
+
+    //========================================
+    // 移動量の決定
+    //========================================
+    float actualStep = 0.0f;
+
+    if (angleDiffToSafe < D3DX_PI * 0.15f)  
+    {
+        // ほぼ安全な方向を向いたなら通常速度
+        actualStep = step;
+    }
+    else if (angleDiffToSafe < D3DX_PI * 0.3f)  
+    {
+        //まあまあ向いたなら半分の速度
+        actualStep = step * 0.5f;
+    }
+    else if (angleDiffToSafe < D3DX_PI * 0.5f)  
+    {
+        //少し向いたなら微速前進
+        actualStep = step * 0.2f;
+    }
+    else
+    {
+        //まだ全然向いていないなら回転に専念
+        actualStep = 0.0f;
+    }
+
+    //========================================
+    // 移動実行
+    //========================================
+    if (actualStep > 0.0f)
+    {
+        // smoothYaw 方向に進む
+        D3DXVECTOR3 nextPos = pos + ForwardFromYaw(smoothYaw) * actualStep;
+        nextPos.x += sep.x * 0.02f;
+        nextPos.z += sep.z * 0.02f;
+        nextPos.y = 0.0f;
+
+        // 移動先が安全かチェック
+        if (!IsInDangerZone(nextPos))
+        {
+            body->SetPosition(nextPos);
+        }
+        // 危険なら移動しない
+    }
+
     body->CStaticMeshObject::Update();
     SyncCannonToBody();
-}
-
-void CComPlayer::TickWander()
+}void CComPlayer::TickWander()
 {
     const float WanderDelta = 0.10f;
     const float WanderClamp = 0.6f;
@@ -1056,6 +1160,108 @@ void CComPlayer::TickBlacklist()
             ++it;
         }
     }
+}
+
+//指定半径内の敵の数をカウントし、重心を返す
+int CComPlayer::CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) const
+{
+    auto body = GetBody();
+    if (!body || !m_pAllPlayer)
+    {
+        outClusterCenter = D3DXVECTOR3(0, 0, 0);
+        return 0;
+    }
+
+    const D3DXVECTOR3 self = body->GetPosition();
+    const float radiusSq = radius * radius;
+
+    int count = 0;
+    D3DXVECTOR3 sum(0, 0, 0);
+
+    for (const auto& p : *m_pAllPlayer)
+    {
+        if (!p) continue;
+        if (p.get() == this) continue;  //自分は除外
+
+        const D3DXVECTOR3 enemyPos = p->GetPosition();
+        const float dx = enemyPos.x - self.x;
+        const float dz = enemyPos.z - self.z;
+        const float distSq = dx * dx + dz * dz;
+
+        if (distSq <= radiusSq)
+        {
+            sum.x += enemyPos.x;
+            sum.z += enemyPos.z;
+            ++count;
+        }
+    }
+
+    if (count > 0)
+    {
+        outClusterCenter.x = sum.x / count;
+        outClusterCenter.y = 0.0f;
+        outClusterCenter.z = sum.z / count;
+    }
+    else
+    {
+        outClusterCenter = self;
+    }
+
+    return count;
+}
+
+//========================================
+// 逃げと攻めをブレンドした方向（Yaw）を計算
+//========================================
+float CComPlayer::ComputeBlendedDirection(
+    const D3DXVECTOR3& self,
+    const D3DXVECTOR3& targetPos,
+    const D3DXVECTOR3& clusterCenter,
+    float escapeWeight,
+    float approachWeight) const
+{
+    // 攻め方向：ターゲットへ向かう
+    D3DXVECTOR3 toTarget = targetPos - self;
+    toTarget.y = 0.0f;
+    float toTargetLen = std::sqrtf(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
+    if (toTargetLen > 1e-6f)
+    {
+        toTarget.x /= toTargetLen;
+        toTarget.z /= toTargetLen;
+    }
+
+    // 逃げ方向：敵の群れの中心から離れる
+    D3DXVECTOR3 escape = self - clusterCenter;
+    escape.y = 0.0f;
+    float escapeLen = std::sqrtf(escape.x * escape.x + escape.z * escape.z);
+    if (escapeLen > 1e-6f)
+    {
+        escape.x /= escapeLen;
+        escape.z /= escapeLen;
+    }
+    else
+    {
+        // 群れの中心と自分が同じ位置なら、ランダムに逃げる
+        escape.x = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
+        escape.z = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
+    }
+
+    // ブレンド
+    D3DXVECTOR3 blended;
+    blended.x = toTarget.x * approachWeight + escape.x * escapeWeight;
+    blended.z = toTarget.z * approachWeight + escape.z * escapeWeight;
+    blended.y = 0.0f;
+
+    // 正規化
+    float blendLen = std::sqrtf(blended.x * blended.x + blended.z * blended.z);
+    if (blendLen > 1e-6f)
+    {
+        blended.x /= blendLen;
+        blended.z /= blendLen;
+    }
+
+    // Yaw に変換
+    return std::atan2f(blended.x, blended.z);
 }
 
 //=====ヒット関数=====

@@ -1116,57 +1116,52 @@ void CGameMain::EachSettingHitPoint()
 		}
 	}
 }
+ 
 
 void CGameMain::BuildComObstacles()
 {
 	m_ComObstacles.clear();
 
-#if 1
-	auto addObstacle = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
+	auto addObstacle = [&](float x, float z, float radius)
 		{
-			if (!obj) return;
 			CComPlayer::SimpleObstacle o;
-			o.pos = obj->GetPosition();
-			o.pos.y = 0.0f;      // 上から見た判定なので Y は 0
+			o.pos = D3DXVECTOR3(x, 0.0f, z);
 			o.radius = radius;
 			m_ComObstacles.push_back(o);
 		};
 
-	// 壁は広いので大きめの半径
-	addObstacle(m_pWallTop, 12.0f);
-	addObstacle(m_pWallBottom, 12.0f);
-	addObstacle(m_pWallLeft, 12.0f);
-	addObstacle(m_pWallRight, 12.0f);
+	// 壁を複数の円でカバーする
+	const float wallRadius = 6.0f;
+	const float wallOffset = 30.0f;  //壁のZX座標
 
-	// 木箱は小さめの障害物
-	addObstacle(m_pWoodBoxTopLeft, 4.0f);
-	addObstacle(m_pWoodBoxTopRight, 4.0f);
-	addObstacle(m_pWoodBoxCenter, 4.0f);
-	addObstacle(m_pWoodBoxBottomLeft, 4.0f);
-	addObstacle(m_pWoodBoxBottomRight, 4.0f);
-#endif
+	// 壁上・壁下
+	for (float x = -24.0f; x <= 24.0f; x += 8.0f)
+	{
+		addObstacle(x, wallOffset, wallRadius);   // 壁上
+		addObstacle(x, -wallOffset, wallRadius);  // 壁下
+	}
 
-	auto addObject = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
+	// 壁左・壁右（Z方向に並べる）
+	for (float z = -24.0f; z <= 24.0f; z += 8.0f)
+	{
+		addObstacle(-wallOffset, z, wallRadius);  // 壁左 (X = -30)
+		addObstacle(wallOffset, z, wallRadius);   // 壁右 (X = +30)
+	}
+
+	// 木箱
+	auto addBoxObstacle = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
 		{
 			if (!obj) return;
-			CComPlayer::SimpleObstacle object;
-			object.pos = obj->GetPosition();
-			object.pos.y = 0.0f;
-			object.radius = radius;
-			m_ComObstacles.push_back(object);
+			CComPlayer::SimpleObstacle o;
+			o.pos = obj->GetPosition();
+			o.pos.y = 0.0f;
+			o.radius = radius;
+			m_ComObstacles.push_back(o);
 		};
 
-	//木箱5個
-	addObject(m_pWoodBoxBottomLeft, 3.0f);
-	addObject(m_pWoodBoxBottomRight, 3.0f);
-	addObject(m_pWoodBoxCenter, 3.0f);
-	addObject(m_pWoodBoxTopLeft, 3.0f);
-	addObject(m_pWoodBoxTopRight, 3.0f);
-
-	//壁
-	addObject(m_pWallLeft, 12.f);
-	addObject(m_pWallRight, 12.f);
-	addObject(m_pWallTop, 12.f);
-	addObject(m_pWallBottom, 12.f);
-
+	addBoxObstacle(m_pWoodBoxTopLeft, 4.0f);
+	addBoxObstacle(m_pWoodBoxTopRight, 4.0f);
+	addBoxObstacle(m_pWoodBoxCenter, 4.0f);
+	addBoxObstacle(m_pWoodBoxBottomLeft, 4.0f);
+	addBoxObstacle(m_pWoodBoxBottomRight, 4.0f);
 }

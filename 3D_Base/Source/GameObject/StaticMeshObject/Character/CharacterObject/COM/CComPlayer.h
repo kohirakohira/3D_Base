@@ -310,10 +310,25 @@ private:
 	float m_CenterPullStrength;     // 中央への引き寄せ強度（デフォルト 0.3）
 
 	float m_ObstacleProbeDist = 8.0f;								// 何メートル先まで見るか
-	float m_ObstacleProbeStep = 0.5f;								// 何メートル刻みでチェックするか
+	float m_ObstacleProbeStep = 0.1f;								// 何メートル刻みでチェックするか
 	float m_ObstacleRadius = 1.5f;									// 自分の半径
 	float m_ProbeAngleRad = D3DXToRadian(25.0f);					// 左右にどれくらい首を振るか
 	float m_LookAheadSkep;
+
+	//COMの複数敵判定
+	float m_MultiEnemyRadius = 8.0f;	//この範囲内の敵をカウント
+	float m_EscapeWeight = 0.6f;		//逃げの重み
+	float m_ApproachWeight = 0.4f;		//攻めの重み
+	int	m_MultiEnemyThreshold = 2;		//この数以上で
+
+	//複数体敵対応関数
+	int CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) const;
+
+	float ComputeBlendedDirection(const D3DXVECTOR3& self,
+		const D3DXVECTOR3& targetPos,
+		const D3DXVECTOR3& clusterCenter,
+		float escapeWeight,
+		float approachWeight) const;
 
 	//=====ヒット関数=====
 	virtual void Hit() override;
