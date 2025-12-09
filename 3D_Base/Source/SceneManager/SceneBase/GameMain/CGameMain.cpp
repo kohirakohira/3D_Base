@@ -1119,20 +1119,39 @@ void CGameMain::BuildComObstacles()
 			m_ComObstacles.push_back(o);
 		};
 
+	auto addWallObstacle = [&](const std::shared_ptr<CStageObject>& obj, float radius)
+		{
+			if (!obj) return;
+			if (!obj) return;
+			CComPlayer::SimpleObstacle o;
+			o.pos = obj->GetPosition();
+			o.pos.y = 0.0f;      // 上か
+			o.radius = radius;
+			m_ComObstacles.push_back(o);
+		};
+	/*
 	// 壁は広いので大きめの半径
 	addObstacle(m_pWallTop, 12.0f);
 	addObstacle(m_pWallBottom, 12.0f);
 	addObstacle(m_pWallLeft, 12.0f);
 	addObstacle(m_pWallRight, 12.0f);
-
+	*/
 	// 木箱は小さめの障害物
 	addObstacle(m_pWoodBoxTopLeft, 4.0f);
 	addObstacle(m_pWoodBoxTopRight, 4.0f);
 	addObstacle(m_pWoodBoxCenter, 4.0f);
 	addObstacle(m_pWoodBoxBottomLeft, 4.0f);
 	addObstacle(m_pWoodBoxBottomRight, 4.0f);
+
+
+	addWallObstacle(m_pWallTop, 12.f);
+	addWallObstacle(m_pWallBottom, 12.f);
+	addWallObstacle(m_pWallLeft, 12.f);
+	addWallObstacle(m_pWallRight, 12.f);
+
 #endif
 
+#if 0
 	auto addObject = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
 		{
 			if (!obj) return;
@@ -1155,5 +1174,5 @@ void CGameMain::BuildComObstacles()
 	addObject(m_pWallRight, 12.f);
 	addObject(m_pWallTop, 12.f);
 	addObject(m_pWallBottom, 12.f);
-
+#endif
 }

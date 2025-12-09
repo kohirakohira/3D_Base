@@ -894,7 +894,8 @@ void CComPlayer::TryAutoFire()
     const float err = std::fabs(Wrap(desired - yaw));
 
     if (err <= ToRad(m_ShotState.FireAngleEpsDeg)) {
-        m_pCannon->Reload(m_pCannon->GetPosition(), m_pCannon->GetRotation().y, true, m_PlayerID);
+        //m_pCannon->Reload(m_pCannon->GetPosition(), m_pCannon->GetRotation().y, true, m_PlayerID);
+        m_pShotManager->Create(m_pCannon->GetPosition(), m_pCannon->GetRotation().y, true, m_PlayerID);
         m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
     }
 }
