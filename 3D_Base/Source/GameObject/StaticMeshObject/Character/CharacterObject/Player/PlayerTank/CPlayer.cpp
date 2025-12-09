@@ -52,10 +52,17 @@ static inline float Deadzone(float v, float z)
 CPlayer::CPlayer()
 	: m_Controller( nullptr )
 
-	, m_PlayerID		()
-	, m_HasControl		( false )
-	, m_ControllerIndex	()
+	, m_PlayerID			()
+	, m_HasControl			( false )
+	, m_ControllerIndex		()
+
+	, m_Key					()
 {
+	m_BlastFlag = false;
+
+	//キーの生成.
+	m_Key = std::make_unique<CMultiInputKeyManager>();
+	m_Key->SetKey({ 'W', 'A', 'S', 'D', 'Z', VK_LEFT, VK_RIGHT });
 }
 
 CPlayer::~CPlayer() = default;
@@ -96,6 +103,9 @@ void CPlayer::SetPushBack(const D3DXVECTOR3& push)
 
 void CPlayer::Update()
 {
+	//キーの更新.
+	m_Key->Update();
+
 	//プレイヤー入力.
 	PlayerInput m_CurrentInput{};
 
@@ -151,49 +161,105 @@ void CPlayer::Create()
 void CPlayer::Move(const PlayerInput& input)
 {
 	//左スティックで移動.
-	auto dir = m_Controller->GetLeftStickDirection(0.5f);
+	CController::Direction dir = CController::Direction::None;
+
+	if (m_Controller != nullptr)
+	{
+		dir = m_Controller->GetLeftStickDirection(0.5f);
+	}
 	//デフォは停止.
 	m_pBody->SetMoveState(CBody::Stop);
 
-	switch (dir)
+	if (dir != CController::Direction::None)
 	{
-	case CController::Direction::Up:
-		//前進.
-		m_pBody->SetMoveState(CBody::Forward);
-		break;
-	case CController::Direction::Down:
-		//後退.
-		m_pBody->SetMoveState(CBody::Backward);
-		break;
-	case CController::Direction::Left:
-		m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
-		break;
-	case CController::Direction::Right:
-		m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
-		break;
-	case CController::Direction::UpLeft:
-		m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
-		m_pBody->SetMoveState(CBody::Forward);
-		break;
-	case CController::Direction::UpRight:
-		m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
-		m_pBody->SetMoveState(CBody::Forward);
-		break;
-	case CController::Direction::DownLeft:
-		m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
-		m_pBody->SetMoveState(CBody::Backward);
-		break;
-	case CController::Direction::DownRight:
-		m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
-		m_pBody->SetMoveState(CBody::Backward);
-		break;
-	case CController::Direction::None:
-		//何も入力が無いので停止しておく.
-		m_pBody->SetMoveState(CBody::Stop);
-		break;
-	default:
-		break;
+		switch (dir)
+		{
+		case CController::Direction::Up:
+			//前進.
+			m_pBody->SetMoveState(CBody::Forward);
+			break;
+		case CController::Direction::Down:
+			//後退.
+			m_pBody->SetMoveState(CBody::Backward);
+			break;
+		case CController::Direction::Left:
+			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
+			break;
+		case CController::Direction::Right:
+			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
+			break;
+		case CController::Direction::UpLeft:
+			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
+			m_pBody->SetMoveState(CBody::Forward);
+			break;
+		case CController::Direction::UpRight:
+			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
+			m_pBody->SetMoveState(CBody::Forward);
+			break;
+		case CController::Direction::DownLeft:
+			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
+			m_pBody->SetMoveState(CBody::Backward);
+			break;
+		case CController::Direction::DownRight:
+			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
+			m_pBody->SetMoveState(CBody::Backward);
+			break;
+		case CController::Direction::None:
+			//何も入力が無いので停止しておく.
+			m_pBody->SetMoveState(CBody::Stop);
+			break;
+		default:
+			break;
+		}
 	}
+	else
+	{
+		if (m_Key->InputKey('W') == true)
+		{
+			m_pBody->SetMoveState(CBody::Forward);
+		}
+
+		if (m_Key->InputKey('S') == true)
+		{
+			m_pBody->SetMoveState(CBody::Backward);
+		}
+
+		if (m_Key->InputKey('A') == true)
+		{
+			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
+		}
+
+		if (m_Key->InputKey('D') == true)
+		{
+			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
+		}
+
+		if (m_Key->InputKey('W') == true && m_Key->InputKey('A') == true)
+		{
+			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
+			m_pBody->SetMoveState(CBody::Forward);
+		}
+
+		if (m_Key->InputKey('W') == true && m_Key->InputKey('D') == true)
+		{
+			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
+			m_pBody->SetMoveState(CBody::Forward);
+		}
+
+		if (m_Key->InputKey('S') == true && m_Key->InputKey('A') == true)
+		{
+			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
+			m_pBody->SetMoveState(CBody::Backward);
+		}
+
+		if (m_Key->InputKey('S') == true && m_Key->InputKey('D') == true)
+		{
+			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
+			m_pBody->SetMoveState(CBody::Backward);
+		}
+
+	}
+	
 	//移動.
 	m_pBody->RadioControl();
 }
@@ -219,29 +285,47 @@ void CPlayer::SetControllerIndex(int index)
 //砲塔だけを回転させる
 void CPlayer::RotateTurretByPad()
 {
-	if (!m_pCannon || !m_Controller)return;
-	if (!m_Controller->CheckConnected()) return;
-
-	auto dir = m_Controller->GetRightStickDirection(0.5f);
+	CController::Direction dir = CController::Direction::None;
+	if (!m_pCannon)return;
+	if (m_Controller != nullptr)
+	{
+		dir = m_Controller->GetRightStickDirection(0.5f);
+	}
 
 	D3DXVECTOR3 rot = m_pCannon->GetRotation();
 
-	switch (dir)
+	if (dir != CController::Direction::None)
 	{
-	case CController::Direction::Left:
-	case CController::Direction::UpLeft:
-	case CController::Direction::DownLeft:
-		rot.y -= m_Tuning.turretTurnSpeed;
-		break;
+		switch (dir)
+		{
+		case CController::Direction::Left:
+		case CController::Direction::UpLeft:
+		case CController::Direction::DownLeft:
+			rot.y -= m_Tuning.turretTurnSpeed;
+			break;
 
-	case CController::Direction::Right:
-	case CController::Direction::UpRight:
-	case CController::Direction::DownRight:
-		rot.y += m_Tuning.turretTurnSpeed;
-		break;
+		case CController::Direction::Right:
+		case CController::Direction::UpRight:
+		case CController::Direction::DownRight:
+			rot.y += m_Tuning.turretTurnSpeed;
+			break;
 
-	default:
-		break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		if (m_Key->InputKey(VK_LEFT) == true)
+		{
+			rot.y -= m_Tuning.turretTurnSpeed;
+		}
+
+		if (m_Key->InputKey(VK_RIGHT) == true)
+		{
+			rot.y += m_Tuning.turretTurnSpeed;
+		}
+
 	}
 
 	m_pCannon->SetRotation(rot);
@@ -268,7 +352,7 @@ void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
 
 	// RT入力があった時 → リロード
 	//※押し込み具合：50(0～255).
-	if (controller->GetRightTrigger(50) == CController::Trigger::RightTrigger)
+	if (controller && controller->GetRightTrigger(50) == CController::Trigger::RightTrigger || m_Key->NowInputKey('Z'))
 	{
 		Reload(m_pCannon->GetCannonPosition(), m_pCannon->GetRotation().y);
 	}
@@ -429,4 +513,14 @@ void CPlayer::CreateCollider()
 {
 	m_pBody->CreateBoxCollider(m_pBody->GetMinPos(), m_pBody->GetMaxPos());
 	m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
+}
+
+void CPlayer::SetBlastFlag(bool flg)
+{
+	m_BlastFlag = flg;
+}
+
+bool CPlayer::GetBlastFlag()
+{
+	return m_BlastFlag;
 }

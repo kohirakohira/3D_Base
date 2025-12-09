@@ -25,13 +25,13 @@ CCollisionManager::CCollisionManager()
 	// キャラクターマネージャー
 	, m_pCharacterManager		()
 
-	// 爆風当たり判定マネージャー
-	, m_pBlastManager		()
-
 	// アイテムボックスマネージャー
 	, m_pItemBoxManager		()
 
-	//, m_Rad					( 4.0f )
+	//爆風マネージャー.
+	, m_pBlastManager		()
+
+	, m_Speed				( 15.0f )
 {
 }
 
@@ -45,13 +45,13 @@ void CCollisionManager::Update()
 	WalltoPlayer();
 
 	// 壁と弾の当たり判定
-	//WalltoShot();
+	WalltoShot();
 
 	// プレイヤーとプレイヤー当たり判定判別
 	PlayertoPlayer();
 
-	// キャラクターとアイテムボックス
-	CharactertoItemBox();
+	//// キャラクターとアイテムボックス
+	//CharactertoItemBox();
 
 	// プレイヤーと弾
 	PlayertoShot();
@@ -60,13 +60,13 @@ void CCollisionManager::Update()
 	WoodBoxtoPlayer();
 
 	// 木箱と弾
-	//WoodBoxtoShot();
+	WoodBoxtoShot();
 
 	// 地面と弾
-	//GroundtoShot();
+	GroundtoShot();
 
-	// 地面とアイテムボックス
-	GroundtoItemBox();
+	//// 地面とアイテムボックス
+	//GroundtoItemBox();
 
 	//復活するかも.
 	////アイテムと木箱.
@@ -125,56 +125,84 @@ void CCollisionManager::WalltoPlayer()
 // 壁と弾の当たり判定
 void CCollisionManager::WalltoShot()
 {
-	for (auto& shot : m_pShotManager->GetShot())
+	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		// 壁が弾と接触したとき
-		if (shot->GetCollider()->CheckCollision(*m_pWallTop->GetCollider()))
+		for (auto& shot : m_pShotManager->GetShot())
 		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				shot->GetPosition(),
-				true,
-				m_pStaticBlast);
+			//木箱をまとめて管理.
+			std::shared_ptr<CCollider> Allwall[] = {
+				m_pWallTop->GetCollider(),
+				m_pWallBottom->GetCollider(),
+				m_pWallLeft->GetCollider(),
+				m_pWallRight->GetCollider(),
+			};
 
-			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+			for (auto& wall : Allwall)
+			{
+				if (shot->GetCollider()->CheckCollision(*wall))
+				{
+					//爆風の動的生成.
+					m_pBlastManager->Create(
+						shot->GetPosition(),
+						m_pCharacterManager->GetBlastFlag(i),
+						m_pStaticBlast,
+						m_Speed
+					);
 
-			m_pShotManager->HitShot();
-		}
-		if (shot->GetCollider()->CheckCollision(*m_pWallBottom->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				shot->GetPosition(),
-				true,
-				m_pStaticBlast);
+					m_pShotManager->HitShot();
+				}
+			}
+			{
+				//// 壁が弾と接触したとき
+				//if (shot->GetCollider()->CheckCollision(*m_pWallTop->GetCollider()))
+				//{
+				//	//動的に作成.
+				//	m_pBlastManager->Create(
+				//		shot->GetPosition(),
+				//		true,
+				//		m_pStaticBlast);
 
-			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
 
-			m_pShotManager->HitShot();
-		}
-		if (shot->GetCollider()->CheckCollision(*m_pWallLeft->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				shot->GetPosition(),
-				true,
-				m_pStaticBlast);
+				//	m_pShotManager->HitShot();
+				//}
+				//if (shot->GetCollider()->CheckCollision(*m_pWallBottom->GetCollider()))
+				//{
+				//	//動的に作成.
+				//	m_pBlastManager->Create(
+				//		shot->GetPosition(),
+				//		true,
+				//		m_pStaticBlast);
 
-			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
 
-			m_pShotManager->HitShot();
-		}
-		if (shot->GetCollider()->CheckCollision(*m_pWallRight->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				shot->GetPosition(),
-				true,
-				m_pStaticBlast);
+				//	m_pShotManager->HitShot();
+				//}
+				//if (shot->GetCollider()->CheckCollision(*m_pWallLeft->GetCollider()))
+				//{
+				//	//動的に作成.
+				//	m_pBlastManager->Create(
+				//		shot->GetPosition(),
+				//		true,
+				//		m_pStaticBlast);
 
-			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
 
-			m_pShotManager->HitShot();
+				//	m_pShotManager->HitShot();
+				//}
+				//if (shot->GetCollider()->CheckCollision(*m_pWallRight->GetCollider()))
+				//{
+				//	//動的に作成.
+				//	m_pBlastManager->Create(
+				//		shot->GetPosition(),
+				//		true,
+				//		m_pStaticBlast);
+
+				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
+
+				//	m_pShotManager->HitShot();
+				//}
+			}
 		}
 	}
 }
@@ -240,44 +268,7 @@ void CCollisionManager::CharactertoItemBox()
 				//画面から消す.
 				m_pItemBoxManager->GetItem()[ItemIndex]->HitPlayer();
 
-				////無敵処理.
-				////プレイヤーに設定.
-				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_ShieldFlag == true)
-				//{
-				//}
-
-				//速度設定.
-				//プレイヤーに設定.
-				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed > 0.0f)
-				{
-					//プレイヤーの速度を設定.
-					const TankTuning Info = { m_pItemBoxManager->GetItemInfo(ItemIndex).m_Speed, 0.03f, 0.03f, 0.3f };
-					//プレイヤーの情報を設定.
-					m_pCharacterManager->SetPlayerTuning(PlayerIndex, Info);
-
-				}
-
-				////攻撃力設定.
-				////弾に設定.
-				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Power > 0.0f)
-				//{
-				//}
-
-				//爆風の半径設定.
-				//爆風に設定.
-				if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast > 0.0f)
-				{
-					m_Rad = m_pItemBoxManager->GetItemInfo(ItemIndex).m_Blast;
-				}
-
-				////装填時短設定.
-				////弾に設定.
-				//if (m_pItemBoxManager->GetItemInfo(ItemIndex).m_Reload > 0.0f)
-				//{
-				//}
-
-				//配列(メモリ上)から消す.
-				m_pItemBoxManager->RemoveItem(ItemIndex);
+				SetItemInfomation(ItemIndex, PlayerIndex);
 
 			}
 		}
@@ -298,13 +289,13 @@ void CCollisionManager::PlayertoShot()
 		{
 			if (shot->GetCollider()->CheckCollision(*Coll))
 			{
-				////動的に作成.
-				//m_pBlastManager->Create(
-				//	shot->GetPosition(),
-				//	true,
-				//	m_pStaticBlast);
-
-				//m_pBlastManager->SetBlastRadiusMax(m_Rad);
+				//爆風の動的生成.
+				m_pBlastManager->Create(
+					shot->GetPosition(),
+					chara->GetBlastFlag(),
+					m_pStaticBlast,
+					m_Speed
+				);
 
 				shot->HitShot();
 
@@ -454,68 +445,97 @@ void CCollisionManager::WoodBoxtoPlayer()
 // 木箱と弾
 void CCollisionManager::WoodBoxtoShot()
 {
-	for (auto& shot : m_pShotManager->GetShot())
+	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		// 壁が弾と接触したとき
-		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
+		for (auto& shot : m_pShotManager->GetShot())
 		{
-			// 動的に作成
-			m_pBlastManager->Create(
-				shot->GetPosition(),
-				true,
-				m_pStaticBlast);
+			//木箱をまとめて管理.
+			std::shared_ptr<CCollider> woodbox[] = {
+				m_pWoodBoxBottomLeft->GetCollider(),
+				m_pWoodBoxBottomRight->GetCollider(),
+				m_pWoodBoxCenter->GetCollider(),
+				m_pWoodBoxTopLeft->GetCollider(),
+				m_pWoodBoxTopRight->GetCollider()
+			};
 
-			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+			for (auto& box : woodbox)
+			{
+				if (shot->GetCollider()->CheckCollision(*box))
+				{
+					//爆風の動的生成.
+					m_pBlastManager->Create(
+						shot->GetPosition(),
+						m_pCharacterManager->GetBlastFlag(i),
+						m_pStaticBlast,
+						m_Speed
+					);
 
-			shot->HitShot();
-		}
-		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				shot->GetPosition(),
-				true,
-				m_pStaticBlast);
+					shot->HitShot();
+				}
+			}
+			{
+				//// 壁が弾と接触したとき
+				//if (shot->GetCollider()->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
+				//{
+				//	// 動的に作成
+				//	m_pBlastManager->Create(
+				//		shot->GetPosition(),
+				//		true,
+				//		m_pStaticBlast);
 
-			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
 
-			shot->HitShot();
-		}
-		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				shot->GetPosition(),
-				true,
-				m_pStaticBlast);
+				//	shot->HitShot();
+				//}
+				//if (shot->GetCollider()->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
+				//{
+				//	//動的に作成.
+				//	m_pBlastManager->Create(
+				//		shot->GetPosition(),
+				//		true,
+				//		m_pStaticBlast);
 
-			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
 
-			shot->HitShot();
-		}
-		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				shot->GetPosition(),
-				true,
-				m_pStaticBlast);
+				//	shot->HitShot();
+				//}
+				//if (shot->GetCollider()->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
+				//{
+				//	//動的に作成.
+				//	m_pBlastManager->Create(
+				//		shot->GetPosition(),
+				//		true,
+				//		m_pStaticBlast);
 
-			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
 
-			shot->HitShot();
-		}
-		if (shot->GetCollider()->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
-		{
-			//動的に作成.
-			m_pBlastManager->Create(
-				shot->GetPosition(),
-				true,
-				m_pStaticBlast);
+				//	shot->HitShot();
+				//}
+				//if (shot->GetCollider()->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
+				//{
+				//	//動的に作成.
+				//	m_pBlastManager->Create(
+				//		shot->GetPosition(),
+				//		true,
+				//		m_pStaticBlast);
 
-			m_pBlastManager->SetBlastRadiusMax(m_Rad);
+				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
 
-			shot->HitShot();
+				//	shot->HitShot();
+				//}
+				//if (shot->GetCollider()->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
+				//{
+				//	//動的に作成.
+				//	m_pBlastManager->Create(
+				//		shot->GetPosition(),
+				//		true,
+				//		m_pStaticBlast);
+
+				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
+
+				//	shot->HitShot();
+				//}
+			}
 		}
 	}
 }
@@ -523,19 +543,22 @@ void CCollisionManager::WoodBoxtoShot()
 // 地面と弾
 void CCollisionManager::GroundtoShot()
 {
-	for (auto& shot : m_pShotManager->GetShot())
+	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		if (shot->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
+		for (auto& shot : m_pShotManager->GetShot())
 		{
-			// 動的に作成
-			m_pBlastManager->Create(
-				shot->GetPosition(),
-				true,
-				m_pStaticBlast);
+			if (shot->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
+			{
+				//爆風の動的生成.
+				m_pBlastManager->Create(
+					shot->GetPosition(),
+					m_pCharacterManager->GetBlastFlag(i),
+					m_pStaticBlast,
+					m_Speed
+				);
 
-			m_pBlastManager->SetBlastRadiusMax(m_Rad);
-
-			shot->HitShot();
+				shot->HitShot();
+			}
 		}
 	}
 }
@@ -564,17 +587,6 @@ void CCollisionManager::PlayertoBlast()
 		if (!chara)continue;
 		auto Coll = chara->GetBody()->GetCollider();
 
-		if (m_pBlastManager->GetBlastFlag() == true)
-		{
-			////車体が爆風と接触したとき.
-			if (Coll->CheckCollision(*m_pBlastManager->GetCollider()))
-			{
-				m_pBlastManager->HitBlast(i);
-
-				std::cout << "当たった" << std::endl;
-
-			}
-		}
 	}
 }
 
@@ -618,4 +630,50 @@ void CCollisionManager::ItemtoWoodBox()
 		m_pItemBoxManager->RemoveItem(DeleteIndex[i]);
 		m_pItemBoxManager->Create();
 	}
+}
+
+//アイテムの設定.
+void CCollisionManager::SetItemInfomation(int Itemindex, int Playerindex)
+{
+	//無敵処理.
+	//プレイヤーに設定.
+	if (m_pItemBoxManager->GetItemInfo(Itemindex).m_ShieldFlag == true)
+	{
+
+	}
+
+	//速度設定.
+	//プレイヤーに設定.
+	if (m_pItemBoxManager->GetItemInfo(Itemindex).m_Speed > 0.0f)
+	{
+		//プレイヤーの速度を設定.
+		const TankTuning Info = { m_pItemBoxManager->GetItemInfo(Itemindex).m_Speed, 0.03f, 0.03f, 0.3f };
+		//プレイヤーの情報を設定.
+		m_pCharacterManager->SetPlayerTuning(Playerindex, Info);
+
+	}
+
+	//攻撃力設定.
+	//弾に設定.
+	if (m_pItemBoxManager->GetItemInfo(Itemindex).m_Power > 0.0f)
+	{
+
+	}
+
+	//爆風の半径設定.
+	//爆風に設定.
+	if (m_pItemBoxManager->GetItemInfo(Itemindex).m_Blast > 0.0f)
+	{
+		m_pCharacterManager->SetBlastFlag(Playerindex, m_pItemBoxManager->GetItemInfo(Itemindex).m_Blast);
+	}
+
+	//装填時短設定.
+	//弾に設定.
+	if (m_pItemBoxManager->GetItemInfo(Itemindex).m_Reload > 0.0f)
+	{
+
+	}
+
+	//配列(メモリ上)から消す.
+	m_pItemBoxManager->RemoveItem(Itemindex);
 }

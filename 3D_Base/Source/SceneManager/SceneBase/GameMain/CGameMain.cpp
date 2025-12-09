@@ -14,7 +14,7 @@ static bool prevA = false;
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス.
 
 //定数宣言.
-static constexpr int TIME = 60;
+static constexpr int TIME = 10;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 
@@ -93,13 +93,14 @@ CGameMain::CGameMain(HWND hWnd)
 
 	, m_pGround						( nullptr )
 	
-	,m_pItemBoxManager				( nullptr )
+	, m_pItemBoxManager				( nullptr )
 
 	, m_Rot							( 0.0f )
 
 	, time							( 0.0f )
 
 	, m_pBlastManager				( nullptr )
+
 	, m_pCollisionManager			( nullptr )
 
 {
@@ -121,12 +122,17 @@ void CGameMain::Update()
 
 	//コントローラーの更新.
 	CControllerManager::GetInstance().Update();
+	CController* controller = CControllerManager::GetInstance().GetController(0);
 
+#ifdef ENABLE_ITEMS
 	//アイテムの動作..
 	m_pItemBoxManager->Update();
 	// アイテムボックスマネージャーをセット
 	m_pCollisionManager->SetCItemBoxManager(m_pItemBoxManager);
+#endif//#ifdef ENABLE_ITEMS
 
+	//爆風の更新処理.
+	m_pBlastManager->Update();
 
 //-----メイン演出用-----..
 	
@@ -172,10 +178,10 @@ void CGameMain::Update()
 	//カメラ追従＆更新.砲塔基準
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		if (auto player = m_pCharacterManager->GetControlPlayer(i))
+		if (auto chara = m_pCharacterManager->GetControlPlayer(i))
 		{
-			const D3DXVECTOR3 camPos = player->GetCannon()->GetPosition();	//砲塔の位置.
-			float yaw = player->GetCannon()->GetRotation().y;	//砲塔の向きY.
+			const D3DXVECTOR3 camPos = chara->GetCannon()->GetPosition();	//砲塔の位置.
+			float yaw = chara->GetCannon()->GetRotation().y;	//砲塔の向きY.
 
 			m_pCameras[i]->SetTargetPos(camPos);
 			m_pCameras[i]->SetTargetRotY(yaw);
@@ -193,20 +199,19 @@ void CGameMain::Update()
 	float angle = time * (PI / 180);
 	m_pSpriteTimerArrow->SetRotation(0.f, D3DXToRadian(180.0f), -angle);
 
-	const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
+	//const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
 
-	if (nowC && !prevC)
-	{
-		m_pCharacterManager->SwitchActivePlayer();
-	}
-	prevC = nowC;
+	//if (nowC && !prevC)
+	//{
+	//	m_pCharacterManager->SwitchActivePlayer();
+	//}
+	//prevC = nowC;
 
-
-	// Cキー押されたら操作プレイヤー切り替え
-	if (GetAsyncKeyState('C') & 0x0001)
-	{
-		m_pCharacterManager->SwitchActivePlayer();
-	}
+	//// Cキー押されたら操作プレイヤー切り替え
+	//if (GetAsyncKeyState('C') & 0x0001)
+	//{
+	//	m_pCharacterManager->SwitchActivePlayer();
+	//}
 
 	// 当たり判定の更新
 	m_pCollisionManager->Update();
@@ -216,9 +221,6 @@ void CGameMain::Update()
 	m_pWallBottom->Update();
 	m_pWallLeft->Update();
 	m_pWallRight->Update();
-
-	//爆風の動作処理.
-	m_pBlastManager->Update();
 
 	// 木箱の更新
 	m_pWoodBoxTopLeft->Update();
@@ -232,8 +234,6 @@ void CGameMain::Update()
 
 	// 当たり判定の更新
 	m_pCollisionManager->Update();
-
-	CController* controller = CControllerManager::GetInstance().GetController(0);
 
 	//勝敗条件(確認用)..
 	//勝ち..
@@ -315,10 +315,14 @@ void CGameMain::Draw()
 		//// 地面の描画
 		//m_pGround->Draw(view, proj, light, paramC);
 
+#ifdef ENABLE_ITEMS
+
 		//アイテムボックスの描画.
 		m_pItemBoxManager->Draw(view, proj, light, paramC);
 
-		//爆風の表示.
+#endif//#ifdef ENABLE_ITEMS
+
+		//爆風の描画.
 		m_pBlastManager->Draw(view, proj, light, paramC);
 
 		//背景の表示.
@@ -590,9 +594,6 @@ void CGameMain::Create()
 	// 地面
 	m_pGround = std::make_shared<CStageObject>();
 
-	//爆発クラスのインスタンス生成.
-	m_pBlastManager = std::make_shared<CBlastCollisionManager>();
-
 	//アイテムマネージャークラスのインスタンス生成..
 	m_pWoodBoxTopLeft = std::make_shared<CStageObject>();
 	m_pWoodBoxTopRight = std::make_shared<CStageObject>();
@@ -600,34 +601,23 @@ void CGameMain::Create()
 	m_pWoodBoxBottomLeft = std::make_shared<CStageObject>();
 	m_pWoodBoxBottomRight = std::make_shared<CStageObject>();
 
+#ifdef ENABLE_ITEMS
+
 	// アイテムマネージャークラスのインスタンス生成
 	m_pItemBoxManager = std::make_shared<CItemBoxManager>();
+
+#endif//#ifdef ENABLE_ITEMS
 
 	// 当たり判定マネージャークラスのインスタンス生成
 	m_pCollisionManager = std::make_shared<CCollisionManager>();
 
-	// 当たり判定マネージャーに必要なクラスをセット
-	// 爆風用の弾をセット
-	m_pCollisionManager->SetBlastMesh(m_pStaticMesh_BulletRed);
+	//爆風マネージャークラスのインスタンス生成.
+	m_pBlastManager = std::make_shared<CBlastManager>();
 
-	// 壁をセット
-	m_pCollisionManager->SetCStageWall(m_pWallTop, m_pWallBottom, m_pWallLeft, m_pWallRight);
-	
-	// 地面をセット
-	m_pCollisionManager->SetCStageGround(m_pGround);
-	
-	// 木箱をセット
-	m_pCollisionManager->SetCStageWoodBox(m_pWoodBoxTopLeft, m_pWoodBoxTopRight, m_pWoodBoxCenter, m_pWoodBoxBottomLeft, m_pWoodBoxBottomRight);
-	
-	// 弾をセット
-	m_pCollisionManager->SetCShotManager(m_pShotManager);
-	
-	// キャラクターマネージャーをセット
-	m_pCollisionManager->SetCPlayerManager(m_pCharacterManager);
-	
-	// 爆風マネージャーをセット
-	m_pCollisionManager->SetCBlastCollisionManager(m_pBlastManager);
+	//COMの障害物判定
+	BuildComObstacles();
 
+	m_pCharacterManager->SetShotManager(m_pShotManager);
 }
 
 HRESULT CGameMain::LoadData()
@@ -643,7 +633,7 @@ HRESULT CGameMain::LoadData()
 		return E_FAIL;
 	}
 
-	//タイマー画像のスプライト設定
+	//タイマー画像のスプライト設定.
 	CSprite2D::SPRITE_STATE WH_SIZE = {
 		1920, 1080,		//描画幅,高さ..
 		1920, 1080,		//元画像の幅,高さ..
@@ -800,10 +790,6 @@ HRESULT CGameMain::LoadData()
 			break;
 		}
 	}
-
-	//爆風のメッシュ設定.
-	m_pCollisionManager->SetBlastMesh(m_pStaticMesh_BulletRed);
-
 	//弾メッシュ情報を持たせる.
 	m_pShotManager->AttachMeshToPlayerShot(BulletKinds::Mesh_1, m_pStaticMesh_BulletRed);
 	m_pShotManager->AttachMeshToPlayerShot(BulletKinds::Mesh_2, m_pStaticMesh_BulletYellow);
@@ -813,8 +799,12 @@ HRESULT CGameMain::LoadData()
 	//スタティックメッシュを設定
 	m_pStage->AttachMesh(m_pStaticMeshStage);
 
+#ifdef ENABLE_ITEMS
+
 	//アイテムボックスマネージャーにメッシュを設定
 	m_pItemBoxManager->AttachMesh(m_pStaticMeshItemBox);
+
+#endif//#ifdef ENABLE_ITEMS
 
 	//壁にメッシュを設定
 	m_pWallTop->AttachMesh(m_pStaticMeshWallW);
@@ -834,6 +824,30 @@ HRESULT CGameMain::LoadData()
 
 	//背景画像を設定.
 	m_pBackImgObject->AttachMesh(m_pStaticMeshBackImg);
+
+	// 当たり判定マネージャーに必要なクラスをセット
+	// 爆風用の弾をセット
+	m_pCollisionManager->SetBlastMesh(m_pStaticMesh_BulletRed);
+
+	// 壁をセット
+	m_pCollisionManager->SetCStageWall(m_pWallTop, m_pWallBottom, m_pWallLeft, m_pWallRight);
+
+	// 地面をセット
+	m_pCollisionManager->SetCStageGround(m_pGround);
+
+	// 木箱をセット
+	m_pCollisionManager->SetCStageWoodBox(m_pWoodBoxTopLeft, m_pWoodBoxTopRight, m_pWoodBoxCenter, m_pWoodBoxBottomLeft, m_pWoodBoxBottomRight);
+
+	// 弾をセット
+	m_pCollisionManager->SetCShotManager(m_pShotManager);
+
+	// キャラクターマネージャーをセット
+	m_pCollisionManager->SetCPlayerManager(m_pCharacterManager);
+
+	//爆風マネージャーを設定.
+	m_pCollisionManager->SetCBlastManager(m_pBlastManager);
+
+	m_pCharacterManager->SetShotManager(m_pShotManager);
 
 	// バウンディングの作成
 	CreateBounding();
@@ -895,6 +909,11 @@ void CGameMain::SetPosition()
 
 	// プレイヤーの初期座標設定
 	m_pCharacterManager->SetStartPosition();
+
+	//COMに渡す障害物の情報
+	BuildComObstacles();
+	m_pCharacterManager->SetComObstacles(&m_ComObstacles);
+
 }
 
 void CGameMain::CreateBounding()
@@ -962,6 +981,12 @@ void CGameMain::CreateBounding()
 	//m_pBlastManager->CreateBSphereForMesh(m_pStaticMesh_BulletRed);
 	////当たり判定設定.
 	//m_pBlastManager->CreateSpehreCollider(m_pBlastManager->GetBlastRadius());
+
+	// プレイヤーの初期座標設定
+	m_pCharacterManager->SetStartPosition();
+
+	//BuildObstacleColliders();
+	//m_pCharacterManager->SetComObstacles(&m_ObstacleColliders);
 
 }
 
@@ -1090,4 +1115,95 @@ void CGameMain::EachSettingHitPoint()
 			m_pSpriteHitPoint[i]->SetScale(-0.5f, 0.5f, 0.5f);
 		}
 	}
+}
+
+#if 0
+void CGameMain::BuildObstacleColliders()
+{
+	m_ObstacleColliders.clear();
+
+	// 壁のBoxColliderを追加
+	if (m_pWallTop && m_pWallTop->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallTop->GetBoxCollider());
+
+	if (m_pWallBottom && m_pWallBottom->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallBottom->GetBoxCollider());
+
+	if (m_pWallLeft && m_pWallLeft->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallLeft->GetBoxCollider());
+
+	if (m_pWallRight && m_pWallRight->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWallRight->GetBoxCollider());
+
+	// 木箱のBoxColliderを追加
+	if (m_pWoodBoxTopLeft && m_pWoodBoxTopLeft->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxTopLeft->GetBoxCollider());
+
+	if (m_pWoodBoxTopRight && m_pWoodBoxTopRight->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxTopRight->GetBoxCollider());
+
+	if (m_pWoodBoxCenter && m_pWoodBoxCenter->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxCenter->GetBoxCollider());
+
+	if (m_pWoodBoxBottomLeft && m_pWoodBoxBottomLeft->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxBottomLeft->GetBoxCollider());
+
+	if (m_pWoodBoxBottomRight && m_pWoodBoxBottomRight->GetBoxCollider())
+		m_ObstacleColliders.push_back(m_pWoodBoxBottomRight->GetBoxCollider());
+}
+#endif
+
+
+void CGameMain::BuildComObstacles()
+{
+	m_ComObstacles.clear();
+
+#if 1
+	auto addObstacle = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
+		{
+			if (!obj) return;
+			CComPlayer::SimpleObstacle o;
+			o.pos = obj->GetPosition();
+			o.pos.y = 0.0f;      // 上から見た判定なので Y は 0
+			o.radius = radius;
+			m_ComObstacles.push_back(o);
+		};
+
+	// 壁は広いので大きめの半径
+	addObstacle(m_pWallTop, 12.0f);
+	addObstacle(m_pWallBottom, 12.0f);
+	addObstacle(m_pWallLeft, 12.0f);
+	addObstacle(m_pWallRight, 12.0f);
+
+	// 木箱は小さめの障害物
+	addObstacle(m_pWoodBoxTopLeft, 4.0f);
+	addObstacle(m_pWoodBoxTopRight, 4.0f);
+	addObstacle(m_pWoodBoxCenter, 4.0f);
+	addObstacle(m_pWoodBoxBottomLeft, 4.0f);
+	addObstacle(m_pWoodBoxBottomRight, 4.0f);
+#endif
+
+	auto addObject = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
+		{
+			if (!obj) return;
+			CComPlayer::SimpleObstacle object;
+			object.pos = obj->GetPosition();
+			object.pos.y = 0.0f;
+			object.radius = radius;
+			m_ComObstacles.push_back(object);
+		};
+
+	//木箱5個
+	addObject(m_pWoodBoxBottomLeft, 3.0f);
+	addObject(m_pWoodBoxBottomRight, 3.0f);
+	addObject(m_pWoodBoxCenter, 3.0f);
+	addObject(m_pWoodBoxTopLeft, 3.0f);
+	addObject(m_pWoodBoxTopRight, 3.0f);
+
+	//壁
+	addObject(m_pWallLeft, 12.f);
+	addObject(m_pWallRight, 12.f);
+	addObject(m_pWallTop, 12.f);
+	addObject(m_pWallBottom, 12.f);
+
 }

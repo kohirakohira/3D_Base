@@ -6,6 +6,7 @@ CCharacterObjectBase::CCharacterObjectBase()
 	, m_IsActive			( false )
 	, m_IsAlive				( false )
 	, m_HasControl			( false )
+	, m_PlayerID			( -1 )
 {
 	// キャラクター初期値.
 	m_Chara = {

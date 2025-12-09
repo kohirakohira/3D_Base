@@ -13,3 +13,5 @@
 #include <Windows.h>
 #include "Global.h"
 #include "MyMacro.h"
+
+//#define ENABLE_ITEMS	//アイテム処理を有効にする

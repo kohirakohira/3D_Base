@@ -10,6 +10,7 @@ CCharacterManager::CCharacterManager()
 	, m_pCharacter			()
 	, m_ActivePlayerIndex	( 0 )
 	, m_pCom				()
+	, ItemFlag				( false )
 {
 	//m_pCom = std::make_shared<CComPlayer>();
 }
@@ -44,6 +45,23 @@ void CCharacterManager::Init()
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
+		//プレイヤー0は固定で人間操作にする.
+		if (i == 0)
+		{
+			auto player = std::make_shared<CPlayer>();
+			player->Init(i);
+			player->SetControllerIndex(0);
+			player->SetHasControl(true);
+
+			if (!m_pBody || !m_pCannon)
+			{
+				SetBodyAndCannon(player->GetBody(), player->GetCannon());
+			}
+
+			m_pCharacter.push_back(player);
+			continue;
+		}
+
 		// コントローラーの接続状態を確認
 		CController* ctrl = CControllerManager::GetInstance().GetController(i);
 		bool connected = false;
@@ -126,7 +144,7 @@ void CCharacterManager::Init()
 void CCharacterManager::Update()
 {
 	//pad の接続状態に応じてPlayer.COMを入れ替える
-	SwitchControl();
+	//SwitchControl();
 
 	const int count = static_cast<int>(m_pCharacter.size());
 	if (count <= 0) return;
@@ -169,7 +187,7 @@ void CCharacterManager::Update()
 				//COMが追いかけるターゲットを設定
 				if (target && target != self)
 				{
-					com->SetTarget(target);    // プレイヤーを追いかける
+					//com->SetTarget(target);    // プレイヤーを追いかける
 				}
 				else
 				{
@@ -382,7 +400,7 @@ void CCharacterManager::SetStartPosition()
 		else if (index == 1)
 		{
 			pos = D3DXVECTOR3(-offset, 0.0f, offset);
-			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f);
+			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f);
 			sca = D3DXVECTOR3(1.8f, 1.8f, 1.8f);
 
 		}
@@ -512,8 +530,7 @@ void CCharacterManager::SetShotManager(std::shared_ptr<CShotManager>& mgr)
 	{
 		if (auto* com = dynamic_cast<CComPlayer*>(up.get())) 
 		{	
-			//CComPlayerなら生のポインタにして渡す.所有権は渡さない
-			com->AttachShotManager(m_ShotManager);	//weak_ptrに渡す
+			com->SetShotManager(m_ShotManager);	
 		}
 		else
 		{
@@ -685,7 +702,7 @@ void CCharacterManager::SwitchControl()
 			//すでにShotManagerが設定されていればCOMにもつける
 			if (m_ShotManager)
 			{
-				newCOM->AttachShotManager(m_ShotManager);
+				newCOM->SetShotManager(m_ShotManager);
 			}
 
 			//プレイヤーからCOMに入れ替え.
@@ -701,5 +718,33 @@ void CCharacterManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 	{
 		m_pCharacter[index]->GetBody()->SetPosition(push);
 		m_pCharacter[index]->GetCannon()->SetPosition(push);
+	}
+}
+
+
+void CCharacterManager::SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles)
+{
+	for (auto& up : m_pCharacter)
+	{
+		if (auto* com = dynamic_cast<CComPlayer*>(up.get()))
+		{
+			//com->SetSimpleObstacles(obstacles);
+		}
+	}
+}
+
+void CCharacterManager::SetBlastFlag(int index, bool flg)
+{
+	if (index >= 0 && index < m_pCharacter.size())
+	{
+		m_pCharacter[index]->SetBlastFlag(flg);
+	}
+}
+
+bool CCharacterManager::GetBlastFlag(int index)
+{
+	if (index >= 0 && index < m_pCharacter.size())
+	{
+		return m_pCharacter[index]->GetBlastFlag();;
 	}
 }

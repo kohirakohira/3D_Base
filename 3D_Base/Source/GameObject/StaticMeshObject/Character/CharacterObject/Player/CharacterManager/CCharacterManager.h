@@ -68,7 +68,7 @@ public:
 	std::shared_ptr<CCharacterObjectBase> GetControlPlayer(int index); // 引数あり
 	//============================
 
-	void SwitchActivePlayer(); // 旧コード：動かせるプレイヤーを変更できた
+	void SwitchActivePlayer(); //動かせるプレイヤーを変更できた
 
 	//プレイヤーの位置と回転を取得.引数には各プレイヤーを入れる
 	D3DXVECTOR3 GetPosition(int index)const;
@@ -101,7 +101,15 @@ public:
 	//=====無敵の設定・取得=====
 	void SetMuteki(int index, bool flg);
 	void GetMuteki(int index);
-	//========================
+	//==========================
+
+	//障害物リストを渡す.
+	void SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles);
+
+	//=====プレイヤーの爆風フラグの設定・取得=====
+	void SetBlastFlag(int index, bool flg);
+	bool GetBlastFlag(int index);
+	//============================================
 
 private:
 
@@ -125,8 +133,9 @@ private:
 	std::shared_ptr<CCannon>				m_pCannon;
 	std::shared_ptr<CShotManager>			m_ShotManager; //弾マネージャー
 	std::shared_ptr<CComPlayer>				m_pCom;
-	//*仮追加
-	//std::shared_ptr<CComPlayer>				m_pCom;
+	
+	//アイテムを取得したかどうか.
+	bool ItemFlag;
 
 	//CPlayerとCComPlayerを同一コンテナで管理するための基底に統一
 	std::vector<std::shared_ptr<CCharacterObjectBase>> m_pCharacter;

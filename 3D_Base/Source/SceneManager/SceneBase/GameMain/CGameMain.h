@@ -30,11 +30,11 @@
 #include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h" // 弾クラスマネージャー.
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス.
 
-#include "Collision//BlastCollision//BlastCollisionManager//CBlastCollisionManager.h"	//爆風クラス.
-
 #include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"//アイテムボックスマネージャークラス..
 
 #include "Camera//CCamera.h" //カメラクラス.
+
+#include "../../GameObject/StaticMeshObject/BlastManager/CBlastManager.h"//爆風マネージャークラス.
 
 //-----ステージオブジェクトクラス-----
 #include "GameObject//StaticMeshObject//StageObject//CStageObject.h"
@@ -198,17 +198,26 @@ public:
 	// 地面
 	std::shared_ptr<CStageObject>		m_pGround;
 
-	// 爆風
-	std::shared_ptr<CBlastCollisionManager>	m_pBlastManager;
-
 	// アイテムボックスマネージャークラス
 	std::shared_ptr<CItemBoxManager>	m_pItemBoxManager;
+
+	//爆風マネージャークラス.
+	std::shared_ptr<CBlastManager>		m_pBlastManager;
 
 	// 当たり判定マネージャー
 	std::shared_ptr<CCollisionManager> m_pCollisionManager;
 
 	// シーン列挙変数
 	CSceneType		m_SceneType;
+
+private:
+	std::vector<std::shared_ptr<CBoxCollider>> m_ObstacleColliders;
+	std::vector<CComPlayer::SimpleObstacle> m_ComObstacles;
+
+	//障害物リスト
+	void BuildObstacleColliders();
+
+	void BuildComObstacles();
 
 public:		
 	// 変数用

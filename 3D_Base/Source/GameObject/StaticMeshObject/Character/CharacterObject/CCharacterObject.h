@@ -49,15 +49,14 @@ public:
 	virtual void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override = 0;
 
 	//車体の取得.
-	virtual std::shared_ptr<CBody> GetBody() const = 0;
-	//砲塔の取得.
+	virtual std::shared_ptr<CBody> GetBody() const { return m_pBody; }	//砲塔の取得.
 	virtual std::shared_ptr<CCannon> GetCannon() const = 0;
 	//弾マネージャーの取得.
 	virtual std::shared_ptr<CShotManager> GetShotManager() const = 0;
 
 	//砲塔の位置取得.
 	virtual D3DXVECTOR3 GetCannonPosition() const = 0;
-	virtual float GetCannonYaw() const = 0;
+	virtual float GetCannonYaw() const { return m_pCannon->GetRotation().y; }
 
 	//プレイヤーかCOMを判定する用.
 	virtual bool IsPlayer() const = 0;
@@ -101,14 +100,36 @@ public:
 	virtual bool GetMuteki() const = 0;
 	//========================
 
+	//=====プレイヤーの爆風フラグの設定・取得=====
+	virtual void SetBlastFlag(bool flg) = 0;
+	virtual bool GetBlastFlag() = 0;
+	//============================================
+
+	//位置の取得.
+	virtual D3DXVECTOR3 GetPosition() const = 0;
+
+	//位置設定
+	virtual void SetPosition(const D3DXVECTOR3& pos) = 0;
+
+	//回転取得
+	virtual D3DXVECTOR3 GetRotation() const = 0;
+
+	//回転設定
+	virtual void SetRotation(const D3DXVECTOR3& rot) = 0;
+
+	//プレイヤーのインデックス番号の取得.
+	virtual int GetPlayerID() = 0;
+
 protected:
 	//車体クラス.
 	std::shared_ptr<CBody>			m_pBody;
 	//砲塔クラス.
 	std::shared_ptr<CCannon>		m_pCannon;
 	//弾マネージャークラス.
-	//生成や設定はPlayer/COM側で行う.
 	std::shared_ptr<CShotManager>	m_pShotManager;
+
+	//爆風のフラグ.
+	bool m_BlastFlag;
 
 	//キャラクターの状態.
 	bool m_IsActive;
@@ -118,4 +139,7 @@ protected:
 
 	//操作権があるか
 	bool m_HasControl;	
+
+	//プレイヤーID
+	int m_PlayerID;
 };

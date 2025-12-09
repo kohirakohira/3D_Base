@@ -68,8 +68,6 @@
     <ClCompile Include="Source\stdafx.cpp" />
     <ClCompile Include="Source\Vector3.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
-    <ClCompile Include="Source\Collision\BlastCollision\CBlastCollision.cpp" />
-    <ClCompile Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\CController.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.cpp" />
@@ -80,9 +78,11 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankCannon\CCannon.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerManager\CPlayerManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\CPlayer.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\BlastManager\Blast\CBlast.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\BlastManager\CBlastManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -140,8 +140,6 @@
     <ClInclude Include="Source\MyMacro.h" />
     <ClInclude Include="Source\stdafx.h" />
     <ClInclude Include="Source\Vector3.h" />
-    <ClInclude Include="Source\Collision\BlastCollision\CBlastCollision.h" />
-    <ClInclude Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\CController.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.h" />
@@ -153,9 +151,11 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankCannon\CCannon.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerManager\CPlayerManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\CPlayer.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\BlastManager\Blast\CBlast.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\BlastManager\CBlastManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />
