@@ -40,7 +40,7 @@ bool CSoundManager::Load(HWND hWnd)
 		{ enList::BGM_Main,		_T("Data\\Sound\\BGM\\Main.mp3"),								_T("BGM_Main")	},
 
 		{ enList::SE_Click,		_T("Data\\Sound\\SE\\Choice.mp3"),								_T("SE_Click")	},
-		{ enList::SE_Shot,		_T("Data\\Sound\\SE\\shot.mp3"),								_T("SE_Shot")	},
+		{ enList::SE_Shot,		_T("Data\\Sound\\SE\\Shot.mp3"),								_T("SE_Shot")	},
 		{ enList::SE_Damage ,	_T("Data\\Sound\\SE\\damage.mp3"),								_T("SE_Damage")	},
 		{ enList::SE_Explosion,	_T("Data\\Sound\\SE\\explosion.mp3"),						_T("SE_Explosion")	},
 		{ enList::SE_Clear,		_T("Data\\Sound\\SE\\Clear.wav"),								_T("SE_Clear")	},
