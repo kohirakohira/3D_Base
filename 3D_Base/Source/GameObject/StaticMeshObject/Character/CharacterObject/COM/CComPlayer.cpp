@@ -352,6 +352,12 @@ void CComPlayer::Update()
         return;
     }
 
+    //COMが死亡しているなスキップ
+    if (m_Chara.m_Death == true)
+    {
+        return;
+    }
+
     //定期リターゲット
     if (--m_RetargetTimer <= 0 || !m_pTarget) {
         MakeFixedTimeTarget();
