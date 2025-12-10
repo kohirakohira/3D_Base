@@ -9,9 +9,6 @@
 //ショットマネージャー
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	
 
-//COM用の追尾クラス
-#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CChase/CChase.h"
-
 //当たり判定.障害物判定用
 #include "Collision/Collider/BoxCollider/CBoxCollider.h"
 
