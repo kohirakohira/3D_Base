@@ -1139,12 +1139,12 @@ void CGameMain::BuildComObstacles()
 	{
 		addObstacle(x, wallOffset, wallRadius);   // 壁上
 		addObstacle(x, -wallOffset, wallRadius);  // 壁下
+	}
 
-		for (float z = -24.f; z <= 24.f; z += 8.0f)
-		{
-			addObstacle(-wallOffset, z, wallRadius);
-			addObstacle(wallOffset, z, wallRadius);
-		}
+	for (float z = -24.f; z <= 24.f; z += 8.0f)
+	{
+		addObstacle(-wallOffset, z, wallRadius);
+		addObstacle(wallOffset, z, wallRadius);
 	}
 	// 木箱
 	auto addBoxObstacle = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
