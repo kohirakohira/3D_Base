@@ -38,6 +38,7 @@ public:
 protected:
 	std::shared_ptr<RAY>	m_pRayY;	//Y•ûŒü‚ÖL‚Î‚µ‚½ƒŒƒC.
 
+
 	TankTuning m_Tuning;	//íÔ‚Ìî•ñ
 	
 };

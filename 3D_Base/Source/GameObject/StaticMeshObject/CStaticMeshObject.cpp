@@ -166,6 +166,53 @@ bool CStaticMeshObject::IsHitForRay(
 	return false;	//外れている.
 }
 
+//壁からの位置を計算する
+void CStaticMeshObject::CalculatePositionFromWall()
+{
+	static constexpr float WSPACE = 0.8f;	//壁との限界距離
+
+	float Distance;			//レイの距離
+	D3DXVECTOR3 Intersect;	//レイの交差点
+
+	D3DXVECTOR3 vNormal;
+	D3DXVECTOR3 vOffset = D3DXVECTOR3(0.f, 0.f, 0.f);
+
+	RAY Ray;
+
+	if (IsHitForRay(Ray, &Distance, &Intersect) == true)
+	{
+		if (Distance <= WSPACE)
+		{
+			vOffset = vNormal * (WSPACE - Distance);
+
+			//レイの位置を更新
+			Ray.Position += vOffset;
+		}
+	}
+
+#if 0
+	//レイの向きにより当たる壁までの距離を求める（前後左右）
+	for (int dir = 0; dir < CROSSRAY::max; dir++)
+	{
+		if (IsHitForRay(pCrossRay->Ray[dir], &Distance, &Intersect, &vNormal))
+		{
+			if (Distance <= WSPACE)
+			{
+				//法線は壁から真っすぐに出ているので、法線とかけ合わせて、対象を動かすベクトルが得られる
+				vOffset = vNormal * (WSPACE - Distance);
+
+				//レイの位置を更新
+				for (int i = 0; i < CROSSRAY::max; i++)
+				{
+					pCrossRay->Ray[i].Position += vOffset;
+				}
+			}
+		}
+	}
+#endif
+}
+
+
 //交差位置のポリゴンの超連を見つける.
 HRESULT CStaticMeshObject::FindVerticesOnPoly(
 	LPD3DXMESH pMesh, DWORD dwPolyIndex, D3DXVECTOR3* pVertices)
