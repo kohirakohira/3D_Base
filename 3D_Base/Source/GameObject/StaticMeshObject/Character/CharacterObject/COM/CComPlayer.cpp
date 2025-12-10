@@ -117,6 +117,12 @@ void CComPlayer::CreateCollider()
     m_pCannon->CreateBoxCollider(m_pCannon->GetMinPos(), m_pCannon->GetMaxPos());
 }
 
+void CComPlayer::SetShotManager(std::shared_ptr<CShotManager> shot)
+{
+    m_pShotManager = shot;
+    m_pCannon->SetShotManager(shot);
+}
+
 //ХsР│ТlВЁЦhВо
 void CComPlayer::SanitizeParams()
 {

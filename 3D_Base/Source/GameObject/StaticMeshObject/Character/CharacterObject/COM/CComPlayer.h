@@ -315,8 +315,5 @@ private:
 	bool GetMuteki() const override { return m_Chara.m_Muteki; }
 	//========================
 
-	void SetBlastFlag(bool flg) override{} ;
-	bool GetBlastFlag() override { return m_BlastFlag; }
-
 	int GetPlayerID() override { return m_PlayerID; } 
 };
