@@ -52,6 +52,7 @@ void CBlastCollisionManager::Create(const D3DXVECTOR3& pos, bool blast, std::sha
 
 	//î•ñ‚Ì•Û‘¶.
 	m_pBlastCollision.push_back(std::move(blastColl));
+
 }
 
 //“–‚½‚Á‚½‚ÌŠÖ”.

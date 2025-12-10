@@ -1,4 +1,5 @@
 #include "CControllerManager.h"
+#include "Assets//Sound//CSoundManager.h" // サウンドマネージャー
 
 CControllerManager::CControllerManager()
 	: m_ConnectedCount			( 0 )
@@ -77,6 +78,9 @@ void CControllerManager::Reoderring()
 		std::swap(m_Controller[index], m_Controller[nextSlot]);
 
 		nextSlot++;
+
+		// コントローラーの切断SE
+		CSoundManager::PlaySE(CSoundManager::SE_UnConnect);
 	}
 }
 //===================================

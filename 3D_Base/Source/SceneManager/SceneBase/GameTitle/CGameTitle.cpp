@@ -77,6 +77,7 @@ void CGameTitle::Update()
 
 				//ƒRƒ“ƒ\[ƒ‹•¶š‚ğÁ‚·.
 				system("cls");
+
 			}
 			else
 			{
