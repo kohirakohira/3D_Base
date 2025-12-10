@@ -1,4 +1,5 @@
 #include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h" // ショットマネージャークラス
+#include "Assets/Sound/CSoundManager.h"
 
 CShotManager::CShotManager()
 	: m_pShots			()
@@ -74,7 +75,6 @@ void CShotManager::HitShot()
 
 void CShotManager::Create(const D3DXVECTOR3& pos, float rotY, bool shotFlg, int No)
 {
-
 	// インスタンス生成
 	auto shot = std::make_unique<CShot>();
 
@@ -95,6 +95,9 @@ void CShotManager::Create(const D3DXVECTOR3& pos, float rotY, bool shotFlg, int 
 
 	// 情報の保存
 	m_pShots.push_back(std::move(shot));
+
+	// 大砲の発射効果音
+	CSoundManager::PlaySE(CSoundManager::SE_Shot);
 }
 
 // モデルに合わせたバウンディングスフィア作成のラッパー関数
