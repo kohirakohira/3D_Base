@@ -288,17 +288,6 @@ private:
 		float escapeWeight,
 		float approachWeight) const;
 
-	//=====ヒット関数=====
-	virtual void Hit() override;
-	//===================
-
-	//=====ダメージ関数=====
-	void Damage() override;
-	//=====================
-
-	//=====死亡関数=====
-	void Death() override;
-	//=================
 
 	//===ダメージの設定・取得===
 	virtual void SetDamage(bool flg) override { m_Chara.m_Damage = flg; }
@@ -314,9 +303,6 @@ private:
 	void SetMuteki(bool flg) override { m_Chara.m_Muteki = flg; }
 	bool GetMuteki() const override { return m_Chara.m_Muteki; }
 	//========================
-
-	void SetBlastFlag(bool flg) override{} ;
-	bool GetBlastFlag() override { return m_BlastFlag; }
 
 	int GetPlayerID() override { return m_PlayerID; } 
 };
