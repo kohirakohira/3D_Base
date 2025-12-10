@@ -14,11 +14,25 @@ CCannon::CCannon(int inputID)
 
 	// コライダー作成
 	m_pCollider = std::make_shared<CBoxCollider>();
-	//m_pRay = std::make_shared<CRay>();
+
+	//レイの生成
+	m_pRay = new RAY();
+
+	float len = 10.f;
+	D3DXVECTOR3 pos = this->GetPosition();
+	D3DXVECTOR3 rot = this->GetRotation();
+
+	//yは無視
+	m_pRay->Axis = (D3DXVECTOR3(3.f,0.f,3.f));
+	m_pRay->Length = len;
+	m_pRay->Position = pos;
+	m_pRay->RotationY = rot.y;
 }
 
 CCannon::~CCannon()
 {
+	//レイの破棄
+	SAFE_DELETE(m_pRay);
 }
 
 void CCannon::Update()
@@ -57,6 +71,7 @@ void CCannon::CreateBounding(std::shared_ptr<CStaticMesh> pCannon)
 
 void CCannon::Reload(D3DXVECTOR3 pos, float y, bool flag, int index)
 {
+
 	//クールタイムがインターバルより小さいとき.
 	if (m_ShotCoolTime >= m_ShotInterval)
 	{

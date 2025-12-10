@@ -126,13 +126,6 @@ void CGameDebug::Init()
 	m_pSpriteTimerObj->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteTimerObj->SetScale(0.3f, 0.3f, 0.f);
 
-
-
-
-
-
-
-
 	//検証用.
 	m_pItemBoxManager->SetPosition(0.f, 20.f, 0.f);
 	m_pItemBoxManager->SetRotation(0.f, 0.f, 0.f);
@@ -246,13 +239,6 @@ HRESULT CGameDebug::LoadData()
 
 	//地面の画像設定.
 	m_pGround->AttachMesh(m_pStaticMeshGround);
-
-
-
-
-
-
-
 
 	//検証用.
 	//スタティックメッシュの読み込み.
