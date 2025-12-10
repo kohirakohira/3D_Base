@@ -15,24 +15,10 @@ CCannon::CCannon(int inputID)
 	// コライダー作成
 	m_pCollider = std::make_shared<CBoxCollider>();
 
-	//レイの生成
-	m_pRay = new RAY();
-
-	float len = 10.f;
-	D3DXVECTOR3 pos = this->GetPosition();
-	D3DXVECTOR3 rot = this->GetRotation();
-
-	//yは無視
-	m_pRay->Axis = (D3DXVECTOR3(3.f,0.f,3.f));
-	m_pRay->Length = len;
-	m_pRay->Position = pos;
-	m_pRay->RotationY = rot.y;
 }
 
 CCannon::~CCannon()
 {
-	//レイの破棄
-	SAFE_DELETE(m_pRay);
 }
 
 void CCannon::Update()

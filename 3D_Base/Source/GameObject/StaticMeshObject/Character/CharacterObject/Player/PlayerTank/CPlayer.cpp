@@ -129,6 +129,11 @@ void CPlayer::Update()
 	// 死亡処理の更新
 	Death();
 
+	if (m_Chara.m_Death == true)
+	{
+		return;
+	}
+
 	//移動とか適用
 	UpdateHumanInputAndMove(m_CurrentInput);
 

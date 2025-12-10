@@ -2,9 +2,6 @@
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"	//基底クラス.
 
 //-----外部のヘッダー-----
-//アイテム
-#include "GameObject/StaticMeshObject/ItemBoxManager/ItemBoxType/ItemType.h"
-#include "GameObject/StaticMeshObject/ItemBoxManager/ItemBox/CItemBox.h"
 
 //ショットマネージャー
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	
@@ -74,9 +71,6 @@ public:
 	//プレイヤーを取得する.読み取り専用
 	void SetPlayersRef(const std::vector<std::shared_ptr<CCharacterObjectBase>>* all) { m_pAllPlayer = all; }
 
-	//マネージャーからアイテムの参照
-	void SetItemBox(std::vector<std::shared_ptr<CItemBox>>* item) { m_pItemBox = item; }
-
 	//障害物用のBOXセット
 	void SetBoxColliders(const std::vector<std::shared_ptr<CBoxCollider>>* colliders)
 	{
@@ -145,12 +139,10 @@ private:
 	void StepChase();													//追跡処理
 	void StepAttack();													//攻撃処理
 	void StepEvade();													//離脱処理
-	void StepItemSeek();												//アイテム探索処理
 	void TryAutoFire();													//COMの弾発射処理
 	void SanitizeParams();												//パラメータ調整
 	void TickChaseTo(const D3DXVECTOR3& targetPos);						//追尾
 	void TickAimTo(const D3DXVECTOR3& targetPos);						//砲塔追尾
-	//void TickWander(float turnStep, float moveStep);
 	void TickWander();													//引数なし
 	void Blacklist(int id) { m_TargetBlackList[id] = m_BlackListTime; }	//一定時間ターゲットにしない
 	bool IsBlacklisted(int id) const;									//IDがリストに登録されているか判定.読み取り専用
@@ -188,8 +180,6 @@ private:
 
 	bool HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const;
 
-	float NearestItemDist2(float& outDist2) const;
-
 	//分離COMが重なったりするのを防ぐ計算
 	void ComputeSeparation(const D3DXVECTOR3& selfPos,
 		D3DXVECTOR3& outSep, float& outNearest) const;
@@ -200,8 +190,6 @@ private:
 	//外部クラス
 	std::shared_ptr<CCharacterObjectBase> m_pTarget;							//追尾対象
 	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;		//プレイヤーの一覧取得
-	std::vector<std::shared_ptr<CItemBox>>* m_pItemBox;							//アイテムボックス
-	std::weak_ptr<CItemBox> m_pItemTarget;										//弱参照のアイテムボックス
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;			//障害物のBoxColliderリスト
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
 	const std::vector<SimpleObstacle>* m_pSimpleObstacles;						//障害物情報
@@ -236,15 +224,6 @@ private:
 	std::unordered_map<int, int> m_TargetBlackList;	//キーは相手のID.値は残りフレーム数
 	int m_BlackListTime;							//何秒無視するか
 
-	//アイテムが消えたので一旦消さずに放置
-#if 0
-	//アイテム
-	int		m_RetargetItemTimer;		//アイテムタイマー
-	int		m_RetargetItemInterval;		//アイテム探索インターバル 
-	float	m_ItemGetRadius;			//範囲内なら狙う
-	float	m_ItemPickUpRaius;			//以下なら取得.最終的には当たり判定でやる
-	ComShotState m_ShotState;
-#endif
 
 	ComShotState m_ShotState;			//COMのショット情報
 

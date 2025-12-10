@@ -166,6 +166,7 @@ bool CStaticMeshObject::IsHitForRay(
 	return false;	//外れている.
 }
 
+#if 0
 //壁からの位置を計算する
 void CStaticMeshObject::CalculatePositionFromWall()
 {
@@ -211,7 +212,7 @@ void CStaticMeshObject::CalculatePositionFromWall()
 	}
 #endif
 }
-
+#endif
 
 //交差位置のポリゴンの超連を見つける.
 HRESULT CStaticMeshObject::FindVerticesOnPoly(
