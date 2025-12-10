@@ -317,14 +317,33 @@ void CCharacterManager::SetRespawnArea(int index)
 	areas[2].RespawnRot = { 0.0f, D3DXToRadian(AngleY),	    0.0f }; // 左下
 	areas[3].RespawnRot = { 0.0f, D3DXToRadian(AngleY * 7), 0.0f }; // 右下
 
-	// 各プレイヤーがどのエリアにいるか調べる
-	for (int index = 0; index < PLAYER_MAX; index++)
+	// エリア初期化
+	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		auto PPos = m_pCharacter[index]->GetBody()->GetPosition();
+		areas[i].Taken = false;
+	}
 
-		int areaIndex = GetAreaIndex(PPos.x, PPos.z);
+	// 各キャラクターがどのエリアにいるか調べる
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		// リスポーン対象者は除外
+		if (i == index)
+		{
+			continue;
+		}
+		
+		// 死んでいる対象も除外
+		if (m_pCharacter[i]->GetDeath() == true)
+		{
+			continue;
+		}
 
-		areas[areaIndex].Taken = true;
+		// キャラクターの座標取得
+		auto Pos = m_pCharacter[i]->GetBody()->GetPosition();
+		// キャラクターが現在いるエリアを判別
+		int area = GetAreaIndex(Pos.x, Pos.z);
+		// キャラクターがいる場所のフラグを立てる
+		areas[area].Taken = true;
 	}
 
 	// 空いているエリアを探す
@@ -351,11 +370,6 @@ void CCharacterManager::SetRespawnArea(int index)
 		m_pCharacter[index]->GetCannon()->SetPosition(areas[freeIndex].RespawnPos);
 		m_pCharacter[index]->GetBody()->SetRotation(areas[freeIndex].RespawnRot);
 		m_pCharacter[index]->GetCannon()->SetRotation(areas[freeIndex].RespawnRot);
-
-		for (int index = 0; index < PLAYER_MAX; index++)
-		{
-			areas[index].Taken = false;
-		}
 	}
 }
 //==============================
@@ -363,19 +377,26 @@ void CCharacterManager::SetRespawnArea(int index)
 //=======中央を跨がないように計算=======
 int CCharacterManager::GetAreaIndex(float x, float z)
 {
-	// 四捨五入の座標を使用
-	float rx = std::round(x);
-	float rz = std::round(z);
+	// 中央線を跨ぐ曖昧判定を避けるための微小値
+	const float eps = 0.001f;
 
-	// もし四捨五入結果が0なら、適当に片方に寄せる
-	if (rx == 0) rx = (x >= 0) ? 1 : -1;
-	if (rz == 0) rz = (z >= 0) ? 1 : -1;
+	// 中央付近の誤差で 0 と誤判定しないよう補正
+	if (fabsf(x) < eps)
+	{
+		x = (x >= 0) ? eps : -eps;
+	}
+	if (fabsf(z) < eps)
+	{
+		z = (z >= 0) ? eps : -eps;
+	}
 
-	// これで確実に x,z は ±1 のどちらかに分類できる
-	if (rx < 0 && rz > 0) return 0; // 左上
-	if (rx > 0 && rz > 0) return 1; // 右上
-	if (rx < 0 && rz < 0) return 2; // 左下
-	if (rx > 0 && rz < 0) return 3; // 右下
+	// x,z の符号でエリア判定（これが最も安定）
+	if (x < 0 && z > 0) return 0; // 左上
+	if (x > 0 && z > 0) return 1; // 右上
+	if (x < 0 && z < 0) return 2; // 左下
+	if (x > 0 && z < 0) return 3; // 右下
+
+	return 0; // 念のため
 }
 //====================================
 
