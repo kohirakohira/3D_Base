@@ -43,6 +43,9 @@ public:
 	//弾を作成・リロード・発射関数.
 	void Reload(D3DXVECTOR3 pos, float y, bool flag, int index);
 
+	//レイの取得.
+	RAY GetRay() const{ return *m_pRay; }
+
 private:
 	float		m_TurnSpeed;			// 回転速度
 
@@ -57,4 +60,7 @@ private:
 
 	// コントローラークラス
 	CController* m_pController;
+
+	//レイ構造体のポインタ
+	RAY* m_pRay;
 };

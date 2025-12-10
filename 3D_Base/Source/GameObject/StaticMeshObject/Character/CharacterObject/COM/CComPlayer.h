@@ -9,9 +9,6 @@
 //ショットマネージャー
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"	
 
-//COM用の追尾クラス
-#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CChase/CChase.h"
-
 //当たり判定.障害物判定用
 #include "Collision/Collider/BoxCollider/CBoxCollider.h"
 
@@ -20,22 +17,26 @@
 
 #include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/CPlayer.h"
 
+//ユーティリティクラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/Util/Util.h"
+
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
 #include <limits>
 #include <unordered_set>
 #include <memory>
-
-
+#include <deque>
 class CComPlayer
 	: public CCharacterObjectBase
 {
 public:
 
+	//オブジェクト
 	struct SimpleObstacle
 	{
-		D3DXVECTOR3 pos;	
+		D3DXVECTOR3 pos;
 		float radius;
 	};
 
@@ -67,6 +68,9 @@ public:
 	void SetComEnabled(bool enabled) { m_ComEnabled = enabled; }
 	bool IsComEnabled() const { return m_ComEnabled; }
 
+	//キャラクターマネージャーで使うよう
+	void AttachShotManager(std::shared_ptr<CShotManager>& mgr) { m_pShotManager = mgr; }
+
 	//プレイヤーを取得する.読み取り専用
 	void SetPlayersRef(const std::vector<std::shared_ptr<CCharacterObjectBase>>* all) { m_pAllPlayer = all; }
 
@@ -83,8 +87,26 @@ public:
 
 	void CreateCollider();
 
-	//プレイヤーのインデックス番号の取得.
-	int GetPlayerID() { return m_PlayerID; }
+	//弾マネージャーの設定.
+	void SetShotManager(std::shared_ptr<CShotManager> shot) override;
+
+	D3DXVECTOR3 GetPosition() const override
+	{
+		if (m_pBody) return m_pBody->GetPosition();
+		return D3DXVECTOR3(0, 0, 0);
+	}
+
+	//位置設定
+	void SetPosition(const D3DXVECTOR3& pos) override
+	{
+		if (m_pBody)   m_pBody->SetPosition(pos);
+		if (m_pCannon) m_pCannon->SetPosition(pos);
+	}
+
+	//回転取得
+	D3DXVECTOR3 GetRotation() const override { if (m_pBody) return m_pBody->GetPosition(); return D3DXVECTOR3(0, 0, 0); }
+	//回転設定
+	void SetRotation(const D3DXVECTOR3& rot) override { if (m_pBody) return m_pBody->SetRotation(rot); }
 
 	void FindNearestTarget();
 
@@ -93,16 +115,18 @@ public:
 		m_pSimpleObstacles = obstacles;
 	}
 
+	//キャラクターにヒットしたとき
+	void CharacterHitRay();
 
 private:
 	//構造体
 	//COMのショット関連のパラメータ
 	struct ComShotState
 	{
-		int m_ShotCD = 0;				//クールダウン
-		int	ShotCooldownFrames = 120;	//クールダウン時間
-		float FireAngleEpsDeg = 30;		//この角度以内なら発射
-		float MuzzleOffsetZ = 1;		//砲口のオフセット
+		int m_ShotCD = 0;						//クールダウン
+		int	ShotCooldownFrames = 120;			//クールダウン時間
+		float FireAngleEpsDeg = 360.f;			//この角度以内なら発射
+		float MuzzleOffsetZ = 0.5f;				//砲口のオフセット
 	};
 
 	//列挙型
@@ -113,7 +137,6 @@ private:
 		Chase,		//追跡
 		Attack,		//攻撃
 		Evade,		//離脱
-		ItemSeek,	//アイテム探索
 	};
 
 	//関数
@@ -124,11 +147,11 @@ private:
 	void StepEvade();													//離脱処理
 	void StepItemSeek();												//アイテム探索処理
 	void TryAutoFire();													//COMの弾発射処理
-	void MakeItemTarget();
 	void SanitizeParams();												//パラメータ調整
 	void TickChaseTo(const D3DXVECTOR3& targetPos);						//追尾
 	void TickAimTo(const D3DXVECTOR3& targetPos);						//砲塔追尾
-	void TickWander(float turnStep, float moveStep);
+	//void TickWander(float turnStep, float moveStep);
+	void TickWander();													//引数なし
 	void Blacklist(int id) { m_TargetBlackList[id] = m_BlackListTime; }	//一定時間ターゲットにしない
 	bool IsBlacklisted(int id) const;									//IDがリストに登録されているか判定.読み取り専用
 	void TickBlacklist();												//フレームごとにブラックリストを更新
@@ -136,10 +159,6 @@ private:
 	void TransitionTo(State state);										//ステータスを変更する
 	void EvaluateTransitions(float dist);								//条件に応じて状態変更	
 	void MakeFixedTimeTarget();											//一定時間ターゲットにする
-	static float Deg2Red(float d) { return d * (D3DX_PI / 180.0f); }
-	static float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b);
-	static float AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos);
-	static float ToRad(float d) { return d * (D3DX_PI / 180.0f); }
 	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 
 	//障害物判定用
@@ -155,6 +174,8 @@ private:
 	//回避側に固定旋回を混ぜる
 	float SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep);
 
+	bool FollowPath(float turnStep, float moveSte);
+
 	//========================================
 	// 安全な前進処
 	//========================================
@@ -165,23 +186,9 @@ private:
 	//========================================
 	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
 
+	bool HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const;
 
-	// ヘルパ
-	static float Wrap(float rad);                         //[-π,π]に正規化
-	static float Approach(float cur, float goal, float step);
-	static D3DXVECTOR3 ForwardFromYaw(float yaw);         //(sin(yaw),0,cos(yaw))
-	static float PI() { return D3DX_PI; }
-	static float TWO_PI() { return D3DX_PI * 2.0f; }
-
-	static inline float AngleDeadband(float a, float epsRad) {
-		return (std::fabs(a) < epsRad) ? 0.0f : a;
-	}
-	static inline float ClampF(float v, float lo, float hi) {
-		return (v < lo) ? lo : (v > hi) ? hi : v;
-	}
-
-	//動作切り替え
-	static float Sqr(float v) { return v * v; }
+	float NearestItemDist2(float& outDist2) const;
 
 	//分離COMが重なったりするのを防ぐ計算
 	void ComputeSeparation(const D3DXVECTOR3& selfPos,
@@ -198,7 +205,7 @@ private:
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;			//障害物のBoxColliderリスト
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
 	const std::vector<SimpleObstacle>* m_pSimpleObstacles;						//障害物情報
-	//std::shared_ptr<CShotManager> m_pShotManager;									//ショットマネージャーの弱参照
+	std::deque<D3DXVECTOR3> m_Path;												//ワールド座標WP列
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
@@ -229,23 +236,27 @@ private:
 	std::unordered_map<int, int> m_TargetBlackList;	//キーは相手のID.値は残りフレーム数
 	int m_BlackListTime;							//何秒無視するか
 
+	//アイテムが消えたので一旦消さずに放置
+#if 0
 	//アイテム
 	int		m_RetargetItemTimer;		//アイテムタイマー
 	int		m_RetargetItemInterval;		//アイテム探索インターバル 
 	float	m_ItemGetRadius;			//範囲内なら狙う
 	float	m_ItemPickUpRaius;			//以下なら取得.最終的には当たり判定でやる
 	ComShotState m_ShotState;
+#endif
+
+	ComShotState m_ShotState;			//COMのショット情報
 
 	//========================================
 	// 障害物回避パラメータ
 	//========================================
-	float		m_ProbeAngleRad;		// 探査角度（左右に振る角度）
+	//float		m_ProbeAngleRad;		// 探査角度（左右に振る角度）
 	float		m_ProbeDist;			// 探査距離
 	float		m_AvoidHoldFrames;		// 回避を維持するフレーム数
 	int			m_AvoidSide;			// 回避方向（+1:右, -1:左, 0:未決定）
 	float		m_AvoidMaxFrames;		// 最大回避フレーム
 	float		m_BodyRadius;			// 自機の半径
-
 
 	bool		m_Respawn;				// リスポーン
 
@@ -253,17 +264,59 @@ private:
 	float m_WanderRadius;           // 中央からこの範囲内を徘徊（デフォルト 15.0）
 	float m_CenterPullStrength;     // 中央への引き寄せ強度（デフォルト 0.3）
 
-#if 1
-	//bool    m_WantsItem;            // アイテムを欲しているか
-	//float   m_ItemSeekPriority;     // アイテム優先度（HP低下時など上昇）
+	float m_ObstacleProbeDist = 8.0f;								// 何メートル先まで見るか
+	float m_ObstacleProbeStep = 0.1f;								// 何メートル刻みでチェックするか
+	float m_ObstacleRadius = 1.5f;									// 自分の半径
+	float m_ProbeAngleRad = D3DXToRadian(25.0f);					// 左右にどれくらい首を振るか
+	float m_LookAheadSkep;
 
-	//// private セクションに追加する関数
-	//void CheckItemCollision();      // アイテムとの衝突判定
-	//bool ShouldSeekItem() const;    // アイテムを探すべきか判定
-	//void ApplyItemEffect(const ItemInfomation& info);   // アイテム効果適用
-#endif
+	//COMの複数敵判定
+	float m_MultiEnemyRadius = 8.0f;	//この範囲内の敵をカウント
+	float m_EscapeWeight = 0.6f;		//逃げの重み
+	float m_ApproachWeight = 0.4f;		//攻めの重み
+	int	  m_MultiEnemyThreshold = 2;	//この数以上で
 
+	//レイがヒットしたかどうか
+	bool m_RayHit;
+
+	//複数体敵対応関数
+	int CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) const;
+
+	float ComputeBlendedDirection(const D3DXVECTOR3& self,
+		const D3DXVECTOR3& targetPos,
+		const D3DXVECTOR3& clusterCenter,
+		float escapeWeight,
+		float approachWeight) const;
+
+	//=====ヒット関数=====
+	virtual void Hit() override;
+	//===================
+
+	//=====ダメージ関数=====
+	void Damage() override;
+	//=====================
+
+	//=====死亡関数=====
+	void Death() override;
+	//=================
+
+	//===ダメージの設定・取得===
+	virtual void SetDamage(bool flg) override { m_Chara.m_Damage = flg; }
+	virtual bool GetDamage() const override { return m_Chara.m_Damage; }
+	//========================
+
+	//=====死亡の設定・取得=====
+	virtual void SetDeath(bool flg) override { m_Chara.m_Death = flg; }
+	virtual bool GetDeath() const override { return m_Chara.m_Death; }
+	//========================
+
+	//=====無敵の設定・取得=====
+	void SetMuteki(bool flg) override { m_Chara.m_Muteki = flg; }
+	bool GetMuteki() const override { return m_Chara.m_Muteki; }
+	//========================
+
+	void SetBlastFlag(bool flg) override{} ;
+	bool GetBlastFlag() override { return m_BlastFlag; }
+
+	int GetPlayerID() override { return m_PlayerID; } 
 };
-
-
-
