@@ -257,6 +257,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\BlastManager\CBlastManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CChase\CChase.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\Util\Util.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.h" />
     <ClInclude Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.h" />
     <ClInclude Include="Source\Collision\Shape\Volume\BoundingSphere\CBoundingSphere.h" />

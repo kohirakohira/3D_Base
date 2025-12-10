@@ -24,10 +24,3 @@ void CCharacter::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& 
 {
 	CStaticMeshObject::Draw(View, Proj, Light, Camera);
 }
-
-#if 0
-void CCharacter::SettingTune()
-{
-	m_Tuning = { 0.08f, 0.03f, 0.03f, 0.3f };
-}
-#endif

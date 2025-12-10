@@ -20,6 +20,10 @@
 
 #include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/CPlayer.h"
 
+//ユーティリティクラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/Util/Util.h"
+
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
@@ -27,13 +31,12 @@
 #include <unordered_set>
 #include <memory>
 #include <deque>
-
-
 class CComPlayer
 	: public CCharacterObjectBase
 {
 public:
 
+	//オブジェクト
 	struct SimpleObstacle
 	{
 		D3DXVECTOR3 pos;
@@ -121,17 +124,9 @@ public:
 	}
 
 	//回転取得
-	D3DXVECTOR3 GetRotation() const override
-	{
-		if (m_pBody) return m_pBody->GetRotation();
-		return D3DXVECTOR3(0, 0, 0);
-	}
-
+	D3DXVECTOR3 GetRotation() const override { if (m_pBody) return m_pBody->GetPosition(); return D3DXVECTOR3(0, 0, 0); }
 	//回転設定
-	void SetRotation(const D3DXVECTOR3& rot) override
-	{
-		if (m_pBody) m_pBody->SetRotation(rot);
-	}
+	void SetRotation(const D3DXVECTOR3& rot) override { if (m_pBody) return m_pBody->SetRotation(rot); }
 
 	void FindNearestTarget();
 
@@ -140,6 +135,8 @@ public:
 		m_pSimpleObstacles = obstacles;
 	}
 
+	//キャラクターにヒットしたとき
+	void CharacterHitRay();
 
 private:
 	//構造体
@@ -148,8 +145,8 @@ private:
 	{
 		int m_ShotCD = 0;						//クールダウン
 		int	ShotCooldownFrames = 120;			//クールダウン時間
-		float FireAngleEpsDeg = 30;				//この角度以内なら発射
-		float MuzzleOffsetZ = 1;				//砲口のオフセット
+		float FireAngleEpsDeg = 360.f;			//この角度以内なら発射
+		float MuzzleOffsetZ = 0.5f;				//砲口のオフセット
 	};
 
 	//列挙型
@@ -182,10 +179,6 @@ private:
 	void TransitionTo(State state);										//ステータスを変更する
 	void EvaluateTransitions(float dist);								//条件に応じて状態変更	
 	void MakeFixedTimeTarget();											//一定時間ターゲットにする
-	static float Deg2Red(float d) { return d * (D3DX_PI / 180.0f); }
-	static float DistXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b);
-	static float AngleError(float fromYaw, const D3DXVECTOR3& fromPos, const D3DXVECTOR3& toPos);
-	static float ToRad(float d) { return d * (D3DX_PI / 180.0f); }
 	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 
 	//障害物判定用
@@ -217,23 +210,6 @@ private:
 
 	float NearestItemDist2(float& outDist2) const;
 
-	// ヘルパ
-	static float Wrap(float rad);                         //[-π,π]に正規化
-	static float Approach(float cur, float goal, float step);
-	static D3DXVECTOR3 ForwardFromYaw(float yaw);         //(sin(yaw),0,cos(yaw))
-	static float PI() { return D3DX_PI; }
-	static float TWO_PI() { return D3DX_PI * 2.0f; }
-
-	static inline float AngleDeadband(float a, float epsRad) {
-		return (std::fabs(a) < epsRad) ? 0.0f : a;
-	}
-	static inline float ClampF(float v, float lo, float hi) {
-		return (v < lo) ? lo : (v > hi) ? hi : v;
-	}
-
-	//動作切り替え
-	static float Sqr(float v) { return v * v; }
-
 	//分離COMが重なったりするのを防ぐ計算
 	void ComputeSeparation(const D3DXVECTOR3& selfPos,
 		D3DXVECTOR3& outSep, float& outNearest) const;
@@ -249,8 +225,7 @@ private:
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;			//障害物のBoxColliderリスト
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
 	const std::vector<SimpleObstacle>* m_pSimpleObstacles;						//障害物情報
-	std::deque<D3DXVECTOR3> m_Path;	//ワールド座標WP列
-
+	std::deque<D3DXVECTOR3> m_Path;												//ワールド座標WP列
 
 	//COMの各パラメータ
 	bool	m_ComEnabled;				//最初はCOM有効
@@ -319,7 +294,10 @@ private:
 	float m_MultiEnemyRadius = 8.0f;	//この範囲内の敵をカウント
 	float m_EscapeWeight = 0.6f;		//逃げの重み
 	float m_ApproachWeight = 0.4f;		//攻めの重み
-	int	m_MultiEnemyThreshold = 2;		//この数以上で
+	int	  m_MultiEnemyThreshold = 2;	//この数以上で
+
+	//レイがヒットしたかどうか
+	bool m_RayHit;
 
 	//複数体敵対応関数
 	int CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) const;

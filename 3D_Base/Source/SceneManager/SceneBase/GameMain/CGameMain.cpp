@@ -1131,7 +1131,7 @@ void CGameMain::BuildComObstacles()
 		};
 
 	// 壁を複数の円でカバーする
-	const float wallRadius = 6.0f;
+	const float wallRadius = 6.5f;
 	const float wallOffset = 30.0f;  //壁のZX座標
 
 	// 壁上・壁下
@@ -1139,15 +1139,21 @@ void CGameMain::BuildComObstacles()
 	{
 		addObstacle(x, wallOffset, wallRadius);   // 壁上
 		addObstacle(x, -wallOffset, wallRadius);  // 壁下
-	}
 
+		for (float z = -24.f; z <= 24.f; z += 8.0f)
+		{
+			addObstacle(-wallOffset, z, wallRadius);
+			addObstacle(wallOffset, z, wallRadius);
+		}
+	}
+#if 0
 	// 壁左・壁右（Z方向に並べる）
 	for (float z = -24.0f; z <= 24.0f; z += 8.0f)
 	{
 		addObstacle(-wallOffset, z, wallRadius);  // 壁左 (X = -30)
 		addObstacle(wallOffset, z, wallRadius);   // 壁右 (X = +30)
 	}
-
+#endif
 	// 木箱
 	auto addBoxObstacle = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
 		{
@@ -1159,9 +1165,9 @@ void CGameMain::BuildComObstacles()
 			m_ComObstacles.push_back(o);
 		};
 
-	addBoxObstacle(m_pWoodBoxTopLeft, 4.0f);
-	addBoxObstacle(m_pWoodBoxTopRight, 4.0f);
-	addBoxObstacle(m_pWoodBoxCenter, 4.0f);
-	addBoxObstacle(m_pWoodBoxBottomLeft, 4.0f);
-	addBoxObstacle(m_pWoodBoxBottomRight, 4.0f);
+	addBoxObstacle(m_pWoodBoxTopLeft, 3.0f);
+	addBoxObstacle(m_pWoodBoxTopRight, 3.0f);
+	addBoxObstacle(m_pWoodBoxCenter, 3.0f);
+	addBoxObstacle(m_pWoodBoxBottomLeft, 3.0f);
+	addBoxObstacle(m_pWoodBoxBottomRight, 3.0f);
 }
