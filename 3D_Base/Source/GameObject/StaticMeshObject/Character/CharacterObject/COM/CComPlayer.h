@@ -17,6 +17,8 @@
 //ユーティリティクラス
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/Util/Util.h"
 
+//ターゲット選定クラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComTargetSelector/CComTargetSelector.h"
 
 //-----ライブラリ-----
 #include <d3dx9math.h>
@@ -55,11 +57,6 @@ public:
 	void Create(int id);
 
 	static std::vector<CComPlayer*>& Instances();
-
-	//追尾対象の設定
-	void SetTarget(std::shared_ptr<CCharacterObjectBase> actor) { m_pTarget = std::move(actor); }
-	void ClearTarget() { m_pTarget = nullptr; }
-
 
 	//COMの有効無効を決める
 	void SetComEnabled(bool enabled) { m_ComEnabled = enabled; }
@@ -112,6 +109,12 @@ public:
 	//キャラクターにヒットしたとき
 	void CharacterHitRay();
 
+	//ターゲット取得
+	std::shared_ptr<CCharacterObjectBase> GetTarget() const
+	{
+		return m_TargetSelector.GetCurrentTarget();
+	}
+
 private:
 	//構造体
 	//COMのショット関連のパラメータ
@@ -144,13 +147,9 @@ private:
 	void TickChaseTo(const D3DXVECTOR3& targetPos);						//追尾
 	void TickAimTo(const D3DXVECTOR3& targetPos);						//砲塔追尾
 	void TickWander();													//引数なし
-	void Blacklist(int id) { m_TargetBlackList[id] = m_BlackListTime; }	//一定時間ターゲットにしない
-	bool IsBlacklisted(int id) const;									//IDがリストに登録されているか判定.読み取り専用
-	void TickBlacklist();												//フレームごとにブラックリストを更新
 	void SyncCannonToBody();											//砲塔を車体に追従させる
 	void TransitionTo(State state);										//ステータスを変更する
 	void EvaluateTransitions(float dist);								//条件に応じて状態変更	
-	void MakeFixedTimeTarget();											//一定時間ターゲットにする
 	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 
 	//障害物判定用
@@ -188,7 +187,6 @@ private:
 	void ChangeState(State state);
 
 	//外部クラス
-	std::shared_ptr<CCharacterObjectBase> m_pTarget;							//追尾対象
 	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;		//プレイヤーの一覧取得
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;			//障害物のBoxColliderリスト
 	std::unordered_set<const CCharacterObjectBase*> m_Black;
@@ -207,22 +205,13 @@ private:
 	int		m_EvadeDuration;			//回避するフレーム数
 	int		m_EvadeFrames;
 	D3DXVECTOR3 m_LastSeenPos;			//最後に見た位置
-	int		m_LostSightFrames;
 	bool	m_IsTarget;					//ターゲットかどうか	
 	bool	m_Registered;				//インスタンス登録管理
 
 	//探索処理パラメータ
-	int		m_RetargetInterval;						//探索のインターバル
-	int		m_RetargetTimer;						//カウント
-	float	m_ForgetDistance;						//これ以上離れた忘れる
-	float	m_StickinessRatio;						//既存ターゲット
-	float	m_CurTargetDist;						//キャッシュ
 	State	m_State;
 	int		m_StateFrames;							//その状態に入ってからの経過フレーム
 	float	m_WanderAngle;
-	float	m_CurTargetDist2 = std::numeric_limits<float>::infinity();	// 現在ターゲットとの距離^2
-	std::unordered_map<int, int> m_TargetBlackList;	//キーは相手のID.値は残りフレーム数
-	int m_BlackListTime;							//何秒無視するか
 
 
 	ComShotState m_ShotState;			//COMのショット情報
@@ -284,4 +273,10 @@ private:
 	//========================
 
 	int GetPlayerID() override { return m_PlayerID; } 
+
+	//// 射線チェック用
+	//bool IsTargetInSight() const;
+	//bool HasObstacleInFireLine() const;
+
+	CComTargetSelector m_TargetSelector;
 };

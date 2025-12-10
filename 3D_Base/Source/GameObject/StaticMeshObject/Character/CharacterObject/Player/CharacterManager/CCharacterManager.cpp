@@ -191,7 +191,7 @@ void CCharacterManager::Update()
 				}
 				else
 				{
-					com->ClearTarget();
+					//com->ClearTarget();
 				}
 
 				//AI‚Æ‚µ‚Ä‚ÌUpdate
