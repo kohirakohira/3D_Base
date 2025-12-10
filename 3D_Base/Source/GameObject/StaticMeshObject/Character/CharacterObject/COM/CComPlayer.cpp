@@ -1260,7 +1260,9 @@ float CComPlayer::ComputeBlendedDirection(
         blended.z /= blendLen;
     }
 
-    return false;
+    // Yaw ‚É•ÏŠ·
+    return std::atan2f(blended.x, blended.z);
+
 }
 
 
