@@ -1134,7 +1134,7 @@ void CGameMain::BuildComObstacles()
 	const float wallRadius = 6.5f;
 	const float wallOffset = 30.0f;  //壁のZX座標
 
-	// 壁上・壁下
+	// 壁上壁下
 	for (float x = -24.0f; x <= 24.0f; x += 8.0f)
 	{
 		addObstacle(x, wallOffset, wallRadius);   // 壁上
@@ -1146,14 +1146,6 @@ void CGameMain::BuildComObstacles()
 			addObstacle(wallOffset, z, wallRadius);
 		}
 	}
-#if 0
-	// 壁左・壁右（Z方向に並べる）
-	for (float z = -24.0f; z <= 24.0f; z += 8.0f)
-	{
-		addObstacle(-wallOffset, z, wallRadius);  // 壁左 (X = -30)
-		addObstacle(wallOffset, z, wallRadius);   // 壁右 (X = +30)
-	}
-#endif
 	// 木箱
 	auto addBoxObstacle = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
 		{

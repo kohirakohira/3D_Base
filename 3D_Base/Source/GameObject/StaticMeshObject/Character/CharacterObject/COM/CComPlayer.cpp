@@ -374,7 +374,6 @@ void CComPlayer::Update()
     body->SetPosition(pos.x, pos.y = 0, pos.z);
 
     float itemD2;
-    //NearestItemDist2(itemD2);
 
     //状態遷移はここだけで行う
     EvaluateTransitions(dist2);
@@ -963,7 +962,7 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
         }
         else
         {
-            // ぶつかる場合も、近いよりは遠くでぶつかる方向をマシとする
+            //ぶつかる場合も、近いよりは遠くでぶつかる方向をマシとする
             score -= (m_ObstacleProbeDist - hitD);
         }
 
@@ -977,7 +976,7 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
         }
     }
 
-    // 最終的に選ばれたbestYawに向かうよう、curYawをturnStep分だけ近づける
+    //最終的に選ばれたbestYawに向かうよう、curYawをturnStep分だけ近づける
     const float d = Util::Wrap(bestYaw - curYaw);
     return Util::Approach(curYaw, curYaw + d, turnStep);
 }
@@ -1003,7 +1002,7 @@ bool CComPlayer::HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, f
             D3DXVECTOR3 v = p - ob.pos;
             v.y = 0.0f;
             const float dist2 = v.x * v.x + v.z * v.z;
-            const float r = selfR + ob.radius;   // 自分＋障害物の安全距離
+            const float r = selfR + ob.radius;   // 自分と障害物の安全距離
             if (dist2 <= r * r)
             {
                 outHitDist = d;
@@ -1027,12 +1026,12 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
 
     const float curYaw = body->GetRotation().y;
 
-    // COM 同士の分離
+    //COM同士の分離
     D3DXVECTOR3 sep(0, 0, 0);
     float nearest = 1e9f;
     ComputeSeparation(pos, sep, nearest);
 
-    // 試す角度オフセット
+    //試す角度オフセット
     const float offsets[] = { 0.f, +0.4f, -0.4f, +0.8f, -0.8f, +D3DX_PI * 0.5f, -D3DX_PI * 0.5f, D3DX_PI };
 
     float safeYaw = nextYaw;
