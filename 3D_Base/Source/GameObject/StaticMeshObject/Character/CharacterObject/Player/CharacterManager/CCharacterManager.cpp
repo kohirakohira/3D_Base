@@ -400,7 +400,7 @@ void CCharacterManager::SetStartPosition()
 		else if (index == 1)
 		{
 			pos = D3DXVECTOR3(-offset, 0.0f, offset);
-			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY), 0.f);
+			rot = D3DXVECTOR3(0.f, D3DXToRadian(AngleY * 3), 0.f);
 			sca = D3DXVECTOR3(1.8f, 1.8f, 1.8f);
 
 		}
@@ -447,7 +447,6 @@ void CCharacterManager::SetStartPosition()
 			cannon->SetRotation(crot);
 		}
 	}
-
 }
 
 //=======ƒvƒŒƒCƒ„[‚ğæ“¾=======	
@@ -730,21 +729,5 @@ void CCharacterManager::SetComObstacles(const std::vector<CComPlayer::SimpleObst
 		{
 			//com->SetSimpleObstacles(obstacles);
 		}
-	}
-}
-
-void CCharacterManager::SetBlastFlag(int index, bool flg)
-{
-	if (index >= 0 && index < m_pCharacter.size())
-	{
-		m_pCharacter[index]->SetBlastFlag(flg);
-	}
-}
-
-bool CCharacterManager::GetBlastFlag(int index)
-{
-	if (index >= 0 && index < m_pCharacter.size())
-	{
-		return m_pCharacter[index]->GetBlastFlag();;
 	}
 }

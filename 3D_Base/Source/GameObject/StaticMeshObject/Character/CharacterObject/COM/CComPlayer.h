@@ -47,17 +47,6 @@ public:
 	//描画関数.
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 
-	//車体の取得.
-	std::shared_ptr<CBody> GetBody() const override { return m_pBody; }
-	//砲塔の取得.
-	std::shared_ptr<CCannon>GetCannon() const override { return m_pCannon; }
-	//弾マネージャーの取得.
-	std::shared_ptr<CShotManager>GetShotManager() const override { return m_pShotManager; }
-
-	//砲塔の位置取得.
-	D3DXVECTOR3 GetCannonPosition() const override { return m_pCannon->GetPosition(); }
-	float GetCannonYaw() const override { return m_pCannon->GetRotation().y; }
-
 	//プレイヤーかCOMを判定する.
 	bool IsPlayer() const override { return false; }
 
@@ -68,12 +57,6 @@ public:
 	void Create(int id);
 
 	static std::vector<CComPlayer*>& Instances();
-
-	//リスポーンフラグの取得
-	bool GetRespawnFlag() const { return m_Respawn; }
-	//リスポーンフラグの設定
-	void SetRespawnFlag(bool flg) override { m_Respawn = flg; };
-
 
 	//追尾対象の設定
 	void SetTarget(std::shared_ptr<CCharacterObjectBase> actor) { m_pTarget = std::move(actor); }
@@ -100,36 +83,6 @@ public:
 
 	void CreateCollider();
 
-	//弾マネージャーの設定.
-	void SetShotManager(std::shared_ptr<CShotManager> shot) override;
-
-	//位置の取得.
-	D3DXVECTOR3 GetPosition() const override
-	{
-		if (m_pBody) return m_pBody->GetPosition();
-		return D3DXVECTOR3(0, 0, 0);
-	}
-
-	//位置設定
-	void SetPosition(const D3DXVECTOR3& pos) override
-	{
-		if (m_pBody)   m_pBody->SetPosition(pos);
-		if (m_pCannon) m_pCannon->SetPosition(pos);
-	}
-
-	//回転取得
-	D3DXVECTOR3 GetRotation() const override
-	{
-		if (m_pBody) return m_pBody->GetRotation();
-		return D3DXVECTOR3(0, 0, 0);
-	}
-
-	//回転設定
-	void SetRotation(const D3DXVECTOR3& rot) override
-	{
-		if (m_pBody) m_pBody->SetRotation(rot);
-	}
-
 	//プレイヤーのインデックス番号の取得.
 	int GetPlayerID() { return m_PlayerID; }
 
@@ -146,10 +99,10 @@ private:
 	//COMのショット関連のパラメータ
 	struct ComShotState
 	{
-		int m_ShotCD = 0;						//クールダウン
-		int	ShotCooldownFrames = 120;			//クールダウン時間
-		float FireAngleEpsDeg = 30;				//この角度以内なら発射
-		float MuzzleOffsetZ = 1;				//砲口のオフセット
+		int m_ShotCD = 0;				//クールダウン
+		int	ShotCooldownFrames = 120;	//クールダウン時間
+		float FireAngleEpsDeg = 30;		//この角度以内なら発射
+		float MuzzleOffsetZ = 1;		//砲口のオフセット
 	};
 
 	//列挙型
@@ -309,37 +262,6 @@ private:
 	//bool ShouldSeekItem() const;    // アイテムを探すべきか判定
 	//void ApplyItemEffect(const ItemInfomation& info);   // アイテム効果適用
 #endif
-	//=====ヒット関数=====
-	virtual void Hit() override;
-	//===================
-
-	//=====ダメージ関数=====
-	void Damage() override;
-	//=====================
-
-	//=====死亡関数=====
-	void Death() override;
-	//=================
-
-	//===ダメージの設定・取得===
-	virtual void SetDamage(bool flg) override { m_Chara.m_Damage = flg; }
-	virtual bool GetDamage() const override { return m_Chara.m_Damage; }
-	//========================
-
-	//=====死亡の設定・取得=====
-	virtual void SetDeath(bool flg) override { m_Chara.m_Death = flg; }
-	virtual bool GetDeath() const override { return m_Chara.m_Death; }
-	//========================
-
-	//=====無敵の設定・取得=====
-	void SetMuteki(bool flg) override { m_Chara.m_Muteki = flg; }
-	bool GetMuteki() const override { return m_Chara.m_Muteki; }
-	//========================
-
-	//=====プレイヤーの爆風フラグの設定・取得=====
-	void SetBlastFlag(bool flg);
-	bool GetBlastFlag();
-	//============================================
 
 };
 

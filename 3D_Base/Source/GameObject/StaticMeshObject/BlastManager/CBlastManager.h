@@ -16,7 +16,7 @@ public:
 	~CBlastManager();
 
 	//インスタンス生成.
-	void Create(const D3DXVECTOR3& pos, bool isRad, std::shared_ptr<CStaticMesh> mesh, float s);
+	void Create(const D3DXVECTOR3& pos, std::shared_ptr<CStaticMesh> mesh, float s);
 
 	//更新処理.
 	void Update();

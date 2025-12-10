@@ -144,7 +144,6 @@ void CCollisionManager::WalltoShot()
 					//爆風の動的生成.
 					m_pBlastManager->Create(
 						shot->GetPosition(),
-						m_pCharacterManager->GetBlastFlag(i),
 						m_pStaticBlast,
 						m_Speed
 					);
@@ -292,7 +291,6 @@ void CCollisionManager::PlayertoShot()
 				//爆風の動的生成.
 				m_pBlastManager->Create(
 					shot->GetPosition(),
-					chara->GetBlastFlag(),
 					m_pStaticBlast,
 					m_Speed
 				);
@@ -465,7 +463,6 @@ void CCollisionManager::WoodBoxtoShot()
 					//爆風の動的生成.
 					m_pBlastManager->Create(
 						shot->GetPosition(),
-						m_pCharacterManager->GetBlastFlag(i),
 						m_pStaticBlast,
 						m_Speed
 					);
@@ -552,7 +549,6 @@ void CCollisionManager::GroundtoShot()
 				//爆風の動的生成.
 				m_pBlastManager->Create(
 					shot->GetPosition(),
-					m_pCharacterManager->GetBlastFlag(i),
 					m_pStaticBlast,
 					m_Speed
 				);
@@ -635,6 +631,7 @@ void CCollisionManager::ItemtoWoodBox()
 //アイテムの設定.
 void CCollisionManager::SetItemInfomation(int Itemindex, int Playerindex)
 {
+#define ENABLE_ITEMS
 	//無敵処理.
 	//プレイヤーに設定.
 	if (m_pItemBoxManager->GetItemInfo(Itemindex).m_ShieldFlag == true)
@@ -664,7 +661,7 @@ void CCollisionManager::SetItemInfomation(int Itemindex, int Playerindex)
 	//爆風に設定.
 	if (m_pItemBoxManager->GetItemInfo(Itemindex).m_Blast > 0.0f)
 	{
-		m_pCharacterManager->SetBlastFlag(Playerindex, m_pItemBoxManager->GetItemInfo(Itemindex).m_Blast);
+		//m_pCharacterManager->SetBlastFlag(Playerindex, m_pItemBoxManager->GetItemInfo(Itemindex).m_Blast);
 	}
 
 	//装填時短設定.
@@ -676,4 +673,5 @@ void CCollisionManager::SetItemInfomation(int Itemindex, int Playerindex)
 
 	//配列(メモリ上)から消す.
 	m_pItemBoxManager->RemoveItem(Itemindex);
+
 }
