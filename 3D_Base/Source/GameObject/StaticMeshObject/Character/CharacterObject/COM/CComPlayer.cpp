@@ -714,6 +714,7 @@ void CComPlayer::StepAttack()
         }
     }
 
+
     const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
     SafeAdvance(next, t.moveSpeed);
 
