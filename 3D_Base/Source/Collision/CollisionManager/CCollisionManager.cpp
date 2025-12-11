@@ -587,8 +587,14 @@ void CCollisionManager::PlayertoBlast()
 				// 当たった時の処理
 				chara->Hit();
 
-				//倒した数を増やす.
-				CGameDataManager::GetInstance().AddKillCount(blast->GetPlayerID(), 1);
+				if (chara->GetDeath() == true)
+				{
+					//倒した数を増やす.
+					CGameDataManager::GetInstance().AddKillCount(blast->GetPlayerID(), 1);
+				}
+
+				//各プレイヤーのキル数表示.
+				std::cout << "各プレイヤーのキル数表示" << blast->GetPlayerID() << ":" << CGameDataManager::GetInstance().GetKillCount(blast->GetPlayerID()) << std::endl << std::endl << std::endl;
 
 			}
 		}

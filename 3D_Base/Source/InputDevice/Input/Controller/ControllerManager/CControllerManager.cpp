@@ -35,8 +35,8 @@ void CControllerManager::Update()
 	}
 
 #ifdef _DEBUG
-	std::cout << "Ú‘±‚³‚ê‚½”->" << m_ConnectedCount << std::endl;
-	std::cout << "Ø’f‚³‚ê‚½”->" << PLAYER_MAX - m_ConnectedCount << std::endl;
+	//std::cout << "Ú‘±‚³‚ê‚½”->" << m_ConnectedCount << std::endl;
+	//std::cout << "Ø’f‚³‚ê‚½”->" << PLAYER_MAX - m_ConnectedCount << std::endl;
 #endif
 }
 
