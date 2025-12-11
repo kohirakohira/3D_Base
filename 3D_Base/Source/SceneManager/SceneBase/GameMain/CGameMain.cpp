@@ -14,7 +14,7 @@ static bool prevA = false;
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス.
 
 //定数宣言.
-static constexpr int TIME = 100;
+static constexpr int TIME = 600;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 

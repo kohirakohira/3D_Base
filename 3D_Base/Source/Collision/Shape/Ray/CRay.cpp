@@ -243,6 +243,7 @@ void CRay::Render(
 	D3DXMATRIX	mWorld;
 	D3DXMATRIX	mTrans, mRot;
 
+
 	//ŠO•”‚ÌƒŒƒC\‘¢‘Ì‚ğ”½‰f
 	m_vPosition = Ray.Position;
 	m_vRotation.y = Ray.RotationY;

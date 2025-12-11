@@ -8,16 +8,14 @@
 
 #include <memory>
 
-#if 0
-struct CannonRayResult
+// レイヒット時の情報
+struct CannonHitRay
 {
-	bool        bHit = false;               // 何かにヒットしたか
-	float       distance = 0.0f;            // ヒット地点までの距離
-	D3DXVECTOR3 hitPoint = { 0, 0, 0 };       // ヒット地点のワールド座標
-	CStaticMeshObject* pHitObject = nullptr; // ヒットしたオブジェクト
+	bool bHit = true;								// 何にヒットしたか
+	float Distance = 0.f;							// 距離
+	D3DXVECTOR3 HitPoint{0.f,0.f,0.f};				// ヒット位置
+	CStaticMeshObject* pHitObject = nullptr;		// ヒットしたオブジェクト
 };
-
-#endif
 
 /**************************************************
 *	砲塔クラス.
@@ -31,10 +29,17 @@ public:
 
 	// 更新関数
 	void Update() override;
+
+	// レイの更新
+	void UpdateCannonRay();
+
 	// 描画関数
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
 	// 初期化関数
 	void Init();
+
+	//レイ初期化.呼び出すinitがHRESULTなのでHRESULT型
+	HRESULT InitCannonRay(float len = 60.f);
 
 	// 砲塔座標設定
 	void SetCannonPosition(const D3DXVECTOR3& Pos);
@@ -54,18 +59,6 @@ public:
 	//弾を作成・リロード・発射関数.
 	void Reload(D3DXVECTOR3 pos, float y, bool flag, int index);
 
-	//レイの取得.
-	RAY GetRay() const{ return *m_pRay; }
-
-
-#if 0
-	// レイ関連
-	// レイの初期化（ゲーム開始時に1回呼ぶ）
-	HRESULT InitCannonRay(float length = 50.0f);
-
-	// レイの更新（毎フレーム呼ぶ）
-	void UpdateCannonRay();
-
 	// レイの取得（読み取り専用）
 	const RAY& GetCannonRay() const { return m_CannonRay; }
 
@@ -84,26 +77,26 @@ public:
 
 	// レイキャスト判定
 	// 単一オブジェクトへのレイキャスト
-	bool RaycastTo(CStaticMeshObject* pTarget, CannonRayResult& outResult) const;
-
-	// 複数オブジェクトへのレイキャスト（最も近いものを返す）
+	bool RaycastTo(CStaticMeshObject* pTarget, CannonHitRay& outResult) const;
+	
+	//複数オブジェクトに対するレイキャスト
 	bool RaycastToNearest(
 		const std::vector<CStaticMeshObject*>& targets,
-		CannonRayResult& outResult) const;
+		CannonHitRay& outResult) const;
 
-	// 指定位置が射線上にあるか（簡易判定）
-	bool IsPositionInSight(const D3DXVECTOR3& targetPos, float toleranceAngle = 0.1f) const;
+	// 指定位置が射線上にあるか
+	bool IsPositionInSight(D3DXVECTOR3& targetPos, float toleranceAngle = 0.1f) const;
 
 	//========================================
 	// デバッグ描画
 	//========================================
 	// レイの描画を有効/無効
-	void SetRayVisible(bool visible) { m_bDrawRay = visible; }
-	bool IsRayVisible() const { return m_bDrawRay; }
+	void SetRayVisible(bool visible) { m_DrawRay = visible; }
+	bool IsRayVisible() const { return m_DrawRay; }
 
 	// レイのデバッグ描画
 	void DrawRay(D3DXMATRIX& View, D3DXMATRIX& Proj);
-#endif
+
 private:
 	float		m_TurnSpeed;			// 回転速度
 
@@ -119,13 +112,15 @@ private:
 	// コントローラークラス
 	CController* m_pController;
 
-	//レイ構造体のポインタ
-	RAY* m_pRay;
+	//レイ構造体
+	RAY m_CannonRay;
+	//レイの描画クラス	
+	std::unique_ptr<CRay> m_pRayDrawer;
 
-#if 0
-	RAY         m_CannonRay;                // レイ構造体（判定用）
-	std::unique_ptr<CRay> m_pRayDrawer;     // レイ描画クラス（デバッグ用）
-	float       m_MuzzleOffset = 2.0f;      // 砲口の前方オフセット
-	bool        m_bDrawRay = false;         // レイを描画するか
-#endif
+	//砲塔のオフセット
+	float m_MuzzleOffset;
+
+	//レイを描画するか
+	bool m_DrawRay;
+
 };

@@ -166,7 +166,6 @@ bool CStaticMeshObject::IsHitForRay(
 	return false;	//外れている.
 }
 
-#if 0
 //壁からの位置を計算する
 void CStaticMeshObject::CalculatePositionFromWall()
 {
@@ -195,7 +194,7 @@ void CStaticMeshObject::CalculatePositionFromWall()
 	//レイの向きにより当たる壁までの距離を求める（前後左右）
 	for (int dir = 0; dir < CROSSRAY::max; dir++)
 	{
-		if (IsHitForRay(pCrossRay->Ray[dir], &Distance, &Intersect, &vNormal))
+		if (IsHitForRay(Ray[dir], &Distance, &Intersect, &vNormal))
 		{
 			if (Distance <= WSPACE)
 			{
@@ -212,7 +211,6 @@ void CStaticMeshObject::CalculatePositionFromWall()
 	}
 #endif
 }
-#endif
 
 //交差位置のポリゴンの超連を見つける.
 HRESULT CStaticMeshObject::FindVerticesOnPoly(

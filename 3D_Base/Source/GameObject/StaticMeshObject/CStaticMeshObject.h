@@ -80,7 +80,7 @@ public:
 		D3DXVECTOR3* pIntersect);	//(out)交差点
 
 	////壁からの位置を計算する
-	//void CalculatePositionFromWall();
+	void CalculatePositionFromWall();
 
 private:
 	//交差位置のポリゴンの超連を見つける.

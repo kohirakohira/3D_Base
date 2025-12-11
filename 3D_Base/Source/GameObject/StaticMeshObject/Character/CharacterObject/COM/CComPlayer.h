@@ -106,9 +106,6 @@ public:
 		m_pSimpleObstacles = obstacles;
 	}
 
-	//キャラクターにヒットしたとき
-	void CharacterHitRay();
-
 	//ターゲット取得
 	std::shared_ptr<CCharacterObjectBase> GetTarget() const
 	{
@@ -210,7 +207,7 @@ private:
 
 	//探索処理パラメータ
 	State	m_State;
-	int		m_StateFrames;							//その状態に入ってからの経過フレーム
+	int		m_StateFrames;				//その状態に入ってからの経過フレーム
 	float	m_WanderAngle;
 
 
@@ -219,7 +216,6 @@ private:
 	//========================================
 	// 障害物回避パラメータ
 	//========================================
-	//float		m_ProbeAngleRad;		// 探査角度（左右に振る角度）
 	float		m_ProbeDist;			// 探査距離
 	float		m_AvoidHoldFrames;		// 回避を維持するフレーム数
 	int			m_AvoidSide;			// 回避方向（+1:右, -1:左, 0:未決定）
@@ -244,9 +240,6 @@ private:
 	float m_ApproachWeight = 0.4f;		//攻めの重み
 	int	  m_MultiEnemyThreshold = 2;	//この数以上で
 
-	//レイがヒットしたかどうか
-	bool m_RayHit;
-
 	//複数体敵対応関数
 	int CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) const;
 
@@ -256,6 +249,11 @@ private:
 		float escapeWeight,
 		float approachWeight) const;
 
+#if 0
+	//レイでの射線判定									
+	bool IsTargetInSight() const;			//射線をチェックする
+	bool HasObstacleInFireLine() const;
+#endif
 
 	//===ダメージの設定・取得===
 	virtual void SetDamage(bool flg) override { m_Chara.m_Damage = flg; }
@@ -274,9 +272,6 @@ private:
 
 	int GetPlayerID() override { return m_PlayerID; } 
 
-	//// 射線チェック用
-	//bool IsTargetInSight() const;
-	//bool HasObstacleInFireLine() const;
 
 	CComTargetSelector m_TargetSelector;
 };

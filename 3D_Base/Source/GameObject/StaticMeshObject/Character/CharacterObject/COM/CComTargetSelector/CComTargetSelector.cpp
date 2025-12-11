@@ -141,9 +141,14 @@ TargetResult CComTargetSelector::SelectTarget(
 
 void CComTargetSelector::ClearTarget()
 {
-    m_pTarget.reset();
-    m_CurrentTargetDist = 1e9f;
-    m_LostSightFrames = 0;
+    //ƒ^[ƒQƒbƒg‚ªŽ€–S‚µ‚Ä‚¢‚½‚ç
+    if (m_pTarget->GetDeath() == true)
+    {
+        m_pTarget.reset();
+        m_CurrentTargetDist = 1e9f;
+        m_LostSightFrames = 0;
+
+    }
 }
 
 void CComTargetSelector::ForceSetTarget(std::shared_ptr<CCharacterObjectBase> target)

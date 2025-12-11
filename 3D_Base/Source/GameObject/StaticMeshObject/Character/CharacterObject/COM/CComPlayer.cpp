@@ -44,7 +44,6 @@ CComPlayer::CComPlayer()
     , m_CenterPullStrength(0.3f)                   // 引き寄せ強度
     , m_pSimpleObstacles(nullptr)
     , m_LookAheadSkep(2.0f)
-    , m_RayHit              ( false )
     //========================================
     // 障害物回避パラメータ
     //========================================
@@ -297,8 +296,8 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
     const float desiredYaw = std::atan2f(target.x, target.z);
 
     float cyaw = cannon->GetRotation().y;
-    cyaw = Util::Approach(cyaw, cyaw + Util::Wrap(desiredYaw - cyaw), m_Tuning.turretTurnSpeed);    
-   //cyaw = Util::Approach(cyaw, cyaw + Util::Wrap(desiredYaw - cyaw), 0.05);    //本来のチューニング値ではないCOMのみの調整値
+    float crot = 0.02;
+    cyaw = Util::Approach(cyaw, cyaw + Util::Wrap(desiredYaw - cyaw), m_Tuning.turretTurnSpeed + crot);    
 
     cannon->SetPosition(base);
     cannon->SetRotation(D3DXVECTOR3(0.0f, cyaw, 0.0f));
@@ -522,7 +521,7 @@ void CComPlayer::StepEvade()
         targetPos = target->GetPosition();
     }
 
-    // 水平面でターゲットの反対方向に移動
+    //水平面でターゲットの反対方向に移動
     D3DXVECTOR3 away = selfPos - targetPos;
     away.y = 0.0f;
 
@@ -567,31 +566,39 @@ void CComPlayer::StepSeek()
     const float dist2 = d.x * d.x + d.z * d.z;
     float desiredYaw;
 
+    auto target = m_TargetSelector.GetCurrentTarget();
+
     const float centerRadius = 10.0f;
     if (dist2 > centerRadius * centerRadius)
     {
-        // 中心に向かう
+        //中心付近での徘徊
+        //TickWander();
+        //desiredYaw = curYaw + m_WanderAngle;
         desiredYaw = std::atan2f(d.x, d.z);
     }
     else
     {
-        // 中心付近では徘徊
+        //desiredYaw = std::atan2f(d.x, d.z);
+
+        //中心にいく.中心を優先しやすい
         TickWander();
         desiredYaw = curYaw + m_WanderAngle;
+        
     }
+
 
     const float next = SteerWithAvoidAABB(curYaw, desiredYaw, tuning.bodyTurnSpeed);
     SafeAdvance(next, tuning.moveSpeed);
 
-    auto target = m_TargetSelector.GetCurrentTarget();
     if (target)
     {
         TickAimTo(target->GetPosition());
-        //TryAutoFire();
+        TryAutoFire();
     }
 
     SyncCannonToBody();
 }
+
 void CComPlayer::StepChase()
 {
     auto body = GetBody();
@@ -630,7 +637,7 @@ void CComPlayer::StepChase()
 
         //近づき過ぎないようKeepDistance付近では少し横移動を入れる
         const float dist = Util::DistXZ(self, tp);
-        if (dist < m_KeepDistance * 0.9f)
+        if (dist < m_KeepDistance * 0.9f) 
         {
             desired = Util::Wrap(desired + (D3DX_PI * 0.5f) * ((m_StateFrames / 60) % 2 ? +1.f : -1.f));
         }
@@ -642,6 +649,7 @@ void CComPlayer::StepChase()
     TickAimTo(tp);
     TryAutoFire();
 }
+
 void CComPlayer::StepAttack()
 {
     auto body = GetBody();
@@ -696,7 +704,8 @@ void CComPlayer::StepAttack()
         }
     }
 
-    if (target->GetDeath())
+
+    if (target->GetDeath() == true)
     {
         m_TargetSelector.ClearTarget();
         return;
@@ -756,7 +765,8 @@ void CComPlayer::TryAutoFire()
         return;
     }
 
-    D3DXVECTOR3 muzzle; float yaw = 0.f;
+    D3DXVECTOR3 muzzle; 
+    float yaw = 0.f;
     ComputeMuzzle(muzzle, yaw);
 
     D3DXVECTOR3 to = target->GetPosition() - muzzle;
@@ -767,12 +777,25 @@ void CComPlayer::TryAutoFire()
     const float desired = std::atan2f(to.x, to.z);
     const float err = std::fabs(Util::Wrap(desired - yaw));
 
+    auto selfPos = this->GetPosition();
+
+    float hitD;
+
+    //障害物を考慮して発射
+    if (HasObstacleAheadSimple(selfPos, yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
+    {
+        return;
+    }
+
+    //
+
+    //角度内なら弾発射
     if (err <= Util::ToRad(m_ShotState.FireAngleEpsDeg))
     {
         m_pShotManager->Create(muzzle, yaw, true, m_PlayerID);
         m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
     }
-} 
+}
 
 #if 0
 void CComPlayer::TryAutoFire()
@@ -1183,7 +1206,6 @@ float CComPlayer::ComputeBlendedDirection(
 
 }
 
-
 void CComPlayer::FindNearestTarget()
 {
     //m_pAllPlayer から人間プレイヤーを探す
@@ -1199,31 +1221,5 @@ void CComPlayer::FindNearestTarget()
     }
 }
 
-
-//// ターゲットが射線上にいるか確認
-//bool CComPlayer::IsTargetInSight() const
-//{
-//    if (!m_pCannon || !m_pTarget) return false;
-//
-//    // 簡易判定
-//    D3DXVECTOR3 targetPos = m_pTarget->GetPosition();
-//    return m_pCannon->IsPositionInSight(targetPos, AI::ToRad(10.0f));  // 10度の許容範囲
-//}
-//
-//// 射線上に障害物があるか確認
-//bool CComPlayer::HasObstacleInFireLine() const
-//{
-//    if (!m_pCannon || !m_pTarget) return false;
-//
-//    // ターゲットまでの距離
-//    D3DXVECTOR3 muzzle = m_pCannon->GetMuzzlePosition();
-//    D3DXVECTOR3 toTarget = m_pTarget->GetPosition() - muzzle;
-//    float targetDist = D3DXVec3Length(&toTarget);
-//
-//    // 障害物に対してレイキャスト
-//    // 実際の実装では障害物のメッシュオブジェクトが必要
-//
-//    return false;  // 今は常にfalse
-//}
 
 
