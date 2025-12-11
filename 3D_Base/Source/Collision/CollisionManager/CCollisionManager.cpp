@@ -622,9 +622,10 @@ void CCollisionManager::PlayertoBlast()
 				//倒した数を増やす.
 				CGameDataManager::GetInstance().AddKillCount(blast->GetPlayerID(), 1);
 				chara->SetKill(true);
+
+				//各プレイヤーのキル数表示.
+				std::cout << "各プレイヤーのキル数表示" << blast->GetPlayerID() << ":" << CGameDataManager::GetInstance().GetKillCount(blast->GetPlayerID()) << std::endl << std::endl << std::endl;
 			}
-			//各プレイヤーのキル数表示.
-			std::cout << "各プレイヤーのキル数表示" << blast->GetPlayerID() << ":" << CGameDataManager::GetInstance().GetKillCount(blast->GetPlayerID()) << std::endl << std::endl << std::endl;
 		}
 	}
 }
