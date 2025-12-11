@@ -53,8 +53,4 @@ private:
 	CSceneType					m_CurrentSceneType;
 	//次のシーン.
 	CSceneType					m_NextType;
-
-	////インスタンスの設定.
-	//CImguiManager& m_ImguiManager = CImguiManager::GetInstance();
-
 };
