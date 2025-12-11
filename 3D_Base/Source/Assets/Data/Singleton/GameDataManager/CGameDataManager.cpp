@@ -9,6 +9,7 @@ CGameDataManager::~CGameDataManager()
 {
 }
 
+//AddKillCount(プレイヤーID, キル数).
 void CGameDataManager::AddKillCount(int playerID, int amount)
 {
 	//指定されたプレイヤーのキル数を増やす.

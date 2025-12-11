@@ -15,6 +15,8 @@
 #include "GameObject/StaticMeshObject/ItemBoxManager/CItemBoxManager.h"
 #include "../../GameObject/StaticMeshObject/BlastManager/CBlastManager.h"
 
+#include "Assets//Data/Singleton/GameDataManager/CGameDataManager.h"		//倒した数をカウントするクラス※シングルトン化.
+
 //===================================
 //	コリジョンマネージャークラス
 //===================================

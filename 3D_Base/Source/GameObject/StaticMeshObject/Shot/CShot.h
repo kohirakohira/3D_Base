@@ -22,13 +22,16 @@ public:
 
 	bool IsActive() const;
 
+	//プレイヤーIDの設定・取得.
+	void SetPlayerID(float id) { m_PlayerID = id; }
+	float GetPlayerID() const { return m_PlayerID; }
+
 	// 発射フラグの設定
 	void SetShotFlag(bool flag) { m_Shot.m_ShotFlag = flag; }
-
 	// 発射フラグの取得
 	bool GetShotFlag() const { return m_Shot.m_ShotFlag; }
 
-protected:
+public:
 	//弾構造体.
 	struct Shot
 	{
@@ -39,6 +42,9 @@ protected:
 		float		m_Gravity;				// 弾の重力
 		float		m_Velocity;				// 加速度
 	};
+
+	//プレイヤーID.
+	float m_PlayerID;
 
 private:
 	//変数宣言.

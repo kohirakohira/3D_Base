@@ -31,11 +31,17 @@ public:
 	//爆発フラグの設定.
 	void SetBomStart(bool f);
 
+	//プレイヤーID設定・取得.
+	void SetPlayerID(float id);
+	float GetPlayerID() const { return m_PlayerID; }
+
 	//爆発の開始フラグを取得.
 	bool IsBomStart() const;
 	//爆発の終了フラグを取得.
 	bool IsBomFinish() const;
 
+	//半径の取得.
+	float GetBlastRadius() { return m_Radius; }
 
 public:
 	//半径の最大サイズ.
@@ -45,6 +51,8 @@ public:
 	bool	m_BomFinish;
 	//速度.
 	float	m_Speed;
+	//プレイヤーID.
+	float	m_PlayerID;
 
 private:
 	//半径の最低サイズ.

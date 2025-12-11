@@ -12,7 +12,7 @@ CBlastManager::~CBlastManager()
 }
 
 //インスタンス生成.
-void CBlastManager::Create(const D3DXVECTOR3& pos, std::shared_ptr<CStaticMesh> mesh, float s)
+void CBlastManager::Create(const D3DXVECTOR3& pos, std::shared_ptr<CStaticMesh> mesh, float s, const float playerID)
 {
 	//インスタンス生成.
 	auto blast = std::make_shared<CBlast>();
@@ -23,6 +23,8 @@ void CBlastManager::Create(const D3DXVECTOR3& pos, std::shared_ptr<CStaticMesh> 
 	blast->SetSpeed(s);
 	//半径の設定.
 	blast->SetMaxRadius(m_NormalRadius);
+	//プレイヤーindex番号を設定.
+	blast->SetPlayerID(playerID);
 
 	//初期位置.
 	blast->SetPosition(pos);
@@ -39,6 +41,7 @@ void CBlastManager::Update()
 	for (auto& blast : m_Blast)
 	{
 		blast->Update();
+		blast->GetCollider()->SetRadius(blast->GetBlastRadius());
 	}
 
 	//std::remove_if(begin, end, pred)：削除対象でない要素だけを前に詰める.
@@ -66,4 +69,10 @@ std::shared_ptr<CBlast> CBlastManager::GetBlast(int index)
 	{
 		return m_Blast[index];
 	}
+}
+
+//爆風をある分取得.
+std::vector<std::shared_ptr<CBlast>> CBlastManager::GetAllBlast()
+{
+	return m_Blast;
 }

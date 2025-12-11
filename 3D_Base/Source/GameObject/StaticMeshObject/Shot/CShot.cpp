@@ -83,7 +83,7 @@ void CShot::Reload(const D3DXVECTOR3& Pos, float RotY)
 bool CShot::HitShot()
 {
 	m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
-	m_Shot.m_ShotFlag = true;
+	m_Shot.m_ShotFlag = false;
 	m_Shot.m_DisplayTime = 0.0f;
 	return m_Shot.m_ShotFlag;
 }

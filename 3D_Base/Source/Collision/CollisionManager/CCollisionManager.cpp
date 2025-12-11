@@ -145,8 +145,8 @@ void CCollisionManager::WalltoShot()
 					m_pBlastManager->Create(
 						shot->GetPosition(),
 						m_pStaticBlast,
-						m_Speed
-					);
+						m_Speed, 
+						shot->GetPlayerID());
 
 					m_pShotManager->HitShot();
 				}
@@ -292,13 +292,10 @@ void CCollisionManager::PlayertoShot()
 				m_pBlastManager->Create(
 					shot->GetPosition(),
 					m_pStaticBlast,
-					m_Speed
-				);
+					m_Speed,
+					shot->GetPlayerID());
 
 				shot->HitShot();
-
-				// “–‚½‚Á‚½Žž‚Ìˆ—
-				chara->Hit();
 			}
 		}
 	}
@@ -464,8 +461,8 @@ void CCollisionManager::WoodBoxtoShot()
 					m_pBlastManager->Create(
 						shot->GetPosition(),
 						m_pStaticBlast,
-						m_Speed
-					);
+						m_Speed,
+						shot->GetPlayerID());
 
 					shot->HitShot();
 				}
@@ -544,14 +541,14 @@ void CCollisionManager::GroundtoShot()
 	{
 		for (auto& shot : m_pShotManager->GetShot())
 		{
-			if (shot->GetCollider()->CheckCollision(*m_pGround->GetCollider()))
+			if (shot->GetCollider()->CheckCollision(*m_pGround->GetCollider()) && shot->GetShotFlag() == true)
 			{
 				//”š•—‚Ì“®“I¶¬.
 				m_pBlastManager->Create(
 					shot->GetPosition(),
 					m_pStaticBlast,
-					m_Speed
-				);
+					m_Speed,
+					shot->GetPlayerID());
 
 				shot->HitShot();
 			}
@@ -583,6 +580,18 @@ void CCollisionManager::PlayertoBlast()
 		if (!chara)continue;
 		auto Coll = chara->GetBody()->GetCollider();
 
+		for (auto& blast : m_pBlastManager->GetAllBlast())
+		{
+			if (blast->GetCollider()->CheckCollision(*Coll))
+			{
+				// “–‚½‚Á‚½Žž‚Ìˆ—
+				chara->Hit();
+
+				//“|‚µ‚½”‚ð‘‚â‚·.
+				CGameDataManager::GetInstance().AddKillCount(blast->GetPlayerID(), 1);
+
+			}
+		}
 	}
 }
 

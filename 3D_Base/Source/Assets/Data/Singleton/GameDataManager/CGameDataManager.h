@@ -13,8 +13,9 @@ class CGameDataManager
 	: public CSingleton<CGameDataManager>
 {
 public:
-	//キル数の追加・取得.
+	//キル数の追加.
 	void AddKillCount(int playerID, int amount = 1);
+	//キル数の取得.
 	int GetKillCount(int playerID) const ;
 
 private:

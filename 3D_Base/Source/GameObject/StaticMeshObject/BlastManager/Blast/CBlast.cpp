@@ -7,9 +7,10 @@ CBlast::CBlast()
 	, m_BomStart			( false )
 	, m_BomFinish			( false )
 	, m_Speed				( 0.0f )
+	, m_PlayerID			( 0.0f )
 {
 	//インスタンスの生成.
-	m_pCollider = std::make_shared<CBoxCollider>();
+	m_pCollider = std::make_shared<CSphereCollider>();
 }
 
 CBlast::~CBlast()
@@ -37,14 +38,13 @@ void CBlast::Update()
 #endif
 		//メッシュの半径を設定.
 		CStaticMeshObject::SetScale(m_Radius);
-		//当たり判定の半径を設定.
-		m_pCollider->SetRadius(m_Radius);
 		if (m_Radius >= m_MaxSize)
 		{
 			m_BomStart = false;
 			m_BomFinish = true;
 		}
 	}
+	CStaticMeshObject::Update();
 }
 
 //描画処理.
@@ -69,6 +69,12 @@ void CBlast::SetSpeed(float s)
 void CBlast::SetBomStart(bool f)
 {
 	m_BomStart = f;
+}
+
+//プレイヤーID設定.
+void CBlast::SetPlayerID(float id)
+{
+	m_PlayerID = id;
 }
 
 //爆発の開始フラグを取得.

@@ -40,6 +40,10 @@ public:
 	// 外部のクラスから情報取得
 	void SetCShot(std::vector<std::shared_ptr<CShot>> pShot) { m_pShots = pShot; }
 
+	//プレイヤーIDの設定・取得.
+	void SetPlayerID(int indexl, float id);
+	float GetPlayerID(int index) const;
+
 	// 外部のクラスに情報を渡す
 	std::vector<std::shared_ptr<CShot>>	GetShot() const { return m_pShots; }
 

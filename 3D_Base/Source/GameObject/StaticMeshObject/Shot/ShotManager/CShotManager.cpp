@@ -81,6 +81,9 @@ void CShotManager::Create(const D3DXVECTOR3& pos, float rotY, bool shotFlg, int 
 	// メッシュのアタッチ
 	shot->AttachMesh(m_Mesh[No]);
 
+	//プレイヤーIDを設定.
+	shot->SetPlayerID(No);
+
 	// 弾の向きの設定
 	shot->Reload(pos, rotY);
 
@@ -124,5 +127,21 @@ const D3DXVECTOR3& CShotManager::GetPosition()
 	for (auto& shot : m_pShots)
 	{
 		return shot->GetPosition();
+	}
+}
+
+void CShotManager::SetPlayerID(int index, float id)
+{
+	if (index >= 0 && index < m_pShots.size())
+	{
+		m_pShots[index]->SetPlayerID(id);
+	}
+}
+
+float CShotManager::GetPlayerID(int index) const
+{
+	if (index >= 0 && index < m_pShots.size())
+	{
+		return m_pShots[index]->GetPlayerID();
 	}
 }
