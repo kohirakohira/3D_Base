@@ -605,7 +605,8 @@ void CCollisionManager::PlayertoBlast()
 
 		for (auto& blast : m_pBlastManager->GetAllBlast())
 		{
-			if (blast->GetCollider()->CheckCollision(*Coll))
+			if (blast->GetCollider()->CheckCollision(*Coll) &&
+				chara->GetDeath() == false || chara->GetMuteki() == false)
 			{
 				// “–‚½‚Á‚½Žž‚Ìˆ—
 				chara->Hit();
