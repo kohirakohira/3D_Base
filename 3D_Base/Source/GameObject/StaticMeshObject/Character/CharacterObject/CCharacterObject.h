@@ -35,6 +35,7 @@ public:
 		bool	m_Drawflag;		// 描画フラグ
 		bool	m_Damage;		// ダメージフラグ
 		bool	m_Death;		// 死亡フラグ		
+		bool	m_Kill;			// すでにキル処理したか		
 		bool	m_Muteki;		// 無敵フラグ
 		bool	m_Respawn;		// リスポーンフラグ
 	} m_Chara;
@@ -88,6 +89,11 @@ public:
 	//=====死亡の設定・取得=====
 	virtual void SetDeath(bool flg) { m_Chara.m_Death = flg; }
 	virtual bool GetDeath() const { return m_Chara.m_Death; }
+	//========================
+
+	//=====キル処理の設定・取得=====
+	virtual void SetKill(bool flg) { m_Chara.m_Kill = flg; }
+	virtual bool GetKill() const { return m_Chara.m_Kill; }
 	//========================
 
 	//=====無敵の設定・取得=====

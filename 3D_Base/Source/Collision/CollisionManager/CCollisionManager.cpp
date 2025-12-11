@@ -300,7 +300,7 @@ void CCollisionManager::PlayertoShot()
 
 		for (auto& shot : m_pShotManager->GetShot())
 		{
-			if (shot->GetCollider()->CheckCollision(*Coll))
+			if (shot->GetCollider()->CheckCollision(*Coll) && chara->GetDeath() == false)
 			{
 				//爆風の動的生成.
 				m_pBlastManager->Create(
@@ -605,21 +605,26 @@ void CCollisionManager::PlayertoBlast()
 
 		for (auto& blast : m_pBlastManager->GetAllBlast())
 		{
-			if (blast->GetCollider()->CheckCollision(*Coll))
+			// 自身の爆風には当たらないようにする
+			if (blast->GetPlayerID() == chara->GetPlayerID())
+			{
+				continue;
+			}
+
+			if (blast->GetCollider()->CheckCollision(*Coll) && chara->GetDeath() == false)
 			{
 				// 当たった時の処理
 				chara->Hit();
-
-				if (chara->GetDeath() == true)
-				{
-					//倒した数を増やす.
-					CGameDataManager::GetInstance().AddKillCount(blast->GetPlayerID(), 1);
-				}
-
-				//各プレイヤーのキル数表示.
-				std::cout << "各プレイヤーのキル数表示" << blast->GetPlayerID() << ":" << CGameDataManager::GetInstance().GetKillCount(blast->GetPlayerID()) << std::endl << std::endl << std::endl;
-
 			}
+
+			if (chara->GetDeath() == true && chara->GetKill() == false)
+			{
+				//倒した数を増やす.
+				CGameDataManager::GetInstance().AddKillCount(blast->GetPlayerID(), 1);
+				chara->SetKill(true);
+			}
+			//各プレイヤーのキル数表示.
+			std::cout << "各プレイヤーのキル数表示" << blast->GetPlayerID() << ":" << CGameDataManager::GetInstance().GetKillCount(blast->GetPlayerID()) << std::endl << std::endl << std::endl;
 		}
 	}
 }

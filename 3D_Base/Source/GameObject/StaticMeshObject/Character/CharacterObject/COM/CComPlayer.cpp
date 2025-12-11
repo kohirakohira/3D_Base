@@ -95,8 +95,9 @@ void CComPlayer::Create(int id)
 
     // プレイヤーのフラグを初期化
     m_Chara.m_Drawflag = true;
-    m_Chara.m_Damage = false;
-    m_Chara.m_Death = false;
+    m_Chara.m_Damage  = false;
+    m_Chara.m_Death   = false;
+    m_Chara.m_Kill    = false;
     m_Chara.m_Respawn = false;
 
     //継承したものも初期化
