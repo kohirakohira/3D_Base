@@ -264,6 +264,10 @@ void CPlayer::Move(const PlayerInput& input)
 			m_pBody->SetMoveState(CBody::Backward);
 		}
 
+		if (m_Key->NoInputKey() == false)
+		{
+			m_pBody->SetMoveState(CBody::Stop);
+		}
 	}
 	
 	//ˆÚ“®.

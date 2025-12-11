@@ -1,5 +1,5 @@
 #include "GameObject//StaticMeshObject//Shot//ShotManager//CShotManager.h" // ショットマネージャークラス
-#include "Assets/Sound/CSoundManager.h"
+#include "Assets//Sound//CSoundManager.h" // サウンドマネージャー
 
 CShotManager::CShotManager()
 	: m_pShots			()

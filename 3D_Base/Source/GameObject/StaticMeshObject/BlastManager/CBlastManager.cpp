@@ -1,4 +1,5 @@
 #include "CBlastManager.h"
+#include "Assets/Sound/CSoundManager.h" // サウンドマネージャー
 
 CBlastManager::CBlastManager()
 	: m_Blast			( )
@@ -33,6 +34,10 @@ void CBlastManager::Create(const D3DXVECTOR3& pos, std::shared_ptr<CStaticMesh> 
 
 	//インスタンスを移動.
 	m_Blast.push_back(blast);
+
+
+	// 弾の爆発SE
+	CSoundManager::PlaySE(CSoundManager::SE_Explosion);
 }
 
 //更新処理.

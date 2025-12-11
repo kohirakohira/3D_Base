@@ -2,5 +2,15 @@
 
 SE
 
-・戦車が弾を発射するSE
-    On-Jin音人：銃火器・大砲02
+・選択時のSE
+・選択決定のSE
+・コントローラーの接続時のSE
+・コントローラーの接続が切れたときのSE
+    効果音ラボ  https://soundeffect-lab.info/sound/button/
+ 
+・戦車が弾を発射するSE   銃火器・大砲02
+    On-Jin ～音人～ https://on-jin.com/
+
+・弾が爆発するSE 爆破・破砕音01
+    On-Jin ～音人～ https://on-jin.com/
+ 

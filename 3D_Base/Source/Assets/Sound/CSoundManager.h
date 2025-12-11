@@ -18,11 +18,17 @@ public:
 		BGM_Over,	//ゲームオーバーステージ.
 		BGM_Main,	//ゲームメイン.
 
+		SE_Select,		//選択肢.
 		SE_Click,		//決定.
+		SE_Connect,		//コントローラー接続.
+		SE_UnConnect,	//コントローラーの接続が切れる.
+
 		SE_Shot,		//発射.
 		SE_Damage,		//ダメージ.
-		SE_Explosion,	//爆発
-		SE_Clear,		//クリア.
+		SE_Explosion,	//爆発.
+
+		SE_Impact,		//衝突.
+		SE_Move,		//戦車の移動音.
 
 		//音が増えたら「ここ」に追加してください.
 		max,		//最大数.

@@ -1,4 +1,6 @@
 #include "CCollisionManager.h"
+//-----サウンド-----
+#include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
 
 CCollisionManager::CCollisionManager()
 	: m_pStaticBlast		()
@@ -95,18 +97,30 @@ void CCollisionManager::WalltoPlayer()
 		if (Coll->CheckCollision(*m_pWallTop->GetCollider()))
 		{
 			push.z -= pushStrength;
+
+			//衝突SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Impact);
 		}
 		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()))
 		{
 			push.z += pushStrength;
+
+			//衝突SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Impact);
 		}
 		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()))
 		{
 			push.x += pushStrength;
+
+			//衝突SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Impact);
 		}
 		if (Coll->CheckCollision(*m_pWallRight->GetCollider()))
 		{
 			push.x -= pushStrength;
+
+			//衝突SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Impact);
 		}
 
 		// 押し返しを正規化
@@ -296,6 +310,12 @@ void CCollisionManager::PlayertoShot()
 					shot->GetPlayerID());
 
 				shot->HitShot();
+
+				//ダメージSEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Damage);
+
+				// 当たった時の処理
+				chara->Hit();
 			}
 		}
 	}
@@ -344,6 +364,9 @@ void CCollisionManager::WoodBoxtoPlayer()
 					// 壁に当たった時に押し返す
 					chara->GetBody()->PushBack(dir);
 					chara->GetCannon()->PushBack(dir);
+
+					//衝突SEの再生.
+					CSoundManager::PlaySE(CSoundManager::SE_Impact);
 				}
 			}
 		}

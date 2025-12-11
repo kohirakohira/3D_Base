@@ -3,7 +3,7 @@
 #include "Collision/CollisionManager/CCollisionManager.h"
 
 CCannon::CCannon(int inputID)
-	: m_TurnSpeed				( 0.01f )	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
+	: m_TurnSpeed				( 0.01f )
 	, m_ShotCoolTime			( 120 )
 	, m_ShotInterval			( 120 )
 	, m_PlayerID				( inputID )

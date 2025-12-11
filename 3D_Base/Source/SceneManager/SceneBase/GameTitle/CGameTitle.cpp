@@ -67,7 +67,7 @@ void CGameTitle::Update()
 				//BGMのループ停止.
 				CSoundManager::Stop(CSoundManager::BGM_Title);
 
-				//SEの再生.
+				//決定SEの再生.
 				CSoundManager::PlaySE(CSoundManager::SE_Click);
 
 				DrawFlag = true;
@@ -77,13 +77,14 @@ void CGameTitle::Update()
 
 				//コンソール文字を消す.
 				system("cls");
+
 			}
 			else
 			{
 				//BGMのループ停止.
 				CSoundManager::Stop(CSoundManager::BGM_Title);
 
-				//SEの再生.
+				//決定SEの再生.
 				CSoundManager::PlaySE(CSoundManager::SE_Click);
 
 				DrawFlag = true;
