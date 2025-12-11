@@ -33,19 +33,21 @@ bool CSoundManager::Load(HWND hWnd)
 	};
 	SoundList SList[] =
 	{
-		{ enList::BGM_Title,	_T("Data\\Sound\\BGM\\Title.mp3"),								_T("BGM_Title")	},
-		{ enList::BGM_Bonus,	_T("Data\\Sound\\BGM\\BonusGameHouse.mp3"),						_T("BGM_Bonus")	},
-		{ enList::BGM_Clear,	_T("Data\\Sound\\BGM\\Ending.mp3"),								_T("BGM_Clear")	},
-		{ enList::BGM_Over,		_T("Data\\Sound\\BGM\\Over.mp3"),								_T("BGM_Over")	},
-		{ enList::BGM_Main,		_T("Data\\Sound\\BGM\\Main.mp3"),								_T("BGM_Main")	},
+		{ enList::BGM_Title,	_T("Data\\Sound\\BGM\\Title.mp3"),				_T("BGM_Title")	},
+		{ enList::BGM_Bonus,	_T("Data\\Sound\\BGM\\BonusGameHouse.mp3"),		_T("BGM_Bonus")	},
+		{ enList::BGM_Clear,	_T("Data\\Sound\\BGM\\Ending.mp3"),				_T("BGM_Clear")	},
+		{ enList::BGM_Over,		_T("Data\\Sound\\BGM\\Over.mp3"),				_T("BGM_Over")	},
+		{ enList::BGM_Main,		_T("Data\\Sound\\BGM\\Main.mp3"),				_T("BGM_Main")	},
 
-		{ enList::SE_Select,	_T("Data\\Sound\\SE\\Select.mp3"),								_T("SE_Select")	},
-		{ enList::SE_Click,		_T("Data\\Sound\\SE\\Accept.mp3"),								_T("SE_Click")	},
-		{ enList::SE_Connect,	_T("Data\\Sound\\SE\\Connect.mp3"),							_T("SE_Connect")	},
-		{ enList::SE_UnConnect,	_T("Data\\Sound\\SE\\UnConnect.mp3"),						_T("SE_UnConnect")	},
-		{ enList::SE_Shot,		_T("Data\\Sound\\SE\\Shot.mp3"),								_T("SE_Shot")	},
-		{ enList::SE_Damage ,	_T("Data\\Sound\\SE\\damage.mp3"),								_T("SE_Damage")	},
-		{ enList::SE_Explosion,	_T("Data\\Sound\\SE\\explosion.mp3"),						_T("SE_Explosion")	},
+		{ enList::SE_Select,	_T("Data\\Sound\\SE\\Select.mp3"),				_T("SE_Select")	},
+		{ enList::SE_Click,		_T("Data\\Sound\\SE\\Accept.mp3"),				_T("SE_Click")	},
+		{ enList::SE_Connect,	_T("Data\\Sound\\SE\\Connect.mp3"),			_T("SE_Connect")	},
+		{ enList::SE_UnConnect,	_T("Data\\Sound\\SE\\UnConnect.mp3"),		_T("SE_UnConnect")	},
+		{ enList::SE_Shot,		_T("Data\\Sound\\SE\\Shot.mp3"),				_T("SE_Shot")	},
+		{ enList::SE_Damage ,	_T("Data\\Sound\\SE\\damage.mp3"),				_T("SE_Damage")	},
+		{ enList::SE_Explosion,	_T("Data\\Sound\\SE\\explosion.mp3"),		_T("SE_Explosion")	},
+		{ enList::SE_Impact,	_T("Data\\Sound\\SE\\Impact.mp3"),				_T("SE_Impact")	},
+		{ enList::SE_Move,		_T("Data\\Sound\\SE\\Move.mp3"),				_T("SE_Move")	},
 	};
 	//配列の最大要素数を算出 (配列全体のサイズ/配列1つ分のサイズ).
 	int list_max = sizeof(SList) / sizeof(SList[0]);

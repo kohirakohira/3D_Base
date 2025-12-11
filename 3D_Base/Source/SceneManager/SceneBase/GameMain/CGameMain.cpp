@@ -116,9 +116,8 @@ CGameMain::~CGameMain()
 
 void CGameMain::Update()
 {
-
 	//BGMのループ再生..
-	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
+	CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
 	//コントローラーの更新.
 	CControllerManager::GetInstance().Update();

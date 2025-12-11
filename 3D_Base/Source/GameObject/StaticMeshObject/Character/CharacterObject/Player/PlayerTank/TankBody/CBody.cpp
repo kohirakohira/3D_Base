@@ -3,8 +3,11 @@
 
 #include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
 
+//-----サウンド-----
+#include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
+
 CBody::CBody(int inputID)
-	: m_TurnSpeed			(0.01f)	// ちっきりやりたい場合はラジアン値を設定すること(戦車で使うぞ!)
+	: m_TurnSpeed			(0.01f)
 	, m_MoveSpeed			(0.1f)
 	, m_MoveState			(enMoveState::Stop)
 	, m_Death				(false)
@@ -65,15 +68,25 @@ void CBody::RadioControl()
 	{
 	case enMoveState::Forward: 		// 前進
 		m_vPosition += vecAxisZ * m_Tuning.moveSpeed;
+
+		//移動SEの再生.
+		CSoundManager::PlayLoop(CSoundManager::SE_Move);
 		break;
 	case enMoveState::Backward: 	// 後退
 		m_vPosition -= vecAxisZ * m_Tuning.moveSpeed;
+
+		//移動SEの再生.
+		CSoundManager::PlayLoop(CSoundManager::SE_Move);
+		break;
+	case enMoveState::Stop: 	// 停止
+		//移動SEの停止.
+		CSoundManager::Stop(CSoundManager::SE_Move);
 		break;
 	default:
 		break;
 	}
-	// 上記の移動処理が終われば停止状態にしておく
-	m_MoveState = enMoveState::Stop;
+	//// 上記の移動処理が終われば停止状態にしておく
+	//m_MoveState = enMoveState::Stop;
 }
 
 void CBody::PushBack(const D3DXVECTOR3& push)

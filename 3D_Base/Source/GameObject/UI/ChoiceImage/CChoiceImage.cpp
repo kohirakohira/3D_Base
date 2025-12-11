@@ -1,4 +1,6 @@
 #include "CChoiceImage.h"
+//-----サウンド-----
+#include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
 
 CChoiceImage::CChoiceImage(CSceneType typ)
 	:m_SceneType		( typ )
@@ -65,6 +67,9 @@ void CChoiceImage::ControllerUpdate()
 			m_vPosition.y = WND_H / posAdjustment_1;
 			//セッティング.
 			m_IsSelected = false;
+
+			//選択SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		//下移動(エンド).
 		if (dirlef == CController::Direction::Down)
@@ -73,6 +78,9 @@ void CChoiceImage::ControllerUpdate()
 			m_vPosition.y = WND_H / posAdjustment_2;
 			//閉じる.
 			m_IsSelected = true;
+
+			//選択SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		break;
 	case CSceneType::Debug:
@@ -86,6 +94,9 @@ void CChoiceImage::ControllerUpdate()
 			m_vPosition.x = WND_W / posAdjustment_3;
 			//戻る.
 			m_IsSelected = false;
+
+			//選択SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		//左移動(戻る).
 		if (dirlef == CController::Direction::Left)
@@ -94,6 +105,9 @@ void CChoiceImage::ControllerUpdate()
 			m_vPosition.x = WND_W / posAdjustment_4;
 			//メイン.
 			m_IsSelected = true;
+
+			//選択SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		break;
 	case CSceneType::Main:
@@ -121,6 +135,9 @@ void CChoiceImage::KeyUpdate()
 			m_vPosition.y = WND_H / posAdjustment_1;
 			//セッティング.
 			m_IsSelected = false;
+
+			//選択SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		//下移動(エンド).
 		if (m_Key->NowInputKey('S') == true)
@@ -129,6 +146,9 @@ void CChoiceImage::KeyUpdate()
 			m_vPosition.y = WND_H / posAdjustment_2;
 			//閉じる.
 			m_IsSelected = true;
+
+			//選択SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		break;
 	case CSceneType::Debug:
@@ -142,6 +162,9 @@ void CChoiceImage::KeyUpdate()
 			m_vPosition.x = WND_W / posAdjustment_3;
 			//戻る.
 			m_IsSelected = false;
+
+			//選択SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		//左移動(戻る).
 		if (m_Key->NowInputKey('A') == true)
@@ -150,6 +173,9 @@ void CChoiceImage::KeyUpdate()
 			m_vPosition.x = WND_W / posAdjustment_4;
 			//メイン.
 			m_IsSelected = true;
+
+			//選択SEの再生.
+			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		break;
 	case CSceneType::Main:
