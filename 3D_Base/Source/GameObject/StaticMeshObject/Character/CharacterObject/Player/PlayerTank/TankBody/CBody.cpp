@@ -86,7 +86,7 @@ void CBody::RadioControl()
 		break;
 	}
 	//// ã‹L‚ÌˆÚ“®ˆ—‚ªI‚í‚ê‚Î’â~ó‘Ô‚É‚µ‚Ä‚¨‚­
-	//m_MoveState = enMoveState::Stop;
+	m_MoveState = enMoveState::Stop;
 }
 
 void CBody::PushBack(const D3DXVECTOR3& push)

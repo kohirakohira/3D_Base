@@ -18,6 +18,7 @@ CCharacterObjectBase::CCharacterObjectBase()
 		true,	// 描画フラグ
 		false,	// ダメージフラグ
 		false,	// 死亡フラグ	
+		false,	// すでにキル処理したか	
 		false,	// 無敵フラグ
 		false,	// リスポーンフラグ
 	};
@@ -66,17 +67,21 @@ void CCharacterObjectBase::SetShotManager(std::shared_ptr<CShotManager> shot)
 //=====ヒット関数=====
 void CCharacterObjectBase::Hit()
 {
-	// プレイヤーの体力を引く
-	m_Chara.m_Hp--;
-	if (m_Chara.m_Hp < 0)
+	if (m_Chara.m_Muteki == false)
 	{
-		// 死亡フラグ有効化
-		m_Chara.m_Death = true;
-	}
-	else
-	{
-		// ダメージフラグ有効化
-		m_Chara.m_Damage = true;
+		// プレイヤーの体力を引く
+		m_Chara.m_Hp -= 1;
+		if (m_Chara.m_Hp < 0)
+		{
+			// 死亡フラグ有効化
+			m_Chara.m_Death = true;
+			m_Chara.m_Kill = false;  // 死亡直後なのでまだ未処理
+		}
+		else
+		{
+			// ダメージフラグ有効化
+			m_Chara.m_Damage = true;
+		}
 	}
 }
 //===================
@@ -89,6 +94,9 @@ void CCharacterObjectBase::Damage()
 
 	if (m_Chara.m_Damage == true)
 	{
+		// 無敵フラグ有効化
+		m_Chara.m_Muteki = true;
+
 		// 無敵タイマーを減少
 		m_Chara.m_MutekiTimer -= TIME;
 
@@ -117,6 +125,9 @@ void CCharacterObjectBase::Damage()
 			// 描画フラグ有効化
 			m_Chara.m_Drawflag = true;
 
+			// 無敵フラグを無効化
+			m_Chara.m_Muteki = false;
+
 			// ダメージフラグを無効化
 			m_Chara.m_Damage = false;
 		}
@@ -126,6 +137,7 @@ void CCharacterObjectBase::Damage()
 		// 念のためここでも無敵を初期化する
 		m_Chara.m_MutekiCnt = 0;
 		m_Chara.m_MutekiTimer = 0.2;
+		m_Chara.m_Muteki = false;
 	}
 }
 //=====================
