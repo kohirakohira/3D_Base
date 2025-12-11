@@ -32,17 +32,22 @@ void CComTargetSelector::Update()
     // ブラックリストの時間を減らす
     TickBlacklist();
 
-    // ターゲットがいない場合は見失いフレームを増加
-    if (!m_pTarget)
+    TickBlacklist();
+
+    // ターゲットの速度を計算
+    if (m_pTarget)
     {
-        ++m_LostSightFrames;
+        D3DXVECTOR3 currentPos = m_pTarget->GetPosition();
+        m_TargetVelocity = currentPos - m_LastTargetPos;
+        m_LastTargetPos = currentPos;
+        m_LostSightFrames = 0;
     }
     else
     {
-        m_LostSightFrames = 0;
+        m_TargetVelocity = { 0, 0, 0 };
+        ++m_LostSightFrames;
     }
 
-    // リターゲットタイマーを減らす
     if (m_RetargetTimer > 0)
     {
         --m_RetargetTimer;
@@ -142,12 +147,14 @@ TargetResult CComTargetSelector::SelectTarget(
 void CComTargetSelector::ClearTarget()
 {
     //ターゲットが死亡していたら
+    if (!m_pTarget) return;
+
+    // ターゲットが死亡していたらクリア
     if (m_pTarget->GetDeath() == true)
     {
         m_pTarget.reset();
         m_CurrentTargetDist = 1e9f;
         m_LostSightFrames = 0;
-
     }
 }
 

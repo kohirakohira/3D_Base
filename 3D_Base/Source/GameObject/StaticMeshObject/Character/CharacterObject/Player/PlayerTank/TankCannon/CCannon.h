@@ -85,14 +85,20 @@ public:
 		CannonHitRay& outResult) const;
 
 	// 指定位置が射線上にあるか
-	bool IsPositionInSight(D3DXVECTOR3& targetPos, float toleranceAngle = 0.1f) const;
+	bool IsPositionInSight(const D3DXVECTOR3& targetPos, float toleranceAngle = 0.1f) const;
 
-	//========================================
-	// デバッグ描画
-	//========================================
 	// レイの描画を有効/無効
 	void SetRayVisible(bool visible) { m_DrawRay = visible; }
 	bool IsRayVisible() const { return m_DrawRay; }
+
+	// 射線上に障害物があるか
+	bool HasObstacleInFireLine(const D3DXVECTOR3& targetPos,
+		const std::vector<CStaticMeshObject*>& obstacles) const;
+
+	// 射線が通っているか（障害物なし && 射線上）
+	bool CanFireAt(const D3DXVECTOR3& targetPos,
+		const std::vector<CStaticMeshObject*>& obstacles,
+		float toleranceAngleDeg = 10.0f) const;
 
 	// レイのデバッグ描画
 	void DrawRay(D3DXMATRIX& View, D3DXMATRIX& Proj);

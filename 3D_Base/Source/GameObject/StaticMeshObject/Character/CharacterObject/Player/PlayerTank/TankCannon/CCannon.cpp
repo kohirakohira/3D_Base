@@ -199,11 +199,13 @@ bool CCannon::RaycastToNearest(const std::vector<CStaticMeshObject*>& targets, C
 }
 
 //射線上かどうか
-bool CCannon::IsPositionInSight(D3DXVECTOR3& targetPos, float toleranceAngle) const
+bool CCannon::IsPositionInSight(const D3DXVECTOR3& targetPos, float toleranceAngle) const
 {
     D3DXVECTOR3 muzzle = GetMuzzlePosition();   //砲口の位置を取得 
     
-    muzzle.y = 0.0f;  // 水平面で判定
+    //ターゲットへのベクトル
+    D3DXVECTOR3 toTarget = targetPos - muzzle;
+    toTarget.y = 0.0f;  
 
     float dist = D3DXVec3Length(&muzzle);
     if (dist < 0.001f) return true;  // ほぼ同じ位置
@@ -221,6 +223,60 @@ bool CCannon::IsPositionInSight(D3DXVECTOR3& targetPos, float toleranceAngle) co
 
     // 許容角度内か
     return dot >= Util::Wrap(toleranceAngle);   //sinfでもいい
+}
+
+bool CCannon::HasObstacleInFireLine(const D3DXVECTOR3& targetPos, const std::vector<CStaticMeshObject*>& obstacles) const
+{
+    D3DXVECTOR3 muzzle = GetMuzzlePosition();
+    D3DXVECTOR3 toTarget = targetPos - muzzle;
+    float targetDist = D3DXVec3Length(&toTarget);
+
+    if (targetDist < 0.001f) return false;
+
+    //射線レイを設定
+    RAY fireRay;
+    fireRay.Position = muzzle;
+    fireRay.RotationY = m_vRotation.y;
+    fireRay.Axis = D3DXVECTOR3(0.f, 0.f, 1.f);
+    fireRay.Length = targetDist;    //ターゲットまでの距離
+
+    // 各障害物をチェック
+    for (auto* pObstacle : obstacles)
+    {
+        if (!pObstacle) continue;
+
+        float hitDist = 0.0f;
+        D3DXVECTOR3 hitPoint;
+
+        if (pObstacle->IsHitForRay(fireRay, &hitDist, &hitPoint))
+        {
+            // ターゲットより手前でヒットなら障害物あり
+            float actualHitDist = hitDist * fireRay.Length;
+            if (actualHitDist < targetDist * 0.95f)  // 少し余裕を持たせる
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool CCannon::CanFireAt(const D3DXVECTOR3& targetPos, const std::vector<CStaticMeshObject*>& obstacles, float toleranceAngleDeg) const
+{
+    // 射線上にいない
+    if (!IsPositionInSight(targetPos, toleranceAngleDeg))
+    {
+        return false;
+    }
+
+    // 障害物がある
+    if (HasObstacleInFireLine(targetPos, obstacles))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 //レイ描画

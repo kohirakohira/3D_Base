@@ -20,6 +20,9 @@
 //ターゲット選定クラス
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComTargetSelector/CComTargetSelector.h"
 
+//COMショットクラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComShot/CComShot.h"
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
@@ -27,6 +30,8 @@
 #include <unordered_set>
 #include <memory>
 #include <deque>
+
+
 class CComPlayer
 	: public CCharacterObjectBase
 {
@@ -112,16 +117,18 @@ public:
 		return m_TargetSelector.GetCurrentTarget();
 	}
 
-private:
-	//構造体
-	//COMのショット関連のパラメータ
-	struct ComShotState
+	// 射線判定用障害物を設定
+	void SetFireLineObstacles(const std::vector<CStaticMeshObject*>* obstacles)
 	{
-		int m_ShotCD = 0;						//クールダウン
-		int	ShotCooldownFrames = 120;			//クールダウン時間
-		float FireAngleEpsDeg = 360.f;			//この角度以内なら発射
-		float MuzzleOffsetZ = 0.5f;				//砲口のオフセット
-	};
+		m_pFireLineObstacles = obstacles;
+	}
+
+	//// 性格設定
+	//void SetPersonality(std::unique_ptr<IComPersonality> personality);
+	//void SetPersonalityType(PersonalityType type);
+	//PersonalityType GetPersonalityType() const;
+
+private:
 
 	//列挙型
 	//COMの状態
@@ -147,7 +154,6 @@ private:
 	void SyncCannonToBody();											//砲塔を車体に追従させる
 	void TransitionTo(State state);										//ステータスを変更する
 	void EvaluateTransitions(float dist);								//条件に応じて状態変更	
-	void ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const;
 
 	//障害物判定用
 	bool SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const;
@@ -210,9 +216,6 @@ private:
 	int		m_StateFrames;				//その状態に入ってからの経過フレーム
 	float	m_WanderAngle;
 
-
-	ComShotState m_ShotState;			//COMのショット情報
-
 	//========================================
 	// 障害物回避パラメータ
 	//========================================
@@ -240,6 +243,9 @@ private:
 	float m_ApproachWeight = 0.4f;		//攻めの重み
 	int	  m_MultiEnemyThreshold = 2;	//この数以上で
 
+	// 障害物リスト.射線判定用
+	const std::vector<CStaticMeshObject*>* m_pFireLineObstacles = nullptr;
+
 	//複数体敵対応関数
 	int CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) const;
 
@@ -249,11 +255,6 @@ private:
 		float escapeWeight,
 		float approachWeight) const;
 
-#if 0
-	//レイでの射線判定									
-	bool IsTargetInSight() const;			//射線をチェックする
-	bool HasObstacleInFireLine() const;
-#endif
 
 	//===ダメージの設定・取得===
 	virtual void SetDamage(bool flg) override { m_Chara.m_Damage = flg; }
@@ -272,6 +273,11 @@ private:
 
 	int GetPlayerID() override { return m_PlayerID; } 
 
-
+	//追尾クラス
 	CComTargetSelector m_TargetSelector;
+
+	//COMショットクラス
+	CComShot m_ComShot;
+
+	//std::unique_ptr<IComPersonality> m_pPersonality;
 };

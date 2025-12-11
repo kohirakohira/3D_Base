@@ -61,6 +61,9 @@ public:
     bool HasTarget() const { return m_pTarget != nullptr; }
     int GetLostSightFrames() const { return m_LostSightFrames; }
 
+    //ターゲットの速度を取得
+    D3DXVECTOR3 GetTargetVelocity() const { return m_TargetVelocity; }
+
 private:
     //ブラックリストの更新
     void TickBlacklist();
@@ -81,4 +84,8 @@ private:
     float m_StickinessRatio = 0.8f;     // ターゲット切り替えの閾値
     int m_RetargetInterval = 120;       // 再選択間隔
     int m_RetargetTimer = 0;            // 再選択タイマー
+
+    // ターゲット追跡用
+    D3DXVECTOR3 m_LastTargetPos = { 0, 0, 0 };
+    D3DXVECTOR3 m_TargetVelocity = { 0, 0, 0 };
 };
