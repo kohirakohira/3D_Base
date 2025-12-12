@@ -115,6 +115,8 @@ void CComPlayer::Create(int id)
     shotCfg.bulletSpeed = 0.8f;
     m_ComShot.SetConfig(shotCfg);
 
+    m_pCannon->Init();
+
 #if 0
     int personalityRoll = id % 3;  // ID‚ÉŠî‚Ã‚¢‚Ä«Ši‚ðŒˆ’è
     switch (personalityRoll)
@@ -574,21 +576,14 @@ void CComPlayer::StepSeek()
     const float centerRadius = 10.0f;
     if (dist2 > centerRadius * centerRadius)
     {
-        //’†S•t‹ß‚Å‚Ìœpœj
-        //TickWander();
-        //desiredYaw = curYaw + m_WanderAngle;
         desiredYaw = std::atan2f(d.x, d.z);
     }
     else
     {
-        //desiredYaw = std::atan2f(d.x, d.z);
-
         //’†S‚É‚¢‚­.’†S‚ð—Dæ‚µ‚â‚·‚¢
         TickWander();
         desiredYaw = curYaw + m_WanderAngle;
-        
     }
-
 
     const float next = SteerWithAvoidAABB(curYaw, desiredYaw, tuning.bodyTurnSpeed);
     SafeAdvance(next, tuning.moveSpeed);
@@ -619,9 +614,7 @@ void CComPlayer::StepChase()
     const D3DXVECTOR3 tp = target->GetPosition();
     const float cur = body->GetRotation().y;
 
-    //========================================
-    // •¡”“Gƒ`ƒFƒbƒN
-    //========================================
+    //•¡”l”Žž
     D3DXVECTOR3 clusterCenter;
     int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
 
@@ -831,6 +824,8 @@ void CComPlayer::TryAutoFire()
     auto body = GetBody();
     if (!cannon || !body) return;
 
+    float hitD;
+
     // ŽËüƒ`ƒFƒbƒN
     if (m_pFireLineObstacles && !m_pFireLineObstacles->empty())
     {
@@ -842,13 +837,20 @@ void CComPlayer::TryAutoFire()
         PredictedShot prediction = m_ComShot.PredictTargetPosition(
             muzzle, target->GetPosition(), targetVel);
 
+        //áŠQ•¨‚ª‚ ‚ê‚Î–³Ž‹
+        if (HasObstacleAheadSimple(target->GetPosition(), yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
+        {
+            return;
+        }
+
+#if 0
         if (!cannon->CanFireAt(prediction.aimPoint, *m_pFireLineObstacles,
             m_ComShot.GetConfig().fireAngleDeg))
         {
             return;
         }
+#endif
     }
-
     // ŽËŒ‚ŽÀs
     m_ComShot.TryFire(
         target->GetPosition(),
@@ -856,6 +858,7 @@ void CComPlayer::TryAutoFire()
         body.get(),
         cannon.get()
     );
+
 }
 
 // –C“ƒ‚ÆŽÔ‘Ì‚Ì“¯Šú
@@ -1108,7 +1111,9 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
 
     body->CStaticMeshObject::Update();
     SyncCannonToBody();
-}void CComPlayer::TickWander()
+}
+
+void CComPlayer::TickWander()
 {
     const float WanderDelta = 0.10f;
     const float WanderClamp = 0.6f;
@@ -1221,6 +1226,8 @@ float CComPlayer::ComputeBlendedDirection(
         blended.x /= blendLen;
         blended.z /= blendLen;
     }
+
+    m_ComShot.IsReady();
 
     // Yaw ‚É•ÏŠ·
     return std::atan2f(blended.x, blended.z);

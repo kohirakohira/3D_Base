@@ -32,8 +32,6 @@ void CComTargetSelector::Update()
     // ブラックリストの時間を減らす
     TickBlacklist();
 
-    TickBlacklist();
-
     // ターゲットの速度を計算
     if (m_pTarget)
     {
@@ -115,7 +113,7 @@ TargetResult CComTargetSelector::SelectTarget(
     // 現在のターゲットとの距離
     const float curDist = Util::DistXZ(selfPos, m_pTarget->GetPosition());
 
-    // より近いターゲットがいる場合（スティッキネス考慮）
+    // より近いターゲットがいる場合
     if (best.get() != m_pTarget.get() && bestDist < curDist * m_StickinessRatio)
     {
         m_pTarget = best;

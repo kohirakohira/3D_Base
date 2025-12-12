@@ -31,7 +31,7 @@ void CCannon::Update()
 	CStaticMeshObject::Update();
     
     //レイを更新
-    //UpdateCannonRay();
+    UpdateCannonRay();
 
 }
 
@@ -40,11 +40,11 @@ void CCannon::Draw(
 {
 	CStaticMeshObject::Draw(View, Proj, Light, Camera);
 
-	//// デバッグ用レイ描画
-	//if (m_DrawRay)
-	//{
-	//	DrawRay(View, Proj);
-	//}
+	// デバッグ用レイ描画
+	if (m_DrawRay)
+	{
+		DrawRay(View, Proj);
+	}
 }
 
 void CCannon::Init()
@@ -58,7 +58,7 @@ HRESULT CCannon::InitCannonRay(float len)
     //各パラメータ初期化
     m_CannonRay.Position = m_vPosition;
     m_CannonRay.RotationY = m_vRotation.y;
-    m_CannonRay.Axis = D3DXVECTOR3(0.f, 0.f, 1.f);
+    m_CannonRay.Axis = D3DXVECTOR3(0.f, 1.f, 1.f);
     m_CannonRay.Length = len;
 
     //レイの生成

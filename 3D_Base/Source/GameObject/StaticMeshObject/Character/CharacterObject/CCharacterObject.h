@@ -108,6 +108,9 @@ public:
 	//プレイヤーのインデックス番号の取得.
 	virtual int GetPlayerID() = 0;
 
+	//体力取得
+	virtual int GetHP() const{ return m_Chara.m_Hp; }
+
 protected:
 	//車体クラス.
 	std::shared_ptr<CBody>			m_pBody;

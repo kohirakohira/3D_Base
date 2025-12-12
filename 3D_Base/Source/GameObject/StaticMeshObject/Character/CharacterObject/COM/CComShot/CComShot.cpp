@@ -5,6 +5,13 @@
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/Util/Util.h"
 #include <cmath>
 
+CComShot::CComShot() 
+    : m_Config      ()
+    , m_Cooldown    ( 0 )
+    , m_OwnerID     ( -1 )
+{
+}
+
 void CComShot::Initialize(int ownerID)
 {
     m_OwnerID = ownerID;
@@ -101,7 +108,7 @@ PredictedShot CComShot::PredictTargetPosition(const D3DXVECTOR3& muzzlePos, cons
 
     //‘¬“x‚ª’x‚¢‚Ù‚Ç—\‘ª‚µ‚â‚·‚¢
     float speed = D3DXVec3Length(&targetVelocity);
-    result.confidence = 1.0f / (1.0f + speed * 1.5f);
+    result.confidence = 1.0f / (1.0f + speed * 0.5f);
 
     return result;
 }

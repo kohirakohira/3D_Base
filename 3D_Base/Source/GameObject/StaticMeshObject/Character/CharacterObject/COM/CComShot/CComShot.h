@@ -22,17 +22,17 @@ struct PredictedShot
 //射撃設定
 struct ShotConfig
 {
-    int cooldownFrames = 120;       // クールダウン
-    float fireAngleDeg = 15.0f;     // 許容角度
-    float muzzleOffsetZ = 0.5f;     // 砲口オフセット
-    float cannonHeight = 0.3f;      // 砲塔高さ
-    float bulletSpeed = 0.8f;       // 弾速 
+    int cooldownFrames = 120;           // クールダウン
+    float fireAngleDeg = 360.0f;        // 許容角度
+    float muzzleOffsetZ = 0.5f;         // 砲口オフセット
+    float cannonHeight = 0.3f;          // 砲塔高さ
+    float bulletSpeed = 0.8f;           // 弾速 
 };
 
 class CComShot
 {
 public:
-    CComShot() = default;
+    CComShot();
     ~CComShot() = default;
 
     //初期化と設定
@@ -71,6 +71,6 @@ public:
 private:
     std::shared_ptr<CShotManager> m_pShotManager;
     ShotConfig m_Config;
-    int m_OwnerID = -1;
-    int m_Cooldown = 0;
+    int m_OwnerID;
+    int m_Cooldown;
 };
