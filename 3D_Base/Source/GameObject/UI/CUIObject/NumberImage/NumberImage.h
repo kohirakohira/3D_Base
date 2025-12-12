@@ -47,7 +47,7 @@ public:
 	std::shared_ptr<CSprite2D> SetSpriteNumber(std::shared_ptr<CSprite2D> img) { m_NumImage = img; }
 
 	//§ŒÀŠÔ‚Ìİ’è.
-	float SetTimer(float t) { m_Time = t; }
+	float SetNumber(float num) { m_Number = num; }
 
 	//”š‚Ìİ’è.
 	void SetNumber(int num)
@@ -65,8 +65,8 @@ public:
 
 
 public:
-	//§ŒÀŠÔ.
-	int m_Time;
+	//”š.
+	int m_Number;
 	//UVİ’è—p.
 	std::unordered_map<std::string, std::shared_ptr<NumberImage>>	m_NumBerMap;
 	//‰æ‘œ.

@@ -2,7 +2,7 @@
 
 NumberImage::NumberImage()
 	: m_Num				(NUM{0, 0, 0, 0})
-	, m_Time			( 0 )
+	, m_Number			( 0 )
 {
 }
 
@@ -26,8 +26,8 @@ void NumberImage::Draw()
 void NumberImage::Init()
 {
 	//2桁に分解.
-	int left	= m_Time / 10;
-	int right	= m_Time % 10;
+	int left	= m_Number / 10;
+	int right	= m_Number % 10;
 
 	//オブジェクトに設定.
 	m_NumBerMap["left"]->SetNumber(left);
