@@ -4,6 +4,7 @@
 
 //-----DirectX.-----
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/Util/Util.h"	//ユーティリティ
 
 class CCamera
 {

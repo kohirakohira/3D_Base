@@ -98,7 +98,7 @@ void CGameTitle::Update()
 		}
 	}
 
-	{
+#if 0
 		////デバッグに遷移.
 		//if (m_KeyInput->ReleaseInputKey('D') == true)
 		//{
@@ -143,7 +143,7 @@ void CGameTitle::Update()
 		//	m_SceneType = CSceneType::ResultWin;
 
 		//}
-	}
+#endif
 
 }
 
