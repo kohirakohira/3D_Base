@@ -139,83 +139,80 @@ void CCollisionManager::WalltoPlayer()
 // 壁と弾の当たり判定
 void CCollisionManager::WalltoShot()
 {
-	for (int i = 0; i < PLAYER_MAX; i++)
+	for (auto& shot : m_pShotManager->GetShot())
 	{
-		for (auto& shot : m_pShotManager->GetShot())
+		//木箱をまとめて管理.
+		std::shared_ptr<CCollider> Allwall[] = {
+			m_pWallTop->GetCollider(),
+			m_pWallBottom->GetCollider(),
+			m_pWallLeft->GetCollider(),
+			m_pWallRight->GetCollider(),
+		};
+
+		for (auto& wall : Allwall)
 		{
-			//木箱をまとめて管理.
-			std::shared_ptr<CCollider> Allwall[] = {
-				m_pWallTop->GetCollider(),
-				m_pWallBottom->GetCollider(),
-				m_pWallLeft->GetCollider(),
-				m_pWallRight->GetCollider(),
-			};
-
-			for (auto& wall : Allwall)
+			if (shot->GetCollider()->CheckCollision(*wall))
 			{
-				if (shot->GetCollider()->CheckCollision(*wall))
-				{
-					//爆風の動的生成.
-					m_pBlastManager->Create(
-						shot->GetPosition(),
-						m_pStaticBlast,
-						m_Speed, 
-						shot->GetPlayerID());
+				//爆風の動的生成.
+				m_pBlastManager->Create(
+					shot->GetPosition(),
+					m_pStaticBlast,
+					m_Speed, 
+					shot->GetPlayerID());
 
-					m_pShotManager->HitShot();
-				}
+				m_pShotManager->HitShot();
 			}
-			{
-				//// 壁が弾と接触したとき
-				//if (shot->GetCollider()->CheckCollision(*m_pWallTop->GetCollider()))
-				//{
-				//	//動的に作成.
-				//	m_pBlastManager->Create(
-				//		shot->GetPosition(),
-				//		true,
-				//		m_pStaticBlast);
+		}
+		{
+			//// 壁が弾と接触したとき
+			//if (shot->GetCollider()->CheckCollision(*m_pWallTop->GetCollider()))
+			//{
+			//	//動的に作成.
+			//	m_pBlastManager->Create(
+			//		shot->GetPosition(),
+			//		true,
+			//		m_pStaticBlast);
 
-				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
+			//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
 
-				//	m_pShotManager->HitShot();
-				//}
-				//if (shot->GetCollider()->CheckCollision(*m_pWallBottom->GetCollider()))
-				//{
-				//	//動的に作成.
-				//	m_pBlastManager->Create(
-				//		shot->GetPosition(),
-				//		true,
-				//		m_pStaticBlast);
+			//	m_pShotManager->HitShot();
+			//}
+			//if (shot->GetCollider()->CheckCollision(*m_pWallBottom->GetCollider()))
+			//{
+			//	//動的に作成.
+			//	m_pBlastManager->Create(
+			//		shot->GetPosition(),
+			//		true,
+			//		m_pStaticBlast);
 
-				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
+			//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
 
-				//	m_pShotManager->HitShot();
-				//}
-				//if (shot->GetCollider()->CheckCollision(*m_pWallLeft->GetCollider()))
-				//{
-				//	//動的に作成.
-				//	m_pBlastManager->Create(
-				//		shot->GetPosition(),
-				//		true,
-				//		m_pStaticBlast);
+			//	m_pShotManager->HitShot();
+			//}
+			//if (shot->GetCollider()->CheckCollision(*m_pWallLeft->GetCollider()))
+			//{
+			//	//動的に作成.
+			//	m_pBlastManager->Create(
+			//		shot->GetPosition(),
+			//		true,
+			//		m_pStaticBlast);
 
-				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
+			//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
 
-				//	m_pShotManager->HitShot();
-				//}
-				//if (shot->GetCollider()->CheckCollision(*m_pWallRight->GetCollider()))
-				//{
-				//	//動的に作成.
-				//	m_pBlastManager->Create(
-				//		shot->GetPosition(),
-				//		true,
-				//		m_pStaticBlast);
+			//	m_pShotManager->HitShot();
+			//}
+			//if (shot->GetCollider()->CheckCollision(*m_pWallRight->GetCollider()))
+			//{
+			//	//動的に作成.
+			//	m_pBlastManager->Create(
+			//		shot->GetPosition(),
+			//		true,
+			//		m_pStaticBlast);
 
-				//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
+			//	m_pBlastManager->SetBlastRadiusMax(m_Rad.front());
 
-				//	m_pShotManager->HitShot();
-				//}
-			}
+			//	m_pShotManager->HitShot();
+			//}
 		}
 	}
 }
@@ -330,7 +327,6 @@ void CCollisionManager::WoodBoxtoPlayer()
 		auto chara = m_pCharacterManager->GetControlPlayer(i);
 		if (!chara)continue;
 		auto charaColl = chara->GetBody()->GetCollider();
-		D3DXVECTOR3 charaPos = chara->GetBody()->GetPosition();
 
 
 		//木箱をまとめて管理.
@@ -346,6 +342,9 @@ void CCollisionManager::WoodBoxtoPlayer()
 		{
 			if (charaColl->CheckCollision(*box))
 			{
+				//キャラの位置.
+				D3DXVECTOR3 charaPos = chara->GetBody()->GetPosition();
+
 				//方向ベクトル.
 				D3DXVECTOR3 dir = charaPos - box->GetPosition();
 
@@ -608,7 +607,7 @@ void CCollisionManager::PlayertoBlast()
 				continue;
 			}
 
-			if (blast->GetCollider()->CheckCollision(*Coll) && chara->GetDeath() == false)
+			if (blast->GetCollider()->CheckCollision(*Coll) && chara->GetMuteki() == false && chara->GetDamage() == false)
 			{
 				// 当たった時の処理
 				chara->Hit();

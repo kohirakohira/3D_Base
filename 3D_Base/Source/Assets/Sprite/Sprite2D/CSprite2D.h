@@ -113,6 +113,7 @@ public:
 	void SetViewPortSize(float w, float h);
 
 
+
 	//’†S‚ğİ’è‚·‚é\‘¢‘Ì.
 	struct CenterSetUp
 	{

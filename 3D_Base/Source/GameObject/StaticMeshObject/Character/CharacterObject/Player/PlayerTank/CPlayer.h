@@ -50,9 +50,6 @@ public:
 	D3DXVECTOR3 GetCannonPosition() const { return m_pCannon->GetPosition(); }
 	float GetCannonYaw() const { return m_pCannon->GetRotation().y; }
 
-	//当たった時用.
-	void OnHit(CCharacterObjectBase* other);
-
 	// プレイヤーかCOMを識別
 	bool IsPlayer() const override { return true; }
 

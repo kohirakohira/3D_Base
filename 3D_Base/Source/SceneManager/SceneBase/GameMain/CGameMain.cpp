@@ -212,9 +212,6 @@ void CGameMain::Update()
 	//	m_pCharacterManager->SwitchActivePlayer();
 	//}
 
-	// 当たり判定の更新
-	m_pCollisionManager->Update();
-
 	// 壁の更新
 	m_pWallTop->Update();
 	m_pWallBottom->Update();
@@ -334,17 +331,6 @@ void CGameMain::Draw()
 		//エフェクトもここでやる.
 		CEffect::GetInstance().Draw(view, proj, light, paramC);
 
-//4画面に体力を表示.
-		//前後関係無視..
-		CDirectX11::GetInstance().SetDepth(false);
-		//UI.
-		for (int i = 0; i < HP_MAX; i++)
-		{
-			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, m_Rot);
-			m_pSpriteHitPoint[i]->Draw();
-		}
-		CDirectX11::GetInstance().SetDepth(true);
-
 	};
 	//分割ビューのループ.
 	for (int i = 0; i < VIEWS; ++i)
@@ -358,28 +344,31 @@ void CGameMain::Draw()
 
 		std::shared_ptr<CCharacterObjectBase> owner = m_pCharacterManager->GetControlPlayer(i);
 
-		////////デバッグテキストの描画.
-		//////m_pDbgText->SetColor(0.9f, 0.6f, 0.f);	//色の設定.
-		//////m_pDbgText->Render(_T("ABCD"), 10, 100);.
-
-	//1ビュー分を描画.
+		//1ビュー分を描画.
 		DrawOneViewport(camera, owner);
-		////////デバッグテキスト(数値入り)の描画.
-		//////m_pDbgText->SetColor(1.f, 0.f, 0.f);.
-		//////TCHAR dbgText[64];.
-		//////_stprintf_s(dbgText, _T("Float:%f, %f"), 1.f, 2.2f);.
-		//////m_pDbgText->Render(dbgText, 10, 110);.
 
-		//前後関係無視..
+		//前後関係無視.
+		//UI.
 		CDirectX11::GetInstance().SetDepth(false);
 		//プレイヤー番号の描画..
 		m_pSpritePlayerIcon[i]->Draw();
 		m_pSpriteKillNomber[i]->Draw();
-		for (int i = 0; i < HP_MAX; i++)
+
+
+		//HPの画像の設定..
+		EachSettingHitPoint(i);
+		int chara_hp = m_pCharacterManager->GetControlPlayer(i)->GetHP();
+		//各プレイヤーの体力分回す.
+		for (int hp = 0; hp < chara_hp; hp++)
 		{
-			m_pSpriteHitPoint[i]->SetRotation(0.0f, 0.0f, m_Rot);
-			m_pSpriteHitPoint[i]->Draw();
+			if (m_pSpriteHitPoint[i][hp]->GetIsDisplay() == true)
+			{
+				m_pSpriteHitPoint[i][hp]->SetRotation(0.0f, 0.0f, m_Rot);
+				m_pSpriteHitPoint[i][hp]->Draw();
+			}
 		}
+
+
 		CDirectX11::GetInstance().SetDepth(true);
 	}
 	//全画面ビューポートに戻す.
@@ -456,8 +445,6 @@ void CGameMain::Init()
 	EachSettingPlayerNumber();
 	//倒した数画像の設定..
 	EachSettingKillNumber();
-	//HPの画像の設定..
-	EachSettingHitPoint();
 
 	//制限時間の文字サイズ..
 	m_pDbgText->SetFontSize(5.0f);
@@ -490,9 +477,12 @@ void CGameMain::Create()
 	m_KillCountNumber	= std::make_shared<NumberImage>();
 
 	//HPの分だけ生成..
-	for (int i = 0; i < HP_MAX; i++)
+	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		m_pSpriteHitPoint[i] = std::make_shared<CUIObject>();
+		for (int hp = 0; hp < HP_MAX; hp++)
+		{
+			m_pSpriteHitPoint[i][hp] = std::make_shared<CUIObject>();
+		}
 	}
 	//プレイヤーの分だけ生成..
 	for (int i = 0; i < PLAYERNUM_MAX; i++)
@@ -650,9 +640,9 @@ HRESULT CGameMain::LoadData()
 	};
 	//タイマー枠画像のスプライト設定
 	CSprite2D::SPRITE_STATE TIMER_SIZE = {
-		256, 256,		//描画幅,高さ..
-		256, 256,		//元画像の幅,高さ..
-		256, 256		//アニメーションをしないので、0でいい..
+		257, 257,		//描画幅,高さ..
+		257, 257,		//元画像の幅,高さ..
+		257, 257		//アニメーションをしないので、0でいい..
 	};
 	//タイマー枠画像のスプライト設定
 	CSprite2D::SPRITE_STATE ICON_SIZE = {
@@ -671,8 +661,8 @@ HRESULT CGameMain::LoadData()
 	m_pSprite2DTimerFrame->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE, false);
 	m_pSprite2DTimer->Init(_T("Data\\Texture\\UI\\Timer\\Timer.png"), TIMER_SIZE, false);
 	m_pSprite2DTimerArrow->Init(_T("Data\\Texture\\UI\\Timer\\TimerArrow.png"), TIMER_SIZE, true);
-	m_pSprite2DKillNomber->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE, false);
-	m_pSprite2DHitPoint->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE, true);
+	m_pSprite2DKillNomber->Init(_T("Data\\Texture\\UI\\KillNum_remake.png"), ICON_SIZE, false);
+	m_pSprite2DHitPoint->Init(_T("Data\\Texture\\UI\\Gear.png"), ICON_SIZE, true);
 	m_pSprite2DNumber->Init(_T("Data\\Texture\\UI\\Timer\\number.png"), NUM_SIZE, false);
 
 	//画像をアタッチ
@@ -683,9 +673,12 @@ HRESULT CGameMain::LoadData()
 	m_KillCountNumber	->AttachSprite(m_pSprite2DNumber);
 
 	//HPの分だけアタッチ
-	for (int i = 0; i < HP_MAX; i++)
+	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		m_pSpriteHitPoint[i]->AttachSprite(m_pSprite2DHitPoint);
+		for (int hp = 0; hp < HP_MAX; hp++)
+		{
+			m_pSpriteHitPoint[i][hp]->AttachSprite(m_pSprite2DHitPoint);
+		}
 	}
 	//キル数の分だけアタッチ..
 	for (int i = 0; i < KILLNUM_MAX; i++)
@@ -846,25 +839,20 @@ HRESULT CGameMain::LoadData()
 	// 当たり判定マネージャーに必要なクラスをセット
 	// 爆風用の弾をセット
 	m_pCollisionManager->SetBlastMesh(m_pStaticMesh_BulletRed);
-
 	// 壁をセット
 	m_pCollisionManager->SetCStageWall(m_pWallTop, m_pWallBottom, m_pWallLeft, m_pWallRight);
-
 	// 地面をセット
 	m_pCollisionManager->SetCStageGround(m_pGround);
-
 	// 木箱をセット
 	m_pCollisionManager->SetCStageWoodBox(m_pWoodBoxTopLeft, m_pWoodBoxTopRight, m_pWoodBoxCenter, m_pWoodBoxBottomLeft, m_pWoodBoxBottomRight);
-
 	// 弾をセット
 	m_pCollisionManager->SetCShotManager(m_pShotManager);
-
 	// キャラクターマネージャーをセット
 	m_pCollisionManager->SetCPlayerManager(m_pCharacterManager);
-
 	//爆風マネージャーを設定.
 	m_pCollisionManager->SetCBlastManager(m_pBlastManager);
 
+	//弾マネージャーを設定.
 	m_pCharacterManager->SetShotManager(m_pShotManager);
 
 	// バウンディングの作成
@@ -1114,24 +1102,35 @@ void CGameMain::EachSettingKillNumber()
 		}
 	}
 }
+
 //倒した数画像の設定..
-void CGameMain::EachSettingHitPoint()
+void CGameMain::EachSettingHitPoint(int i)
 {
-	//HPの画像の設定..
-	for (int i = 0; i < HP_MAX; i++)
+	int chara_hp	= m_pCharacterManager->GetControlPlayer(i)->GetHP();
+	int chara_MaxHP = m_pCharacterManager->GetControlPlayer(i)->GetMaxHP();
+
+	//全てのHPアイコンを非表示.
+	for (int hp = 0; hp < chara_MaxHP; hp++)
 	{
-		if (i <= 0)
+		m_pSpriteHitPoint[i][hp]->SetIsDisplay(false);
+	}
+
+	//HPの画像の設定.
+	for (int hp = 0; hp < chara_hp; hp++)
+	{
+		auto hp_sprite = m_pSpriteHitPoint[i][hp];
+		hp_sprite->SetIsDisplay(true);
+
+		if (hp <= 0)
 		{
-			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 128.f, 0.f);
-			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteHitPoint[i]->SetScale(-0.8f, 0.8f, 0.5f);
+			hp_sprite->SetPosition(WND_W / 2 - 128.f, 128.f, 0.f);
 		}
 		else
 		{
-			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 + 64.f, 128.f, 0.f);
-			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteHitPoint[i]->SetScale(-0.8f, 0.8f, 0.5f);
+			hp_sprite->SetPosition(WND_W / 2 + 64.f, 128.f, 0.f);
 		}
+		hp_sprite->SetRotation(0.f, 0.f, 0.f);
+		hp_sprite->SetScale(-0.8f, 0.8f, 0.5f);
 	}
 }
  

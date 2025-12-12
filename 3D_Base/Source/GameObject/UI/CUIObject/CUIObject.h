@@ -33,12 +33,18 @@ public:
 		m_PatternNo.y = y;
 	}
 
+	//表示するか設定・取得.
+	void SetIsDisplay(bool flag) { m_IsDisplay = flag; }
+	bool GetIsDisplay() { return m_IsDisplay; }
+
 protected:
 	//CGameObjectから継承した関数
 	//final : これ以降はoverrideさせない
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override final;
 
 protected:
+	//表示するか否か.
+	bool m_IsDisplay;
 	std::shared_ptr<CSprite2D>	m_pSprite;
 	POINTS		m_PatternNo;	//パターン番号(マス目)
 };

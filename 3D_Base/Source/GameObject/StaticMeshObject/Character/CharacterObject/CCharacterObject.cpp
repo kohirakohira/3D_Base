@@ -42,7 +42,7 @@ void CCharacterObjectBase::Update()
 void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
 	// 生存フラグや描画フラグで早期 return
-	if (!m_IsAlive || !m_Chara.m_Drawflag) {
+	if (!m_Chara.m_Drawflag) {
 		return;
 	}
 
@@ -70,8 +70,8 @@ void CCharacterObjectBase::Hit()
 	if (m_Chara.m_Muteki == false)
 	{
 		// プレイヤーの体力を引く
-		m_Chara.m_Hp -= 1;
-		if (m_Chara.m_Hp < 0)
+		m_Chara.m_Hp--;
+		if (m_Chara.m_Hp <= 0)
 		{
 			// 死亡フラグ有効化
 			m_Chara.m_Death = true;

@@ -96,7 +96,7 @@ public:
 	// 倒した数画像の設定
 	void EachSettingKillNumber();
 	// 倒した数画像の設定
-	void EachSettingHitPoint();
+	void EachSettingHitPoint(int i);
 
 public:		
 	// クラス用
@@ -127,7 +127,7 @@ public:
 	//スタティックメッシュオブジェクトクラス(UI)..
 	std::array<std::shared_ptr<CUIObject>, PLAYERNUM_MAX>		m_pSpritePlayerIcon;			//プレイヤーアイコン.
 	std::array<std::shared_ptr<CUIObject>, KILLNUM_MAX>			m_pSpriteKillNomber;			//キル数アイコン.
-	std::array<std::shared_ptr<CUIObject>, HP_MAX>				m_pSpriteHitPoint;				//HPアイコン.
+	std::array<std::array<std::shared_ptr<CUIObject>, HP_MAX>, PLAYER_MAX> m_pSpriteHitPoint;	//HPアイコン.
 	std::shared_ptr<CUIObject>									m_pSpriteTimerFrame;			//制限時間の枠.
 	std::shared_ptr<CUIObject>									m_pSpriteTimer;					//制限時間の時計枠.
 	std::shared_ptr<CUIObject>									m_pSpriteTimerArrow;			//時計の針.

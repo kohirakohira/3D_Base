@@ -151,10 +151,6 @@ void CPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Cam
 	}
 }
 
-void CPlayer::OnHit(CCharacterObjectBase* other)
-{
-}
-
 void CPlayer::Create()
 {
 	//インスタンス生成(BodyとCannon).
