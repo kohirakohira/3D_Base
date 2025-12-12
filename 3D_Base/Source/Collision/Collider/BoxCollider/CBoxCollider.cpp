@@ -38,7 +38,7 @@ void CBoxCollider::UpdateTransform(const D3DXVECTOR3& pos, const D3DXVECTOR3& ro
 bool CBoxCollider::CheckCollisionSphere(const CSphereCollider& sphere) const
 {
 	// 仮計算用の最接近点
-	D3DXVECTOR3 tempP;
+	D3DXVECTOR3 tempP = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	// OBBとSphereの当たり判定
 	return CheckCollisionOBBtoSphere(sphere, &m_OBB, &tempP);

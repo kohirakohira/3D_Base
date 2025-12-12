@@ -69,14 +69,14 @@ void CBody::RadioControl()
 	case enMoveState::Forward: 		// ‘Oi
 		m_vPosition += vecAxisZ * m_Tuning.moveSpeed;
 
-		//ˆÚ“®SE‚ÌÄ¶.
-		CSoundManager::PlayLoop(CSoundManager::SE_Move);
+		////ˆÚ“®SE‚ÌÄ¶.
+		//CSoundManager::PlayLoop(CSoundManager::SE_Move);
 		break;
 	case enMoveState::Backward: 	// Œã‘Ş
 		m_vPosition -= vecAxisZ * m_Tuning.moveSpeed;
 
-		//ˆÚ“®SE‚ÌÄ¶.
-		CSoundManager::PlayLoop(CSoundManager::SE_Move);
+		////ˆÚ“®SE‚ÌÄ¶.
+		//CSoundManager::PlayLoop(CSoundManager::SE_Move);
 		break;
 	case enMoveState::Stop: 	// ’â~
 		//ˆÚ“®SE‚Ì’â~.
