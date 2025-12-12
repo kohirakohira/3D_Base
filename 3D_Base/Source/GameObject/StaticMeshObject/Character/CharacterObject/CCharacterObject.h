@@ -122,9 +122,6 @@ protected:
 	//弾マネージャークラス.
 	std::shared_ptr<CShotManager>	m_pShotManager;
 
-	//爆風のフラグ.
-	bool m_BlastFlag;
-
 	//キャラクターの状態.
 	bool m_IsActive;
 
