@@ -8,15 +8,6 @@
 //角度計算用マクロ.
 # define L_PI			(3.1415f)
 #define  D3DX_PI		((FLOAT)  3.141592654f)
-#if 0
-# define L_2PI			(6.2830f)
-# define L_H_DEG		(180.0000f)
-# define L_DEG			(360.0000f)
-# define DEG2RAD		(e) ((e)*(L_PI)/(L_H_DEG))
-# define RAD2DEG		(e) ((e)*(L_H_DEG)/(L_PI))
-# define ADJUST_RAD		(e) (((e)<(0.0000f))?(e)+(L_2PI):((e)>(L_2PI))?(e)-(L_2PI):(e))
-# define ADJUST_DEG		(e) (((e)<(0.0000f))?(e)+(L_DEG):((e)>(L_DEG))?(e)-(L_DEG):(e))
-#endif
 
 
 #include <cmath>	//計算用

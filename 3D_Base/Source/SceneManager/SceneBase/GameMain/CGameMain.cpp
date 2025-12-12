@@ -14,7 +14,7 @@ static bool prevA = false;
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス.
 
 //定数宣言.
-static constexpr int TIME = 100;
+static constexpr int TIME = 600;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 
@@ -1138,7 +1138,13 @@ void CGameMain::BuildComObstacles()
 	{
 		addObstacle(x, wallOffset, wallRadius);   // 壁上
 		addObstacle(x, -wallOffset, wallRadius);  // 壁下
+	}
 
+	for (float z = -24.f; z <= 24.f; z += 8.0f)
+	{
+		addObstacle(-wallOffset, z, wallRadius);
+		addObstacle(wallOffset, z, wallRadius);
+	}
 	}
 	for (float z = -24.f; z <= 24.f; z += 8.0f)
 	{

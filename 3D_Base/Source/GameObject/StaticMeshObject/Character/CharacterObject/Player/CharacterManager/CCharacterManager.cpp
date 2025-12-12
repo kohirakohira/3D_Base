@@ -137,6 +137,24 @@ void CCharacterManager::Init()
 		}
 	}
 
+	/*
+	*  // COM‚Ì«Ši‚ğƒ‰ƒ“ƒ_ƒ€‚Éİ’è
+    std::vector<PersonalityType> types = {
+        PersonalityType::Aggressive,
+        PersonalityType::Adaptive,
+        PersonalityType::Persistent
+    };
+
+    for (auto& player : m_pCharacter)
+    {
+        if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
+        {
+            int roll = std::rand() % types.size();
+            com->SetPersonalityType(types[roll]);
+        }
+    }
+	*/
+
 }
 //===================
 
@@ -191,7 +209,7 @@ void CCharacterManager::Update()
 				}
 				else
 				{
-					com->ClearTarget();
+					//com->ClearTarget();
 				}
 
 				//AI‚Æ‚µ‚Ä‚ÌUpdate
