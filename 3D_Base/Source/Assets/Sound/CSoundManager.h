@@ -12,21 +12,22 @@ public:
 	//サウンドリスト列挙型.
 	enum enList
 	{
-		BGM_Bonus,	//ボーナスステージ.
-		BGM_Title,	//タイトルステージ.
-		BGM_Clear,	//クリアステージ.
-		BGM_Over,	//ゲームオーバーステージ.
-		BGM_Main,	//ゲームメイン.
+		BGM_Title,		//タイトルステージ.
+		BGM_Main,		//ゲームメイン.
+		BGM_Result_Win,	//リザルト(勝利)
+		BGM_Result_Draw,//リザルト(引き分け)
 
 		SE_Select,		//選択肢.
 		SE_Click,		//決定.
 		SE_Connect,		//コントローラー接続.
 		SE_UnConnect,	//コントローラーの接続が切れる.
 
+		SE_GameStart,	//ゲームの開始.
+		SE_GameEnd,		//ゲームの終了.
+
 		SE_Shot,		//発射.
 		SE_Damage,		//ダメージ.
 		SE_Explosion,	//爆発.
-
 		SE_Impact,		//衝突.
 		SE_Move,		//戦車の移動音.
 

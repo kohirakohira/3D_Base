@@ -64,9 +64,6 @@ void CGameTitle::Update()
 		{
 			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
 			{
-				//BGMのループ停止.
-				CSoundManager::Stop(CSoundManager::BGM_Title);
-
 				//決定SEの再生.
 				CSoundManager::PlaySE(CSoundManager::SE_Click);
 
@@ -145,6 +142,17 @@ void CGameTitle::Update()
 		//}
 #endif
 
+	if (m_KeyInput->ReleaseInputKey('1') == true)
+	{
+		//ゲームスタートSEの再生(仮).
+		CSoundManager::PlaySE(CSoundManager::SE_GameStart);
+	}
+
+	if (m_KeyInput->ReleaseInputKey('2') == true)
+	{
+		//ゲーム終了SEの再生(仮).
+		CSoundManager::PlaySE(CSoundManager::SE_GameEnd);
+	}
 }
 
 void CGameTitle::Draw()
@@ -201,7 +209,7 @@ void CGameTitle::Init()
 
 	//キー入力の初期化.
 	m_KeyInput->Init();
-	m_KeyInput->SetKey({'D', 'Z', 'L', 'Y', 'M'});
+	m_KeyInput->SetKey({'D', 'Z', 'L', 'Y', 'M', '1', '2'});
 
 }
 
