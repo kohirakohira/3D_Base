@@ -647,58 +647,6 @@ void CComPlayer::StepChase()
     TryAutoFire();
 }
 
-/*void CComPlayer::StepChase()
-{
-    auto body = GetBody();
-    auto target = m_TargetSelector.GetCurrentTarget();
-    if (!body || !target)
-    {
-        StepSeek();
-        return;
-    }
-
-    const auto t = GetTuning();
-    const D3DXVECTOR3 self = body->GetPosition();
-    const D3DXVECTOR3 tp = target->GetPosition();
-    const float cur = body->GetRotation().y;
-    const float dist = Util::DistXZ(self, tp);
-
-    // 複数敵カウント
-    D3DXVECTOR3 clusterCenter;
-    int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
-
-    // HP比率
-    float hpRatio = static_cast<float>(m_Chara.m_Hp) / static_cast<float>(m_Chara.m_MaxHp);
-
-    float desired;
-    float speedMult = 1.0f;
-
-    //========================================
-    // 性格に応じた行動決定
-    //========================================
-    if (m_pPersonality)
-    {
-        BehaviorDecision decision = m_pPersonality->DecideChaseAction(
-            self, tp, dist, nearbyCount, hpRatio);
-
-        desired = decision.desiredYaw;
-        speedMult = decision.moveSpeedMultiplier;
-        m_KeepDistance = decision.keepDistance;
-    }
-    else
-    {
-        // フォールバック：従来の動作
-        desired = std::atan2f((tp - self).x, (tp - self).z);
-    }
-
-    const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
-    SafeAdvance(next, t.moveSpeed * speedMult);
-
-    TickAimTo(tp);
-    TryAutoFire();
-}
-*/
-
 void CComPlayer::StepAttack()
 {
     auto body = GetBody();
@@ -770,19 +718,6 @@ void CComPlayer::StepAttack()
 
 void CComPlayer::EvaluateTransitions(float dist2)
 {
-    /* float evadeMult = 0.60f;
-    float attackEnterMult = 1.05f;
-
-    if (m_pPersonality)
-    {
-        evadeMult = m_pPersonality->GetEvadeDistanceMultiplier();
-        attackEnterMult = m_pPersonality->GetAttackEnterDistanceMultiplier();
-    }
-
-    const float attackEnter2 = Util::Sqr(std::max(m_KeepDistance * attackEnterMult, 3.f));
-    const float attackExit2 = Util::Sqr(std::max(m_KeepDistance * 1.25f, 5.f));
-    const float evadeDist2 = Util::Sqr(m_KeepDistance * evadeMult);
-    */
 
     // 2乗
     const float attackEnter2 = Util::Sqr(std::max(m_KeepDistance * 1.05f, 3.f));
