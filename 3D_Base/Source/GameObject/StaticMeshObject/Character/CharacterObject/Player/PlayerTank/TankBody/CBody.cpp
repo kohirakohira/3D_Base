@@ -69,14 +69,14 @@ void CBody::RadioControl()
 	case enMoveState::Forward: 		// 前進
 		m_vPosition += vecAxisZ * m_Tuning.moveSpeed;
 
-		//移動SEの再生.
-		CSoundManager::PlayLoop(CSoundManager::SE_Move);
+		////移動SEの再生.
+		//CSoundManager::PlayLoop(CSoundManager::SE_Move);
 		break;
 	case enMoveState::Backward: 	// 後退
 		m_vPosition -= vecAxisZ * m_Tuning.moveSpeed;
 
-		//移動SEの再生.
-		CSoundManager::PlayLoop(CSoundManager::SE_Move);
+		////移動SEの再生.
+		//CSoundManager::PlayLoop(CSoundManager::SE_Move);
 		break;
 	case enMoveState::Stop: 	// 停止
 		//移動SEの停止.
@@ -86,7 +86,7 @@ void CBody::RadioControl()
 		break;
 	}
 	//// 上記の移動処理が終われば停止状態にしておく
-	//m_MoveState = enMoveState::Stop;
+	m_MoveState = enMoveState::Stop;
 }
 
 void CBody::PushBack(const D3DXVECTOR3& push)

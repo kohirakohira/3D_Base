@@ -43,5 +43,4 @@ public:
 
 private:
 	float	m_Radius;
-	float	m_BaseRadius; // ‰Šú‰»‚ÉŒvZ‚³‚ê‚é”¼Œa
 };

@@ -79,7 +79,7 @@ public:
 		float* pDistance,			//(out)距離
 		D3DXVECTOR3* pIntersect);	//(out)交差点
 
-	//壁からの位置を計算する
+	////壁からの位置を計算する
 	void CalculatePositionFromWall();
 
 private:

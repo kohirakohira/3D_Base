@@ -5,7 +5,6 @@
 
 CSphereCollider::CSphereCollider()
 	: m_Radius		(0.0f)
-	, m_BaseRadius	(0.0f)
 {
 	// 初期化
 	m_Sphere.CenterPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -20,17 +19,16 @@ void CSphereCollider::UpdateTransform(const D3DXVECTOR3& pos, const D3DXVECTOR3&
 {
 	// CCollider のメンバーを更新
 	m_CenterPos = pos;
-	m_Rotation = rot;
-	m_Scale = scale;
+	m_Rotation  = rot;
+	m_Scale		= scale;
 
-	// 半径を計算 (最も大きなスケールを適用)
-	float maxScale = std::max(std::max(scale.x, scale.y), scale.z);
-
-	m_Radius = m_BaseRadius * maxScale;
+	//// 半径を計算 (最も大きなスケールを適用)
+	//float maxScale = std::max(std::max(scale.x, scale.y), scale.z);
+	//m_Radius = m_BaseRadius * maxScale;
 
 	// 構造体メンバーの更新
 	m_Sphere.CenterPos = m_CenterPos;
-	m_Sphere.Radius = m_Radius;
+	m_Sphere.Radius	   = m_Radius;
 }
 
 bool CSphereCollider::CheckCollisionSphere(const CSphereCollider& sphere) const
@@ -57,9 +55,6 @@ bool CSphereCollider::CheckCollisionBox(const CBoxCollider& box) const
 
 void CSphereCollider::SetRadius(float radius)
 {
-	m_BaseRadius = fabsf(radius);
-
-	// 現在の半径を初期化
-	m_Radius = m_BaseRadius;
-	m_Sphere.Radius = m_Radius;
+	m_Radius = radius;
+	m_Sphere.Radius = radius;
 }

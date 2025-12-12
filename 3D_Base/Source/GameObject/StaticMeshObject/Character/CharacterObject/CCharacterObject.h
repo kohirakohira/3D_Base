@@ -35,6 +35,7 @@ public:
 		bool	m_Drawflag;		// 描画フラグ
 		bool	m_Damage;		// ダメージフラグ
 		bool	m_Death;		// 死亡フラグ		
+		bool	m_Kill;			// すでにキル処理したか		
 		bool	m_Muteki;		// 無敵フラグ
 		bool	m_Respawn;		// リスポーンフラグ
 	} m_Chara;
@@ -90,6 +91,11 @@ public:
 	virtual bool GetDeath() const { return m_Chara.m_Death; }
 	//========================
 
+	//=====キル処理の設定・取得=====
+	virtual void SetKill(bool flg) { m_Chara.m_Kill = flg; }
+	virtual bool GetKill() const { return m_Chara.m_Kill; }
+	//========================
+
 	//=====無敵の設定・取得=====
 	virtual void SetMuteki(bool flg) { m_Chara.m_Muteki = flg; }
 	virtual bool GetMuteki() const { return m_Chara.m_Muteki; }
@@ -108,6 +114,9 @@ public:
 	//プレイヤーのインデックス番号の取得.
 	virtual int GetPlayerID() = 0;
 
+	//体力取得
+	virtual int GetHP() const{ return m_Chara.m_Hp; }
+
 protected:
 	//車体クラス.
 	std::shared_ptr<CBody>			m_pBody;
@@ -115,9 +124,6 @@ protected:
 	std::shared_ptr<CCannon>		m_pCannon;
 	//弾マネージャークラス.
 	std::shared_ptr<CShotManager>	m_pShotManager;
-
-	//爆風のフラグ.
-	bool m_BlastFlag;
 
 	//キャラクターの状態.
 	bool m_IsActive;

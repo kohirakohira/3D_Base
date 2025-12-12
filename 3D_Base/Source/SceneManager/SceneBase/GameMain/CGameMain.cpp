@@ -118,7 +118,7 @@ CGameMain::~CGameMain()
 void CGameMain::Update()
 {
 	//BGMのループ再生..
-	CSoundManager::PlayLoop(CSoundManager::BGM_Main);
+	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
 	//コントローラーの更新.
 	CControllerManager::GetInstance().Update();
@@ -698,19 +698,19 @@ HRESULT CGameMain::LoadData()
 		switch (i)
 		{
 		case 0:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\OneP.png"), ICON_SIZE, false);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\OneP_ver2.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 		case 1:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TwoP.png"), ICON_SIZE, false);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TwoP_ver2.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 		case 2:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TreeP.png"), ICON_SIZE, false);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TreeP_ver2.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 		case 3:
-			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\FourP.png"), ICON_SIZE, false);
+			m_pSprite2DPlayerIcon[i]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\FourP_ver2.png"), ICON_SIZE, false);
 			m_pSpritePlayerIcon[i]->AttachSprite(m_pSprite2DPlayerIcon[i]);
 			break;
 		default:
@@ -1122,15 +1122,15 @@ void CGameMain::EachSettingHitPoint()
 	{
 		if (i <= 0)
 		{
-			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 64.f, 0.f);
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 128.f, 0.f);
 			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteHitPoint[i]->SetScale(-0.5f, 0.5f, 0.5f);
+			m_pSpriteHitPoint[i]->SetScale(-0.8f, 0.8f, 0.5f);
 		}
 		else
 		{
-			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2, 64.f, 0.f);
+			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 + 64.f, 128.f, 0.f);
 			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteHitPoint[i]->SetScale(-0.5f, 0.5f, 0.5f);
+			m_pSpriteHitPoint[i]->SetScale(-0.8f, 0.8f, 0.5f);
 		}
 	}
 }
@@ -1157,8 +1157,8 @@ void CGameMain::BuildComObstacles()
 	{
 		addObstacle(x, wallOffset, wallRadius);   // 壁上
 		addObstacle(x, -wallOffset, wallRadius);  // 壁下
-
 	}
+
 	for (float z = -24.f; z <= 24.f; z += 8.0f)
 	{
 		addObstacle(-wallOffset, z, wallRadius);

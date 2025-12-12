@@ -6,13 +6,33 @@
 //レイ構造体
 struct RAY
 {
-	D3DXVECTOR3	Axis;		//軸
-	D3DXVECTOR3	Position;	//位置
-	float		Length;		//長さ
-	float		RotationY;	//Y軸回転
+	D3DXVECTOR3		Axis;		//軸
+	D3DXVECTOR3		Position;	//位置
+	float			Length;		//長さ
+	float			RotationY;	//Y軸回転
 
 	RAY() : Axis(), Position(), Length(), RotationY() {}
 };
+
+//レイ構造体（十字）
+struct CROSSRAY
+{
+	enum enDir { ZF, ZB, XL, XR, max };
+	RAY Ray[enDir::max];
+
+	CROSSRAY() : Ray()
+	{
+		Ray[enDir::ZF].Axis = D3DXVECTOR3(0.f, 0.f, 1.f);
+		Ray[enDir::ZB].Axis = D3DXVECTOR3(0.f, 0.f, -1.f);
+		Ray[enDir::XL].Axis = D3DXVECTOR3(-1.f, 0.f, 0.f);
+		Ray[enDir::XR].Axis = D3DXVECTOR3(1.f, 0.f, 0.f);
+
+		for (int i = 0; i < enDir::max; i++) {
+			Ray[i].Length = 1.f;
+		}
+	}
+};
+
 
 /**************************************************
 *	レイ（線分）描画クラス.

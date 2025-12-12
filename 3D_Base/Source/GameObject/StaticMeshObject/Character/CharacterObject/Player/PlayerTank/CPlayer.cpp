@@ -58,7 +58,6 @@ CPlayer::CPlayer()
 
 	, m_Key					()
 {
-	m_BlastFlag = false;
 
 	//ƒL[‚Ì¶¬.
 	m_Key = std::make_unique<CMultiInputKeyManager>();
@@ -88,6 +87,7 @@ void CPlayer::Init(int id)
 	m_Chara.m_Drawflag = true;
 	m_Chara.m_Damage  = false;
 	m_Chara.m_Death   = false;
+	m_Chara.m_Kill	  = false;
 	m_Chara.m_Respawn = false;
 
 	//Œp³‚µ‚½‚à‚Ì‚à‰Šú‰»

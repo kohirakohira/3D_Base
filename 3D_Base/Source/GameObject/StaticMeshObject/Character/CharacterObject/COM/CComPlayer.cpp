@@ -18,33 +18,22 @@ std::vector<CComPlayer*>& CComPlayer::Instances() {
 
 CComPlayer::CComPlayer()
     : m_KeepDistance(9.0f)   //0ならベタ詰め
-    , m_pTarget(nullptr)
     , m_AvoidRadius(10.0f)
     , m_AvoidWeight(2.0f)
     , m_Registered(false)
     , m_StateFrames(0)
     , m_SeekRadius(5.0f)
-    , m_AttacRadius(20.0f)
+    , m_AttacRadius(50.0f)
     , m_FireConeDeg(10.0f)
     , m_ClosenessRadius(1.f)     //近くにしすぎない
     , m_EvadeDuration(60)
     , m_ComEnabled(true)
     , m_EvadeFrames(60)
     , m_IsTarget(false)   //最初はターゲットではない
-    , m_LostSightFrames(0)
     , m_pAllPlayer(nullptr)
-    , m_RetargetInterval(120)
-    , m_RetargetTimer(0)
-    , m_ForgetDistance(60.0f)
-    , m_StickinessRatio(0.8f)
-    , m_CurTargetDist(1e9f)
     , m_LastSeenPos(D3DXVECTOR3(0, 0, 0))
     , m_State(State::Seek)
     , m_WanderAngle(0.f)
-    , m_BlackListTime(120)     //3秒くらいだけ
-    , m_CurTargetDist2(std::numeric_limits<float>::infinity())
-    , m_pItemBox(nullptr)
-    , m_pItemTarget()
     //, m_RetargetItemTimer(0)
     //, m_RetargetItemInterval(30)
     //, m_ItemGetRadius(20.f)
@@ -55,7 +44,6 @@ CComPlayer::CComPlayer()
     , m_CenterPullStrength(0.3f)                   // 引き寄せ強度
     , m_pSimpleObstacles(nullptr)
     , m_LookAheadSkep(2.0f)
-    , m_RayHit              ( false )
     //========================================
     // 障害物回避パラメータ
     //========================================
@@ -95,8 +83,9 @@ void CComPlayer::Create(int id)
 
     // プレイヤーのフラグを初期化
     m_Chara.m_Drawflag = true;
-    m_Chara.m_Damage = false;
-    m_Chara.m_Death = false;
+    m_Chara.m_Damage  = false;
+    m_Chara.m_Death   = false;
+    m_Chara.m_Kill    = false;
     m_Chara.m_Respawn = false;
 
     //継承したものも初期化
@@ -108,6 +97,43 @@ void CComPlayer::Create(int id)
         Instances().push_back(this);
         m_Registered = true;
     }
+
+    // ターゲットセレクターの初期化
+    m_TargetSelector.Initialize(id);
+    m_TargetSelector.SetForgetDistance(60.0f);
+    m_TargetSelector.SetStickinessRatio(0.8f);
+    m_TargetSelector.SetBlacklistDuration(120);
+    m_TargetSelector.SetRetargetInterval(120);
+
+    //射撃の初期化
+    m_ComShot.Initialize(id);
+
+    ShotConfig shotCfg;
+    shotCfg.cooldownFrames = 120;
+    shotCfg.fireAngleDeg = 12.0f;
+    shotCfg.muzzleOffsetZ = 0.5f;
+    shotCfg.cannonHeight = m_Tuning.cannonHeight;
+    shotCfg.bulletSpeed = 0.8f;
+    m_ComShot.SetConfig(shotCfg);
+
+    m_pCannon->Init();
+
+#if 0
+    int personalityRoll = id % 3;  // IDに基づいて性格を決定
+    switch (personalityRoll)
+    {
+    case 0:
+        SetPersonalityType(PersonalityType::Aggressive);
+        break;
+    case 1:
+        SetPersonalityType(PersonalityType::Adaptive);
+        break;
+    case 2:
+        SetPersonalityType(PersonalityType::Persistent);
+        break;
+    }
+}
+#endif
 }
 
 // コライダーの作成
@@ -121,6 +147,7 @@ void CComPlayer::SetShotManager(std::shared_ptr<CShotManager> shot)
 {
     m_pShotManager = shot;
     m_pCannon->SetShotManager(shot);
+    m_ComShot.SetShotManager(shot);
 }
 
 //不正値を防ぐ
@@ -279,55 +306,36 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
 // 砲塔があれば常にターゲットを向く
 void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
 {
-    std::shared_ptr<CCannon> cannon = GetCannon();
-    const std::shared_ptr<CBody> body = GetBody();
+    auto cannon = GetCannon();
+    auto body = GetBody();
     if (!cannon) return;
+
+    // 砲口位置を取得
+    D3DXVECTOR3 muzzle;
+    float currentYaw;
+    m_ComShot.ComputeMuzzle(muzzle, currentYaw, body.get(), cannon.get());
+
+    // 予測位置を計算
+    D3DXVECTOR3 targetVel = m_TargetSelector.GetTargetVelocity();
+    PredictedShot prediction = m_ComShot.PredictTargetPosition(
+        muzzle, targetPos, targetVel);
 
     // 砲塔の基準位置
     D3DXVECTOR3 base = body ? body->GetPosition() : cannon->GetPosition();
     base.y += m_Tuning.cannonHeight;
 
-    // 目標方位
-    const D3DXVECTOR3 target = targetPos - base;
-    const float desiredYaw = std::atan2f(target.x, target.z);
+    // 目標方位（予測位置）
+    const D3DXVECTOR3 toAim = prediction.aimPoint - base;
+    const float desiredYaw = std::atan2f(toAim.x, toAim.z);
 
     float cyaw = cannon->GetRotation().y;
-    cyaw = Util::Approach(cyaw, cyaw + Util::Wrap(desiredYaw - cyaw), m_Tuning.turretTurnSpeed);
+    cyaw = Util::Approach(cyaw, cyaw + Util::Wrap(desiredYaw - cyaw),
+        m_Tuning.turretTurnSpeed + 0.02f);
 
     cannon->SetPosition(base);
     cannon->SetRotation(D3DXVECTOR3(0.0f, cyaw, 0.0f));
     cannon->CStaticMeshObject::Update();
 }
-
-//砲口のワールド座標とヨー角を計算
-void CComPlayer::ComputeMuzzle(D3DXVECTOR3& outpos, float& outYaw) const
-{
-    const auto& tuning = GetTuning();
-
-    auto body = GetBody();
-    auto cannon = GetCannon();
-
-    D3DXVECTOR3 base(0, 0, 0);
-    float yaw = 0.0f;
-
-    if (body) {
-        base = body->GetPosition();
-        yaw = body->GetRotation().y;
-    }
-
-    if (cannon) {
-        //砲塔があれば向きを優先
-        if (!body) base = cannon->GetPosition();
-        yaw = cannon->GetRotation().y;
-    }
-
-    base.y += tuning.cannonHeight; //砲塔の高さオフセット
-    const D3DXVECTOR3 forwared = Util::ForwardFromYaw(yaw);
-
-    outpos = base + forwared * m_ShotState.MuzzleOffsetZ;   //砲身先端オフセット
-    outYaw = yaw;
-}
-
 
 #if 1
 void CComPlayer::Update()
@@ -343,7 +351,6 @@ void CComPlayer::Update()
 
     FollowPath(tuning.turretTurnSpeed, tuning.moveSpeed);
 
-    TickBlacklist();
 
     auto body = GetBody();
     auto cannon = GetCannon();
@@ -352,33 +359,36 @@ void CComPlayer::Update()
         return;
     }
 
-    //COMが死亡しているなスキップ
+    m_TargetSelector.Update();
+
+    if (body)
+    {
+        TargetResult result = m_TargetSelector.SelectTarget(
+            body->GetPosition(),
+            m_pAllPlayer
+        );
+    }
+
+    m_ComShot.TickCooldown();   //クールダウン更新
+
+    //死亡したら処理スキップ
     if (m_Chara.m_Death == true)
     {
         return;
     }
 
-    //定期リターゲット
-    if (--m_RetargetTimer <= 0 || !m_pTarget) {
-        MakeFixedTimeTarget();
-        m_RetargetTimer = m_RetargetInterval;
-    }
-
-    //距離を計算
-    float dist2 = 1e18f;
-    if (m_pTarget) {
-        const D3DXVECTOR3 d = m_pTarget->GetPosition() - body->GetPosition();
-        dist2 = d.x * d.x + d.z * d.z;
-        m_LostSightFrames = 0;
-    }
-    else {
-        ++m_LostSightFrames;
-    }
-
+    //COMの木箱乗り上げ対策
     D3DXVECTOR3 pos = body->GetPosition();
     body->SetPosition(pos.x, pos.y = 0, pos.z);
 
-    float itemD2;
+    //距離計算
+    float dist2 = 1e18f;
+    auto target = m_TargetSelector.GetCurrentTarget();
+    if (target && body)
+    {
+        const D3DXVECTOR3 d = target->GetPosition() - body->GetPosition();
+        dist2 = d.x * d.x + d.z * d.z;
+    }
 
     //状態遷移はここだけで行う
     EvaluateTransitions(dist2);
@@ -393,34 +403,6 @@ void CComPlayer::Update()
     ++m_StateFrames;
 }
 #endif
-
-float CComPlayer::NearestItemDist2(float& outDist2) const
-{
-    //大きい値
-    outDist2 = 1e18f;
-    if (!m_pItemBox) return outDist2;
-
-    auto body = GetBody();
-    if (!body)
-    {
-        return outDist2;
-    }
-    const D3DXVECTOR3 self = body->GetPosition();
-    for (auto& box : *m_pItemBox)
-    {
-        if (!box) continue;
-        if (!box->IsActive()) continue;
-
-        const D3DXVECTOR3 dist = box->GetPosition() - self;
-
-        const float d2 = dist.x * dist.x + dist.z * dist.z;
-        if (d2 < outDist2)
-        {
-            outDist2 = d2;
-        }
-        return outDist2;
-    }
-}
 
 
 #if 1
@@ -536,12 +518,15 @@ void CComPlayer::StepEvade()
     const D3DXVECTOR3 selfPos = body->GetPosition();
 
     D3DXVECTOR3 targetPos = selfPos;
-    if (m_pTarget)
+
+    auto target = m_TargetSelector.GetCurrentTarget();
+
+    if (target) 
     {
-        targetPos = m_pTarget->GetPosition();
+        targetPos = target->GetPosition();
     }
 
-    // 水平面でターゲットの反対方向に移動
+    //水平面でターゲットの反対方向に移動
     D3DXVECTOR3 away = selfPos - targetPos;
     away.y = 0.0f;
 
@@ -561,9 +546,6 @@ void CComPlayer::StepEvade()
         const float next = SteerWithAvoidAABB(yaw, desired, m_Tuning.turretTurnSpeed);
         SafeAdvance(next, m_Tuning.moveSpeed * 0.6f);
 
-        //壁判定
-        m_pCannon->CStaticMeshObject::CalculatePositionFromWall();
-
         TryAutoFire();
 
         // 砲塔の見た目を更新
@@ -575,7 +557,7 @@ void CComPlayer::StepEvade()
 #endif
 }
 
-#if 1
+
 void CComPlayer::StepSeek()
 {
     auto body = GetBody();
@@ -590,15 +572,16 @@ void CComPlayer::StepSeek()
     const float dist2 = d.x * d.x + d.z * d.z;
     float desiredYaw;
 
+    auto target = m_TargetSelector.GetCurrentTarget();
+
     const float centerRadius = 10.0f;
     if (dist2 > centerRadius * centerRadius)
     {
-        // 中心に向かう
         desiredYaw = std::atan2f(d.x, d.z);
     }
     else
     {
-        // 中心付近では徘徊
+        //中心にいく.中心を優先しやすい
         TickWander();
         desiredYaw = curYaw + m_WanderAngle;
     }
@@ -606,18 +589,22 @@ void CComPlayer::StepSeek()
     const float next = SteerWithAvoidAABB(curYaw, desiredYaw, tuning.bodyTurnSpeed);
     SafeAdvance(next, tuning.moveSpeed);
 
-    if (m_pTarget)
+    if (target)
     {
-        TickAimTo(m_pTarget->GetPosition());
+        TickAimTo(target->GetPosition());
         TryAutoFire();
     }
+
     SyncCannonToBody();
 }
+
 void CComPlayer::StepChase()
 {
     auto body = GetBody();
 
-    if (!body || !m_pTarget)
+
+    auto target = m_TargetSelector.GetCurrentTarget();
+    if (!body || !target)
     {
         StepSeek();
         return;
@@ -625,12 +612,10 @@ void CComPlayer::StepChase()
     const auto t = GetTuning();
 
     const D3DXVECTOR3 self = body->GetPosition();
-    const D3DXVECTOR3 tp = m_pTarget->GetPosition();
+    const D3DXVECTOR3 tp = target->GetPosition();
     const float cur = body->GetRotation().y;
 
-    //========================================
-    // 複数敵チェック
-    //========================================
+    //複数人数時
     D3DXVECTOR3 clusterCenter;
     int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
 
@@ -649,7 +634,7 @@ void CComPlayer::StepChase()
 
         //近づき過ぎないようKeepDistance付近では少し横移動を入れる
         const float dist = Util::DistXZ(self, tp);
-        if (dist < m_KeepDistance * 0.9f)
+        if (dist < m_KeepDistance * 0.9f) 
         {
             desired = Util::Wrap(desired + (D3DX_PI * 0.5f) * ((m_StateFrames / 60) % 2 ? +1.f : -1.f));
         }
@@ -661,11 +646,65 @@ void CComPlayer::StepChase()
     TickAimTo(tp);
     TryAutoFire();
 }
+
+/*void CComPlayer::StepChase()
+{
+    auto body = GetBody();
+    auto target = m_TargetSelector.GetCurrentTarget();
+    if (!body || !target)
+    {
+        StepSeek();
+        return;
+    }
+
+    const auto t = GetTuning();
+    const D3DXVECTOR3 self = body->GetPosition();
+    const D3DXVECTOR3 tp = target->GetPosition();
+    const float cur = body->GetRotation().y;
+    const float dist = Util::DistXZ(self, tp);
+
+    // 複数敵カウント
+    D3DXVECTOR3 clusterCenter;
+    int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
+
+    // HP比率
+    float hpRatio = static_cast<float>(m_Chara.m_Hp) / static_cast<float>(m_Chara.m_MaxHp);
+
+    float desired;
+    float speedMult = 1.0f;
+
+    //========================================
+    // 性格に応じた行動決定
+    //========================================
+    if (m_pPersonality)
+    {
+        BehaviorDecision decision = m_pPersonality->DecideChaseAction(
+            self, tp, dist, nearbyCount, hpRatio);
+
+        desired = decision.desiredYaw;
+        speedMult = decision.moveSpeedMultiplier;
+        m_KeepDistance = decision.keepDistance;
+    }
+    else
+    {
+        // フォールバック：従来の動作
+        desired = std::atan2f((tp - self).x, (tp - self).z);
+    }
+
+    const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
+    SafeAdvance(next, t.moveSpeed * speedMult);
+
+    TickAimTo(tp);
+    TryAutoFire();
+}
+*/
+
 void CComPlayer::StepAttack()
 {
     auto body = GetBody();
 
-    if (!body || !m_pTarget)
+    auto target = m_TargetSelector.GetCurrentTarget();
+    if (!body || !target)
     {
         StepSeek();
         return;
@@ -674,7 +713,7 @@ void CComPlayer::StepAttack()
     const auto t = GetTuning();
 
     const D3DXVECTOR3 self = body->GetPosition();
-    const D3DXVECTOR3 tp = m_pTarget->GetPosition();
+    const D3DXVECTOR3 tp = target->GetPosition();
     const float cur = body->GetRotation().y;
 
     //========================================
@@ -715,171 +754,113 @@ void CComPlayer::StepAttack()
     }
 
 
+    if (target->GetDeath() == true)
+    {
+        m_TargetSelector.ClearTarget();
+        return;
+    }
+
     const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
     SafeAdvance(next, t.moveSpeed);
 
     TickAimTo(tp);
-
-    
-
-#if 0
-    //rayがヒットしたときのみ発射
-    if (IsHitForRay(ray, &Distance, &Intersect) == true)
-    {
-        D3DXVECTOR3 Pos = m_pCannon->GetPosition();
-        Pos.x = Intersect.x + 1.0f;
-        m_pCannon->SetPosition(Pos);
-    }
-#endif
-
     TryAutoFire();
 }
-#endif
 
-// アイテム取得
-void CComPlayer::StepItemSeek()
-{
-}
 
 void CComPlayer::EvaluateTransitions(float dist2)
 {
+    /* float evadeMult = 0.60f;
+    float attackEnterMult = 1.05f;
+
+    if (m_pPersonality)
+    {
+        evadeMult = m_pPersonality->GetEvadeDistanceMultiplier();
+        attackEnterMult = m_pPersonality->GetAttackEnterDistanceMultiplier();
+    }
+
+    const float attackEnter2 = Util::Sqr(std::max(m_KeepDistance * attackEnterMult, 3.f));
+    const float attackExit2 = Util::Sqr(std::max(m_KeepDistance * 1.25f, 5.f));
+    const float evadeDist2 = Util::Sqr(m_KeepDistance * evadeMult);
+    */
+
     // 2乗
     const float attackEnter2 = Util::Sqr(std::max(m_KeepDistance * 1.05f, 3.f));
     const float attackExit2 = Util::Sqr(std::max(m_KeepDistance * 1.25f, 5.f));
     const float evadeDist2 = Util::Sqr(m_KeepDistance * 0.60f);
     const int   loseFrames = 120;
 
+    const bool hasTarget = m_TargetSelector.HasTarget();
+    const int lostFrames = m_TargetSelector.GetLostSightFrames();
+
     switch (m_State) {
     case State::Seek:
-        if (m_pTarget) ChangeState(State::Chase);
+        if (hasTarget) ChangeState(State::Chase);
         break;
     case State::Chase:
-        if (!m_pTarget) { ChangeState(State::Seek);  break; }
+        if (!hasTarget) { ChangeState(State::Seek);  break; }
         if (dist2 <= evadeDist2) { ChangeState(State::Evade); break; }
         if (dist2 <= attackEnter2) { ChangeState(State::Attack); break; }
         break;
     case State::Attack:
-        if (!m_pTarget) { ChangeState(State::Seek);  break; }
+        if (!hasTarget) { ChangeState(State::Seek);  break; }
         if (dist2 < evadeDist2) { ChangeState(State::Evade); break; }
         if (dist2 > attackExit2) { ChangeState(State::Chase); break; }
         break;
     case State::Evade:
-        if (!m_pTarget) { ChangeState(State::Seek);  break; }
+        if (!hasTarget) { ChangeState(State::Seek);  break; }
         if (dist2 >= attackEnter2) { ChangeState(State::Chase); break; }
         else if (dist2 >= evadeDist2) { ChangeState(State::Attack); break; }
-        if (m_LostSightFrames > loseFrames) { ChangeState(State::Seek); }
+        if (lostFrames > loseFrames) { ChangeState(State::Seek); }
         break;
     }
 }
 
-//========================================
-// ターゲット選定
-//========================================
-void CComPlayer::MakeFixedTimeTarget()
-{
-    if (!m_pAllPlayer) return;
-    auto body = GetBody();
-    if (!body) return;
-
-    const D3DXVECTOR3 self = body->GetPosition();
-
-    std::shared_ptr<CCharacterObjectBase> best;
-    float bestD2 = std::numeric_limits<float>::infinity();
-
-    for (auto& p : *m_pAllPlayer) {
-        if (!p) continue;
-        if (p.get() == this) continue;  // 自分は除外
-        if (IsBlacklisted(p->GetPlayerID())) continue;
-
-        const float d2 = Util::DistXZ(self, p->GetPosition());
-        if (d2 < bestD2) { bestD2 = d2; best = p; }
-    }
-
-    if (!best) {
-        m_pTarget.reset();
-        m_CurTargetDist2 = 1e9f;
-        return;
-    }
-
-    if (!m_pTarget) {
-        m_pTarget = best;
-        m_CurTargetDist2 = bestD2;
-        return;
-    }
-
-    // 近いターゲット
-    const float curD2 = Util::DistXZ(self, m_pTarget->GetPosition());
-    if (best.get() != m_pTarget.get() && bestD2 < curD2 * m_StickinessRatio) {
-        m_pTarget = best;
-        m_CurTargetDist2 = bestD2;
-    }
-    else {
-        m_CurTargetDist2 = curD2;
-    }
-
-    // 遠くなったら忘れさせる
-    const float forget2 = m_ForgetDistance * m_ForgetDistance;
-    if (m_CurTargetDist2 > forget2) {
-        Blacklist(m_pTarget->GetPlayerID());
-        m_pTarget.reset();
-        m_CurTargetDist2 = 1e9f;
-    }
-}
-
-
 void CComPlayer::TryAutoFire()
 {
-    // CShotManagerが有効か確認
-    if (!m_pShotManager || !m_pTarget) return;
+    auto target = m_TargetSelector.GetCurrentTarget();
+    if (!target) return;
 
-    if (m_ShotState.m_ShotCD > 0)
+    auto cannon = GetCannon();
+    auto body = GetBody();
+    if (!cannon || !body) return;
+
+    float hitD;
+
+    // 射線チェック
+    if (m_pFireLineObstacles && !m_pFireLineObstacles->empty())
     {
-        --m_ShotState.m_ShotCD;
-        return;
+        D3DXVECTOR3 muzzle;
+        float yaw;
+        m_ComShot.ComputeMuzzle(muzzle, yaw, body.get(), cannon.get());
+
+        D3DXVECTOR3 targetVel = m_TargetSelector.GetTargetVelocity();
+        PredictedShot prediction = m_ComShot.PredictTargetPosition(
+            muzzle, target->GetPosition(), targetVel);
+
+        //障害物があれば無視
+        if (HasObstacleAheadSimple(target->GetPosition(), yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
+        {
+            return;
+        }
+
+#if 0
+        if (!cannon->CanFireAt(prediction.aimPoint, *m_pFireLineObstacles,
+            m_ComShot.GetConfig().fireAngleDeg))
+        {
+            return;
+        }
+#endif
     }
+    // 射撃実行
+    m_ComShot.TryFire(
+        target->GetPosition(),
+        m_TargetSelector.GetTargetVelocity(),
+        body.get(),
+        cannon.get()
+    );
 
-    D3DXVECTOR3 muzzle; float yaw = 0.f;
-    ComputeMuzzle(muzzle, yaw);
-
-    D3DXVECTOR3 to = m_pTarget->GetPosition() - muzzle;
-    to.y = 0.0f;
-    const float d2 = to.x * to.x + to.z * to.z;
-    if (d2 <= 1e-6f) return;
-
-    const float desired = std::atan2f(to.x, to.z);
-    const float err = std::fabs(Util::Wrap(desired - yaw));
-
-    //ray情報
-    RAY ray = m_pCannon->GetRay();
-    float Distance = 0.f;
-    D3DXVECTOR3 Intersect(0.f, 0.f, 0.f);
-
-
-    if (err <= Util::ToRad(m_ShotState.FireAngleEpsDeg))
-    {
-        m_pShotManager->Create(muzzle, yaw, true, m_PlayerID);
-        m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
-    }
-} 
-
-//レイがヒットしたとき
-void CComPlayer::CharacterHitRay()
-{
-    //Cannonが持っているレイの情報
-    //std::shared_ptr<RAY> ray = m_pCannon->GetRay();
-    RAY ray = m_pCannon->GetRay();
-    float Distance = 0.f;
-    D3DXVECTOR3 Intersect(0.f, 0.f, 0.f);
-
-    //COMのレイと当たり判定
-    if (IsHitForRay(ray, &Distance, &Intersect) == true)
-    {
-        D3DXVECTOR3 Pos = m_pCannon->GetPosition();
-        Pos.x = Intersect.x + 1.f;
-        m_pCannon->SetPosition(Pos);
-    }
 }
-
 
 // 砲塔と車体の同期
 void CComPlayer::SyncCannonToBody()
@@ -1131,7 +1112,9 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
 
     body->CStaticMeshObject::Update();
     SyncCannonToBody();
-}void CComPlayer::TickWander()
+}
+
+void CComPlayer::TickWander()
 {
     const float WanderDelta = 0.10f;
     const float WanderClamp = 0.6f;
@@ -1148,26 +1131,6 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
 
 #endif
 
-// IDがリストに登録されているか判定
-bool CComPlayer::IsBlacklisted(int id) const
-{
-    auto it = m_TargetBlackList.find(id);
-    return it != m_TargetBlackList.end();
-}
-
-// フレームごとにブラックリストを更新
-void CComPlayer::TickBlacklist()
-{
-    for (auto it = m_TargetBlackList.begin(); it != m_TargetBlackList.end();)
-    {
-        if (--(it->second) <= 0) {
-            it = m_TargetBlackList.erase(it);
-        }
-        else {
-            ++it;
-        }
-    }
-}
 
 //指定半径内の敵の数をカウントし、重心を返す
 int CComPlayer::CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) const
@@ -1217,9 +1180,7 @@ int CComPlayer::CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) 
     return count;
 }
 
-//========================================
 // 逃げと攻めをブレンドした方向を計算
-//========================================
 float CComPlayer::ComputeBlendedDirection(
     const D3DXVECTOR3& self,
     const D3DXVECTOR3& targetPos,
@@ -1267,11 +1228,12 @@ float CComPlayer::ComputeBlendedDirection(
         blended.z /= blendLen;
     }
 
+    m_ComShot.IsReady();
+
     // Yaw に変換
     return std::atan2f(blended.x, blended.z);
 
 }
-
 
 void CComPlayer::FindNearestTarget()
 {
@@ -1290,4 +1252,32 @@ void CComPlayer::FindNearestTarget()
 
 
 
-
+//void CComPlayer::SetPersonality(std::unique_ptr<IComPersonality> personality)
+//{
+//    m_pPersonality = std::move(personality);
+//}
+//
+//void CComPlayer::SetPersonalityType(PersonalityType type)
+//{
+//    switch (type)
+//    {
+//    case PersonalityType::Aggressive:
+//        m_pPersonality = std::make_unique<CAggressivePersonality>();
+//        break;
+//    case PersonalityType::Adaptive:
+//        m_pPersonality = std::make_unique<CAdaptivePersonality>();
+//        break;
+//    case PersonalityType::Persistent:
+//        m_pPersonality = std::make_unique<CPersistentPersonality>();
+//        break;
+//    }
+//}
+//
+//PersonalityType CComPlayer::GetPersonalityType() const
+//{
+//    if (m_pPersonality)
+//    {
+//        return m_pPersonality->GetType();
+//    }
+//    return PersonalityType::Adaptive;  // デフォルト
+//}
