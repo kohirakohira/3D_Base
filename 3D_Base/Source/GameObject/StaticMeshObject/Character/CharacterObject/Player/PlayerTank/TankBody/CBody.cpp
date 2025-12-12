@@ -3,8 +3,6 @@
 
 #include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
 
-//-----サウンド-----
-#include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
 
 CBody::CBody(int inputID)
 	: m_TurnSpeed			(0.01f)
@@ -68,19 +66,9 @@ void CBody::RadioControl()
 	{
 	case enMoveState::Forward: 		// 前進
 		m_vPosition += vecAxisZ * m_Tuning.moveSpeed;
-
-		////移動SEの再生.
-		//CSoundManager::PlayLoop(CSoundManager::SE_Move);
 		break;
 	case enMoveState::Backward: 	// 後退
 		m_vPosition -= vecAxisZ * m_Tuning.moveSpeed;
-
-		////移動SEの再生.
-		//CSoundManager::PlayLoop(CSoundManager::SE_Move);
-		break;
-	case enMoveState::Stop: 	// 停止
-		//移動SEの停止.
-		CSoundManager::Stop(CSoundManager::SE_Move);
 		break;
 	default:
 		break;

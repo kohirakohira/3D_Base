@@ -48,7 +48,7 @@ void CGameResult::Update()
 	CControllerManager::GetInstance().Reoderring();
 
 	//BGMのループ再生.
-	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
+	CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
 	//↓-----タイトルでの演出-----↓.
 	m_Key->Update();
 
@@ -61,7 +61,8 @@ void CGameResult::Update()
 		if (m_Key->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
 		{
 			//BGMのループ停止.
-			CSoundManager::Stop(CSoundManager::BGM_Title);
+			CSoundManager::Stop(CSoundManager::BGM_Result_Win);
+			CSoundManager::Stop(CSoundManager::BGM_Result_Draw);
 
 			//SEの再生.
 			CSoundManager::PlaySE(CSoundManager::SE_Click);
@@ -116,17 +117,13 @@ void CGameResult::Init()
 	m_pSelectIcon->SetRotation(0.f, 0.f, 0.f);
 	m_pSelectIcon->SetScale(1.f, 1.f, 1.f);
 
-
 	//キー設定.
 	m_Key->Init();
 	m_Key->SetKey({ 'Z' });
-
-
 }
 
 void CGameResult::Destroy()
 {
-
 }
 
 void CGameResult::Create()
@@ -160,8 +157,6 @@ void CGameResult::Create()
 
 	//キーインプット.
 	m_Key = std::make_shared<CMultiInputKeyManager>();
-
-
 
 }
 
