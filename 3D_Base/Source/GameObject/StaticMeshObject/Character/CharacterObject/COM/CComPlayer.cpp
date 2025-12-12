@@ -858,8 +858,8 @@ void CComPlayer::TryAutoFire()
 
     if (err <= Util::ToRad(m_ShotState.FireAngleEpsDeg))
     {
-        //m_pShotManager->Create(muzzle, yaw, true, m_PlayerID);
-        //m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
+        m_pShotManager->Create(muzzle, yaw, true, m_PlayerID);
+        m_ShotState.m_ShotCD = m_ShotState.ShotCooldownFrames;
     }
 } 
 
