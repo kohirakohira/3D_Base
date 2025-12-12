@@ -122,6 +122,7 @@ void CGameSettings::Draw()
 		}
 		else
 		{
+			//€”õ’†.
 			//m_SpriteConnectionImg[i]->Draw();
 		}
 	}

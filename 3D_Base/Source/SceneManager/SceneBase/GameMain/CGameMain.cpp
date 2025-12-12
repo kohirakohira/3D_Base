@@ -357,7 +357,6 @@ void CGameMain::Draw()
 		m_pSpritePlayerIcon[i]->Draw();
 		m_pSpriteKillNomber[i]->Draw();
 
-
 		//HPの画像の設定..
 		EachSettingHitPoint(i);
 		int chara_hp = m_pCharacterManager->GetControlPlayer(i)->GetHP();

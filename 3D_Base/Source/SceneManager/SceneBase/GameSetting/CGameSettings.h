@@ -64,7 +64,6 @@ public:
 	//接続確認画像.
 	std::shared_ptr<CSprite2D>			m_SpriteConnection;
 
-
 	//タイトル画像.
 	std::shared_ptr<CSprite2D>			m_pSpriteSetting;
 	//タイトル画像の背景.
@@ -76,7 +75,6 @@ public:
 	//選択肢画像.
 	std::shared_ptr<CSprite2D>			m_SpriteYesSelect;
 	std::shared_ptr<CSprite2D>			m_SpriteNoSelect;
-
 
 	//接続画像(仮).
 	std::vector<std::shared_ptr<CImageObject>>	m_SpriteConnectionImg;
