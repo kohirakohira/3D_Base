@@ -44,6 +44,7 @@
 //-------------------------------.
 #include "GameObject//UI//CUIObject//CUIObject.h" // UIオブジェクトクラス.
 #include "GameObject//UI//Timer//CTimer.h"		  // タイマークラス.
+#include "GameObject/UI/CUIObject/NumberImage/NumberImage.h"
 
 //コントローラー
 #include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
@@ -115,20 +116,23 @@ public:
 	std::shared_ptr<CDebugText>									m_pDbgText;
 
 	// ゲーム内で扱うUI系
-	std::shared_ptr<CSprite2D>									m_pSprite2DTimerArrow;			//時計の針..
-	std::shared_ptr<CSprite2D>									m_pSprite2DTimerFrame;			//制限時間の枠..
-	std::shared_ptr<CSprite2D>									m_pSprite2DTimer;				//制限時間の時計枠..
-	std::shared_ptr<CSprite2D>									m_pSprite2DKillNomber;			//キル数の画像..
-	std::shared_ptr<CSprite2D>									m_pSprite2DHitPoint;			//HPの画像..
-	std::array < std::shared_ptr<CSprite2D>, PLAYERNUM_MAX>		m_pSprite2DPlayerIcon;			//プレイヤー番号画像..
+	std::shared_ptr<CSprite2D>									m_pSprite2DTimerArrow;			//時計の針.
+	std::shared_ptr<CSprite2D>									m_pSprite2DTimerFrame;			//制限時間の枠.
+	std::shared_ptr<CSprite2D>									m_pSprite2DTimer;				//制限時間の時計枠.
+	std::shared_ptr<CSprite2D>									m_pSprite2DKillNomber;			//キル数の画像.
+	std::shared_ptr<CSprite2D>									m_pSprite2DHitPoint;			//HPの画像.
+	std::array < std::shared_ptr<CSprite2D>, PLAYERNUM_MAX>		m_pSprite2DPlayerIcon;			//プレイヤー番号画像.
+	std::shared_ptr<CSprite2D>									m_pSprite2DNumber;				//数字の画像.
 
 	//スタティックメッシュオブジェクトクラス(UI)..
-	std::array<std::shared_ptr<CUIObject>, PLAYERNUM_MAX>		m_pSpritePlayerIcon;			//プレイヤーアイコン..
-	std::array<std::shared_ptr<CUIObject>, KILLNUM_MAX>			m_pSpriteKillNomber;			//キル数アイコン..
-	std::array<std::shared_ptr<CUIObject>, HP_MAX>				m_pSpriteHitPoint;				//HPアイコン..
-	std::shared_ptr<CUIObject>									m_pSpriteTimerFrame;			//制限時間の枠..
-	std::shared_ptr<CUIObject>									m_pSpriteTimer;					//制限時間の時計枠..
-	std::shared_ptr<CUIObject>									m_pSpriteTimerArrow;			//時計の針..
+	std::array<std::shared_ptr<CUIObject>, PLAYERNUM_MAX>		m_pSpritePlayerIcon;			//プレイヤーアイコン.
+	std::array<std::shared_ptr<CUIObject>, KILLNUM_MAX>			m_pSpriteKillNomber;			//キル数アイコン.
+	std::array<std::shared_ptr<CUIObject>, HP_MAX>				m_pSpriteHitPoint;				//HPアイコン.
+	std::shared_ptr<CUIObject>									m_pSpriteTimerFrame;			//制限時間の枠.
+	std::shared_ptr<CUIObject>									m_pSpriteTimer;					//制限時間の時計枠.
+	std::shared_ptr<CUIObject>									m_pSpriteTimerArrow;			//時計の針.
+	std::shared_ptr<NumberImage>								m_TimerNumber;					//制限時間の数字.
+	std::shared_ptr<NumberImage>								m_KillCountNumber;				//キル数の数字.
 
 	//ゲームで扱うスプライトデータ(使いまわす資源)..
 	std::unique_ptr<CSprite3D>		m_pSpriteGround;
@@ -222,9 +226,6 @@ public:
 	int		m_StopTimeCount;
 	//Iconの回転用..
 	float	m_Rot;
-
-	//時計の針.
-	float	time;
 
 	//これは何用？
 	D3DXVECTOR3 push;

@@ -14,7 +14,7 @@ static bool prevA = false;
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス.
 
 //定数宣言.
-static constexpr int TIME = 100;
+static constexpr int TIME = 60;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 
@@ -28,6 +28,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pSprite2DKillNomber			( nullptr )
 	, m_pSprite2DHitPoint			( nullptr )
 	, m_pSprite2DPlayerIcon			()
+	, m_pSprite2DNumber				( nullptr )
 
 	// 画像の設定
 	, m_pSpriteTimerFrame			()
@@ -36,6 +37,8 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pSpritePlayerIcon			()
 	, m_pSpriteKillNomber			()
 	, m_pSpriteHitPoint				()
+	, m_TimerNumber					()
+	, m_KillCountNumber				()
 
 	, m_pSpriteGround				( nullptr )
 	, m_pSpritePlayer				( nullptr )
@@ -96,8 +99,6 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_pItemBoxManager				( nullptr )
 
 	, m_Rot							( 0.0f )
-
-	, time							( 0.0f )
 
 	, m_pBlastManager				( nullptr )
 
@@ -189,14 +190,13 @@ void CGameMain::Update()
 	}
 #endif
 
-	//定数宣言..
+	//定数宣言.
 	const float PI = 3.14159265358979f;
-	//時計の針の回転..
+	//時計の針の回転.
 	float remaining = m_Timer->GetRemainingTime();
-	float totle = 90.f;
-	time = (remaining / totle) * 360;
-	float angle = time * (PI / 180);
-	m_pSpriteTimerArrow->SetRotation(0.f, D3DXToRadian(180.0f), -angle);
+	float progress = 1.0f - (remaining / TIME);
+	float angle = progress * 360.0f;
+	m_pSpriteTimerArrow->SetRotation(0.f, D3DXToRadian(180.0f), D3DXToRadian(angle));
 
 	//const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
 
@@ -233,6 +233,10 @@ void CGameMain::Update()
 
 	// 当たり判定の更新
 	m_pCollisionManager->Update();
+
+	m_TimerNumber->SetNumber(m_Timer->GetRemainingTime(), 2);
+	m_TimerNumber->Update();
+
 
 	//勝敗条件(確認用)..
 	//勝ち..
@@ -388,17 +392,19 @@ void CGameMain::Draw()
 	fullvp.MaxDepth = 1.0f;		//深度バッファの最大値.
 	pContext->RSSetViewports(1, &fullvp);
 
-	////1画面の時の表示..
-	//前後関係無視..
+	//1画面の時の表示.
+	//前後関係無視.
 	CDirectX11::GetInstance().SetDepth(false);
-	//タイマーの枠の描画..
+	//タイマーの枠の描画.
 	m_pSpriteTimerFrame->Draw();
-	//タイマーの描画..
+	//タイマーの描画.
 	m_pSpriteTimer->Draw();
-	//タイマーの描画..
+	//タイマーの描画.
 	m_pSpriteTimerArrow->Draw();
-	//タイマー描画..
-	m_Timer->Draw();
+	//タイマー描画.
+	//m_Timer->Draw();
+	m_TimerNumber->Draw();
+
 	CDirectX11::GetInstance().SetDepth(true);
 	
 }
@@ -438,6 +444,12 @@ void CGameMain::Init()
 	m_pSpriteTimer->SetPosition(WND_W / 2.0f - 74.0f, WND_H / 2 - 32.f, 0.0f);
 	m_pSpriteTimer->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.0f);
+
+	//キル数の情報.
+	m_KillCountNumber->SetPosition(0.0f, 0.0f, 0.0f);
+	m_KillCountNumber->SetRotation(0.0f, 0.0f, 0.0f);
+	m_KillCountNumber->SetScale(1.0f, 1.0f, 1.0f);
+
 	//制限時間画像の設定..
 	EachSettingTimer();
 	//プレイヤー番号画像の設定..
@@ -449,11 +461,6 @@ void CGameMain::Init()
 
 	//制限時間の文字サイズ..
 	m_pDbgText->SetFontSize(5.0f);
-
-	//タイマーの初期化.
-	m_Timer->StartTimer(TIME);
-	m_Timer->SetDebugFont(m_pDbgText);
-	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
 
 	//カメラがめり込んだ時のオブジェクト設定.
 	m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
@@ -477,8 +484,10 @@ void CGameMain::Create()
 
 	//UIObjectのインスタンス生成.
 	m_pSpriteTimerFrame = std::make_shared<CUIObject>();
-	m_pSpriteTimer = std::make_shared<CUIObject>();
+	m_pSpriteTimer		= std::make_shared<CUIObject>();
 	m_pSpriteTimerArrow = std::make_shared<CUIObject>();
+	m_TimerNumber		= std::make_shared<NumberImage>();
+	m_KillCountNumber	= std::make_shared<NumberImage>();
 
 	//HPの分だけ生成..
 	for (int i = 0; i < HP_MAX; i++)
@@ -497,11 +506,12 @@ void CGameMain::Create()
 	}
 
 	//UI系のインスタンス生成..
-	m_pSprite2DTimerFrame = std::make_shared<CSprite2D>();
-	m_pSprite2DTimer = std::make_shared<CSprite2D>();
-	m_pSprite2DTimerArrow = std::make_shared<CSprite2D>();
-	m_pSprite2DKillNomber = std::make_shared<CSprite2D>();
-	m_pSprite2DHitPoint = std::make_shared<CSprite2D>();
+	m_pSprite2DTimerFrame	= std::make_shared<CSprite2D>();
+	m_pSprite2DTimer		= std::make_shared<CSprite2D>();
+	m_pSprite2DTimerArrow	= std::make_shared<CSprite2D>();
+	m_pSprite2DKillNomber	= std::make_shared<CSprite2D>();
+	m_pSprite2DHitPoint		= std::make_shared<CSprite2D>();
+	m_pSprite2DNumber		= std::make_shared<CSprite2D>();
 	//プレイヤーの分だけ生成..
 	for (int i = 0; i < PLAYERNUM_MAX; i++)
 	{
@@ -509,33 +519,33 @@ void CGameMain::Create()
 	}
 
 	//スプライトのインスタンス作成..
-	m_pSpriteGround = std::make_unique<CSprite3D>();
-	m_pSpritePlayer = std::make_unique<CSprite3D>();
-	m_pSpriteExplosion = std::make_shared<CSprite3D>();
+	m_pSpriteGround		= std::make_unique<CSprite3D>();
+	m_pSpritePlayer		= std::make_unique<CSprite3D>();
+	m_pSpriteExplosion	= std::make_shared<CSprite3D>();
 
 	//壁を外から見たときのオブジェクトのインスタンス作成.
 	m_pBackImgObject = std::make_unique<CStaticMeshObject>();
 
 	//スタティックメッシュのインスタンス作成.
-	m_pStaticMeshStage = std::make_shared<CStaticMesh>();
-	m_pStaticMeshBSphere = std::make_shared<CStaticMesh>();
-	m_pStaticMeshItemBox = std::make_shared<CStaticMesh>();
+	m_pStaticMeshStage		= std::make_shared<CStaticMesh>();
+	m_pStaticMeshBSphere	= std::make_shared<CStaticMesh>();
+	m_pStaticMeshItemBox	= std::make_shared<CStaticMesh>();
 
 	// 戦車のメッシュ
-	m_pStaticMesh_TankBodyRed = std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankCannonRed = std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankBodyYellow = std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankCannonYellow = std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankBodyBlue = std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankCannonBlue = std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankBodyGreen = std::make_shared<CStaticMesh>();
-	m_pStaticMesh_TankCannonGreen = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankBodyRed		= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankCannonRed		= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankBodyYellow	= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankCannonYellow	= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankBodyBlue		= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankCannonBlue	= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankBodyGreen		= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_TankCannonGreen	= std::make_shared<CStaticMesh>();
 
 	// 弾のメッシュ
-	m_pStaticMesh_BulletRed = std::make_shared<CStaticMesh>();
-	m_pStaticMesh_BulletYellow = std::make_shared<CStaticMesh>();
-	m_pStaticMesh_BulletBlue = std::make_shared<CStaticMesh>();
-	m_pStaticMesh_BulletGreen = std::make_shared<CStaticMesh>();
+	m_pStaticMesh_BulletRed		= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_BulletYellow	= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_BulletBlue	= std::make_shared<CStaticMesh>();
+	m_pStaticMesh_BulletGreen	= std::make_shared<CStaticMesh>();
 
 	//壁のメッシュ
 	m_pStaticMeshWallW = std::make_shared<CStaticMesh>();
@@ -578,27 +588,27 @@ void CGameMain::Create()
 	m_Timer = std::make_shared<CTimer>();
 
 	//壁
-	m_pWallTop = std::make_shared<CStageObject>();
-	m_pWallBottom = std::make_shared<CStageObject>();
-	m_pWallLeft = std::make_shared<CStageObject>();
-	m_pWallRight = std::make_shared<CStageObject>();
+	m_pWallTop		= std::make_shared<CStageObject>();
+	m_pWallBottom	= std::make_shared<CStageObject>();
+	m_pWallLeft		= std::make_shared<CStageObject>();
+	m_pWallRight	= std::make_shared<CStageObject>();
 
 	// 木箱
-	m_pWoodBoxTopLeft = std::make_shared<CStageObject>();
-	m_pWoodBoxTopRight = std::make_shared<CStageObject>();
-	m_pWoodBoxCenter = std::make_shared<CStageObject>();
-	m_pWoodBoxBottomLeft = std::make_shared<CStageObject>();
-	m_pWoodBoxBottomRight = std::make_shared<CStageObject>();
+	m_pWoodBoxTopLeft		= std::make_shared<CStageObject>();
+	m_pWoodBoxTopRight		= std::make_shared<CStageObject>();
+	m_pWoodBoxCenter		= std::make_shared<CStageObject>();
+	m_pWoodBoxBottomLeft	= std::make_shared<CStageObject>();
+	m_pWoodBoxBottomRight	= std::make_shared<CStageObject>();
 
 	// 地面
 	m_pGround = std::make_shared<CStageObject>();
 
 	//アイテムマネージャークラスのインスタンス生成..
-	m_pWoodBoxTopLeft = std::make_shared<CStageObject>();
-	m_pWoodBoxTopRight = std::make_shared<CStageObject>();
-	m_pWoodBoxCenter = std::make_shared<CStageObject>();
-	m_pWoodBoxBottomLeft = std::make_shared<CStageObject>();
-	m_pWoodBoxBottomRight = std::make_shared<CStageObject>();
+	m_pWoodBoxTopLeft		= std::make_shared<CStageObject>();
+	m_pWoodBoxTopRight		= std::make_shared<CStageObject>();
+	m_pWoodBoxCenter		= std::make_shared<CStageObject>();
+	m_pWoodBoxBottomLeft	= std::make_shared<CStageObject>();
+	m_pWoodBoxBottomRight	= std::make_shared<CStageObject>();
 
 #ifdef ENABLE_ITEMS
 
@@ -650,6 +660,12 @@ HRESULT CGameMain::LoadData()
 		256, 256,		//元画像の幅,高さ..
 		256, 256		//アニメーションをしないので、0でいい..
 	};
+	//数字画像のスプライト設定
+	CSprite2D::SPRITE_STATE NUM_SIZE = {
+		33, 32,			//描画幅,高さ..
+		330, 32,		//元画像の幅,高さ..
+		33, 32			//アニメーションをしないので、0でいい..
+	};
 
 	//制限時間の枠の読み込み
 	m_pSprite2DTimerFrame->Init(_T("Data\\Texture\\UI\\Timer\\TimerFrame.png"), WH_SIZE, false);
@@ -657,11 +673,14 @@ HRESULT CGameMain::LoadData()
 	m_pSprite2DTimerArrow->Init(_T("Data\\Texture\\UI\\Timer\\TimerArrow.png"), TIMER_SIZE, true);
 	m_pSprite2DKillNomber->Init(_T("Data\\Texture\\UI\\KillNum.png"), ICON_SIZE, false);
 	m_pSprite2DHitPoint->Init(_T("Data\\Texture\\UI\\HP.png"), ICON_SIZE, true);
+	m_pSprite2DNumber->Init(_T("Data\\Texture\\UI\\Timer\\number.png"), NUM_SIZE, false);
 
 	//画像をアタッチ
 	m_pSpriteTimerFrame	->AttachSprite(m_pSprite2DTimerFrame);
 	m_pSpriteTimer		->AttachSprite(m_pSprite2DTimer);
 	m_pSpriteTimerArrow	->AttachSprite(m_pSprite2DTimerArrow);
+	m_TimerNumber		->AttachSprite(m_pSprite2DNumber);
+	m_KillCountNumber	->AttachSprite(m_pSprite2DNumber);
 
 	//HPの分だけアタッチ
 	for (int i = 0; i < HP_MAX; i++)
@@ -1020,9 +1039,6 @@ CSceneType CGameMain::GetSceneType() const
 //制限時間画像の設定..
 void CGameMain::EachSettingTimer()
 {
-	//定数宣言..
-	static constexpr int TIME = 90.0;
-
 	//-----中心表示用座標-----..
 		//制限時間枠の画像設定..
 	m_pSpriteTimerFrame->SetPosition(0.f, 0.f, 0.f);
@@ -1042,6 +1058,9 @@ void CGameMain::EachSettingTimer()
 	m_Timer->StartTimer(TIME);
 	m_Timer->SetDebugFont(m_pDbgText);
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
+
+	//タイマーの数字の情報.
+	m_TimerNumber->SetDigitWidth(32);
 }
 //プレイヤー番号画像の設定..
 void CGameMain::EachSettingPlayerNumber()
