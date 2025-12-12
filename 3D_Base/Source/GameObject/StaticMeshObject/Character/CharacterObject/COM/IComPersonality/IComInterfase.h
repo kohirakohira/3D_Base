@@ -25,6 +25,7 @@ struct BehaviorDecision
 
 /*
     COMインスタフェース
+    それぞれのCOMを作成する時に継承させる
 */
 
 class IComInterfase 
@@ -33,13 +34,25 @@ class IComInterfase
 
     virtual ~IComInterfase() = 0;
 
-    virtual MoveType GetType() const = 0;
+    //取得・セット
+    virtual MoveType GetMoveType() const = 0;
+    virtual void SetMoveType(MoveType type)  = 0{ m_MoveType = type; }
 
+    //ターゲット
     virtual float EvaluateTargetPriority(
         const D3DXVECTOR3& selfPos,
         const std::shared_ptr<CCharacterObjectBase>& candidate,
         const std::shared_ptr<CCharacterObjectBase>& currentTarget,
-        float Distance
-    ) = 0;
+        float Distance, float currentDistance ) const = 0;
 
+    //追跡時の行動
+    virtual BehaviorDecision DecivdeChaseAction(
+        const D3DXVECTOR3& selfPos,
+        const D3DXVECTOR3& targetPos,
+        float distanceToTarget,
+        int nearbyEnemyCount,
+        float hp) const = 0;
+
+private:
+    MoveType m_MoveType;
 };

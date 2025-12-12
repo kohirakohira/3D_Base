@@ -158,6 +158,9 @@ private:
 	//障害物判定用
 	bool SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const;
 
+	//レイでの障害物判定
+	bool HitObjectRay();
+
 	//前方に見えない当たり判定を置く
 	bool HasObstacleAheadWithBox(const CBoxCollider& selfBox,
 		const D3DXVECTOR3& forward,
@@ -278,6 +281,8 @@ private:
 
 	//COMショットクラス
 	CComShot m_ComShot;
+
+	CShot m_Shot;
 
 	//std::unique_ptr<IComPersonality> m_pPersonality;
 };

@@ -505,6 +505,30 @@ bool CComPlayer::SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXV
     return any;
 }
 
+//レイとオブジェクト
+bool CComPlayer::HitObjectRay()
+{
+    auto tuning = GetTuning();
+    auto body = GetBody();
+    auto target = m_TargetSelector.GetCurrentTarget();  //現在のターゲットを取得
+    D3DXVECTOR3 muzzle = m_pCannon->GetMuzzlePosition();       //砲口の向きを取得
+
+    D3DXVECTOR3 targetPos = target->GetPosition();
+    D3DXVECTOR3 targetRot = target->GetRotation();
+    D3DXVECTOR3 pos = body->GetPosition();
+    float desired;
+
+    desired = std::atan2f((pos - targetPos).x, (pos - targetPos).z);
+    //射線が通らないような障害物があれば
+    if (m_pCannon->IsPositionInSight(targetPos, 0.5f))
+    {
+        const float next = SteerWithAvoidAABB(targetRot.y, desired, tuning.bodyTurnSpeed);
+        SafeAdvance(next, tuning.bodyTurnSpeed);
+    }
+
+    return false;
+}
+
 //========================================
 // 退避処理
 //========================================
@@ -638,7 +662,6 @@ void CComPlayer::StepChase()
             desired = Util::Wrap(desired + (D3DX_PI * 0.5f) * ((m_StateFrames / 60) % 2 ? +1.f : -1.f));
         }
     }
-
     const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
     SafeAdvance(next, t.moveSpeed);
 
@@ -752,11 +775,13 @@ void CComPlayer::StepAttack()
         }
     }
 
+#if 1
     if (target->GetDeath() == true)
     {
         m_TargetSelector.ClearTarget();
         return;
     }
+#endif
 
     const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
     SafeAdvance(next, t.moveSpeed);
@@ -839,17 +864,26 @@ void CComPlayer::TryAutoFire()
         //障害物があれば無視
         if (HasObstacleAheadSimple(target->GetPosition(), yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
         {
+            //倒したあとは直ぐにターゲットを変更する
+            if (target->GetDeath())
+            {
+                m_TargetSelector.ClearTarget();
+            }
             return;
         }
-
-#if 0
-        if (!cannon->CanFireAt(prediction.aimPoint, *m_pFireLineObstacles,
-            m_ComShot.GetConfig().fireAngleDeg))
-        {
-            return;
-        }
-#endif
     }
+    
+    //戦車が後ろに下がる
+    auto nowPos = target->GetPosition();
+    float offset = -0.1f;
+    D3DXVECTOR3 pos(0.f, offset, 0.f);
+
+    if (m_Shot.GetShotFlag() == true)
+    {
+        nowPos -= pos;
+        SyncCannonToBody();
+    }
+
     // 射撃実行
     m_ComShot.TryFire(
         target->GetPosition(),

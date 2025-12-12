@@ -222,7 +222,7 @@ bool CCannon::IsPositionInSight(const D3DXVECTOR3& targetPos, float toleranceAng
     float dot = D3DXVec3Dot(&forward, &muzzle);
 
     // ‹–—eŠp“x“à‚©
-    return dot >= Util::Wrap(toleranceAngle);   //sinf‚Å‚à‚¢‚¢
+    return dot >= sinf(toleranceAngle);  
 }
 
 bool CCannon::HasObstacleInFireLine(const D3DXVECTOR3& targetPos, const std::vector<CStaticMeshObject*>& obstacles) const
