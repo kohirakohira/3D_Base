@@ -53,6 +53,8 @@
 //当たり判定.
 #include "Collision/CollisionManager/CCollisionManager.h"
 
+class CCharacterObjectBase;
+
 class CGameMain
 	: public CSceneBase
 {
@@ -172,6 +174,7 @@ public:
 
 	// キャラクターマネージャー
 	std::shared_ptr<CCharacterManager>			m_pCharacterManager;
+
 
 	// 弾クラスマネージャー.
 	std::shared_ptr<CShotManager>			m_pShotManager;

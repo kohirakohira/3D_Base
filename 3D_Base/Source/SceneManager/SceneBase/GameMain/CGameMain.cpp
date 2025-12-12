@@ -13,6 +13,8 @@ static bool prevA = false;
 #include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX9クラス.
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス.
 
+#include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
+
 //定数宣言.
 static constexpr int TIME = 600;
 const float deltaTime = 1.0f / FPS;
@@ -556,6 +558,7 @@ void CGameMain::Create()
 
 	//プレイヤーと砲塔のインスタンス生成.
 	m_pCharacterManager = std::make_shared<CCharacterManager>();
+
 	//マネージャーは一回だけ初期化
 	m_pCharacterManager->Init();
 
@@ -1102,18 +1105,18 @@ void CGameMain::EachSettingHitPoint()
 	//HPの画像の設定..
 	for (int i = 0; i < HP_MAX; i++)
 	{
-		if (i <= 0)
-		{
-			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 64.f, 0.f);
-			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteHitPoint[i]->SetScale(-0.5f, 0.5f, 0.5f);
-		}
-		else
-		{
-			m_pSpriteHitPoint[i]->SetPosition(WND_W / 2, 64.f, 0.f);
-			m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
-			m_pSpriteHitPoint[i]->SetScale(-0.5f, 0.5f, 0.5f);
-		}
+			if (i <= 0)
+			{
+				m_pSpriteHitPoint[i]->SetPosition(WND_W / 2 - 128.f, 64.f, 0.f);
+				m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
+				m_pSpriteHitPoint[i]->SetScale(-0.5f, 0.5f, 0.5f);
+			}
+			else
+			{
+				m_pSpriteHitPoint[i]->SetPosition(WND_W / 2, 64.f, 0.f);
+				m_pSpriteHitPoint[i]->SetRotation(0.f, 0.f, 0.f);
+				m_pSpriteHitPoint[i]->SetScale(-0.5f, 0.5f, 0.5f);
+			}
 	}
 }
  

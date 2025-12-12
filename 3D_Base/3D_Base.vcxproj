@@ -259,6 +259,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComShot\CComShot.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComTargetSelector\CComTargetSelector.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComPersonality\IComInterfase.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\Util\Util.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.h" />
     <ClInclude Include="Source\Collision\Shape\Volume\BoudingBox\CBoundingBox.h" />

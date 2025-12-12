@@ -752,7 +752,6 @@ void CComPlayer::StepAttack()
         }
     }
 
-
     if (target->GetDeath() == true)
     {
         m_TargetSelector.ClearTarget();

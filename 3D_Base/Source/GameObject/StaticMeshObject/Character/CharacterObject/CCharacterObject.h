@@ -111,6 +111,7 @@ public:
 	//‘Ì—Íæ“¾
 	virtual int GetHP() const{ return m_Chara.m_Hp; }
 
+
 protected:
 	//Ô‘ÌƒNƒ‰ƒX.
 	std::shared_ptr<CBody>			m_pBody;
