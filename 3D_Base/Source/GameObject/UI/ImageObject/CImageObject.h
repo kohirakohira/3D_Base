@@ -14,7 +14,7 @@ public:
 	~CImageObject();
 
 	//動作関数.
-	void Update() override;
+	void Update() override final;
 	//描画関数.
 	void Draw();
 
@@ -27,12 +27,12 @@ public:
 		m_pSprite = nullptr;
 	}
 
-	//画像の位置を設定する.
-	void SetPosition(float x, float y, float z)
-	{
-		//位置を設定.
-		m_vPosition = D3DXVECTOR3(x, y, z);
-	}
+	////画像の位置を設定する.
+	//void SetPosition(float x, float y, float z)
+	//{
+	//	//位置を設定.
+	//	m_vPosition = D3DXVECTOR3(x, y, z);
+	//}
 
 	//画像の動作.
 	void ImageMove();
