@@ -46,7 +46,7 @@ void CBlastManager::Update()
 	for (auto& blast : m_Blast)
 	{
 		blast->Update();
-		blast->GetCollider()->SetRadius(blast->GetBlastRadius());
+		blast->GetCollider()->SetRadius(blast->GetBlastRadius() * 0.2f);
 	}
 
 	//std::remove_if(begin, end, pred)Fíœ‘ÎÛ‚Å‚È‚¢—v‘f‚¾‚¯‚ğ‘O‚É‹l‚ß‚é.

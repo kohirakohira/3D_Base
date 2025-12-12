@@ -313,9 +313,6 @@ void CCollisionManager::PlayertoShot()
 
 				//ƒ_ƒ[ƒWSE‚ÌÄ¶.
 				CSoundManager::PlaySE(CSoundManager::SE_Damage);
-
-				// “–‚½‚Á‚½Žž‚Ìˆ—
-				chara->Hit();
 			}
 		}
 	}
