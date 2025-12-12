@@ -58,7 +58,6 @@ CPlayer::CPlayer()
 
 	, m_Key					()
 {
-	m_BlastFlag = false;
 
 	//ÉLÅ[ÇÃê∂ê¨.
 	m_Key = std::make_unique<CMultiInputKeyManager>();
