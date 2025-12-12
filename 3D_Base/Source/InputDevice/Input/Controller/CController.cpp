@@ -87,7 +87,7 @@ CController::Direction CController::GetDirectionFromXY(float x, float y, float t
 	//デッドゾーン※入力範囲.
 	if (std::fabs(x) < threshold && std::fabs(y) < threshold)
 	{
-		return CController::Direction::None;
+		return CController::Direction::Stop;
 	}
 
 	//上.

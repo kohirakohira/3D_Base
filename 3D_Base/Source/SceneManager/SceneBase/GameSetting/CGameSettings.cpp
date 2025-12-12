@@ -56,9 +56,6 @@ void CGameSettings::Update()
 	// コントローラーの繰り上げ処理を呼び出し
 	CControllerManager::GetInstance().Reoderring();
 
-	//BGMのループ再生.
-	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
-
 	//キー入力受付.
 	m_InputKey->Update();
 

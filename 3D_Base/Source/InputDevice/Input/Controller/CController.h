@@ -25,6 +25,8 @@ public:
 		DownLeft,   // ç∂â∫
 		DownRight,  // âEâ∫
 
+		Stop,		// í‚é~íÜ
+
 		None = -1   // ñ≥ê›íË
 	};
 

@@ -1,6 +1,9 @@
 #include "CPlayer.h"
 #include "InputDevice/Input/XInput/CXInput.h"
 
+//-----サウンド-----
+#include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
+
 //指定した区間から外れていたら、近い端点に合わせる
 template <class T>	//比較演算子が使える型に対応させる
 static inline T clamp(T v, T lo, T hi)
@@ -179,10 +182,14 @@ void CPlayer::Move(const PlayerInput& input)
 		case CController::Direction::Up:
 			//前進.
 			m_pBody->SetMoveState(CBody::Forward);
+			//移動SEの再生.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			break;
 		case CController::Direction::Down:
 			//後退.
 			m_pBody->SetMoveState(CBody::Backward);
+			//移動SEの再生.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			break;
 		case CController::Direction::Left:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
@@ -193,22 +200,32 @@ void CPlayer::Move(const PlayerInput& input)
 		case CController::Direction::UpLeft:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Forward);
+			//移動SEの再生.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			break;
 		case CController::Direction::UpRight:
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Forward);
+			//移動SEの再生.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			break;
 		case CController::Direction::DownLeft:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Backward);
+			//移動SEの再生.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			break;
 		case CController::Direction::DownRight:
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
+			//移動SEの再生.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			m_pBody->SetMoveState(CBody::Backward);
 			break;
-		case CController::Direction::None:
+		case CController::Direction::Stop:
 			//何も入力が無いので停止しておく.
 			m_pBody->SetMoveState(CBody::Stop);
+			//移動SEの停止.
+			CSoundManager::Stop(CSoundManager::SE_Move);
 			break;
 		default:
 			break;
@@ -263,6 +280,9 @@ void CPlayer::Move(const PlayerInput& input)
 		if (m_Key->NoInputKey() == false)
 		{
 			m_pBody->SetMoveState(CBody::Stop);
+
+			//移動SEの停止.
+			CSoundManager::Stop(CSoundManager::SE_Move);
 		}
 	}
 	

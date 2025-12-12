@@ -34,15 +34,16 @@ bool CSoundManager::Load(HWND hWnd)
 	SoundList SList[] =
 	{
 		{ enList::BGM_Title,	_T("Data\\Sound\\BGM\\Title.mp3"),				_T("BGM_Title")	},
-		{ enList::BGM_Bonus,	_T("Data\\Sound\\BGM\\BonusGameHouse.mp3"),		_T("BGM_Bonus")	},
-		{ enList::BGM_Clear,	_T("Data\\Sound\\BGM\\Ending.mp3"),				_T("BGM_Clear")	},
-		{ enList::BGM_Over,		_T("Data\\Sound\\BGM\\Over.mp3"),				_T("BGM_Over")	},
-		{ enList::BGM_Main,		_T("Data\\Sound\\BGM\\Main.mp3"),				_T("BGM_Main")	},
+		{ enList::BGM_Main,		_T("Data\\Sound\\BGM\\Main_ver2.mp3"),			_T("BGM_Main")	},
+		{ enList::BGM_Result_Win,	_T("Data\\Sound\\BGM\\Result_Win.mp3"),		_T("BGM_Result_Win")},
+		{ enList::BGM_Result_Draw,	_T("Data\\Sound\\BGM\\Result_Draw.mp3"),	_T("BGM_Result_Draw")},
 
 		{ enList::SE_Select,	_T("Data\\Sound\\SE\\Select.mp3"),				_T("SE_Select")	},
 		{ enList::SE_Click,		_T("Data\\Sound\\SE\\Accept.mp3"),				_T("SE_Click")	},
 		{ enList::SE_Connect,	_T("Data\\Sound\\SE\\Connect.mp3"),			_T("SE_Connect")	},
 		{ enList::SE_UnConnect,	_T("Data\\Sound\\SE\\UnConnect.mp3"),		_T("SE_UnConnect")	},
+		{ enList::SE_GameStart,	_T("Data\\Sound\\SE\\GameStart.mp3"),		_T("SE_GameStart")	},
+		{ enList::SE_GameEnd,	_T("Data\\Sound\\SE\\GameEnd.mp3"),			_T("SE_GameEnd")	},
 		{ enList::SE_Shot,		_T("Data\\Sound\\SE\\Shot.mp3"),				_T("SE_Shot")	},
 		{ enList::SE_Damage ,	_T("Data\\Sound\\SE\\damage.mp3"),				_T("SE_Damage")	},
 		{ enList::SE_Explosion,	_T("Data\\Sound\\SE\\explosion.mp3"),		_T("SE_Explosion")	},

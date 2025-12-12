@@ -118,7 +118,7 @@ CGameMain::~CGameMain()
 void CGameMain::Update()
 {
 	//BGMのループ再生..
-	//CSoundManager::PlayLoop(CSoundManager::BGM_Main);
+	CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
 	//コントローラーの更新.
 	CControllerManager::GetInstance().Update();
@@ -242,7 +242,10 @@ void CGameMain::Update()
 		if (m_Timer->GetRemainingTime() <= 0.0f)
 		{
 			//BGMのループ停止..
-			CSoundManager::Stop(CSoundManager::BGM_Bonus);
+			CSoundManager::Stop(CSoundManager::BGM_Main);
+
+			// 戦車が動いている時のSEを停止
+			CSoundManager::Stop(CSoundManager::SE_Move);
 
 			m_SceneType = CSceneType::Result;
 		}
