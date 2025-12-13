@@ -90,7 +90,7 @@ enum SettingKinds
 	Sprite_COM_3P,
 	Sprite_COM_4P,
 
-	Max
+	Max_UI
 };
 
 //=================================================
