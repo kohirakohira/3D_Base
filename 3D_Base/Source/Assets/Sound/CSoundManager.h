@@ -24,6 +24,9 @@ public:
 
 		SE_GameStart,	//ゲームの開始.
 		SE_GameEnd,		//ゲームの終了.
+		SE_FireWork,	//花火.
+		SE_Spark,		//火花.
+		SE_Door,		//シャッター.
 
 		SE_Shot,		//発射.
 		SE_Damage,		//ダメージ.
