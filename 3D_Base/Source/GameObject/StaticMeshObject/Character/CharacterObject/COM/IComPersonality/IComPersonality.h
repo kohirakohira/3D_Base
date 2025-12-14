@@ -77,5 +77,5 @@ public:
         float newDist) const = 0;
 
     
-    virtual TankTuning GetTurretParams() const = 0;
+    //virtual TankTuning GetTurretParams() const = 0;
 };
