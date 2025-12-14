@@ -14,11 +14,18 @@ SE
 ・弾が爆発するSE 爆破・破砕音01
     On-Jin ～音人～ https://on-jin.com/
 
+[演出]
 ・ゲーム開始時のSE   カウントダウン01
    音OtoLogic  https://otologic.jp/free/se/countdown01.html#google_vignette
 
 ・ゲーム終了時のSE   笛ピッピー2
     Springin  https://www.springin.org/sound-stock/subcategory/whistle/
+
+・花火のSE   花火大会
+   効果音ラボ  https://soundeffect-lab.info/sound/sub-category/summer.html
+
+・火花のSE   手持ち花火
+   効果音ラボ  https://soundeffect-lab.info/sound/sub-category/summer.html
 
 TitleのBGM
    https://dova-s.jp/bgm/play21800.html
