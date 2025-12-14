@@ -111,6 +111,8 @@ public:
 	//‘Ì—Íæ“¾
 	virtual int GetHP() const{ return m_Chara.m_Hp; }
 
+	//Å‘å‘Ì—Íæ“¾
+	virtual int GetMaxHP() const { return m_Chara.m_MaxHp; }
 
 protected:
 	//Ô‘ÌƒNƒ‰ƒX.

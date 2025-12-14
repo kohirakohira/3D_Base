@@ -23,6 +23,12 @@
 //COMショットクラス
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComShot/CComShot.h"
 
+//COMのインターフェース
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/IComPersonality/IComPersonality.h"
+
+//経路探索
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CSimplePathfinder/CSimplePathfinder.h"
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
@@ -123,10 +129,14 @@ public:
 		m_pFireLineObstacles = obstacles;
 	}
 
-	//// 性格設定
-	//void SetPersonality(std::unique_ptr<IComPersonality> personality);
-	//void SetPersonalityType(PersonalityType type);
-	//PersonalityType GetPersonalityType() const;
+	// 性格設定
+	void SetPersonality(std::unique_ptr<IComPersonality> personality);
+	void SetPersonalityType(PersonalityType type);
+	PersonalityType GetPersonalityType() const;
+
+	// 経路探索器を設定
+	void SetPathfinder(CSimplePathfinder* pathfinder) { m_pPathfinder = pathfinder; }
+
 
 private:
 
@@ -276,6 +286,10 @@ private:
 
 	int GetPlayerID() override { return m_PlayerID; } 
 
+
+	// 目的地へのパスを計算
+	bool RequestPath(const D3DXVECTOR3& goal);
+
 	//追尾クラス
 	CComTargetSelector m_TargetSelector;
 
@@ -284,5 +298,9 @@ private:
 
 	CShot m_Shot;
 
-	//std::unique_ptr<IComPersonality> m_pPersonality;
+	std::unique_ptr<IComPersonality> m_pPersonality;
+
+	CSimplePathfinder* m_pPathfinder = nullptr;
+	int m_PathRecalcTimer = 0;          // 再計算タイマー
+	static const int PATH_RECALC_INTERVAL = 60;  // 60フレームごとに再計算
 };

@@ -111,6 +111,9 @@ void CCharacterManager::Init()
 			m_pCharacter.push_back(com);
 		}
 	}
+	// Œo˜H’Tõ‰Šú‰»
+	m_Pathfinder.Initialize(10, 40.0f);
+
 
 	//COMƒvƒŒƒCƒ„[“¯m‚ÅQÆ‚ğ‹¤—L.
 	for (auto& player : m_pCharacter)
@@ -118,6 +121,7 @@ void CCharacterManager::Init()
 		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
 		{
 			com->SetPlayersRef(&m_pCharacter);
+			com->SetPathfinder(&m_Pathfinder);
 		}
 	}
 
@@ -137,33 +141,19 @@ void CCharacterManager::Init()
 		}
 	}
 
-	/*
-	*  // COM‚Ì«Ši‚ğƒ‰ƒ“ƒ_ƒ€‚Éİ’è
-    std::vector<PersonalityType> types = {
-        PersonalityType::Aggressive,
-        PersonalityType::Adaptive,
-        PersonalityType::Persistent
-    };
-
-    for (auto& player : m_pCharacter)
-    {
-        if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
-        {
-            int roll = std::rand() % types.size();
-            com->SetPersonalityType(types[roll]);
-        }
-    }
-	*/
-
 }
 //===================
 
 //=======XV=======
 void CCharacterManager::Update()
 {
-	//pad ‚ÌÚ‘±ó‘Ô‚É‰‚¶‚ÄPlayer.COM‚ğ“ü‚ê‘Ö‚¦‚é
-	//SwitchControl();
+	if (m_PathfinderNeedsUpdate && m_pObstaclesRef)
+	{
+		m_Pathfinder.UpdateObstacles(m_pObstaclesRef);
+		m_PathfinderNeedsUpdate = false;
+	}
 
+	//pad ‚ÌÚ‘±ó‘Ô‚É‰‚¶‚ÄPlayer.COM‚ğ“ü‚ê‘Ö‚¦‚é
 	const int count = static_cast<int>(m_pCharacter.size());
 	if (count <= 0) return;
 
@@ -769,4 +759,13 @@ void CCharacterManager::SetComObstacles(const std::vector<CComPlayer::SimpleObst
 			com->SetSimpleObstacles(obstacles);
 		}
 	}
+
+	//Œo˜H’Tõ‚É‚àáŠQ•¨‚ğİ’è
+	SetObstaclesForPathfinding(obstacles);
+}
+
+void CCharacterManager::SetObstaclesForPathfinding(const std::vector<CComPlayer::SimpleObstacle>* obstacles)
+{
+	m_pObstaclesRef = obstacles;
+	m_PathfinderNeedsUpdate = true;
 }
