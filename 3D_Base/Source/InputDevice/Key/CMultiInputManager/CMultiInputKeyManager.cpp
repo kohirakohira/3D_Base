@@ -101,20 +101,3 @@ bool CMultiInputKeyManager::ReleaseInputKey(char key)
 	//–¢“o˜^‚Ífalse‚Å•Ô‚·.
 	return false;
 }
-
-bool CMultiInputKeyManager::NoInputKey()
-{
-	for (auto& pair : m_Key)
-	{
-		CInputKeyManager& manager = pair.second;
-
-		// ‚Ç‚ê‚©1‚Â‚Å‚à‰Ÿ‚³‚ê‚Ä‚¢‚é or ‰Ÿ‚³‚ê‚½uŠÔ or —£‚³‚ê‚½uŠÔ‚È‚ç“ü—Í‚ ‚è
-		if (manager.NowInputKey() || manager.InputKey() || manager.ReleseInputKey())
-		{
-			return false;
-		}
-	}
-
-	// ‚Ç‚ê‚à”½‰‚ª‚È‚¢A“ü—Í‚È‚µ
-	return true;
-}

@@ -29,9 +29,6 @@ public:
 	//離した瞬間.
 	bool ReleaseInputKey(char key);
 
-	// 押されていないとき
-	bool NoInputKey();
-
 public:
 	//必要なキー分を確保する変数コンテナ.
 	std::unordered_map<char, CInputKeyManager> m_Key;

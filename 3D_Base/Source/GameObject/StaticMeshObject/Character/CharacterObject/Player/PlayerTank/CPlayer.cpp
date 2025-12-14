@@ -182,14 +182,10 @@ void CPlayer::Move(const PlayerInput& input)
 		case CController::Direction::Up:
 			//‘Oi.
 			m_pBody->SetMoveState(CBody::Forward);
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			break;
 		case CController::Direction::Down:
 			//Œã‘Þ.
 			m_pBody->SetMoveState(CBody::Backward);
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			break;
 		case CController::Direction::Left:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
@@ -200,32 +196,22 @@ void CPlayer::Move(const PlayerInput& input)
 		case CController::Direction::UpLeft:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Forward);
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			break;
 		case CController::Direction::UpRight:
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Forward);
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			break;
 		case CController::Direction::DownLeft:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Backward);
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			break;
 		case CController::Direction::DownRight:
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
 			m_pBody->SetMoveState(CBody::Backward);
 			break;
 		case CController::Direction::Stop:
 			//‰½‚à“ü—Í‚ª–³‚¢‚Ì‚Å’âŽ~‚µ‚Ä‚¨‚­.
 			m_pBody->SetMoveState(CBody::Stop);
-			//ˆÚ“®SE‚Ì’âŽ~.
-			CSoundManager::Stop(CSoundManager::SE_Move);
 			break;
 		default:
 			break;
@@ -236,11 +222,33 @@ void CPlayer::Move(const PlayerInput& input)
 		if (m_Key->InputKey('W') == true)
 		{
 			m_pBody->SetMoveState(CBody::Forward);
+
+			//ˆÚ“®SE‚ÌÄ¶.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+		}
+		else
+		{
+			if (m_Key->InputKey('S') == false)
+			{
+				//ˆÚ“®SE‚Ì’âŽ~.
+				CSoundManager::Stop(CSoundManager::SE_Move);
+			}
 		}
 
 		if (m_Key->InputKey('S') == true)
 		{
 			m_pBody->SetMoveState(CBody::Backward);
+
+			//ˆÚ“®SE‚ÌÄ¶.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+		}
+		else
+		{
+			if (m_Key->InputKey('W') == false)
+			{
+				//ˆÚ“®SE‚Ì’âŽ~.
+				CSoundManager::Stop(CSoundManager::SE_Move);
+			}
 		}
 
 		if (m_Key->InputKey('A') == true)
@@ -275,14 +283,6 @@ void CPlayer::Move(const PlayerInput& input)
 		{
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Backward);
-		}
-
-		if (m_Key->NoInputKey() == false)
-		{
-			m_pBody->SetMoveState(CBody::Stop);
-
-			//ˆÚ“®SE‚Ì’âŽ~.
-			CSoundManager::Stop(CSoundManager::SE_Move);
 		}
 	}
 	
