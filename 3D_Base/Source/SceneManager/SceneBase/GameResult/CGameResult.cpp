@@ -47,8 +47,18 @@ void CGameResult::Update()
 	// コントローラーの繰り上げ処理を呼び出し
 	CControllerManager::GetInstance().Reoderring();
 
-	//BGMのループ再生.
-	CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
+	// 勝ちか引き分けのBGM変更
+	if (m_SceneType == CSceneType::ResultWin)
+	{
+		//BGMのループ再生.
+		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Win);
+	}
+	else if (m_SceneType == CSceneType::ResultDraw)
+	{
+		//BGMのループ再生.
+		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
+	}
+
 	//↓-----タイトルでの演出-----↓.
 	m_Key->Update();
 
