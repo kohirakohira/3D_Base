@@ -46,26 +46,33 @@ void CGameResult::Update()
 
 	// コントローラーの繰り上げ処理を呼び出し
 	CControllerManager::GetInstance().Reoderring();
+	
+	//キーの判定.
+	m_Key->Update();
 
 	// 勝ちか引き分けのBGM変更
 	if (m_SceneType == CSceneType::ResultWin)
 	{
 		//BGMのループ再生.
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Win);
+		//↓-----リザルトの演出-----↓.
+
+
+
+		//↑-----リザルトでの演出-----↑.
 	}
 	else if (m_SceneType == CSceneType::ResultDraw)
 	{
 		//BGMのループ再生.
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
+		//↓-----リザルトでの演出-----↓.
+
+
+
+		//↑-----リザルトでの演出-----↑.
 	}
 
-	//↓-----タイトルでの演出-----↓.
-	m_Key->Update();
-
-
-	//↑-----タイトルでの演出-----↑.
-
-		//シーンの遷移.
+	//シーンの遷移.
 	if (controller && controller->CheckConnected())
 	{
 		if (m_Key->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
