@@ -55,7 +55,7 @@ bool CComShot::TryFire(const D3DXVECTOR3& targetPos, const D3DXVECTOR3& targetVe
     CStaticMeshObject* targetMesh;
 
    // Šp“x‚ª‹–—e”ÍˆÍ“à‚È‚ç”­ŽË
-   if (err <= allowedAngle && cannon->IsPositionInSight(targetPos,shotAngle))
+   if (err <= allowedAngle)
    {
  
        m_pShotManager->Create(muzzle, yaw, true, m_OwnerID);
