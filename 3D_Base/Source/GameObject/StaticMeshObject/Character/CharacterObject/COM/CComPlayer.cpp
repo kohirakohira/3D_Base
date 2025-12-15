@@ -595,9 +595,6 @@ bool CComPlayer::HitObjectRay()
     return false;
 }
 
-//========================================
-// 退避処理
-//========================================
 void CComPlayer::StepEvade()
 {
     std::shared_ptr<CBody> body = GetBody();
@@ -607,11 +604,12 @@ void CComPlayer::StepEvade()
 
     D3DXVECTOR3 targetPos = selfPos;
 
-    //COM同士の分離ベクトル.プレイヤーとの判定は不利になるのでしない
-    D3DXVECTOR3 sep(0, 0, 0);
-    float nearest = 1e9f;
-    ComputeSeparation(selfPos, sep, nearest);
+    auto target = m_TargetSelector.GetCurrentTarget();
 
+    if (target)
+    {
+        targetPos = target->GetPosition();
+    }
 
     //水平面でターゲットの反対方向に移動
     D3DXVECTOR3 away = selfPos - targetPos;
@@ -634,9 +632,6 @@ void CComPlayer::StepEvade()
         SafeAdvance(next, m_Tuning.moveSpeed * 0.6f);
 
         TryAutoFire();
-        
-        //車体と砲塔の同期
-        SyncCannonToBody();
 
         // 砲塔の見た目を更新
         if (auto cannon = GetCannon())
