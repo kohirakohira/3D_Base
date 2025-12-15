@@ -324,49 +324,6 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
     body->CStaticMeshObject::Update();
 }
 
-#if 0
-void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
-{
-    auto cannon = GetCannon();
-    auto body = GetBody();
-    if (!cannon) return;
-
-    TurretParams params;
-    if (m_pPersonality)
-    {
-        //COMの戦車情報を取得
-        params = m_pPersonality->GetTurretParames();
-    }
-
-    // 砲口位置を取得
-    D3DXVECTOR3 muzzle;
-    float currentYaw;
-    m_ComShot.ComputeMuzzle(muzzle, currentYaw, body.get(), cannon.get());
-
-    // 予測位置を計算
-    D3DXVECTOR3 targetVel = m_TargetSelector.GetTargetVelocity();
-    PredictedShot prediction = m_ComShot.PredictTargetPosition(
-        muzzle, targetPos, targetVel);
-
-    // 砲塔の基準位置
-    D3DXVECTOR3 base = body ? body->GetPosition() : cannon->GetPosition();
-    base.y += m_Tuning.cannonHeight;
-
-    // 目標方位
-    const D3DXVECTOR3 toAim = prediction.aimPoint - base;
-    const float desiredYaw = std::atan2f(toAim.x, toAim.z);
-
-    float cyaw = cannon->GetRotation().y;
-    cyaw = Util::Approach(cyaw, cyaw + Util::Wrap(desiredYaw - cyaw),
-        m_Tuning.turretTurnSpeed + 0.02f);
-
-    cannon->SetPosition(base);
-    cannon->SetRotation(D3DXVECTOR3(0.0f, cyaw, 0.0f));
-    cannon->CStaticMeshObject::Update();
-
-
-}
-#endif
 void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
 {
     auto cannon = GetCannon();
@@ -696,6 +653,7 @@ void CComPlayer::StepSeek()
 
     const float dist2 = d.x * d.x + d.z * d.z;
     float desiredYaw;
+    float hitD;
 
     auto target = m_TargetSelector.GetCurrentTarget();
 
@@ -717,7 +675,13 @@ void CComPlayer::StepSeek()
     if (target)
     {
         TickAimTo(target->GetPosition());
-        TryAutoFire();
+
+        //一応発射処理全てに障害物判定を適用
+        if (HasObstacleAheadSimple(pos, curYaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
+        {
+            return;
+        }
+        //TryAutoFire();
     }
 
     SyncCannonToBody();
@@ -897,13 +861,11 @@ void CComPlayer::StepAttack()
         }
     }
 
-#if 1
     if (target->GetDeath() == true)
     {
         m_TargetSelector.ClearTarget();
         return;
     }
-#endif
 
     const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
     SafeAdvance(next, t.moveSpeed);
@@ -912,7 +874,7 @@ void CComPlayer::StepAttack()
 
     if (HasObstacleAheadSimple(self, cur, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
     {
-        
+        return;
     }
 
     TryAutoFire();
@@ -1174,6 +1136,7 @@ float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnS
 //COMの正面方向に、一定距離以内に障害物があるか
 bool CComPlayer::HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const
 {
+
     auto Tuning = GetTuning();
 
     outHitDist = probeDist;
@@ -1200,6 +1163,7 @@ bool CComPlayer::HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, f
             }
         }
     }
+
     return false;
 }
 

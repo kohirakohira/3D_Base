@@ -47,15 +47,19 @@ bool CComShot::TryFire(const D3DXVECTOR3& targetPos, const D3DXVECTOR3& targetVe
     float allowedAngle = Util::ToRad(m_Config.fireAngleDeg);
     allowedAngle *= (0.5f + prediction.confidence * 0.5f);
 
-    // Šp“x‚ª‹–—e”ÍˆÍ“à‚È‚ç”­ŽË
-    if (err <= allowedAngle)
+    //ŽËü‚ª’Ê‚Á‚Ä‚¢‚ê‚Î
+    if (cannon->IsPositionInSight(targetPos, 5.f))
     {
-        m_pShotManager->Create(muzzle, yaw, true, m_OwnerID);
-        m_Cooldown = m_Config.cooldownFrames;
-        return true;
+        // Šp“x‚ª‹–—e”ÍˆÍ“à‚È‚ç”­ŽË
+        if (err <= allowedAngle)
+        {
+            m_pShotManager->Create(muzzle, yaw, true, m_OwnerID);
+            m_Cooldown = m_Config.cooldownFrames;
+            return true;
+        }
+        return false;
     }
 
-    return false;
 }
 
 void CComShot::TickCooldown()
