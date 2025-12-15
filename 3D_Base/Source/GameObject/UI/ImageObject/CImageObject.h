@@ -27,13 +27,6 @@ public:
 		m_pSprite = nullptr;
 	}
 
-	////‰æ‘œ‚ÌˆÊ’u‚ğİ’è‚·‚é.
-	//void SetPosition(float x, float y, float z)
-	//{
-	//	//ˆÊ’u‚ğİ’è.
-	//	m_vPosition = D3DXVECTOR3(x, y, z);
-	//}
-
 	//‰æ‘œ‚Ì“®ì.
 	void ImageMove();
 
