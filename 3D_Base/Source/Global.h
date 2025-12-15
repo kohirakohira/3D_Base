@@ -62,7 +62,7 @@ constexpr float MAX_RADIUS = 4.0f;		//”¼Œa‚ÌÅ‘å’l.
 constexpr float MIN_RADIUS = 0.0f;		//”¼Œa‚ÌÅ¬’l.
 
 //İ’è‰æ–Ê‚Å‚Ì‰æ‘œ‚Ì‘”.
-const int IMAGE = 7;
+const int IMAGE = 4;
 
 //=================================================
 //  —ñ‹“Œ^.

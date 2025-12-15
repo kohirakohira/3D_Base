@@ -62,7 +62,9 @@ public:
 
 
 	//接続確認画像.
-	std::shared_ptr<CSprite2D>			m_SpriteConnection;
+	std::vector<std::shared_ptr<CSprite2D>>			m_SpriteConnection;
+	//COM接続確認画像.
+	std::vector<std::shared_ptr<CSprite2D>>			m_SpriteCom;
 
 	//タイトル画像.
 	std::shared_ptr<CSprite2D>			m_pSpriteSetting;
@@ -76,9 +78,10 @@ public:
 	std::shared_ptr<CSprite2D>			m_SpriteYesSelect;
 	std::shared_ptr<CSprite2D>			m_SpriteNoSelect;
 
-	//接続画像(仮).
+	//接続画像.
 	std::vector<std::shared_ptr<CImageObject>>	m_SpriteConnectionImg;
-
+	//COM画像.
+	std::vector<std::shared_ptr<CImageObject>>	m_SpriteConnectionCOMImg;
 
 	//タイトル表示用板ポリ.
 	std::shared_ptr<CImageObject>				m_pSpriteSettingImg;

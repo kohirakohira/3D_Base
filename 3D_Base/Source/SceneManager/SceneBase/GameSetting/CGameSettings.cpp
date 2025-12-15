@@ -23,6 +23,10 @@ CGameSettings::CGameSettings(HWND hWnd)
 
 
 	, m_SpriteConnection			()
+	, m_SpriteCom					()
+
+	, m_SpriteConnectionImg			()
+	, m_SpriteConnectionCOMImg		()
 
 	, m_pSpriteSettingImg			( nullptr )
 	, m_pSpriteSettingBackGroundImg ( nullptr )
@@ -62,7 +66,7 @@ void CGameSettings::Update()
 	//背景の動かす速度.
 	MoveBackGround();
 
-	//背景の市松模様を動かす用※画像の編集必須!!.
+	//背景の市松模様を動かす用.
 	m_pSpriteSettingBackGroundImg->Update();
 
 	//選択肢の移動※仮.
@@ -73,20 +77,17 @@ void CGameSettings::Update()
 	{
 		if (m_InputKey->ReleaseInputKey('Z') == true || controller && controller->Down(CXInput::A, true))
 		{
+			//BGMの停止.
+			CSoundManager::Stop(CSoundManager::BGM_Title);
+
 			if (m_pSpriteChoiceImg->GetSelectedFlag() == false)
 			{
-				//BGMの停止.
-				CSoundManager::Stop(CSoundManager::BGM_Title);
-
 				m_SceneType = CSceneType::Title;
 
 				return;
 			}
 			else
 			{
-				//BGMの停止.
-				CSoundManager::Stop(CSoundManager::BGM_Title);
-
 				m_SceneType = CSceneType::Main;
 
 				return;
@@ -123,7 +124,7 @@ void CGameSettings::Draw()
 		else
 		{
 			//準備中.
-			//m_SpriteConnectionImg[i]->Draw();
+			m_SpriteConnectionCOMImg[i]->Draw();
 		}
 	}
 
@@ -175,13 +176,16 @@ void CGameSettings::Init()
 
 
 
-	//画像インスタンスの複製.
+	//画像の設定.
 	for (int i = 0; i < IMAGE; i++)
 	{
-
 		m_SpriteConnectionImg[i]->SetPosition(posx, posy, 0.0f);
 		m_SpriteConnectionImg[i]->SetRotation(0.0f, 0.0f, 0.0f);
 		m_SpriteConnectionImg[i]->SetScale(1.0f, 1.0f, 0.f);
+		
+		m_SpriteConnectionCOMImg[i]->SetPosition(posx, posy, 0.0f);
+		m_SpriteConnectionCOMImg[i]->SetRotation(0.0f, 0.0f, 0.0f);
+		m_SpriteConnectionCOMImg[i]->SetScale(1.0f, 1.0f, 0.f);
 
 		posx += 500.0f;
 
@@ -239,7 +243,11 @@ void CGameSettings::Create()
 
 
 	//接続画像のインスタンス生成.
-	m_SpriteConnection = std::make_shared<CSprite2D>();
+	for (int i = 0; i < IMAGE; i++)
+	{
+		m_SpriteConnection.push_back(std::make_shared<CSprite2D>());
+		m_SpriteCom.push_back(std::make_shared<CSprite2D>());
+	}
 
 
 	//画像インスタンスの複製.
@@ -247,10 +255,10 @@ void CGameSettings::Create()
 	{
 		m_SpriteConnectionImg.push_back(std::make_shared<CImageObject>());
 	}
-
-
-
-
+	for (int i = 0; i < IMAGE; i++)
+	{
+		m_SpriteConnectionCOMImg.push_back(std::make_shared<CImageObject>());
+	}
 }
 
 //データの読み込み.
@@ -287,10 +295,47 @@ HRESULT CGameSettings::LoadData()
 
 
 	//接続確認画像の読み込み.
-	m_SpriteConnection->Init(_T("Data\\Texture\\UI\\SettingImg\\1P_Ready.png"), S_SIZE, false);
+	for (int i = 0; i < IMAGE; i++)
+	{
+		switch (i)
+		{
+		case 0:
+			m_SpriteConnection[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\1P_Ready.png"), S_SIZE, false);
+			break;
+		case 1:
+			m_SpriteConnection[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\2P_Ready.png"), S_SIZE, false);
+			break;
+		case 2:
+			m_SpriteConnection[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\3P_Ready.png"), S_SIZE, false);
+			break;
+		case 3:
+			m_SpriteConnection[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\4P_Ready.png"), S_SIZE, false);
+			break;
+		default:
+			break;
+		}
+	}
 
-
-
+	for (int i = 0; i < IMAGE; i++)
+	{
+		switch (i)
+		{
+		case 0 :
+			m_SpriteCom[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\COM_Yellow.png"), S_SIZE, false);
+			break;
+		case 1 :
+			m_SpriteCom[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\COM_Yellow.png"), S_SIZE, false);
+			break;
+		case 2 :
+			m_SpriteCom[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\COM_Green.png"), S_SIZE, false);
+			break;
+		case 3 :
+			m_SpriteCom[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\COM_Blue.png"), S_SIZE, false);
+			break;
+		default:
+			break;
+		}
+	}
 
 	//タイトルスプライトの読み込み.
 	m_pSpriteSetting->Init(_T("Data\\Texture\\Image\\Setting.png"), WH_SIZE, false);
@@ -324,9 +369,28 @@ HRESULT CGameSettings::LoadData()
 	//画像設定.
 	for (int i = 0; i < IMAGE; i++)
 	{
-		m_SpriteConnectionImg[i]->AttachSprite(m_SpriteConnection);
+		switch (i)
+		{
+		case 0:
+			m_SpriteConnectionImg[i]->AttachSprite(m_SpriteConnection[i]);
+			m_SpriteConnectionCOMImg[i]->AttachSprite(m_SpriteCom[i]);
+			break;
+		case 1:
+			m_SpriteConnectionImg[i]->AttachSprite(m_SpriteConnection[i]);
+			m_SpriteConnectionCOMImg[i]->AttachSprite(m_SpriteCom[i]);
+			break;
+		case 2:
+			m_SpriteConnectionImg[i]->AttachSprite(m_SpriteConnection[i]);
+			m_SpriteConnectionCOMImg[i]->AttachSprite(m_SpriteCom[i]);
+			break;
+		case 3:
+			m_SpriteConnectionImg[i]->AttachSprite(m_SpriteConnection[i]);
+			m_SpriteConnectionCOMImg[i]->AttachSprite(m_SpriteCom[i]);
+			break;
+		default:
+			break;
+		}
 	}
-
 
 	return S_OK;
 }
