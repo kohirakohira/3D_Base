@@ -609,12 +609,8 @@ void CCollisionManager::PlayertoBlast()
 				// 当たった時の処理
 				chara->Hit();
 
-				// ダメージ受けていない最初だけ流す
-				if (chara->GetDamage() == false)
-				{
-					// ダメージSEの再生
-					CSoundManager::PlaySE(CSoundManager::SE_Damage);
-				}
+				// ダメージSEの再生
+				CSoundManager::PlaySE(CSoundManager::SE_Damage);
 			}
 
 			if (chara->GetDeath() == true && chara->GetKill() == false)
