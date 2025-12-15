@@ -33,6 +33,9 @@ public:
 	//‰æ‘œ‚Ì•\¦•‚Ìİ’è.
 	void SetDigitWidth(float w) { m_DigitWidth = w; }
 
+	//Šî€•\¦ˆÊ’u‚Ìİ’è.
+	void SetBasePosition(D3DXVECTOR2 pos) { m_BasePos = pos; }
+
 public:
 	//Œ…‚²‚Æ‚ÌUI.
 	std::vector<std::shared_ptr<CUIObject>>	m_DigitObject;

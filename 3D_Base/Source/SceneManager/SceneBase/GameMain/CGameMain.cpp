@@ -231,9 +231,15 @@ void CGameMain::Update()
 	// 当たり判定の更新
 	m_pCollisionManager->Update();
 
+	//制限時間の設定.
 	m_TimerNumber->SetNumber(m_Timer->GetRemainingTime(), 2);
 	m_TimerNumber->Update();
 
+	//キル数の更新.
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		m_KillCountNumber[i]->Update();
+	}
 
 	//勝敗条件(確認用)..
 	//勝ち..
@@ -370,7 +376,6 @@ void CGameMain::Draw()
 			}
 		}
 
-
 		CDirectX11::GetInstance().SetDepth(true);
 	}
 	//全画面ビューポートに戻す.
@@ -395,6 +400,13 @@ void CGameMain::Draw()
 	//タイマー描画.
 	//m_Timer->Draw();
 	m_TimerNumber->Draw();
+
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		//キル数の表示.
+		m_KillCountNumber[i]->SetNumber(CGameDataManager::GetInstance().GetKillCount(i), 2);
+		m_KillCountNumber[i]->Draw();
+	}
 
 	CDirectX11::GetInstance().SetDepth(true);
 	
@@ -437,9 +449,30 @@ void CGameMain::Init()
 	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.0f);
 
 	//キル数の情報.
-	m_KillCountNumber->SetPosition(0.0f, 0.0f, 0.0f);
-	m_KillCountNumber->SetRotation(0.0f, 0.0f, 0.0f);
-	m_KillCountNumber->SetScale(1.0f, 1.0f, 1.0f);
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		switch (i)
+		{
+		case 0 :
+			m_KillCountNumber[i]->SetBasePosition(D3DXVECTOR2{ 90.0f, 35.0f });
+			m_KillCountNumber[i]->SetDigitWidth(32);
+			break;
+		case 1 :
+			m_KillCountNumber[i]->SetBasePosition(D3DXVECTOR2{ WND_W - 70.0f, 35.0f });
+			m_KillCountNumber[i]->SetDigitWidth(32);
+			break;
+		case 2 :
+			m_KillCountNumber[i]->SetBasePosition(D3DXVECTOR2{ 90.0f, WND_H - 500.0f });
+			m_KillCountNumber[i]->SetDigitWidth(32);
+			break;
+		case 3 :
+			m_KillCountNumber[i]->SetBasePosition(D3DXVECTOR2{ WND_W - 70.0f, WND_H - 500.0f });
+			m_KillCountNumber[i]->SetDigitWidth(32);
+			break;
+		default:
+			break;
+		}
+	}
 
 	//制限時間画像の設定..
 	EachSettingTimer();
@@ -476,7 +509,10 @@ void CGameMain::Create()
 	m_pSpriteTimer		= std::make_shared<CUIObject>();
 	m_pSpriteTimerArrow = std::make_shared<CUIObject>();
 	m_TimerNumber		= std::make_shared<NumberImage>();
-	m_KillCountNumber	= std::make_shared<NumberImage>();
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		m_KillCountNumber[i] = std::make_shared<NumberImage>();
+	}
 
 	//HPの分だけ生成..
 	for (int i = 0; i < PLAYER_MAX; i++)
@@ -672,7 +708,10 @@ HRESULT CGameMain::LoadData()
 	m_pSpriteTimer		->AttachSprite(m_pSprite2DTimer);
 	m_pSpriteTimerArrow	->AttachSprite(m_pSprite2DTimerArrow);
 	m_TimerNumber		->AttachSprite(m_pSprite2DNumber);
-	m_KillCountNumber	->AttachSprite(m_pSprite2DNumber);
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		m_KillCountNumber[i]->AttachSprite(m_pSprite2DNumber);
+	}
 
 	//HPの分だけアタッチ
 	for (int i = 0; i < PLAYER_MAX; i++)
@@ -1050,6 +1089,7 @@ void CGameMain::EachSettingTimer()
 	m_Timer->SetTimerPosition(WND_W / 2 - 15.f, WND_H / 2 - 30.f);
 
 	//タイマーの数字の情報.
+	m_TimerNumber->SetBasePosition(D3DXVECTOR2{ WND_W / 2, WND_H / 2 - 16 });
 	m_TimerNumber->SetDigitWidth(32);
 }
 //プレイヤー番号画像の設定..

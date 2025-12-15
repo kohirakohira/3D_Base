@@ -132,7 +132,7 @@ public:
 	std::shared_ptr<CUIObject>									m_pSpriteTimer;					//制限時間の時計枠.
 	std::shared_ptr<CUIObject>									m_pSpriteTimerArrow;			//時計の針.
 	std::shared_ptr<NumberImage>								m_TimerNumber;					//制限時間の数字.
-	std::shared_ptr<NumberImage>								m_KillCountNumber;				//キル数の数字.
+	std::array<std::shared_ptr<NumberImage>, PLAYER_MAX>		m_KillCountNumber;				//キル数の数字.
 
 	//ゲームで扱うスプライトデータ(使いまわす資源)..
 	std::unique_ptr<CSprite3D>		m_pSpriteGround;
