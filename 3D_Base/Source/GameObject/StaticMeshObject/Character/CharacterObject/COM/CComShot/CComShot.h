@@ -69,7 +69,8 @@ public:
     bool IsReady() const { return m_Cooldown <= 0; }
     int GetCooldown() const { return m_Cooldown; }
 
-    //void SetFireAngleTolerance(float degrees) { m_Config.fireAngleDeg = degrees; }
+    //ショットクールダウン
+    void SetShotCollDown(int collDown) { m_Config.cooldownFrames = collDown; }
 
 private:
     std::shared_ptr<CShotManager> m_pShotManager;

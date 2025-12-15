@@ -3,6 +3,7 @@
 #include "GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankCannon/CCannon.h"
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/Util/Util.h"
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComTargetSelector/CComTargetSelector.h"
 #include <cmath>
 
 CComShot::CComShot() 
@@ -47,15 +48,22 @@ bool CComShot::TryFire(const D3DXVECTOR3& targetPos, const D3DXVECTOR3& targetVe
     float allowedAngle = Util::ToRad(m_Config.fireAngleDeg);
     allowedAngle *= (0.5f + prediction.confidence * 0.5f);
 
-    // 角度が許容範囲内なら発射
-    if (err <= allowedAngle)
-    {
-        m_pShotManager->Create(muzzle, yaw, true, m_OwnerID);
-        m_Cooldown = m_Config.cooldownFrames;
-        return true;
-    }
+    //射線が通っていれば
+    float shotAngle = 0.f;
 
-    return false;
+    //ターゲットを取得
+    CStaticMeshObject* targetMesh;
+
+   // 角度が許容範囲内なら発射
+   if (err <= allowedAngle)
+   {
+ 
+       m_pShotManager->Create(muzzle, yaw, true, m_OwnerID);
+       m_Cooldown = m_Config.cooldownFrames;
+       return true;
+   }
+   return false;
+
 }
 
 void CComShot::TickCooldown()

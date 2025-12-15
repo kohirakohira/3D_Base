@@ -142,7 +142,4 @@ protected:
 
 	//ƒvƒŒƒCƒ„[ID
 	int m_PlayerID;
-
-	//“|‚µ‚½Œã‚Ì•b”
-	int m_KillFrames;
 };
