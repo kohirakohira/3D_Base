@@ -7,8 +7,10 @@ public:
     CPersistentPersonality() = default;
     ~CPersistentPersonality() override = default;
 
-    PersonalityType GetType() const override { return PersonalityType::Persistent; }
+    //性格タイプ取得
+    PersonalityType GetType() const override { return PersonalityType::Aggressive; }
 
+    //ターゲット選択の優先度を調整
     float EvaluateTargetPriority(
         const D3DXVECTOR3& selfPos,
         const std::shared_ptr<CCharacterObjectBase>& candidate,
@@ -16,6 +18,7 @@ public:
         float distance,
         float currentTargetDistance) const override;
 
+    //追跡時の行動決定
     BehaviorDecision DecideChaseAction(
         const D3DXVECTOR3& selfPos,
         const D3DXVECTOR3& targetPos,
@@ -23,6 +26,7 @@ public:
         int nearbyEnemyCount,
         float hpRatio) const override;
 
+    //攻撃時の行動決定
     BehaviorDecision DecideAttackAction(
         const D3DXVECTOR3& selfPos,
         const D3DXVECTOR3& targetPos,
@@ -31,12 +35,18 @@ public:
         float hpRatio,
         int stateFrames) const override;
 
-    float GetEvadeDistanceMultiplier() const override { return 0.4f; }
-    float GetAttackEnterDistanceMultiplier() const override { return 1.2f; }
+    //状態遷移の閾値を調整
+    float GetEvadeDistanceMultiplier() const override { return 0.3f; }  // 回避距離を短く
+    float GetAttackEnterDistanceMultiplier() const override { return 1.5f; }  // 早めに攻撃開始
 
+    //ターゲットを変更するか判定
     bool ShouldSwitchTarget(
         const std::shared_ptr<CCharacterObjectBase>& currentTarget,
         const std::shared_ptr<CCharacterObjectBase>& newCandidate,
         float currentDist,
         float newDist) const override;
+
+    //戦車のパラメータ取得
+    TurretParams GetTurretParames() const override;
+
 };

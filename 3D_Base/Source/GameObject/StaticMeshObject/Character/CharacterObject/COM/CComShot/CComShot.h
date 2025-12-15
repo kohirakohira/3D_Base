@@ -2,6 +2,7 @@
 
 #include <memory>
 
+
 class CShotManager;
 class CBody;
 class CCannon;

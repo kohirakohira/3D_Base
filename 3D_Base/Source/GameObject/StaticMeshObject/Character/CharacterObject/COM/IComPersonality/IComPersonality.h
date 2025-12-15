@@ -23,13 +23,15 @@ struct BehaviorDecision
     float keepDistance = 9.0f;          // 維持距離
 };
 
-//struct TurretParams
-//{
-//    float turretSpeedMultiplier = 1.0f;   // 砲塔回転速度倍率
-//    float aimAccuracy = 1.0f;             // 照準精度
-//    float fireAngleTolerance = 12.0f;     // 射撃許容角度
-//    float predictionAccuracy = 1.0f;      // 予測精度
-//};
+//COMごとのパラメータ
+struct TurretParams
+{
+    float turretSpeedMultiplier = 1.0f;   // 砲塔回転速度倍率
+    float aimAccuracy = 1.0f;             // 照準精度
+    float fireAngleTolerance = 12.0f;     // 射撃許容角度
+    float predictionAccuracy = 1.0f;      // 予測精度
+};
+
 
 //性格インターフェース
 class IComPersonality
@@ -76,6 +78,7 @@ public:
         float currentDist,
         float newDist) const = 0;
 
+    // 戦車の情報を各性格クラスに渡す
+    virtual TurretParams GetTurretParames() const = 0;
     
-    //virtual TankTuning GetTurretParams() const = 0;
 };

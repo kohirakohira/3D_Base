@@ -124,7 +124,7 @@ void CComPlayer::Create(int id)
     switch (id)
     {
     case 1:
-        // 特攻型: 常に一番近い敵を狙う
+        //一番近い敵
         SetPersonalityType(PersonalityType::Aggressive);
         m_TargetSelector.SetForgetDistance(100.0f);     // 広い範囲で認識
         m_TargetSelector.SetStickinessRatio(0.0f);      // 粘着しない
@@ -148,6 +148,7 @@ void CComPlayer::Create(int id)
         break;
 
     default:
+        //どれにも該当しない場合は人間型
         SetPersonalityType(PersonalityType::Adaptive);
         m_TargetSelector.SetForgetDistance(60.0f);
         m_TargetSelector.SetStickinessRatio(0.8f);
@@ -409,7 +410,6 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
 }
 */
 
-#if 1
 void CComPlayer::Update()
 {
     // ダメージ処理の更新
@@ -440,21 +440,23 @@ void CComPlayer::Update()
 
     m_ComShot.TickCooldown();   //クールダウン更新
 
-    /*
-    *  if (m_KillCelebrationFrames > 0)
+#if 0
+    //倒した後の動き
+    if (m_KillFrames > 0)
     {
-        --m_KillCelebrationFrames;
-        // 砲塔だけ回す
-        if (auto cannon = GetCannon())
+        --m_KillFrames;
+        
+        if (cannon)
         {
             float cyaw = cannon->GetRotation().y;
-            cyaw += 0.1f;  // くるくる回る
-            cannon->SetRotation(D3DXVECTOR3(0.0f, cyaw, 0.0f));
+            cyaw += 0.1f;
+            cannon->SetRotation(D3DXVECTOR3(0.f, cyaw, 0.f));
             cannon->CStaticMeshObject::Update();
         }
-        return;  // 他の処理スキップ
+        return;
     }
-    */
+
+#endif
 
     //死亡したら処理スキップ
     if (m_Chara.m_Death == true)
@@ -487,7 +489,6 @@ void CComPlayer::Update()
     }
     ++m_StateFrames;
 }
-#endif
 
 
 #if 1
@@ -711,7 +712,7 @@ void CComPlayer::StepSeek()
     if (target)
     {
         TickAimTo(target->GetPosition());
-        TryAutoFire();
+        //TryAutoFire();
     }
 
     SyncCannonToBody();
@@ -854,6 +855,7 @@ void CComPlayer::StepAttack()
     const D3DXVECTOR3 self = body->GetPosition();
     const D3DXVECTOR3 tp = target->GetPosition();
     const float cur = body->GetRotation().y;
+    float hitD;
 
     // 複数敵チェック
     D3DXVECTOR3 clusterCenter;
@@ -902,6 +904,12 @@ void CComPlayer::StepAttack()
     SafeAdvance(next, t.moveSpeed);
 
     TickAimTo(tp);
+
+    if (HasObstacleAheadSimple(self, cur, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
+    {
+        
+    }
+
     TryAutoFire();
 }
 
@@ -981,6 +989,7 @@ void CComPlayer::TryAutoFire()
             }
             return;
         }
+
     }
     
     //戦車が後ろに下がる

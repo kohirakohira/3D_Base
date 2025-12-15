@@ -88,12 +88,14 @@ bool CAggressivePersonality::ShouldSwitchTarget(
     return newDist < currentDist * 0.9f;
 }
 
-//TurretParams CAggressivePersonality::GetTurretParams() const
-//{
-//    TurretParams params;
-//    params.turretSpeedMultiplier = 1.3f;    // –C“ƒ‰ñ“]‘¬‚¢
-//    params.aimAccuracy = 1.0f;              // ¸“x‚‚¢
-//    params.fireAngleTolerance = 15.0f;      // ‘½­‚¸‚ê‚Ä‚àŒ‚‚Â
-//    params.predictionAccuracy = 0.9f;       // —\‘ª‚â‚âŠÃ‚¢
-//    return params;
-//}
+TurretParams CAggressivePersonality::GetTurretParames() const
+{
+    TurretParams params;
+    params.turretSpeedMultiplier = 1.3;     //–C“ƒ”{—¦
+    params.aimAccuracy = 1.0f;              //¸‡‘¬“x
+    params.fireAngleTolerance = 15.f;       //Šp“x‹–—e”ÍˆÍ
+    params.predictionAccuracy = 0.9f;       //—\‘ª¸“x
+
+    return params;
+}
+

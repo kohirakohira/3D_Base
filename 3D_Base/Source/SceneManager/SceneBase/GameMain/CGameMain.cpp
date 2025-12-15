@@ -16,7 +16,7 @@ static bool prevA = false;
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
 //定数宣言.
-static constexpr int TIME = 600;
+static constexpr int TIME = 100;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 
@@ -1134,8 +1134,8 @@ void CGameMain::BuildComObstacles()
 		};
 
 	// 壁を複数の円でカバーする
-	const float wallRadius = 5.5f;
-	const float wallOffset = 30.0f;  //壁のZX座標
+	const float wallRadius = 6.0f;		//壁円の半径
+	const float wallOffset = 30.0f;		//壁のZX座標
 
 	// 壁上壁下
 	for (float x = -24.0f; x <= 24.0f; x += 8.0f)
@@ -1160,9 +1160,9 @@ void CGameMain::BuildComObstacles()
 			m_ComObstacles.push_back(o);
 		};
 
-	addBoxObstacle(m_pWoodBoxTopLeft, 2.5f);
-	addBoxObstacle(m_pWoodBoxTopRight, 2.5f);
-	addBoxObstacle(m_pWoodBoxCenter, 2.5f);
-	addBoxObstacle(m_pWoodBoxBottomLeft, 2.5f);
-	addBoxObstacle(m_pWoodBoxBottomRight, 2.5f);
+	addBoxObstacle(m_pWoodBoxTopLeft, 3.0f);
+	addBoxObstacle(m_pWoodBoxTopRight, 3.0f);
+	addBoxObstacle(m_pWoodBoxCenter, 3.0f);
+	addBoxObstacle(m_pWoodBoxBottomLeft, 3.0f);
+	addBoxObstacle(m_pWoodBoxBottomRight, 3.0f);
 }

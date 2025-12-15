@@ -13,6 +13,9 @@
 //弾マネージャークラス.
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"
 
+//ショットクラス
+#include "GameObject/StaticMeshObject/Shot/CShot.h"
+
 //================================================================
 //	キャラクターオブジェクト※基底クラス(キャラクターを継承).
 //================================================================
@@ -111,6 +114,9 @@ public:
 	//体力取得
 	virtual int GetHP() const{ return m_Chara.m_Hp; }
 
+	//体力設定
+	virtual void SetHP(int hp) { m_Chara.m_Hp = hp; }
+
 	//最大体力取得
 	virtual int GetMaxHP() const { return m_Chara.m_MaxHp; }
 
@@ -136,4 +142,7 @@ protected:
 
 	//プレイヤーID
 	int m_PlayerID;
+
+	//倒した後の秒数
+	int m_KillFrames;
 };

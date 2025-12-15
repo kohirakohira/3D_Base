@@ -106,14 +106,15 @@ bool CPersistentPersonality::ShouldSwitchTarget(
     return false;
 }
 
-/*
-* TurretParams CPersistentPersonality::GetTurretParams() const
+TurretParams CPersistentPersonality::GetTurretParames() const
 {
-    TurretParams params;
-    params.turretSpeedMultiplier = 1.4f;    // 砲塔回転を速く
-    params.aimAccuracy = 1.0f;              // 精度高い
-    params.fireAngleTolerance = 12.0f;      // 標準
-    params.predictionAccuracy = 1.0f;       // 予測
-    return params;
+    //パラメータを各COMごとに設定
+    TurretParams prames;
+    prames.turretSpeedMultiplier = 1.4f;
+    prames.aimAccuracy = 1.0f;
+    prames.fireAngleTolerance = 12.f;  //標準
+    prames.predictionAccuracy = 1.f;
+
+    return prames;
 }
-*/
+

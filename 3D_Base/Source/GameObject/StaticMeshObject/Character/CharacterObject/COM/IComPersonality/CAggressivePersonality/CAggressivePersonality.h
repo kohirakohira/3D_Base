@@ -46,5 +46,7 @@ public:
         float currentDist,
         float newDist) const override;
 
-    //TurretParams GetTurretParams() const override;
+    //íÔ‚Ìƒpƒ‰ƒ[ƒ^æ“¾
+    TurretParams GetTurretParames() const override;
+
 };

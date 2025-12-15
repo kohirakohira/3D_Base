@@ -16,13 +16,13 @@ float CAdaptivePersonality::EvaluateTargetPriority(
 
     // 距離スコア
     score += 100.0f / (distance + 1.0f);
-#if 1
-    // HPスコア（瀕死の敵を優先）
+
+    //HP優先.HPが2しかないので1優先
     float hpRatio = static_cast<float>(candidate->GetHP()) /
         static_cast<float>(candidate->GetMaxHP());
     score += (1.0f - hpRatio) * 50.0f;
-#endif
-    // 現在のターゲットを維持するボーナス（安定性）
+    
+    //現在のターゲットを維持
     if (currentTarget && candidate.get() == currentTarget.get())
     {
         score += 30.0f;
@@ -48,7 +48,7 @@ BehaviorDecision CAdaptivePersonality::DecideChaseAction(
     // 複数敵に囲まれている場合
     if (nearbyEnemyCount >= 2)
     {
-        // 斜めに移動（被弾を減らす）
+        // 斜めに移動
         decision.desiredYaw = Util::Wrap(baseYaw + D3DX_PI * 0.25f);
         decision.moveSpeedMultiplier = 0.8f;
     }
@@ -141,6 +141,18 @@ bool CAdaptivePersonality::ShouldSwitchTarget(
 
     return false;
 }
+
+TurretParams CAdaptivePersonality::GetTurretParames() const
+{
+    TurretParams params;
+    params.turretSpeedMultiplier = 1.5;     //砲塔倍率
+    params.aimAccuracy = 1.0f;              //昇順速度
+    params.fireAngleTolerance = 10.f;       //角度許容範囲
+    params.predictionAccuracy = 1.0f;       //予測精度
+
+    return params;
+}
+
 
 //TurretParams CAdaptivePersonality::GetTurretParams() const
 //{

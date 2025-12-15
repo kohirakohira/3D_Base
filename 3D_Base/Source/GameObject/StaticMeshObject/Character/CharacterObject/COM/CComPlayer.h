@@ -29,6 +29,9 @@
 //経路探索
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CSimplePathfinder/CSimplePathfinder.h"
 
+
+#include "GameObject/StaticMeshObject/Shot/CShot.h"	//ショット
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
@@ -183,9 +186,7 @@ private:
 
 	bool FollowPath(float turnStep, float moveSte);
 
-	//========================================
-	// 安全な前進処
-	//========================================
+	//前進
 	void SafeAdvance(float nextYaw, float moveStep);
 
 	//========================================
