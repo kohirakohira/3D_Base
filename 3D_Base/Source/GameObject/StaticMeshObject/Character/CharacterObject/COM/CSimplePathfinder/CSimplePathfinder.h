@@ -55,9 +55,7 @@ private:
     std::vector<std::vector<bool>> m_Grid;
 };
 
-//========================================
-// テンプレート実装
-//========================================
+//テンプレートにしてManagerでも使えるように
 template<typename ObstacleType>
 void CSimplePathfinder::UpdateObstacles(const std::vector<ObstacleType>* obstacles)
 {
