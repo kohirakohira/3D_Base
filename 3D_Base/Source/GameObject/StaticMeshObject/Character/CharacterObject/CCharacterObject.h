@@ -13,6 +13,9 @@
 //弾マネージャークラス.
 #include "GameObject/StaticMeshObject/Shot/ShotManager/CShotManager.h"
 
+//ショットクラス
+#include "GameObject/StaticMeshObject/Shot/CShot.h"
+
 //================================================================
 //	キャラクターオブジェクト※基底クラス(キャラクターを継承).
 //================================================================
@@ -139,4 +142,7 @@ protected:
 
 	//プレイヤーID
 	int m_PlayerID;
+
+	//倒した後の秒数
+	int m_KillFrames;
 };

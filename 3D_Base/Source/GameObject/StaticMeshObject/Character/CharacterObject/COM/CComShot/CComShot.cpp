@@ -7,7 +7,7 @@
 
 CComShot::CComShot() 
     : m_Config      ()
-    , m_Cooldown    ( 0 )
+    , m_Cooldown    ( 0 )   //ƒŠƒXƒ|[ƒ“‘Îô
     , m_OwnerID     ( -1 )
 {
 }
