@@ -26,6 +26,8 @@ CGameTitle::CGameTitle(HWND hWnd)
 
 {
 	m_SceneType = CSceneType::Title;
+	//ƒLƒ‹”‚Ì‰Šú‰».
+	CGameDataManager::GetInstance().Init();
 }
 
 CGameTitle::~CGameTitle()

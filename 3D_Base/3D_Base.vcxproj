@@ -198,6 +198,8 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\StageObject\CStageObject.cpp" />
     <ClCompile Include="Source\GameObject\UI\CUIObject\NumberImage\NumberImage.cpp" />
+    <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.cpp" />
+    <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\CController.cpp" />
     <ClCompile Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\GameMain\CGameMain.cpp" />
@@ -276,6 +278,8 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Ground\GroundManager\CGroundManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\StageObject\CStageObject.h" />
     <ClInclude Include="Source\GameObject\UI\CUIObject\NumberImage\NumberImage.h" />
+    <ClInclude Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.h" />
+    <ClInclude Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\CController.h" />
     <ClInclude Include="Source\InputDevice\Input\Controller\ControllerManager\CControllerManager.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameMain\CGameMain.h" />

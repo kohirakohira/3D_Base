@@ -34,3 +34,10 @@ int CGameDataManager::GetKillCount(int playerID) const
 		return 0;
 	}
 }
+
+//ƒLƒ‹”‚ğ‰Šú‰».
+void CGameDataManager::Init()
+{
+	//‘S‰Šú‰».
+	m_KillCount.clear();
+}

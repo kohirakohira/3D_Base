@@ -74,7 +74,6 @@
     <ClCompile Include="Source\SceneManager\SceneBase\GameResult\ResultProduction\CResultProduction.cpp" />
     <ClCompile Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.cpp" />
-    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CChase\CChase.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankCannon\CCannon.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.cpp" />
@@ -83,7 +82,13 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\BlastManager\Blast\CBlast.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\BlastManager\CBlastManager.cpp" />
-    <ClCompile Include="Source\GameObject\UI\CUIObject\TimerImage\TimerImage.cpp" />
+    <ClCompile Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.cpp" />
+    <ClCompile Include="Source\Collision\BlastCollision\CBlastCollision.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComShot\CComShot.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComTargetSelector\CComTargetSelector.cpp" />
+    <ClCompile Include="Source\GameObject\UI\CUIObject\NumberImage\NumberImage.cpp" />
+    <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.cpp" />
+    <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -148,7 +153,6 @@
     <ClInclude Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.h" />
     <ClInclude Include="Source\Assets\Data\Singleton\CSingleton.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.h" />
-    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CChase\CChase.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankBody\CBody.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\PlayerTank\TankCannon\CCannon.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComPlayer.h" />
@@ -157,8 +161,14 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\BlastManager\Blast\CBlast.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\BlastManager\CBlastManager.h" />
-    <ClInclude Include="Source\GameObject\UI\CUIObject\TimerImage\TimerImage.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\Util\Util.h" />
+    <ClInclude Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.h" />
+    <ClInclude Include="Source\Collision\BlastCollision\CBlastCollision.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComShot\CComShot.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComTargetSelector\CComTargetSelector.h" />
+    <ClInclude Include="Source\GameObject\UI\CUIObject\NumberImage\NumberImage.h" />
+    <ClInclude Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.h" />
+    <ClInclude Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />
