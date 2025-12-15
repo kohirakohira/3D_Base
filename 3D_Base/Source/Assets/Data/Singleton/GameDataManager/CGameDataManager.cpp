@@ -41,3 +41,37 @@ void CGameDataManager::Init()
 	//全初期化.
 	m_KillCount.clear();
 }
+
+//同じキル数なのかを判定する関数.
+bool CGameDataManager::SameKill()
+{
+	//最大キル数.
+	int maxKill = 0;
+
+	//最大キル数を取得.
+	for (const auto& pair : m_KillCount)
+	{
+		if (pair.second > maxKill)
+		{
+			//全員の最大キル数.
+			maxKill = pair.second;
+		}
+	}
+
+	//最大キル数の人数.
+	int maxCount = 0;
+
+	//最大キル数の人数を数える.
+	for (const auto& pair : m_KillCount)
+	{
+		//最大キル数が同じ人がいるか.
+		if (pair.second == maxKill)
+		{
+			//最大キル数が同じだから加算.
+			maxCount++;
+		}
+	}
+
+	//もし最大キル数が同じならfalse、一人だけならtrue.
+	return (maxCount == 1);
+}

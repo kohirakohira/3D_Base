@@ -23,6 +23,9 @@
 #include "GameObject//StaticMeshObject//Character//CharacterObject//Player//CharacterManager//CCharacterManager.h" // キャラクターマネージャークラス
 #include "GameObject//StaticMeshObject//Ground//CGround.h" // 地面クラス
 
+//データクラス.
+#include "Assets/Data/Singleton/GameDataManager/CGameDataManager.h"
+
 //キーバインド.
 #include "InputDevice//Key\\CMultiInputManager//CMultiInputKeyManager.h" // キー入力用.
 
@@ -105,8 +108,6 @@ public:
 	bool DrawFlag;
 
 private:
-	//確認用.
-	int NoMajic = 0;
 	//キーバインド.
 	std::shared_ptr<CMultiInputKeyManager>	m_Key;
 };

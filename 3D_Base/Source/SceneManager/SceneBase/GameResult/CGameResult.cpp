@@ -233,18 +233,15 @@ HRESULT CGameResult::LoadData()
 
 CSceneType CGameResult::WinOrDrawFunction()
 {
-	//‰¼‚Åì‚Á‚Ä‚İ‚½.
-	//³’¼l‚¦’¼‚µ‚½‚Ù‚¤‚ª‚¢‚¢‚©‚à?
-
 	//ˆêl‚ÅŸ‚Á‚Ä‚¢‚½‚ç.
-	if (NoMajic <= 0)
+	if (CGameDataManager::GetInstance().SameKill() == true)
 	{
 		m_SceneType = CSceneType::ResultWin;
 	}
-	//“¯‚¶ƒLƒ‹”‚È‚ç.
-	if (NoMajic > 0)
+	else
 	{
 		m_SceneType = CSceneType::ResultDraw;
 	}
+
 	return m_SceneType;
 }
