@@ -98,6 +98,8 @@ void CComPlayer::Create(int id)
         m_Registered = true;
     }
 
+    m_pCannon->InitCannonRay();
+
     // ターゲットセレクターの初期化
     m_TargetSelector.Initialize(id);
     m_TargetSelector.SetForgetDistance(60.0f);
@@ -126,6 +128,7 @@ void CComPlayer::Create(int id)
         m_TargetSelector.SetForgetDistance(100.0f);     // 広い範囲で認識
         m_TargetSelector.SetStickinessRatio(0.0f);      // 粘着しない
         m_TargetSelector.SetRetargetInterval(30);       // 頻繁に再評価
+        m_ComShot.SetShotCollDown(100);                 // ショットのクールダウン
         break;
 
     case 2:
@@ -134,14 +137,16 @@ void CComPlayer::Create(int id)
         m_TargetSelector.SetForgetDistance(60.0f);      // 通常範囲
         m_TargetSelector.SetStickinessRatio(0.8f);      // 適度に粘着
         m_TargetSelector.SetRetargetInterval(90);       // 適度に再評価
+        m_ComShot.SetShotCollDown(120);                  // プレイヤーと同じような条件
         break;
 
     case 3:
         //絶対にターゲットを変えない
         SetPersonalityType(PersonalityType::Persistent);
-        m_TargetSelector.SetForgetDistance(1e9);   //どこまでも追う
+        m_TargetSelector.SetForgetDistance(1e9);    //どこまでも追う
         m_TargetSelector.SetStickinessRatio(1.0f);      //絶対に粘着
         m_TargetSelector.SetRetargetInterval(9999);     //再評価しない
+        m_ComShot.SetShotCollDown(60);          
         break;
 
     default:
@@ -380,6 +385,7 @@ void CComPlayer::Update()
     Death();
 
     SanitizeParams();
+    SyncCannonToBody(); //常に砲塔と車体を同期
 
     auto tuning = GetTuning();
 
@@ -505,6 +511,7 @@ void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& 
         m_pBody->Draw(View, Proj, Light, Camera);
         m_pCannon->Draw(View, Proj, Light, Camera);
         m_pCannon->SetScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
+        m_pCannon->DrawRay(View, Proj);
     }
 }
 
@@ -593,7 +600,6 @@ bool CComPlayer::HitObjectRay()
 //========================================
 void CComPlayer::StepEvade()
 {
-#if 1
     std::shared_ptr<CBody> body = GetBody();
     if (!body) return;
 
@@ -601,12 +607,11 @@ void CComPlayer::StepEvade()
 
     D3DXVECTOR3 targetPos = selfPos;
 
-    auto target = m_TargetSelector.GetCurrentTarget();
+    //COM同士の分離ベクトル.プレイヤーとの判定は不利になるのでしない
+    D3DXVECTOR3 sep(0, 0, 0);
+    float nearest = 1e9f;
+    ComputeSeparation(selfPos, sep, nearest);
 
-    if (target) 
-    {
-        targetPos = target->GetPosition();
-    }
 
     //水平面でターゲットの反対方向に移動
     D3DXVECTOR3 away = selfPos - targetPos;
@@ -629,6 +634,9 @@ void CComPlayer::StepEvade()
         SafeAdvance(next, m_Tuning.moveSpeed * 0.6f);
 
         TryAutoFire();
+        
+        //車体と砲塔の同期
+        SyncCannonToBody();
 
         // 砲塔の見た目を更新
         if (auto cannon = GetCannon())
@@ -636,7 +644,6 @@ void CComPlayer::StepEvade()
             cannon->CStaticMeshObject::Update();
         }
     }
-#endif
 }
 
 
@@ -653,7 +660,6 @@ void CComPlayer::StepSeek()
 
     const float dist2 = d.x * d.x + d.z * d.z;
     float desiredYaw;
-    float hitD;
 
     auto target = m_TargetSelector.GetCurrentTarget();
 
@@ -672,70 +678,15 @@ void CComPlayer::StepSeek()
     const float next = SteerWithAvoidAABB(curYaw, desiredYaw, tuning.bodyTurnSpeed);
     SafeAdvance(next, tuning.moveSpeed);
 
+    //ターゲットがいる時点で砲塔はむく
     if (target)
     {
         TickAimTo(target->GetPosition());
-
-        //一応発射処理全てに障害物判定を適用
-        if (HasObstacleAheadSimple(pos, curYaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
-        {
-            return;
-        }
-        //TryAutoFire();
     }
 
     SyncCannonToBody();
 }
 
-/*
-void CComPlayer::StepChase()
-{
-    auto body = GetBody();
-
-
-    auto target = m_TargetSelector.GetCurrentTarget();
-    if (!body || !target)
-    {
-        StepSeek();
-        return;
-    }
-    const auto t = GetTuning();
-
-    const D3DXVECTOR3 self = body->GetPosition();
-    const D3DXVECTOR3 tp = target->GetPosition();
-    const float cur = body->GetRotation().y;
-
-    //複数人数時
-    D3DXVECTOR3 clusterCenter;
-    int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
-
-    float desired;
-
-    if (nearbyCount >= m_MultiEnemyThreshold)
-    {
-        //囲まれているなら逃げつつ攻める
-        desired = ComputeBlendedDirection(self, tp, clusterCenter,
-            m_EscapeWeight, m_ApproachWeight);
-    }
-    else
-    {
-        //通常の追跡
-        desired = std::atan2f((tp - self).x, (tp - self).z);
-
-        //近づき過ぎないようKeepDistance付近では少し横移動を入れる
-        const float dist = Util::DistXZ(self, tp);
-        if (dist < m_KeepDistance * 0.9f) 
-        {
-            desired = Util::Wrap(desired + (D3DX_PI * 0.5f) * ((m_StateFrames / 60) % 2 ? +1.f : -1.f));
-        }
-    }
-    const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
-    SafeAdvance(next, t.moveSpeed);
-
-    TickAimTo(tp);
-    TryAutoFire();
-}
-*/
 #if 1
 void CComPlayer::StepChase()
 {
@@ -807,6 +758,7 @@ void CComPlayer::StepChase()
     TickAimTo(tp);
     TryAutoFire();
 }
+
 #endif
 void CComPlayer::StepAttack()
 {
