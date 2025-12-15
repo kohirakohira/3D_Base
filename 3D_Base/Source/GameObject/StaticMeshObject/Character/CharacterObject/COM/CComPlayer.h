@@ -140,6 +140,9 @@ public:
 	// Œo˜H’TõŠí‚ğİ’è
 	void SetPathfinder(CSimplePathfinder* pathfinder) { m_pPathfinder = pathfinder; }
 
+	//áŠQ•¨‚ª‚ ‚é‚Ì‚©Šm‚©‚ß‚é
+	bool HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const;
+
 
 private:
 
@@ -194,7 +197,6 @@ private:
 	//========================================
 	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
 
-	bool HasObstacleAheadSimple(const D3DXVECTOR3& selfPos, float yaw, float probeDist, float step, float& outHitDist) const;
 
 	//•ª—£COM‚ªd‚È‚Á‚½‚è‚·‚é‚Ì‚ğ–h‚®ŒvZ
 	void ComputeSeparation(const D3DXVECTOR3& selfPos,
