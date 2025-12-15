@@ -607,7 +607,7 @@ void CCollisionManager::PlayertoBlast()
 				continue;
 			}
 
-			if (blast->GetCollider()->CheckCollision(*Coll) && chara->GetMuteki() == false && chara->GetDamage() == false)
+			if (blast->GetCollider()->CheckCollision(*Coll) && chara->GetDeath() == false)
 			{
 				// 当たった時の処理
 				chara->Hit();
@@ -617,10 +617,11 @@ void CCollisionManager::PlayertoBlast()
 			{
 				//倒した数を増やす.
 				CGameDataManager::GetInstance().AddKillCount(blast->GetPlayerID(), 1);
-				chara->SetKill(true);
 
 				//各プレイヤーのキル数表示.
 				std::cout << "各プレイヤーのキル数表示" << blast->GetPlayerID() << ":" << CGameDataManager::GetInstance().GetKillCount(blast->GetPlayerID()) << std::endl << std::endl << std::endl;
+
+				chara->SetKill(true);
 			}
 		}
 	}
