@@ -61,13 +61,13 @@ constexpr float			TIME_LIMIT = 3.0f;		//アイテムの制限時間.
 constexpr float MAX_RADIUS = 4.0f;		//半径の最大値.
 constexpr float MIN_RADIUS = 0.0f;		//半径の最小値.
 
-//テスト.
-const int IMAGE = 4;
+//設定画面での画像の総数.
+const int IMAGE = 7;
 
 //=================================================
 //  列挙型.
 //=================================================
-//列挙.
+//弾の画像用列挙.
 enum BulletKinds
 {
 	Mesh_1 = 0,
@@ -78,6 +78,20 @@ enum BulletKinds
 	Max
 };
 
+//設定画面でのUI画像用列挙.
+enum SettingKinds
+{
+	Sprite_1P_Ready = 0,
+	Sprite_2P_Ready,
+	Sprite_3P_Ready,
+	Sprite_4P_Ready,
+
+	Sprite_COM_2P,
+	Sprite_COM_3P,
+	Sprite_COM_4P,
+
+	Max_UI
+};
 
 //=================================================
 //	構造体
