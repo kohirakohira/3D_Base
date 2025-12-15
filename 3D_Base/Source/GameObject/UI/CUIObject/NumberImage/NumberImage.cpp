@@ -5,7 +5,7 @@ NumberImage::NumberImage()
 	, m_DigitPattern_Map	()
 	, m_Digits				()
 	, m_DigitWidth			()
-	, m_BasePos				(D3DXVECTOR2{WND_W / 2, WND_H / 2 - 16 })
+	, m_BasePos				(D3DXVECTOR2{0.0f, 0.0f})
 {
 	//‰Šú‰».
 	for (int i = 0; i < 10; i++)

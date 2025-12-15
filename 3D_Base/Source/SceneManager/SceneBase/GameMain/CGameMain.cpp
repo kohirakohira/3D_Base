@@ -231,9 +231,9 @@ void CGameMain::Update()
 	// 当たり判定の更新
 	m_pCollisionManager->Update();
 
+	//タイマーの更新.
 	m_TimerNumber->SetNumber(m_Timer->GetRemainingTime(), 2);
 	m_TimerNumber->Update();
-
 
 	//勝敗条件(確認用)..
 	//勝ち..
@@ -370,6 +370,9 @@ void CGameMain::Draw()
 			}
 		}
 
+		//キル数の更新.
+		m_KillCountNumber->SetNumber(CGameDataManager::GetInstance().GetKillCount(i), 2);
+		m_KillCountNumber->Update();
 
 		CDirectX11::GetInstance().SetDepth(true);
 	}
@@ -393,9 +396,9 @@ void CGameMain::Draw()
 	//タイマーの描画.
 	m_pSpriteTimerArrow->Draw();
 	//タイマー描画.
-	//m_Timer->Draw();
 	m_TimerNumber->Draw();
-
+	//キル数の描画.
+	m_KillCountNumber->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
 	
 }
@@ -436,11 +439,6 @@ void CGameMain::Init()
 	m_pSpriteTimer->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pSpriteTimer->SetScale(0.25f, 0.25f, 0.0f);
 
-	//キル数の情報.
-	m_KillCountNumber->SetPosition(0.0f, 0.0f, 0.0f);
-	m_KillCountNumber->SetRotation(0.0f, 0.0f, 0.0f);
-	m_KillCountNumber->SetScale(1.0f, 1.0f, 1.0f);
-
 	//制限時間画像の設定..
 	EachSettingTimer();
 	//プレイヤー番号画像の設定..
@@ -455,6 +453,27 @@ void CGameMain::Init()
 	m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
 	m_pBackImgObject->SetScale(7.5f, 7.5f, 7.5f);
 	m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
+
+	//タイマーの秒数位置設定.
+	m_TimerNumber->SetBasePosition(D3DXVECTOR2(WND_W / 2, WND_H / 2 - 16));
+
+	//キル数の表示位置設定.
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		switch (i)
+		{
+		case 0 :
+		case 2 :
+			m_KillCountNumber->SetBasePosition(D3DXVECTOR2(10.0f, 5.0f));
+			break;
+		case 1 :
+		case 3 :
+			m_KillCountNumber->SetBasePosition(D3DXVECTOR2(WND_W - 30.0f, 5.0f));
+			break;
+		default:
+			break;
+		}
+	}
 
 	SetPosition();
 }
@@ -1051,6 +1070,10 @@ void CGameMain::EachSettingTimer()
 
 	//タイマーの数字の情報.
 	m_TimerNumber->SetDigitWidth(32);
+
+	//キル数の情報.
+	m_KillCountNumber->SetDigitWidth(32);
+
 }
 //プレイヤー番号画像の設定..
 void CGameMain::EachSettingPlayerNumber()
