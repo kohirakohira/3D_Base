@@ -166,6 +166,7 @@
     <ClCompile Include="Data\ImGui\Library\imgui_impl_win32.cpp" />
     <ClCompile Include="Data\ImGui\Library\imgui_tables.cpp" />
     <ClCompile Include="Data\ImGui\Library\imgui_widgets.cpp" />
+    <ClCompile Include="Source\Assets\BackGround\BackGround.cpp" />
     <ClCompile Include="Source\Assets\DebugText\CDebugText.cpp" />
     <ClCompile Include="Source\Assets\DirectX\DirectX11\CDirectX11.cpp" />
     <ClCompile Include="Source\Assets\DirectX\DirectX9\CDirectX9.cpp" />
@@ -175,8 +176,6 @@
     <ClCompile Include="Source\Assets\Sound\CSoundManager.cpp" />
     <ClCompile Include="Source\Assets\Sprite\Sprite2D\CSprite2D.cpp" />
     <ClCompile Include="Source\Assets\Sprite\Sprite3D\CSprite3D.cpp" />
-    <ClCompile Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.cpp" />
-    <ClCompile Include="Source\Collision\BlastCollision\CBlastCollision.cpp" />
     <ClCompile Include="Source\Collision\Collider\BoxCollider\CBoxCollider.cpp" />
     <ClCompile Include="Source\Collision\Collider\CCollider.cpp" />
     <ClCompile Include="Source\Collision\Collider\SphereCollider\CSphereCollider.cpp" />
@@ -220,7 +219,6 @@
     <ClCompile Include="Source\InputDevice\Input\KeyInput\CKeyInput.cpp" />
     <ClCompile Include="Source\InputDevice\Key\CMultiInputManager\CMultiInputKeyManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.cpp" />
-    <ClCompile Include="Source\Collision\Shape\Ray\CRay.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\CSceneBase.cpp" />
     <ClCompile Include="Source\SceneManager\CSceneManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\CShot.cpp" />
@@ -248,6 +246,7 @@
     <ClCompile Include="Source\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Assets\BackGround\BackGround.h" />
     <ClInclude Include="Source\Assets\Data\Singleton\CSingleton.h" />
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX11\CDirectX11.h" />
@@ -258,8 +257,6 @@
     <ClInclude Include="Source\Assets\Sound\CSoundManager.h" />
     <ClInclude Include="Source\Assets\Sprite\Sprite2D\CSprite2D.h" />
     <ClInclude Include="Source\Assets\Sprite\Sprite3D\CSprite3D.h" />
-    <ClInclude Include="Source\Collision\BlastCollision\BlastCollisionManager\CBlastCollisionManager.h" />
-    <ClInclude Include="Source\Collision\BlastCollision\CBlastCollision.h" />
     <ClInclude Include="Source\Collision\Collider\BoxCollider\CBoxCollider.h" />
     <ClInclude Include="Source\Collision\Collider\CCollider.h" />
     <ClInclude Include="Source\Collision\Collider\SphereCollider\CSphereCollider.h" />
@@ -305,7 +302,6 @@
     <ClInclude Include="Source\InputDevice\Input\KeyInput\CKeyInput.h" />
     <ClInclude Include="Source\InputDevice\Key\CMultiInputManager\CMultiInputKeyManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\Player\CharacterManager\CCharacterManager.h" />
-    <ClInclude Include="Source\Collision\Shape\Ray\CRay.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\CSceneBase.h" />
     <ClInclude Include="Source\SceneManager\CSceneManager.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\GameTitle\TitleProduction\CTitleProduction.h" />

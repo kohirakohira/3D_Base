@@ -12,7 +12,7 @@
 #include "Collision//Shape//Volume//BoudingBox//CBoundingBox.h"	// バウンディングボックス
 #include "Collision//Collider//SphereCollider//CSphereCollider.h" // スフィアコライダークラス
 #include "Collision//Collider//BoxCollider//CBoxCollider.h" // ボックスコライダークラス
-#include "Collision//Shape//Ray//CRay.h" // レイクラス
+#include "Collision//Ray//CRay.h" // レイクラス
 
 /************************************************************
 *	スタティックメッシュオブジェクトクラス.
