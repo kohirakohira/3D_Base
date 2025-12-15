@@ -137,7 +137,7 @@ void CComPlayer::Create(int id)
         break;
 
     case 3:
-        // 執念型: 絶対にターゲットを変えない
+        //絶対にターゲットを変えない
         SetPersonalityType(PersonalityType::Persistent);
         m_TargetSelector.SetForgetDistance(1e9);   //どこまでも追う
         m_TargetSelector.SetStickinessRatio(1.0f);      //絶対に粘着
@@ -723,7 +723,7 @@ void CComPlayer::StepSeek()
     SyncCannonToBody();
 }
 
-
+/*
 void CComPlayer::StepChase()
 {
     auto body = GetBody();
@@ -771,8 +771,8 @@ void CComPlayer::StepChase()
     TickAimTo(tp);
     TryAutoFire();
 }
-
-#if 0
+*/
+#if 1
 void CComPlayer::StepChase()
 {
     auto body = GetBody();
