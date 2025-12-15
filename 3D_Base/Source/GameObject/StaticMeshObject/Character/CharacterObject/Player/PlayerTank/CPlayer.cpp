@@ -135,9 +135,11 @@ void CPlayer::Update()
 	//playerが死亡していたら処理をスキップ
 	if (m_Chara.m_Death == true)
 	{
+		//移動SEの停止.
+		CSoundManager::Stop(CSoundManager::SE_Move);
+
 		return;
 	}
-
 	//移動とか適用
 	UpdateHumanInputAndMove(m_CurrentInput);
 

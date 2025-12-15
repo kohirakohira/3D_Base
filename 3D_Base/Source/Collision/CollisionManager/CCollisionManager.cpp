@@ -307,9 +307,6 @@ void CCollisionManager::PlayertoShot()
 					shot->GetPlayerID());
 
 				shot->HitShot();
-
-				//ダメージSEの再生.
-				CSoundManager::PlaySE(CSoundManager::SE_Damage);
 			}
 		}
 	}
@@ -611,6 +608,9 @@ void CCollisionManager::PlayertoBlast()
 			{
 				// 当たった時の処理
 				chara->Hit();
+
+				// ダメージSEの再生
+				CSoundManager::PlaySE(CSoundManager::SE_Damage);
 			}
 
 			if (chara->GetDeath() == true && chara->GetKill() == false)
