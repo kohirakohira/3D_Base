@@ -67,7 +67,7 @@ void CCharacterObjectBase::SetShotManager(std::shared_ptr<CShotManager> shot)
 //=====ヒット関数=====
 void CCharacterObjectBase::Hit()
 {
-	if (m_Chara.m_Muteki == false)
+	if (m_Chara.m_Muteki == false &&m_Chara.m_Damage == false)
 	{
 		// プレイヤーの体力を引く
 		m_Chara.m_Hp--;
