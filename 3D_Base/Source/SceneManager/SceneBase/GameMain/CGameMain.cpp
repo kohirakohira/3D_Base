@@ -13,6 +13,8 @@ static bool prevA = false;
 #include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX9クラス.
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス.
 
+#include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
+
 //定数宣言.
 static constexpr int TIME = 60;
 const float deltaTime = 1.0f / FPS;
@@ -593,6 +595,7 @@ void CGameMain::Create()
 
 	//プレイヤーと砲塔のインスタンス生成.
 	m_pCharacterManager = std::make_shared<CCharacterManager>();
+
 	//マネージャーは一回だけ初期化
 	m_pCharacterManager->Init();
 
@@ -1190,8 +1193,8 @@ void CGameMain::BuildComObstacles()
 		};
 
 	// 壁を複数の円でカバーする
-	const float wallRadius = 6.5f;
-	const float wallOffset = 30.0f;  //壁のZX座標
+	const float wallRadius = 6.0f;		//壁円の半径
+	const float wallOffset = 30.0f;		//壁のZX座標
 
 	// 壁上壁下
 	for (float x = -24.0f; x <= 24.0f; x += 8.0f)

@@ -7,6 +7,8 @@ CCharacterObjectBase::CCharacterObjectBase()
 	, m_IsAlive				( false )
 	, m_HasControl			( false )
 	, m_PlayerID			( -1 )
+	, m_BlastFlag			( false )
+	, m_KillFrames			( 60 )
 {
 	// キャラクター初期値.
 	m_Chara = {
@@ -172,6 +174,7 @@ void CCharacterObjectBase::Death()
 
 			// 死亡フラグを無効化
 			m_Chara.m_Death = false;
+
 		}
 	}
 }

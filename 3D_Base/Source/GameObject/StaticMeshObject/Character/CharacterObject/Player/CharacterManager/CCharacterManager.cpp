@@ -111,6 +111,9 @@ void CCharacterManager::Init()
 			m_pCharacter.push_back(com);
 		}
 	}
+	// 経路探索初期化
+	m_Pathfinder.Initialize(10, 40.0f);
+
 
 	//COMプレイヤー同士で参照を共有.
 	for (auto& player : m_pCharacter)
@@ -118,6 +121,7 @@ void CCharacterManager::Init()
 		if (auto com = std::dynamic_pointer_cast<CComPlayer>(player))
 		{
 			com->SetPlayersRef(&m_pCharacter);
+			com->SetPathfinder(&m_Pathfinder);
 		}
 	}
 
@@ -143,9 +147,13 @@ void CCharacterManager::Init()
 //=======更新=======
 void CCharacterManager::Update()
 {
-	//pad の接続状態に応じてPlayer.COMを入れ替える
-	//SwitchControl();
+	if (m_PathfinderNeedsUpdate && m_pObstaclesRef)
+	{
+		m_Pathfinder.UpdateObstacles(m_pObstaclesRef);
+		m_PathfinderNeedsUpdate = false;
+	}
 
+	//pad の接続状態に応じてPlayer.COMを入れ替える
 	const int count = static_cast<int>(m_pCharacter.size());
 	if (count <= 0) return;
 
@@ -751,4 +759,13 @@ void CCharacterManager::SetComObstacles(const std::vector<CComPlayer::SimpleObst
 			com->SetSimpleObstacles(obstacles);
 		}
 	}
+
+	//経路探索にも障害物を設定
+	SetObstaclesForPathfinding(obstacles);
+}
+
+void CCharacterManager::SetObstaclesForPathfinding(const std::vector<CComPlayer::SimpleObstacle>* obstacles)
+{
+	m_pObstaclesRef = obstacles;
+	m_PathfinderNeedsUpdate = true;
 }

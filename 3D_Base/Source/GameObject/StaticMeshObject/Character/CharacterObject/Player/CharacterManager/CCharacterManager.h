@@ -22,6 +22,9 @@
 //コントローラークラス.
 #include "InputDevice/Input/Controller\ControllerManager/CControllerManager.h"
 
+//経路探索
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CSimplePathfinder/CSimplePathfinder.h"
+
 class CCharacterManager
 	: public CStaticMeshObject
 {
@@ -108,6 +111,9 @@ public:
 
 private:
 
+	// 障害物設定
+	void SetObstaclesForPathfinding(const std::vector<CComPlayer::SimpleObstacle>* obstacles);
+
 	struct Area {
 		bool Taken = false;
 		D3DXVECTOR3 RespawnPos; // リスポーン位置
@@ -141,4 +147,8 @@ private:
 
 	bool m_OnePPadEnabled = true; // 1PパッドON/OFF
 	int m_keyboardPlayer = 0;
+
+	CSimplePathfinder m_Pathfinder;
+	const std::vector<CComPlayer::SimpleObstacle>* m_pObstaclesRef = nullptr;
+	bool m_PathfinderNeedsUpdate = true;
 };
