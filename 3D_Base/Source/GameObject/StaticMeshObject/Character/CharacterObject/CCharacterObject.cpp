@@ -117,10 +117,10 @@ void CCharacterObjectBase::Damage()
 			m_Chara.m_MutekiCnt++;
 
 			// 無敵タイマーを初期化
-			m_Chara.m_MutekiTimer = 0.2f;
+			m_Chara.m_MutekiTimer = 0.1f;
 		}
 
-		if (m_Chara.m_MutekiCnt >= 10)
+		if (m_Chara.m_MutekiCnt >= 20)
 		{
 			// 描画フラグ有効化
 			m_Chara.m_Drawflag = true;

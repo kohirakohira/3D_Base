@@ -137,7 +137,6 @@ void CPlayer::Update()
 	{
 		return;
 	}
-
 	//ˆÚ“®‚Æ‚©“K—p
 	UpdateHumanInputAndMove(m_CurrentInput);
 
