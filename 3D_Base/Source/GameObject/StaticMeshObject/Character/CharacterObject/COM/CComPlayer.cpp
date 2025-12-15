@@ -772,7 +772,6 @@ void CComPlayer::StepChase()
     TryAutoFire();
 }
 
-
 #if 0
 void CComPlayer::StepChase()
 {

@@ -7,7 +7,6 @@ CCharacterObjectBase::CCharacterObjectBase()
 	, m_IsAlive				( false )
 	, m_HasControl			( false )
 	, m_PlayerID			( -1 )
-	, m_BlastFlag			( false )
 	, m_KillFrames			( 60 )
 {
 	// キャラクター初期値.
