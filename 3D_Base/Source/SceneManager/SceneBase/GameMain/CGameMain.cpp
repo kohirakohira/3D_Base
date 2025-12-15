@@ -16,9 +16,10 @@ static bool prevA = false;
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
 //定数宣言.
-static constexpr int TIME = 60;
+static constexpr int TIME = 20;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
+const float FLASH_TIME = 0.5f;			//点滅周期.
 
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd						( hWnd )
@@ -68,43 +69,34 @@ CGameMain::CGameMain(HWND hWnd)
 
 	// 木箱のメッシュ
 	, m_pStaticMeshWoodBox			( nullptr )
-
 	, m_pStaticMeshBackImg			( nullptr )
-
 	, m_pBackImgObject				( nullptr )
-
-	, m_pCharacterManager				()
+	
+	, m_pCharacterManager			()
 	, m_pShotManager				()
 
 	, m_pStage						( nullptr )
-
 	, m_pDbgText					( nullptr )
-
-	, m_StopTimeCount				( 0 )
 	, m_pCameras					()
-
 	, m_Timer						( nullptr )
 
 	, m_pWallTop					( nullptr )
 	, m_pWallBottom					( nullptr )
 	, m_pWallLeft					( nullptr )
 	, m_pWallRight					( nullptr )
-
 	, m_pWoodBoxTopLeft				( nullptr )
 	, m_pWoodBoxTopRight			( nullptr )
 	, m_pWoodBoxCenter				( nullptr )
 	, m_pWoodBoxBottomLeft			( nullptr )
 	, m_pWoodBoxBottomRight			( nullptr )
-
 	, m_pGround						( nullptr )
-	
 	, m_pItemBoxManager				( nullptr )
-
-	, m_Rot							( 0.0f )
-
 	, m_pBlastManager				( nullptr )
 
+	, m_Rot							( 0.0f )
 	, m_pCollisionManager			( nullptr )
+	, m_Flashing					( false )
+	, m_FlashingTime				( 0.0f )
 
 {
 	//最初のシーンをメインにする..
@@ -145,6 +137,20 @@ void CGameMain::Update()
 		m_Rot = 0.0f;
 	}
 	
+	//赤の点滅スタート.
+	if (m_Timer->GetRemainingTime() <= 10.0f)
+	{
+		m_Flashing = true;
+	}
+	if (m_Flashing == true)
+	{
+		m_FlashingTime += deltaTime;
+	}
+	else
+	{
+		m_FlashingTime = 0.0f;
+	}
+
 //-----メイン演出用-----..
 
 	//プレイヤー全員更新.
@@ -390,6 +396,24 @@ void CGameMain::Draw()
 	fullvp.MaxDepth = 1.0f;		//深度バッファの最大値.
 	pContext->RSSetViewports(1, &fullvp);
 
+	//時間を割った時の余りを計算.
+	float mod = fmod(m_FlashingTime, FLASH_TIME);
+
+	//赤色に点滅するか判定.
+	if (mod < FLASH_TIME * 0.5f)
+	{
+		if (m_Flashing == true)
+		{
+			//赤色の処理.
+			m_pSpriteTimerFrame->SetColor(D3DXVECTOR4{ 1.0f, 0.0f, 0.0f, 1.0f });
+		}
+	}
+	else
+	{
+		//通常色の処理.
+		m_pSpriteTimerFrame->SetColor(D3DXVECTOR4{ 1.0f, 1.0f, 1.0f, 1.0f });
+	}
+
 	//1画面の時の表示.
 	//前後関係無視.
 	CDirectX11::GetInstance().SetDepth(false);
@@ -445,6 +469,7 @@ void CGameMain::Init()
 	m_pSpriteTimerFrame->SetPosition(0.0f, 0.0f, 0.0f);
 	m_pSpriteTimerFrame->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pSpriteTimerFrame->SetScale(1.f, 1.f, 0.f);
+
 	//時計本体.
 	m_pSpriteTimer->SetPosition(WND_W / 2.0f - 74.0f, WND_H / 2 - 32.f, 0.0f);
 	m_pSpriteTimer->SetRotation(0.0f, 0.0f, 0.0f);

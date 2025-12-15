@@ -225,10 +225,13 @@ private:
 
 public:		
 	// 変数用
-	// 簡易時間を止める変数
-	int		m_StopTimeCount;
 	//Iconの回転用..
 	float	m_Rot;
+
+	//点滅フラグ.
+	bool m_Flashing;
+	//点滅用カウント.
+	float m_FlashingTime;
 
 	//これは何用？
 	D3DXVECTOR3 push;

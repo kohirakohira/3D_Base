@@ -21,6 +21,7 @@ CSprite2D::CSprite2D()
 	, m_UV				( 0.0f, 0.0f )
 	, m_MoveFlag		( false )
 	, m_Alpha			( 1.0f )
+	, m_Color			( D3DXVECTOR4{1.0f, 1.0f, 1.0f, m_Alpha } )
 	, m_SpriteState		()
 	, m_PatternNo		()
 	, m_PatternMax		()
@@ -393,7 +394,7 @@ void CSprite2D::Render()
 		cb.mWorld = m;
 
 		//カラー.
-		cb.vColor = D3DXVECTOR4( 1.0f, 1.0f, 1.0f, m_Alpha );
+		cb.vColor = m_Color;
 
 		//テクスチャの動き.
 		if (m_MoveFlag == false)
@@ -453,6 +454,12 @@ void CSprite2D::Render()
 	//アルファブレンド無効にする.
 	CDirectX11::GetInstance().SetAlphaBlend( false );
 
+}
+
+//色の設定.
+void CSprite2D::SetColor(D3DXVECTOR4 c)
+{
+	m_Color = c;
 }
 
 void CSprite2D::SetViewPortSize(float w, float h)

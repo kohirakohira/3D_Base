@@ -36,6 +36,12 @@ void CUIObject::Draw()
 	m_pSprite->Render();
 }
 
+//F‚ÌÝ’è.
+void CUIObject::SetColor(D3DXVECTOR4 c)
+{
+	m_pSprite->SetColor(c);
+}
+
 void CUIObject::Draw(
 	D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
 {
