@@ -723,7 +723,7 @@ void CComPlayer::StepSeek()
     SyncCannonToBody();
 }
 
-
+/*
 void CComPlayer::StepChase()
 {
     auto body = GetBody();
@@ -771,8 +771,10 @@ void CComPlayer::StepChase()
     TickAimTo(tp);
     TryAutoFire();
 }
+*/
 
-#if 0
+
+#if 1
 void CComPlayer::StepChase()
 {
     auto body = GetBody();
