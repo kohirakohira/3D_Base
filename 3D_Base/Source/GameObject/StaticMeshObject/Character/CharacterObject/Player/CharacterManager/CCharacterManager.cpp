@@ -5,12 +5,14 @@
 #undef min;
 
 CCharacterManager::CCharacterManager()
-	: offset				(20.f)
-	, AngleY				(45.f)
-	, m_pCharacter			()
-	, m_ActivePlayerIndex	( 0 )
-	, m_pCom				()
-	, ItemFlag				( false )
+	: offset					(20.f)
+	, AngleY					(45.f)
+	, m_pCharacter				()
+	, m_ActivePlayerIndex		( 0 )
+	, m_pCom					()
+	, ItemFlag					( false )
+	, m_pObstaclesRef			( nullptr )
+	, m_PathfinderNeedsUpdate	( true )
 {
 	//m_pCom = std::make_shared<CComPlayer>();
 }

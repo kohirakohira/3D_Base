@@ -149,6 +149,6 @@ private:
 	int m_keyboardPlayer = 0;
 
 	CSimplePathfinder m_Pathfinder;
-	const std::vector<CComPlayer::SimpleObstacle>* m_pObstaclesRef = nullptr;
-	bool m_PathfinderNeedsUpdate = true;
+	const std::vector<CComPlayer::SimpleObstacle>* m_pObstaclesRef;
+	bool m_PathfinderNeedsUpdate;
 };
