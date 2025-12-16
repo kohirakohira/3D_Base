@@ -149,3 +149,19 @@ void CComShot::ComputeMuzzle(
     outPos = base + forward * m_Config.muzzleOffsetZ;
     outYaw = yaw;
 }
+
+bool CComShot::TryFireOnRayHit(CBody* body, CCannon* cannon)
+{
+    if (!m_pShotManager) return false;
+    if (m_Cooldown > 0) return false;
+
+    //–CŒûˆÊ’u‚ÆŠp“x‚ðŒvŽZ
+    D3DXVECTOR3 muzzle;
+    float yaw;
+    ComputeMuzzle(muzzle, yaw, body, cannon);
+
+    //‘¦À‚É”­ŽË
+    m_pShotManager->Create(muzzle, yaw, true, m_OwnerID);
+    m_Cooldown = m_Config.cooldownFrames;
+    return true;
+}

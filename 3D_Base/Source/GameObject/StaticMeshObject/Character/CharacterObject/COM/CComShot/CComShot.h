@@ -72,6 +72,9 @@ public:
     //ショットクールダウン
     void SetShotCollDown(int collDown) { m_Config.cooldownFrames = collDown; }
 
+    // レイヒット時の発射
+    bool TryFireOnRayHit(CBody* body, CCannon* cannon);
+
 private:
     std::shared_ptr<CShotManager> m_pShotManager;
     ShotConfig m_Config;

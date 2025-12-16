@@ -32,6 +32,7 @@
 
 #include "GameObject/StaticMeshObject/Shot/CShot.h"	//ショット
 
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
@@ -281,6 +282,8 @@ private:
 
 	int GetPlayerID() override { return m_PlayerID; } 
 
+	// 砲塔レイで最初に当たったキャラクターを取得
+	std::shared_ptr<CCharacterObjectBase> GetRayHitCharacter() const;
 
 	// 目的地へのパスを計算
 	bool RequestPath(const D3DXVECTOR3& goal);

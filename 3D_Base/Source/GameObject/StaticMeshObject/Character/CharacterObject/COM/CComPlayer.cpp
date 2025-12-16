@@ -880,99 +880,30 @@ void CComPlayer::TryAutoFire()
     auto body = GetBody();
     if (!cannon || !body) return;
 
-    float hitD;
+    if (!m_ComShot.IsReady()) return;
 
-    // 射線チェック
-    if (m_pFireLineObstacles && !m_pFireLineObstacles->empty())
+    // 砲塔レイでターゲット位置にヒット判定
+    const float targetRadius = 2.f;  // ターゲットの当たり判定半径
+    float hitDistance;
+
+    if (cannon->RaycastToPosition(target->GetPosition(), targetRadius, hitDistance))
     {
-        D3DXVECTOR3 muzzle;
-        float yaw;
-        m_ComShot.ComputeMuzzle(muzzle, yaw, body.get(), cannon.get());
-
-        D3DXVECTOR3 targetVel = m_TargetSelector.GetTargetVelocity();
-        PredictedShot prediction = m_ComShot.PredictTargetPosition(
-            muzzle, target->GetPosition(), targetVel);
-
-        //障害物があれば無視
-        if (HasObstacleAheadSimple(target->GetPosition(), yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
+        // 障害物チェック
+        float obstacleHitD;
+        if (HasObstacleAheadSimple(body->GetPosition(), cannon->GetRotation().y,
+            hitDistance, m_ObstacleProbeStep, obstacleHitD))
         {
-            //倒したあとは直ぐにターゲットを変更する
-            if (target->GetDeath())
+            // 障害物がターゲットより手前にある
+            if (obstacleHitD < hitDistance)
             {
-                m_TargetSelector.ClearTarget();
+                return;
             }
-            return;
         }
 
+        // レイがターゲットに当たった → 発射！
+        m_ComShot.TryFireOnRayHit(body.get(), cannon.get());
     }
-    
-    //戦車が後ろに下がる
-    auto nowPos = target->GetPosition();
-    float offset = -0.1f;
-    D3DXVECTOR3 pos(0.f, offset, 0.f);
-
-    if (m_Shot.GetShotFlag() == true)
-    {
-        nowPos -= pos;
-        SyncCannonToBody();
-    }
-
-    // 射撃実行
-    m_ComShot.TryFire(
-        target->GetPosition(),
-        m_TargetSelector.GetTargetVelocity(),
-        body.get(),
-        cannon.get()
-    );
-
 }
-
-/*
-    auto target = m_TargetSelector.GetCurrentTarget();
-    if (!target) return;
-
-    auto cannon = GetCannon();
-    auto body = GetBody();
-    if (!cannon || !body) return;
-
-    //性格から射撃パラメータを取得して適用
-    if (m_pPersonality)
-    {
-        TurretParams params = m_pPersonality->GetTurretParams();
-        m_ComShot.SetFireAngleTolerance(params.fireAngleTolerance);
-    }
-
-    float hitD;
-
-    // 射線チェック
-    if (m_pFireLineObstacles && !m_pFireLineObstacles->empty())
-    {
-        D3DXVECTOR3 muzzle;
-        float yaw;
-        m_ComShot.ComputeMuzzle(muzzle, yaw, body.get(), cannon.get());
-
-        D3DXVECTOR3 targetVel = m_TargetSelector.GetTargetVelocity();
-        PredictedShot prediction = m_ComShot.PredictTargetPosition(
-            muzzle, target->GetPosition(), targetVel);
-
-        if (HasObstacleAheadSimple(target->GetPosition(), yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
-        {
-            if (target->GetDeath())
-            {
-                m_TargetSelector.ClearTarget();
-            }
-            return;
-        }
-    }
-
-    // 射撃実行
-    m_ComShot.TryFire(
-        target->GetPosition(),
-        m_TargetSelector.GetTargetVelocity(),
-        body.get(),
-        cannon.get()
-    );
-*/
 
 // 砲塔と車体の同期
 void CComPlayer::SyncCannonToBody()
@@ -1339,6 +1270,41 @@ float CComPlayer::ComputeBlendedDirection(
     // Yaw に変換
     return std::atan2f(blended.x, blended.z);
 
+}
+
+
+std::shared_ptr<CCharacterObjectBase> CComPlayer::GetRayHitCharacter() const
+{
+    auto cannon = GetCannon();
+    if (!cannon || !m_pAllPlayer) return nullptr;
+
+    CannonHitRay bestHit;
+    bestHit.bHit = false;
+    bestHit.Distance = 1e9f;
+    std::shared_ptr<CCharacterObjectBase> hitTarget = nullptr;
+
+    for (const auto& player : *m_pAllPlayer)
+    {
+        if (!player) continue;
+        if (player.get() == this) continue;  // 自分は除外
+        if (player->GetDeath()) continue;     // 死亡者は除外
+
+        CStaticMeshObject* mesh = dynamic_cast<CStaticMeshObject*>(player.get());
+        if (!mesh) continue;
+
+        CannonHitRay tempHit;
+        if (cannon->RaycastTo(mesh, tempHit))
+        {
+            // より近いヒットを優先
+            if (tempHit.Distance < bestHit.Distance)
+            {
+                bestHit = tempHit;
+                hitTarget = player;
+            }
+        }
+    }
+
+    return hitTarget;
 }
 
 bool CComPlayer::RequestPath(const D3DXVECTOR3& goal)
