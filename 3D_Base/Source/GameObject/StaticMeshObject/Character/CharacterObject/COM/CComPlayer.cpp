@@ -1352,6 +1352,21 @@ bool CComPlayer::RequestPath(const D3DXVECTOR3& goal)
     return m_pPathfinder->FindPath(body->GetPosition(), goal, m_Path);
 }
 
+void CComPlayer::SetPosition(const D3DXVECTOR3& pos)
+{
+    if (m_pBody)
+    {
+        m_pBody->SetPosition(pos);
+    }
+    if (m_pCannon)
+    {
+        //砲塔は高さオフセットを適用する
+        D3DXVECTOR3 cannonPos = pos;
+        cannonPos.y += m_Tuning.cannonHeight;
+        m_pCannon->SetPosition(cannonPos);
+    }
+}
+
 void CComPlayer::FindNearestTarget()
 {
     //m_pAllPlayer から人間プレイヤーを探す

@@ -130,16 +130,16 @@ void CComShot::ComputeMuzzle(
 {
     D3DXVECTOR3 base(0, 0, 0);
     float yaw = 0.0f;
-
     if (body)
     {
         base = body->GetPosition();
         yaw = body->GetRotation().y;
     }
 
+    //–C“ƒ‚ÍŒü‚«‚¾‚¯Šî€‚É‚·‚é
     if (cannon)
     {
-        if (!body) base = cannon->GetPosition();
+        //if (!body) base = cannon->GetPosition();
         yaw = cannon->GetRotation().y;  // –C“ƒ‚ÌŒü‚«‚ğ—Dæ
     }
 

@@ -95,4 +95,23 @@ namespace Util	//È—ª
 		return v * v;
 	}
 
+	static float Length(const D3DXVECTOR3& v)
+	{
+		return std::sqrtf(v.x * v.x + v.z * v.z);
+	}
+
+	//ƒxƒNƒgƒ‹‚Ì³‹K‰»
+	static D3DXVECTOR3 Normalize(const D3DXVECTOR3& v)
+	{
+		float len = Length(v);
+		if (len < 1e-6f) return D3DXVECTOR3(0, 0, 0);
+		return D3DXVECTOR3(v.x / len, 0, v.z / len);
+	}
+
+	//“àÏ
+	static float DotXZ(const D3DXVECTOR3& a, const D3DXVECTOR3& b)
+	{
+		return a.x * b.x + a.z * b.z;
+	}
+
 };
