@@ -272,9 +272,9 @@ HRESULT CGameTitle::LoadData()
 	};
 	//選択肢画像のスプライト設定.
 	CSprite2D::SPRITE_STATE C_SIZE = {
-		16,32,		//描画幅,高さ.
-		16,32,		//元画像の幅,高さ.
-		16,32,		//アニメーションをしないので、0でいい.
+		24,40,		//描画幅,高さ.
+		24,40,		//元画像の幅,高さ.
+		24,40,		//アニメーションをしないので、0でいい.
 	};
 	//選択画像のスプライト設定.
 	CSprite2D::SPRITE_STATE SL_SIZE = {
@@ -289,7 +289,7 @@ HRESULT CGameTitle::LoadData()
 	//タイトルスプライトの読み込み.
 	m_pSpriteTitle->Init( _T("Data\\Texture\\Image\\Title.png"), WH_SIZE, false);
 	//選択肢スプライトの読み込み.
-	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Select\\Choice.png"), C_SIZE, false);
+	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Select\\Choice_ver2.png"), C_SIZE, false);
 	//選択肢スプライトの読み込み.
 	m_SpritePlaySelect->Init(_T("Data\\Texture\\UI\\Select\\PlaySelectImg.png"), SL_SIZE, false);
 	m_SpriteEndSelect->Init(_T("Data\\Texture\\UI\\Select\\EndSelectImg.png"), SL_SIZE, false);

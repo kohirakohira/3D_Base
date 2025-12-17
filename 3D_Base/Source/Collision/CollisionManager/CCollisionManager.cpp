@@ -94,28 +94,32 @@ void CCollisionManager::WalltoPlayer()
 		D3DXVECTOR3 push(0.0f, 0.0f, 0.0f);
 
 		// ŽÔ‘Ì‚ª•Ç‚ÆÚG‚µ‚½‚Æ‚«
-		if (Coll->CheckCollision(*m_pWallTop->GetCollider()))
+		if (Coll->CheckCollision(*m_pWallTop->GetCollider()) &&
+			chara->GetDeath() == false)
 		{
 			push.z -= pushStrength;
 
 			//Õ“ËSE‚ÌÄ¶.
 			CSoundManager::PlaySE(CSoundManager::SE_Impact);
 		}
-		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()))
+		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()) &&
+			chara->GetDeath() == false)
 		{
 			push.z += pushStrength;
 
 			//Õ“ËSE‚ÌÄ¶.
 			CSoundManager::PlaySE(CSoundManager::SE_Impact);
 		}
-		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()))
+		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()) &&
+			chara->GetDeath() == false)
 		{
 			push.x += pushStrength;
 
 			//Õ“ËSE‚ÌÄ¶.
 			CSoundManager::PlaySE(CSoundManager::SE_Impact);
 		}
-		if (Coll->CheckCollision(*m_pWallRight->GetCollider()))
+		if (Coll->CheckCollision(*m_pWallRight->GetCollider()) &&
+			chara->GetDeath() == false)
 		{
 			push.x -= pushStrength;
 
@@ -337,7 +341,8 @@ void CCollisionManager::WoodBoxtoPlayer()
 
 		for (auto& box : woodbox)
 		{
-			if (charaColl->CheckCollision(*box))
+			if (charaColl->CheckCollision(*box) &&
+				chara->GetDeath() == false)
 			{
 				//ƒLƒƒƒ‰‚ÌˆÊ’u.
 				D3DXVECTOR3 charaPos = chara->GetBody()->GetPosition();

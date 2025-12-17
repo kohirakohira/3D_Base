@@ -74,17 +74,17 @@ void CMain::Update()
 	CImguiManager::GetInstance().SetFrame();
 	//‚±‚±‚Å•`‰æ.
 	{
-#ifdef _DEBUG
-		ImGui::Begin("Debug Window");
-		ImGui::Text("Test");
-		static float testValue = 100.0f;
-		static bool  testBox1 = false;
-		static std::vector<float> fpsData;
-
-		CImguiManager::GetInstance().Graph("CheckBox", fpsData, ImVec2(200, 80));
-		CImguiManager::GetInstance().Slider("Value", testValue, 0.0f, 1.0f);
-		ImGui::End();
-#endif
+//#ifdef _DEBUG
+//		ImGui::Begin("Debug Window");
+//		ImGui::Text("Test");
+//		static float testValue = 100.0f;
+//		static bool  testBox1 = false;
+//		static std::vector<float> fpsData;
+//
+//		CImguiManager::GetInstance().Graph("CheckBox", fpsData, ImVec2(200, 80));
+//		CImguiManager::GetInstance().Slider("Value", testValue, 0.0f, 1.0f);
+//		ImGui::End();
+//#endif
 
 	}
 	//imgui‚Ì•`‰æ.
