@@ -118,3 +118,50 @@ TurretParams CPersistentPersonality::GetTurretParames() const
     return prames;
 }
 
+/*
+BehaviorDecision CPersistentPersonality::DecideMultiEnemyAction(
+    const D3DXVECTOR3& selfPos,
+    const D3DXVECTOR3& targetPos,
+    const D3DXVECTOR3& clusterCenter,
+    int nearbyEnemyCount,
+    float hpRatio) const
+{
+    BehaviorDecision decision;
+
+    // Persistent は他の敵を無視してターゲットだけを追う
+    D3DXVECTOR3 toTarget = targetPos - selfPos;
+    toTarget.y = 0.0f;
+    decision.desiredYaw = std::atan2f(toTarget.x, toTarget.z);
+
+    // ただし、囲まれているときは少し斜めに移動して包囲を抜ける
+    if (nearbyEnemyCount >= 3)
+    {
+        // 包囲突破：ターゲット方向に斜め移動
+        decision.desiredYaw = Util::Wrap(decision.desiredYaw + D3DX_PI * 0.2f);
+        decision.moveSpeedMultiplier = 1.3f;  // 速く突破
+    }
+    else
+    {
+        decision.moveSpeedMultiplier = 1.1f;
+    }
+
+    decision.shouldFire = true;
+    decision.shouldEvade = false;  // 逃げない
+    decision.keepDistance = 5.0f;
+
+    return decision;
+}
+
+float CPersistentPersonality::GetEscapeWeight(int nearbyEnemyCount, float hpRatio) const
+{
+    // ほぼ逃げない
+    return (nearbyEnemyCount >= 3) ? 0.3f : 0.0f;
+}
+
+float CPersistentPersonality::GetApproachWeight(int nearbyEnemyCount, float hpRatio) const
+{
+    // 常にターゲットを追う
+    return 1.5f;
+}
+*/
+

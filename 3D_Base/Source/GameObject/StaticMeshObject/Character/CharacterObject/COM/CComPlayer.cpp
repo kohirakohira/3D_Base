@@ -808,6 +808,39 @@ void CComPlayer::StepAttack()
         }
     }
 
+    /*
+    // •¡”“Gƒ`ƒFƒbƒN
+    D3DXVECTOR3 clusterCenter;
+    int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
+    float hpRatio = static_cast<float>(m_Chara.m_Hp) / static_cast<float>(m_Chara.m_MaxHp);
+
+    float desired;
+    float speedMult = 1.0f;
+
+    //«Ši‚É‰‚¶‚½•¡”“G‘Î‰
+    if (nearbyCount >= m_MultiEnemyThreshold && m_pPersonality)
+    {
+        BehaviorDecision decision = m_pPersonality->DecideMultiEnemyAction(
+            self, tp, clusterCenter, nearbyCount, hpRatio);
+
+        desired = decision.desiredYaw;
+        speedMult = decision.moveSpeedMultiplier;
+        m_KeepDistance = decision.keepDistance;
+    }
+    else
+    {
+        // ’Êí‚Ìü‰ñUŒ‚
+        const int period = 60;
+        const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
+        const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
+        desired = Util::Wrap(toYaw + sign * (D3DX_PI * 0.5f));
+
+        const float dist = Util::DistXZ(self, tp);
+        if (dist > m_KeepDistance * 1.2f) desired = toYaw;
+        else if (dist < m_KeepDistance * 0.8f) desired = Util::Wrap(toYaw + D3DX_PI);
+    }
+    */
+
     if (target->GetDeath() == true)
     {
         m_TargetSelector.ClearTarget();

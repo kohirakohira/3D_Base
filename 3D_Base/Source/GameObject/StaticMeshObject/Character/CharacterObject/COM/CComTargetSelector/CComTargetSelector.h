@@ -88,4 +88,20 @@ private:
     // ターゲット追跡用
     D3DXVECTOR3 m_LastTargetPos = { 0, 0, 0 };
     D3DXVECTOR3 m_TargetVelocity = { 0, 0, 0 };
+
+    /*
+    struct AimingEnemy
+{
+    int playerID;
+    float aimAngle;         // どれだけこっちを向いているか
+    float distance;
+};
+
+std::vector<AimingEnemy> m_AimingEnemies;
+
+void UpdateAimingEnemies(const D3DXVECTOR3& selfPos,
+    const std::vector<std::shared_ptr<CCharacterObjectBase>>* allPlayers);
+bool IsBeingTargeted() const;
+int GetMostDangerousEnemy() const;
+    */
 };

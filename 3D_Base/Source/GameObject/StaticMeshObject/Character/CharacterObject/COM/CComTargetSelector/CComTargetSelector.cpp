@@ -198,3 +198,65 @@ void CComTargetSelector::TickBlacklist()
     }
 }
 
+/*
+void CComTargetSelector::UpdateAimingEnemies(
+    const D3DXVECTOR3& selfPos,
+    const std::vector<std::shared_ptr<CCharacterObjectBase>>* allPlayers)
+{
+    m_AimingEnemies.clear();
+    if (!allPlayers) return;
+
+    for (const auto& p : *allPlayers)
+    {
+        if (!p || p->GetPlayerID() == m_OwnerID) continue;
+        if (p->GetDeath()) continue;
+
+        D3DXVECTOR3 enemyPos = p->GetPosition();
+        float enemyYaw = p->GetRotation().y;
+
+        // “G‚©‚çŽ©•ª‚Ö‚Ì•ûŒü
+        D3DXVECTOR3 toSelf = selfPos - enemyPos;
+        toSelf.y = 0.0f;
+        float dist = std::sqrtf(toSelf.x * toSelf.x + toSelf.z * toSelf.z);
+        if (dist < 1e-6f) continue;
+
+        float angleToSelf = std::atan2f(toSelf.x, toSelf.z);
+        float angleDiff = std::fabs(Util::Wrap(angleToSelf - enemyYaw));
+
+        // 30“xˆÈ“à‚Å‚±‚Á‚¿‚ðŒü‚¢‚Ä‚¢‚é
+        if (angleDiff < D3DX_PI / 6.0f)
+        {
+            AimingEnemy ae;
+            ae.playerID = p->GetPlayerID();
+            ae.aimAngle = angleDiff;
+            ae.distance = dist;
+            m_AimingEnemies.push_back(ae);
+        }
+    }
+}
+
+bool CComTargetSelector::IsBeingTargeted() const
+{
+    return !m_AimingEnemies.empty();
+}
+
+int CComTargetSelector::GetMostDangerousEnemy() const
+{
+    if (m_AimingEnemies.empty()) return -1;
+
+    int mostDangerous = -1;
+    float highestDanger = 0.0f;
+
+    for (const auto& ae : m_AimingEnemies)
+    {
+        // ‹ß‚­‚ÄA³Šm‚É‘_‚Á‚Ä‚¢‚é‚Ù‚ÇŠëŒ¯
+        float danger = (1.0f / (ae.distance + 1.0f)) * (1.0f - ae.aimAngle / (D3DX_PI / 6.0f));
+        if (danger > highestDanger)
+        {
+            highestDanger = danger;
+            mostDangerous = ae.playerID;
+        }
+    }
+    return mostDangerous;
+}
+*/
