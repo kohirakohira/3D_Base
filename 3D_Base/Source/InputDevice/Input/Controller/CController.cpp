@@ -42,8 +42,15 @@ void CController::ControllerAmputation()
 	}
 }
 
+bool CController::IsJustConnected() const
+{
+	// –¢Ú‘± ¨ Ú‘±
+	return (m_PrevConnected == false && m_Connected == true);
+}
+
 bool CController::IsJustDisconnected() const
 {
+	// Ú‘± ¨ –¢Ú‘±
 	return (m_PrevConnected == true && m_Connected == false);
 }
 

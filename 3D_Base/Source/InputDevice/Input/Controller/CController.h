@@ -53,6 +53,8 @@ public:
 	//Ø’fˆ—.
 	void ControllerAmputation();
 
+	// Ú‘±”»’èŠÖ”
+	bool IsJustConnected() const;
 	// Ø’f”»’èŠÖ”
 	bool IsJustDisconnected() const;
 

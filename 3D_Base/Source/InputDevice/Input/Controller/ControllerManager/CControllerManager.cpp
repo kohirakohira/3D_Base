@@ -25,20 +25,22 @@ void CControllerManager::Update()
 	{
 		controller->Update();
 
+		// Ú‘±‚³‚ê‚½uŠÔ
+		if (controller->IsJustConnected())
+		{
+			CSoundManager::PlaySE(CSoundManager::SE_Connect);
+		}
+
+		// Ø’f‚³‚ê‚½uŠÔ
+		if (controller->IsJustDisconnected())
+		{
+			CSoundManager::PlaySE(CSoundManager::SE_UnConnect);
+			controller->ControllerAmputation();
+		}
+
 		if (controller->CheckConnected() == true)
 		{
 			m_ConnectedCount++;
-		}
-		else
-		{
-			// Ø’f‚³‚ê‚½uŠÔ‚¾‚¯
-			if (controller->IsJustDisconnected())
-			{
-				// ƒRƒ“ƒgƒ[ƒ‰[‚ÌØ’fSE
-				CSoundManager::PlaySE(CSoundManager::SE_UnConnect);
-			}
-
-			controller->ControllerAmputation();
 		}
 	}
 
