@@ -22,6 +22,7 @@ CController::~CController()
 //USB‚Ì’x‰„‚ª‚ ‚é‚Ì‚ÅAUpdate‚Í–ˆ‰ñŒÄ‚Ô‚×‚«II.
 void CController::Update()
 {
+	m_PrevConnected = m_Connected;      // ‘O‰ñ‚ð•Û‘¶
 	m_Connected = m_Pad->Update();
 
 }
@@ -35,10 +36,15 @@ bool CController::CheckConnected() const
 //Ø’fˆ—.
 void CController::ControllerAmputation()
 {
-	if (m_Connected != true)
+	if (IsJustDisconnected())
 	{
 		m_Pad->EndProc();
 	}
+}
+
+bool CController::IsJustDisconnected() const
+{
+	return (m_PrevConnected == true && m_Connected == false);
 }
 
 bool CController::Down(CXInput::KEY key, bool just) const

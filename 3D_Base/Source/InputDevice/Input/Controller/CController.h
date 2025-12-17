@@ -53,6 +53,9 @@ public:
 	//切断処理.
 	void ControllerAmputation();
 
+	// 切断判定関数
+	bool IsJustDisconnected() const;
+
 	//ラッパー関数.
 	//関数名(・・・, bool just = false)：このbool型の引数はデフォルト引数.
 	//例：関数名(・・・)：この書き方だとfalse.
@@ -89,5 +92,6 @@ private:
 	//メンバ変数.
 	std::unique_ptr<CXInput> m_Pad;	//実際の入力処理.
 	int		m_Index;				//コントローラーのID.
-	bool	m_Connected;			//接続フラグ.
+	bool	m_Connected;			// 接続フラグ(現在)
+	bool	m_PrevConnected;		// 接続フラグ(過去)
 };
