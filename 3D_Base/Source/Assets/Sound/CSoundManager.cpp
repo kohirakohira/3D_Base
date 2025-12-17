@@ -33,8 +33,8 @@ bool CSoundManager::Load(HWND hWnd)
 	};
 	SoundList SList[] =
 	{
-		{ enList::BGM_Title,		_T("Data\\Sound\\BGM\\Title.mp3"),			_T("BGM_Title")			},
-		{ enList::BGM_Main,			_T("Data\\Sound\\BGM\\Main_ver2.mp3"),		_T("BGM_Main")			},
+		{ enList::BGM_Title,		_T("Data\\Sound\\BGM\\Title_ver2.mp3"),		_T("BGM_Title")			},
+		{ enList::BGM_Main,			_T("Data\\Sound\\BGM\\Main.mp3"),			_T("BGM_Main")			},
 		{ enList::BGM_Result_Win,	_T("Data\\Sound\\BGM\\Result_Win.mp3"),		_T("BGM_Result_Win")	},
 		{ enList::BGM_Result_Draw,	_T("Data\\Sound\\BGM\\Result_Draw.mp3"),	_T("BGM_Result_Draw")	},
 
@@ -49,7 +49,7 @@ bool CSoundManager::Load(HWND hWnd)
 		{ enList::SE_Door,		_T("Data\\Sound\\SE\\Door.mp3"),				_T("SE_Door")		},
 		{ enList::SE_Shot,		_T("Data\\Sound\\SE\\Shot.mp3"),				_T("SE_Shot")		},
 		{ enList::SE_Damage ,	_T("Data\\Sound\\SE\\damage.mp3"),				_T("SE_Damage")		},
-		{ enList::SE_Explosion,	_T("Data\\Sound\\SE\\explosion.mp3"),			_T("SE_Explosion")	},
+		{ enList::SE_Explosion,	_T("Data\\Sound\\SE\\explosion_2.mp3"),			_T("SE_Explosion")	},
 		{ enList::SE_Impact,	_T("Data\\Sound\\SE\\Impact.mp3"),				_T("SE_Impact")		},
 		{ enList::SE_Move,		_T("Data\\Sound\\SE\\Move.mp3"),				_T("SE_Move")		},
 	};
