@@ -20,7 +20,7 @@ CCamera::CCamera()
 
 	//ライト情報
 	m_Light.Position = D3DXVECTOR3(0.f, 3.f, 0.f);	//ライト方向
-	m_Light.Range = 12.0f;
+	m_Light.Range = 100.0f;
 	m_Light.Color = D3DXVECTOR3(1.f, 1.f, 1.f);
 	m_Light.fIntensity = 1.0f;
 	m_Light.Atten = D3DXVECTOR3(1.0f, 0.f, 0.05f);
@@ -51,10 +51,10 @@ void CCamera::Update()
 	//ビュー行列を計算
 	D3DXMatrixLookAtLH(&m_mView, &m_Position, &m_LookAt, &m_Up);
 
-	//プロジェクションもここで更新しておく
-	float fovY = D3DXToRadian(45.0f);
-	float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
-	D3DXMatrixPerspectiveFovLH(&m_mProj, fovY, aspect, 0.1f, 100.0f);
+	////プロジェクションもここで更新しておく
+	//float fovY = D3DXToRadian(45.0f);
+	//float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
+	//D3DXMatrixPerspectiveFovLH(&m_mProj, fovY, aspect, 0.1f, 100.0f);
 
 
 	//SetCamera.Draw側で使う構造体を追尾結果にあわせて更新
@@ -109,7 +109,7 @@ void CCamera::Projection()
 	//アスペクト（幅÷高さ）.
 	float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
 	float near_z = 0.3f;
-	float far_z = 1000.0f;
+	float far_z = 5000.0f;
 
 	//プロジェクション（射影）変換.
 	D3DXMatrixPerspectiveFovLH(
@@ -185,4 +185,20 @@ void CCamera::FreeMove()
 	if (GetAsyncKeyState('Y') & 0x8000) {
 		m_Position.z -= add_value;
 	}
+}
+
+void CCamera::SetFog()
+{
+	if (m_Fog.IsFog == false)
+	{
+		return;
+	}
+
+	CDirectX11::GetInstance().UpdateFogConstantBuffer(m_Fog, m_Camera.vPosition);
+
+}
+
+void CCamera::SetIsFog(bool f)
+{
+	m_Fog.IsFog = f;
 }

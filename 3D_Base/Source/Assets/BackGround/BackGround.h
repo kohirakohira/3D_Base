@@ -3,14 +3,14 @@
 #include <iostream>
 
 //-----åpè≥ÉNÉâÉX-----
-#include "../../GameObject/UI/CUIObject/CUIObject.h"
+#include "../../GameObject/SpriteObject/CSpriteObject.h"
 
 
 //=====================================================================
 //				îwåiÇÃï`âÊ(CUIObjectÇåpè≥).
 //=====================================================================
 class BackGround
-	: public CUIObject
+	: public CSpriteObject
 {
 public:
 	BackGround();

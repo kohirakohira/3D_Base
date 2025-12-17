@@ -6,13 +6,9 @@
 CGame::CGame(HWND hWnd )
 	: m_hWnd			( hWnd )
 	, m_pSceneManager	( nullptr )
-	, m_BackGround		( nullptr )
-	, m_BackGroundImg	( nullptr )
 {
 	//インスタンスの作成.
 	m_pSceneManager = std::make_shared<CSceneManager>(m_hWnd);
-	m_BackGroundImg = std::make_unique<CUIObject>();
-	m_BackGround	= std::make_unique<BackGround>();
 }
 
 //デストラクタ.
@@ -62,5 +58,3 @@ void CGame::Draw()
 	//各シーンのDraw関数.
 	m_pSceneManager->Draw();
 }
-
-//GitHub確認用

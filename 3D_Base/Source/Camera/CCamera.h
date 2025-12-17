@@ -43,6 +43,12 @@ public:
 	void FreeMove();
 
 public:
+	//境界線を消すのに使用するかも.
+	FOGPARAM GetFog() const { return m_Fog; }
+	void SetFog();
+	void SetFogParam(const FOGPARAM fog) { m_Fog = fog; }
+	void SetIsFog(bool f);
+public:
 	//ライト情報.
 	const LIGHT& GetLight() const { return m_Light; }
 	void SetLightPos(float x, float y, float z) { m_Light.Position = D3DXVECTOR3(x, y, z); }
@@ -57,6 +63,7 @@ public:
 	//構造体設定変数.
 	CAMERA			m_Camera;
 	LIGHT			m_Light;
+	FOGPARAM		m_Fog;
 	//行列.
 	D3DXMATRIX		m_mView;	//ビュー(カメラ)行列.
 	D3DXMATRIX		m_mProj;	//射影（プロジェクション）行列.

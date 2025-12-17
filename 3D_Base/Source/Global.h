@@ -113,6 +113,25 @@ struct LIGHT
 	D3DXVECTOR3	Color;
 	D3DXVECTOR3 Atten;		//減衰
 };
+//フォグ.
+struct FOGPARAM
+{
+	bool IsFog;
+	D3DXVECTOR3 cameraPos;
+	D3DXVECTOR3 Color;
+	float Start;
+	float End;
+
+	FOGPARAM()
+		: IsFog			( false )
+		, cameraPos		( { 0.0f, 0.0f, 0.0f } )
+		, Color			( { 1.0f, 1.0f, 1.0f } )
+		, Start			( 0.0f )
+		, End			( 0.0f )
+	{
+	}
+
+};
 
 
 //タンクの情報構造体.
