@@ -51,10 +51,10 @@ void CCamera::Update()
 	//ビュー行列を計算
 	D3DXMatrixLookAtLH(&m_mView, &m_Position, &m_LookAt, &m_Up);
 
-	//プロジェクションもここで更新しておく
-	float fovY = D3DXToRadian(45.0f);
-	float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
-	D3DXMatrixPerspectiveFovLH(&m_mProj, fovY, aspect, 0.1f, 100.0f);
+	////プロジェクションもここで更新しておく
+	//float fovY = D3DXToRadian(45.0f);
+	//float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
+	//D3DXMatrixPerspectiveFovLH(&m_mProj, fovY, aspect, 0.1f, 100.0f);
 
 
 	//SetCamera.Draw側で使う構造体を追尾結果にあわせて更新
@@ -185,4 +185,20 @@ void CCamera::FreeMove()
 	if (GetAsyncKeyState('Y') & 0x8000) {
 		m_Position.z -= add_value;
 	}
+}
+
+void CCamera::SetFog()
+{
+	if (m_Fog.IsFog == false)
+	{
+		return;
+	}
+
+	CDirectX11::GetInstance().UpdateFogConstantBuffer(m_Fog, m_Camera.vPosition);
+
+}
+
+void CCamera::SetIsFog(bool f)
+{
+	m_Fog.IsFog = f;
 }
