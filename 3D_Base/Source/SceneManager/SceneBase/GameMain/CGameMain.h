@@ -54,6 +54,8 @@
 //当たり判定.
 #include "Collision/CollisionManager/CCollisionManager.h"
 
+class CCharacterObjectBase;
+
 class CGameMain
 	: public CSceneBase
 {
@@ -177,6 +179,7 @@ public:
 	// キャラクターマネージャー
 	std::shared_ptr<CCharacterManager>			m_pCharacterManager;
 
+
 	// 弾クラスマネージャー.
 	std::shared_ptr<CShotManager>			m_pShotManager;
 
@@ -222,10 +225,13 @@ private:
 
 public:		
 	// 変数用
-	// 簡易時間を止める変数
-	int		m_StopTimeCount;
 	//Iconの回転用..
 	float	m_Rot;
+
+	//点滅フラグ.
+	bool m_Flashing;
+	//点滅用カウント.
+	float m_FlashingTime;
 
 	//これは何用？
 	D3DXVECTOR3 push;

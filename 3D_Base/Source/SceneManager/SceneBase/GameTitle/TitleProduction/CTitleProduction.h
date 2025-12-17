@@ -4,8 +4,8 @@
 //-----外部クラス-----
 #include "../../../../GameObject/SpriteObject/CSpriteObject.h"	//スプライトオブジェクトクラス.
 #include "../../../../Camera/CCamera.h" //カメラクラス.
-
-
+#include "../../../../GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankBody/CBody.h"
+#include "../../../../GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankCannon/CCannon.h"
 
 //-----メッシュクラス-----
 #include "../../../../Assets/Mesh/StaticMesh/CStaticMesh.h" //スタティックメッシュクラス.
@@ -47,6 +47,8 @@ public:
 
 	//スタティックメッシュクラス.
 	std::shared_ptr<CStaticMesh>		m_BackGroundMesh;	//背景メッシュ.
+	std::shared_ptr<CStaticMesh>		m_BodyMesh;			//ボディメッシュ.
+	std::shared_ptr<CStaticMesh>		m_CannonMesh;			//キャノンメッシュ.
 	//スプライトクラス.
 	std::unique_ptr<CSprite3D>			m_SpriteGround;
 
@@ -54,4 +56,9 @@ public:
 	std::unique_ptr<CStaticMeshObject>	m_pBackImgObject;
 	//地面クラス.
 	std::unique_ptr<CSpriteObject>		m_SpriteObjGround;
+	//プレイヤー(車体)クラス.
+	std::unique_ptr<CBody>				m_Body;
+	//プレイヤー(砲塔)クラス.
+	std::unique_ptr<CCannon>			m_Cannon;
+
 };

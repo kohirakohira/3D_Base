@@ -112,7 +112,8 @@ public:
 	//描画ごとにビューポート設定
 	void SetViewPortSize(float w, float h);
 
-
+	//色の設定.
+	void SetColor(D3DXVECTOR4 c);
 
 	//中心を設定する構造体.
 	struct CenterSetUp
@@ -146,6 +147,8 @@ private:
 	bool			m_MoveFlag;		//テクスチャの動かすか否か.
 
 	float			m_Alpha;		//α値(0:透明、1:完全不透明).
+
+	D3DXVECTOR4		m_Color;		//色の設定.
 
 	SPRITE_STATE	m_SpriteState;	//スプライト情報
 	POINTS			m_PatternNo;	//パターン番号(マス目)

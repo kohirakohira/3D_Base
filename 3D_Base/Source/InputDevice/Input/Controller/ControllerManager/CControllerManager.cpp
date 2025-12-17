@@ -31,6 +31,13 @@ void CControllerManager::Update()
 		}
 		else
 		{
+			// 切断された瞬間だけ
+			if (controller->IsJustDisconnected())
+			{
+				// コントローラーの切断SE
+				CSoundManager::PlaySE(CSoundManager::SE_UnConnect);
+			}
+
 			controller->ControllerAmputation();
 		}
 	}
@@ -78,9 +85,6 @@ void CControllerManager::Reoderring()
 		std::swap(m_Controller[index], m_Controller[nextSlot]);
 
 		nextSlot++;
-
-		// コントローラーの切断SE
-		CSoundManager::PlaySE(CSoundManager::SE_UnConnect);
 	}
 }
 //===================================

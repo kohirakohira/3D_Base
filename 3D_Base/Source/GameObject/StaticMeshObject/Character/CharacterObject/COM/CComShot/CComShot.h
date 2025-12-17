@@ -2,6 +2,7 @@
 
 #include <memory>
 
+
 class CShotManager;
 class CBody;
 class CCannon;
@@ -67,6 +68,9 @@ public:
     //状態取得
     bool IsReady() const { return m_Cooldown <= 0; }
     int GetCooldown() const { return m_Cooldown; }
+
+    //ショットクールダウン
+    void SetShotCollDown(int collDown) { m_Config.cooldownFrames = collDown; }
 
 private:
     std::shared_ptr<CShotManager> m_pShotManager;

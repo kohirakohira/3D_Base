@@ -58,7 +58,7 @@ HRESULT CCannon::InitCannonRay(float len)
     //各パラメータ初期化
     m_CannonRay.Position = m_vPosition;
     m_CannonRay.RotationY = m_vRotation.y;
-    m_CannonRay.Axis = D3DXVECTOR3(0.f, 1.f, 1.f);
+    m_CannonRay.Axis = D3DXVECTOR3(0.f, 0.f, 1.f);
     m_CannonRay.Length = len;
 
     //レイの生成
@@ -222,7 +222,7 @@ bool CCannon::IsPositionInSight(const D3DXVECTOR3& targetPos, float toleranceAng
     float dot = D3DXVec3Dot(&forward, &muzzle);
 
     // 許容角度内か
-    return dot >= Util::Wrap(toleranceAngle);   //sinfでもいい
+    return dot >= sinf(toleranceAngle);  
 }
 
 bool CCannon::HasObstacleInFireLine(const D3DXVECTOR3& targetPos, const std::vector<CStaticMeshObject*>& obstacles) const

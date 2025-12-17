@@ -46,26 +46,33 @@ void CGameResult::Update()
 
 	// コントローラーの繰り上げ処理を呼び出し
 	CControllerManager::GetInstance().Reoderring();
+	
+	//キーの判定.
+	m_Key->Update();
 
 	// 勝ちか引き分けのBGM変更
 	if (m_SceneType == CSceneType::ResultWin)
 	{
 		//BGMのループ再生.
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Win);
+		//↓-----リザルトの演出-----↓.
+
+
+
+		//↑-----リザルトでの演出-----↑.
 	}
 	else if (m_SceneType == CSceneType::ResultDraw)
 	{
 		//BGMのループ再生.
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
+		//↓-----リザルトでの演出-----↓.
+
+
+
+		//↑-----リザルトでの演出-----↑.
 	}
 
-	//↓-----タイトルでの演出-----↓.
-	m_Key->Update();
-
-
-	//↑-----タイトルでの演出-----↑.
-
-		//シーンの遷移.
+	//シーンの遷移.
 	if (controller && controller->CheckConnected())
 	{
 		if (m_Key->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
@@ -115,17 +122,17 @@ void CGameResult::Init()
 	m_pCamera->SetCameraPos(-1.5f, 1.5f, 14.f);
 	m_pCamera->SetLightPos(-1.5f, 2.f, 5.f);
 	//位置の設定.
-	//m_pCharacterManager->SetPosition(0.f, 1.f, 6.f);
+	//m_pCharacterManager->SetPosition(0.0f, 1.0f, 6.0f);
 
 	//大きさを設定.
-	m_pSpriteObj->SetPosition(WND_W / 2 - 640, 0.f, 0.f);
-	m_pSpriteObj->SetRotation(0.f, 0.f, 0.f);
-	m_pSpriteObj->SetScale(0.7f, 0.7f, 0.f);
+	m_pSpriteObj->SetPosition(0.0f, 0.0f, 0.0f);
+	m_pSpriteObj->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pSpriteObj->SetScale(1.0f, 1.0f, 1.0f);
 
 	//大きさを設定.
-	m_pSelectIcon->SetPosition(WND_W / 2 - 128, WND_H / 1.5 + 128, 0.f);
-	m_pSelectIcon->SetRotation(0.f, 0.f, 0.f);
-	m_pSelectIcon->SetScale(1.f, 1.f, 1.f);
+	m_pSelectIcon->SetPosition(WND_W / 2 - 128, WND_H / 1.5 + 128, 0.0f);
+	m_pSelectIcon->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pSelectIcon->SetScale(1.0f, 1.0f, 1.0f);
 
 	//キー設定.
 	m_Key->Init();
@@ -186,8 +193,7 @@ HRESULT CGameResult::LoadData()
 	};
 	//タイトル画像のスプライト設定.
 	CSprite2D::SPRITE_STATE SELECT_SIZE = {
-		256, 
-		6,		//描画幅,高さ.
+		256, 96,		//描画幅,高さ.
 		256, 96,		//元画像の幅,高さ.
 		256, 96			//アニメーションをしないので、0でいい.
 	};
@@ -205,12 +211,12 @@ HRESULT CGameResult::LoadData()
 	if (m_SceneType == CSceneType::ResultWin)
 	{
 		//独り勝ちスプライトの読み込み.
-		m_pSpriteResult->Init(_T("Data\\Texture\\Image\\Clear.png"), WH_SIZE, false);
+		m_pSpriteResult->Init(_T("Data\\Texture\\Image\\Winner.png"), WH_SIZE, false);
 	}
 	else if (m_SceneType == CSceneType::ResultDraw)
 	{
 		//引き分けスプライトの読み込み.
-		m_pSpriteResult->Init(_T("Data\\Texture\\Image\\Over.png"), WH_SIZE, false);
+		m_pSpriteResult->Init(_T("Data\\Texture\\Image\\Draw.png"), WH_SIZE, false);
 	}
 
 	//選択画像のスプライトの読み込み.
@@ -233,18 +239,15 @@ HRESULT CGameResult::LoadData()
 
 CSceneType CGameResult::WinOrDrawFunction()
 {
-	//仮で作ってみた.
-	//正直考え直したほうがいいかも?
-
 	//一人で勝っていたら.
-	if (NoMajic <= 0)
+	if (CGameDataManager::GetInstance().SameKill() == true)
 	{
 		m_SceneType = CSceneType::ResultWin;
 	}
-	//同じキル数なら.
-	if (NoMajic > 0)
+	else
 	{
 		m_SceneType = CSceneType::ResultDraw;
 	}
+
 	return m_SceneType;
 }

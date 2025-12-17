@@ -37,6 +37,9 @@ public:
 	void SetIsDisplay(bool flag) { m_IsDisplay = flag; }
 	bool GetIsDisplay() { return m_IsDisplay; }
 
+	//F‚Ìİ’è.
+	void SetColor(D3DXVECTOR4 c);
+
 protected:
 	//CGameObject‚©‚çŒp³‚µ‚½ŠÖ”
 	//final : ‚±‚êˆÈ~‚Íoverride‚³‚¹‚È‚¢

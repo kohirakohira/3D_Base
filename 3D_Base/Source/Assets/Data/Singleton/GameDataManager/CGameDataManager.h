@@ -20,6 +20,9 @@ public:
 	//キル数を初期化.
 	void Init();
 
+	//同じキル数なのかを判定する関数.
+	bool SameKill();
+
 private:
 	//friend：クラスや関数に「private/protectedメンバへのアクセス権」を与えることができる.
 	friend class CSingleton<CGameDataManager>;
