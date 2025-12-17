@@ -32,15 +32,6 @@ public:
 		static CDirectX11 s_Instance;	//s_:staticの意味.
 		return s_Instance;
 	}
-public:
-	//フォグ構造体.
-	struct FOGBUFFER
-	{
-		D3DXVECTOR3 CameraPos;	//カメラ位置.
-		float		FogStart;	//開始距離.
-		D3DXVECTOR3 FogColor;	//フォグの色.
-		float		FogEnd;		//終了距離.
-	};
 
 public:
 
@@ -55,9 +46,6 @@ public:
 	void SetDepth( bool flag );
 	//アルファブレンドON/OFF切り替え.
 	void SetAlphaBlend( bool flag );
-
-	//Fog情報の設定.
-	void UpdateFogConstantBuffer(const FOGPARAM fog, const D3DXVECTOR3 camPos);
 
 	//バックバッファクリア関数.
 	void ClearBackBuffer();
@@ -98,9 +86,6 @@ private://外部からアクセス不可能.
 	//アルファブレンドステート作成.
 	HRESULT CreateAlphaBlendState();
 
-	//Fogバッファ作成.
-	HRESULT CreateFogConstantBuffer();
-
 private:
 	ID3D11Device*				m_pDevice11;			//デバイスオブジェクト.
 	ID3D11DeviceContext*		m_pContext11;			//デバイスコンテキスト.
@@ -112,9 +97,6 @@ private:
 	//深度（Ｚ）テスト設定.
 	ID3D11DepthStencilState*	m_pDepthStencilStateOn;		//有効設定.
 	ID3D11DepthStencilState*	m_pDepthStencilStateOff;	//無効設定.
-
-	//Fog.
-	ID3D11Buffer*			m_pFogBuffer;
 
 	//アルファブレンド.
 	ID3D11BlendState*		m_pAlphaBlendOn;	//有効設定.

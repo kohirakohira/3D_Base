@@ -44,6 +44,15 @@ public:
 		D3DXVECTOR2	Tex;	//テクスチャ座標.
 	};
 
+	//フォグ構造体.
+	struct FOGBUFFER
+	{
+		D3DXVECTOR3 CameraPos;	//カメラ位置.
+		float		FogStart;	//開始距離.
+		D3DXVECTOR3 FogColor;	//フォグの色.
+		float		FogEnd;		//終了距離.
+	};
+
 public:
 	CSprite3D();	//コンストラクタ.
 	~CSprite3D();	//デストラクタ.
@@ -120,6 +129,7 @@ private:
 	ID3D11Buffer*			m_pConstantBuffer;	//コンスタントバッファ.
 
 	ID3D11Buffer*			m_pVertexBuffer;	//頂点バッファ.
+	ID3D11Buffer*			m_pFogConstantBuffer;//Fogバッファ.
 
 	ID3D11ShaderResourceView*	m_pTexture;			//テクスチャ.
 	ID3D11SamplerState*			m_pSampleLinear;	//サンプラ:テクスチャに各種フィルタをかける.

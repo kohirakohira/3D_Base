@@ -72,12 +72,6 @@ HRESULT CDirectX11::Create(HWND hWnd)
 		return E_FAIL;
 	}
 
-	//Fogバッファ作成.
-	if (FAILED(CreateFogConstantBuffer()))
-	{
-		return E_FAIL;
-	}
-
 	//------------------------------------------------
 	//	ビューポート設定.
 	//------------------------------------------------
@@ -319,25 +313,6 @@ HRESULT CDirectX11::CreateAlphaBlendState()
 	return S_OK;
 }
 
-//Fogバッファ作成.
-HRESULT CDirectX11::CreateFogConstantBuffer()
-{
-	D3D11_BUFFER_DESC desc{};
-	desc.BindFlags		= D3D11_BIND_CONSTANT_BUFFER;
-	desc.ByteWidth		= sizeof(FOGBUFFER);
-	desc.Usage			= D3D11_USAGE_DYNAMIC;
-	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	if (FAILED(m_pDevice11->CreateBuffer(&desc, nullptr, &m_pFogBuffer)))
-	{
-		_ASSERT_EXPR(false, _T("Fog ConstantBuffer 作成失敗"));
-		return E_FAIL;
-	}
-
-	return S_OK;
-}
-
-
 //透過設定の切り替え.
 void CDirectX11::SetAlphaBlend( bool flag )
 {
@@ -347,52 +322,6 @@ void CDirectX11::SetAlphaBlend( bool flag )
 
 	//アルファブレンド設定をセット.
 	m_pContext11->OMSetBlendState( pTmp, nullptr, mask );
-}
-
-//Fog情報の設定.
-void CDirectX11::UpdateFogConstantBuffer(const FOGPARAM fog, const D3DXVECTOR3 camPos)
-{
-	//中身がないときは処理をしない.
-	if (m_pFogBuffer == nullptr)
-	{
-		return;
-	}
-
-	//D3D11_MAPPED_SUBRESOURCE:サブリソースデータへのアクセス提供.
-	D3D11_MAPPED_SUBRESOURCE mapped;
-
-	//GPUが持っているメモリを、一時的にCPUから触れるようにするための関数.
-	//アクセス可能にする.
-	m_pContext11->Map(
-		m_pFogBuffer, 
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&mapped
-	);
-
-	FOGBUFFER* buf	= reinterpret_cast<FOGBUFFER*>(mapped.pData);
-	buf->FogColor	= fog.Color;
-	buf->FogStart	= fog.Start;
-	buf->FogEnd		= fog.End;
-	buf->CameraPos	= fog.cameraPos;
-
-	//アクセスを閉じる.
-	m_pContext11->Unmap(m_pFogBuffer, 0);
-
-	m_pContext11->VSSetConstantBuffers(
-		1,
-		1,
-		&m_pFogBuffer
-	);
-
-	//ピクセルシェーダーにバインド.
-	m_pContext11->PSSetConstantBuffers(
-		1,
-		1,
-		&m_pFogBuffer
-	);
-
 }
 
 //深度（Ｚ）テストON/OFF切り替え.

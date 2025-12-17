@@ -22,6 +22,7 @@ CTitleProduction::CTitleProduction()
 
 CTitleProduction::~CTitleProduction()
 {
+	m_Camera->SetIsFog(false);
 }
 
 //“®ìŠÖ”.

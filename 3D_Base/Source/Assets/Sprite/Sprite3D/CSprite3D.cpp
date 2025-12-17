@@ -6,26 +6,27 @@ const TCHAR SHADER_NAME[] = _T( "Data\\Shader\\Sprite3D.hlsl" );
 
 //コンストラクタ.
 CSprite3D::CSprite3D()
-	: m_pDx11			( nullptr )
-	, m_pDevice11		( nullptr )
-	, m_pContext11		( nullptr )
-	, m_pVertexShader	( nullptr )
-	, m_pVertexLayout	( nullptr )
-	, m_pPixelShader	( nullptr )
-	, m_pConstantBuffer	( nullptr )
-	, m_pVertexBuffer	( nullptr )
-	, m_pSampleLinear	( nullptr )
-	, m_pTexture		( nullptr )
-	, m_vPosition		()
-	, m_vRotation		()
-	, m_vScale			( 1.0f, 1.0f, 1.0f )
-	, m_UV				( 0.0f, 0.0f )
-	, m_MoveFlag		( false )
-	, m_Alpha			( 1.0f )
-	, m_SpriteState		()
-	, m_PatternNo		()
-	, m_PatternMax		()
-	, m_Billboard		( false )
+	: m_pDx11					( nullptr )
+	, m_pDevice11				( nullptr )
+	, m_pContext11				( nullptr )
+	, m_pVertexShader			( nullptr )
+	, m_pVertexLayout			( nullptr )
+	, m_pPixelShader			( nullptr )
+	, m_pConstantBuffer			( nullptr )
+	, m_pVertexBuffer			( nullptr )
+	, m_pFogConstantBuffer		( nullptr )
+	, m_pSampleLinear			( nullptr )
+	, m_pTexture				( nullptr )
+	, m_vPosition				()
+	, m_vRotation				()
+	, m_vScale					( 1.0f, 1.0f, 1.0f )
+	, m_UV						( 0.0f, 0.0f )
+	, m_MoveFlag				( false )
+	, m_Alpha					( 1.0f )
+	, m_SpriteState				()
+	, m_PatternNo				()
+	, m_PatternMax				()
+	, m_Billboard				( false )
 {
 }
 
@@ -231,6 +232,17 @@ HRESULT CSprite3D::CreateShader()
 		return E_FAIL;
 	}
 
+	D3D11_BUFFER_DESC fogCb = {};
+	fogCb.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
+	fogCb.ByteWidth			= sizeof(FOGBUFFER);
+	fogCb.CPUAccessFlags	= D3D11_CPU_ACCESS_WRITE;
+	fogCb.Usage				= D3D11_USAGE_DYNAMIC;
+
+	if (FAILED(m_pDevice11->CreateBuffer(&fogCb, nullptr, &m_pFogConstantBuffer)))
+	{
+		_ASSERT_EXPR(false, _T("Fog ConstantBuffer 作成失敗"));
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
