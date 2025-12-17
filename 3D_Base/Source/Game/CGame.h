@@ -1,7 +1,5 @@
 #pragma once
 #include "Scenemanager//CSceneManager.h" //シーンマネージャークラス
-#include "GameObject/UI/CUIObject/CUIObject.h"
-#include "Assets/BackGround/BackGround.h"	//空の板ポリゴン.
 
 /********************************************************************************
 *	ゲームクラス.
@@ -27,11 +25,6 @@ private:
 
 	//シーンマネージャー.
 	std::shared_ptr<CSceneManager>	m_pSceneManager;
-
-	//板ポリ画像.
-	std::unique_ptr<CUIObject>		m_BackGroundImg;
-	//空の板ポリ.
-	std::unique_ptr<BackGround>		m_BackGround;
 
 private:
 	//=delete「削除定義」と呼ばれる機能.

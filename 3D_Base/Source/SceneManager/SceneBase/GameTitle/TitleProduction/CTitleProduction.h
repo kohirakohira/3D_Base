@@ -6,6 +6,7 @@
 #include "../../../../Camera/CCamera.h" //カメラクラス.
 #include "../../../../GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankBody/CBody.h"
 #include "../../../../GameObject/StaticMeshObject/Character/CharacterObject/Player/PlayerTank/TankCannon/CCannon.h"
+#include "../../../../Assets/BackGround/BackGround.h"
 
 //-----メッシュクラス-----
 #include "../../../../Assets/Mesh/StaticMesh/CStaticMesh.h" //スタティックメッシュクラス.
@@ -44,6 +45,10 @@ public:
 
 	//カメラクラス.
 	std::shared_ptr<CCamera>			m_Camera;
+	//板ポリ画像.
+	std::shared_ptr<CSprite3D>		m_BackGroundImg;
+	//空の板ポリ.
+	std::unique_ptr<BackGround>		m_BackGround;
 
 	//スタティックメッシュクラス.
 	std::shared_ptr<CStaticMesh>		m_BackGroundMesh;	//背景メッシュ.

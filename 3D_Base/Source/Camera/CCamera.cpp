@@ -20,7 +20,7 @@ CCamera::CCamera()
 
 	//ライト情報
 	m_Light.Position = D3DXVECTOR3(0.f, 3.f, 0.f);	//ライト方向
-	m_Light.Range = 12.0f;
+	m_Light.Range = 100.0f;
 	m_Light.Color = D3DXVECTOR3(1.f, 1.f, 1.f);
 	m_Light.fIntensity = 1.0f;
 	m_Light.Atten = D3DXVECTOR3(1.0f, 0.f, 0.05f);
@@ -109,7 +109,7 @@ void CCamera::Projection()
 	//アスペクト（幅÷高さ）.
 	float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
 	float near_z = 0.3f;
-	float far_z = 1000.0f;
+	float far_z = 5000.0f;
 
 	//プロジェクション（射影）変換.
 	D3DXMatrixPerspectiveFovLH(

@@ -13,6 +13,10 @@ CTitleProduction::CTitleProduction()
 	, m_Cannon				( nullptr )
 
 	, m_UV					( 0.0f, 0.0f )
+
+	, m_BackGround			( nullptr )
+	, m_BackGroundImg		( nullptr )
+
 {
 }
 
@@ -39,10 +43,13 @@ void CTitleProduction::Draw()
 	//カメラの情報更新.
 	m_Camera->Info();
 
+	//背景の描画.
+	m_BackGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
+
 	//地面を描画する.
 	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 	//背景を描画する.
-	m_pBackImgObject->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
+	//m_pBackImgObject->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
 	//プレイヤーを描画する.
 	m_Cannon->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
 	m_Body->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
@@ -54,6 +61,12 @@ void CTitleProduction::Create()
 {
 	//カメラ生成.
 	m_Camera			= std::make_shared<CCamera>();
+
+	//背景画像のインスタンス生成.
+	m_BackGroundImg = std::make_shared<CSprite3D>();
+
+	//背景のインスタンス生成.
+	m_BackGround = std::make_unique<BackGround>();
 
 	//地面の生成.
 	m_SpriteGround		= std::make_unique<CSprite3D>();
@@ -91,7 +104,7 @@ void CTitleProduction::Init()
 	m_Camera->SetLightIntensity(100.0f);			//ライトの強さ.
 	m_Camera->SetLightRange(1000.0f);				//ライトの長さ.
 	m_Camera->SetLightAtten(0.0f, 0.0f, 0.1f);		//ライトの減衰.
-	m_Camera->SetCameraPos(0.0f, 0.0f, 0.0f);		//カメラ位置の設定.
+	m_Camera->SetCameraPosition(D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });		//カメラ位置の設定.
 
 	//地面の設定.
 	D3DXVECTOR3 angle = { 0.0f, 0.0f, 0.0f };
@@ -105,6 +118,10 @@ void CTitleProduction::Init()
 	m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
 	m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pBackImgObject->SetScale(300.0f, 300.0f, 300.0f);
+
+	m_BackGround->SetPosition(0.0f, 0.0f, 1000.0f);
+	m_BackGround->SetRotation(0.0f, 0.0f, 0.0f);
+	m_BackGround->SetScale(1.0f, 1.0f, 1.0f);
 
 	//プレイヤーの設定.
 	m_Cannon->SetPosition(POS_X, 0.1f, POS_Z);
@@ -125,6 +142,17 @@ HRESULT CTitleProduction::LoadData()
 		256,256,
 		256,256
 	};
+	//背景画像のスプライト設定
+	CSprite3D::SPRITE_STATE SBACK_SIZE =
+	{
+		WND_W, WND_H,		//描画幅高さ.
+		1536.0f, 1024.0f,	//元画像幅高さ.
+		WND_W, WND_H		//1コマあたりの幅高さ.
+	};
+	m_BackGroundImg->Init(CDirectX11::GetInstance(),
+		_T("Data\\Mesh\\Static\\OutBackImage\\BackImg.png"), SBACK_SIZE);
+
+	m_BackGround->AttachSprite(*m_BackGroundImg);
 
 	//スプライトの読み込み.
 	m_SpriteGround->Init(CDirectX11::GetInstance(), _T("Data\\Mesh\\Static\\Ground\\groundex.bmp"), GROUND);
