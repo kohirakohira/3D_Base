@@ -39,8 +39,8 @@
 //選択肢.
 #include "GameObject//UI//CUIObject//ChoiceImage//CChoiceImage.h"  // 選択肢クラス
 
-
-
+//リザルトの演出.
+#include "SceneManager/SceneBase/GameResult/ResultProduction/CResultProduction.h"
 
 //前方宣言.
 class CSprite2D;
@@ -92,9 +92,11 @@ public:
 	//シーンタイプ変数.
 	CSceneType m_SceneType;
 
+	//リザルト演出.
+	std::unique_ptr<CResultProduction>	m_pResultProduction;
 
 	//演出.
-	std::shared_ptr<CCharacterManager>		m_pCharacterManager;
+	std::shared_ptr<CCharacterManager>	m_pCharacterManager;
 	std::shared_ptr<CGround>			m_pGround;
 	//カメラ.
 	std::shared_ptr<CCamera>			m_pCamera;

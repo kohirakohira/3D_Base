@@ -3,10 +3,13 @@
 
 //-----外部クラス-----
 #include "../../../../Camera/CCamera.h" //カメラクラス.
-#include "../../../../GameObject/StaticMeshObject/Ground/CGround.h" //地面クラス.
+
+
+
 
 //-----メッシュクラス-----
 #include "../../../../Assets/Mesh/StaticMesh/CStaticMesh.h" //スタティックメッシュクラス.
+#include "../../../../Assets/Sprite/Sprite3D/CSprite3D.h" //地面スプライト.
 
 
 //======================================================
@@ -39,6 +42,9 @@ public:
 private:
 	//スタティックメッシュクラス.
 	std::shared_ptr<CStaticMesh>	m_GroundMesh;		//地面メッシュ.
+
+	//スプライト3D.
+	std::shared_ptr<CSprite3D>		m_SpriteGround;
 
 	//カメラクラス変数.
 	std::shared_ptr<CCamera>		m_Camera;

@@ -19,7 +19,7 @@ CGameResult::CGameResult(HWND hWnd)
 	, m_pStaticMeshGround	( nullptr )
 	, m_pStaticMeshCloud	( nullptr )
 
-	, m_pCharacterManager		( nullptr )
+	, m_pCharacterManager	( nullptr )
 	, m_pGround				( nullptr )
 
 	, m_pCamera				( nullptr )
@@ -29,6 +29,8 @@ CGameResult::CGameResult(HWND hWnd)
 	, DrawFlag				( false )
 
 	, m_Key					( nullptr )
+
+	, m_pResultProduction	( nullptr )
 {
 	//結果がどっちか判定.
 	WinOrDrawFunction();
@@ -57,7 +59,7 @@ void CGameResult::Update()
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Win);
 		//↓-----リザルトの演出-----↓.
 
-
+		m_pResultProduction->WinUpdate();
 
 		//↑-----リザルトでの演出-----↑.
 	}
@@ -67,7 +69,7 @@ void CGameResult::Update()
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
 		//↓-----リザルトでの演出-----↓.
 
-
+		m_pResultProduction->DrawUpdate();
 
 		//↑-----リザルトでの演出-----↑.
 	}
@@ -115,6 +117,9 @@ void CGameResult::Draw()
 
 void CGameResult::Init()
 {
+	//初期化.
+	m_pResultProduction->Init();
+
 	//カメラの位置.
 	m_pCamera->SetCameraPos(-1.5f, 1.5f, 14.f);
 	m_pCamera->SetLightPos(-1.5f, 2.f, 5.f);
@@ -172,10 +177,16 @@ void CGameResult::Create()
 	//キーインプット.
 	m_Key = std::make_shared<CMultiInputKeyManager>();
 
+	//リザルトの演出.
+	m_pResultProduction = std::make_unique<CResultProduction>();
+
 }
 
 HRESULT CGameResult::LoadData()
 {
+	//リザルト演出のデータ読み取り.
+	m_pResultProduction->LoadData();
+
 	//タイトル画像のスプライト設定.
 	CSprite2D::SPRITE_STATE WH_SIZE = {
 		WND_W,WND_H,		//描画幅,高さ.
