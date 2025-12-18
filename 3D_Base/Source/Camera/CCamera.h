@@ -50,9 +50,6 @@ public:
 	void SetLightIntensity(float I) { m_Light.fIntensity = I; }
 	void SetLightRange(float r) { m_Light.Range = r; }
 	void SetLightAtten(float kc, float kl, float kq) { m_Light.Atten = D3DXVECTOR3(kc, kl, kq); }
-
-	const D3DXVECTOR3& GetPosition() const { return m_Position; }
-	void SetCameraPosition(D3DXVECTOR3 pos) { m_Position = pos; }
 public:
 	//構造体設定変数.
 	CAMERA			m_Camera;
@@ -63,11 +60,9 @@ public:
 private:
 	D3DXVECTOR3		m_TargetPos;		//ターゲットの位置
 	float			m_TargetRotY;		//ターゲットのY軸回転
-	D3DXVECTOR3		m_Position;			//カメラの位置
 	float			m_Distance;			//カメラとターゲットの距離
 	float			m_HeightOffset;		//ターゲットからの高さ
 	D3DXVECTOR3		m_Up;				//上方向
-	D3DXVECTOR3		m_LookAt;			//注視点
 
 
 

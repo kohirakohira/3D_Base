@@ -99,12 +99,11 @@ void CTitleProduction::Init()
 	//カメラの初期化.
 	m_Camera->Init();
 	//カメラの設定.
-	m_Camera->SetLightPos(0.0f, 0.0f, 0.0f);		//位置設定.
+	m_Camera->SetLightPos(0.0f, 50.0f, 0.0f);		//位置設定.
 	m_Camera->SetLightColor(1.0f, 1.0f, 1.0f);		//色の設定.
 	m_Camera->SetLightIntensity(100.0f);			//ライトの強さ.
 	m_Camera->SetLightRange(1000.0f);				//ライトの長さ.
 	m_Camera->SetLightAtten(0.0f, 0.0f, 0.1f);		//ライトの減衰.
-	m_Camera->SetCameraPosition(D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });		//カメラ位置の設定.
 
 	//地面の設定.
 	D3DXVECTOR3 angle = { 0.0f, 0.0f, 0.0f };
@@ -114,14 +113,14 @@ void CTitleProduction::Init()
 	m_SpriteObjGround->SetPosition(0.0f, -100.0f, 200.0f);
 	m_SpriteObjGround->SetScale(8.0f, 8.0f, 8.0f);
 
-	//背景の初期化.
-	m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
-	m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
-	m_pBackImgObject->SetScale(300.0f, 300.0f, 300.0f);
+	////背景の初期化.
+	//m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
+	//m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
+	//m_pBackImgObject->SetScale(300.0f, 300.0f, 300.0f);
 
-	m_BackGround->SetPosition(0.0f, 0.0f, 1000.0f);
-	m_BackGround->SetRotation(0.0f, 0.0f, 0.0f);
-	m_BackGround->SetScale(1.0f, 1.0f, 1.0f);
+	m_BackGround->SetPosition(0.0f, 100.0f, 1000.0f);
+	m_BackGround->SetRotation(0.0f, D3DXToRadian(-45), 0.0f);
+	m_BackGround->SetScale(4.0f, 1.0f, 4.0f);
 
 	//プレイヤーの設定.
 	m_Cannon->SetPosition(POS_X, 0.1f, POS_Z);
@@ -146,7 +145,7 @@ HRESULT CTitleProduction::LoadData()
 	CSprite3D::SPRITE_STATE SBACK_SIZE =
 	{
 		WND_W, WND_H,		//描画幅高さ.
-		1536.0f, 1024.0f,	//元画像幅高さ.
+		WND_W, WND_H,		//元画像幅高さ.
 		WND_W, WND_H		//1コマあたりの幅高さ.
 	};
 	m_BackGroundImg->Init(CDirectX11::GetInstance(),

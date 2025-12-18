@@ -6,10 +6,8 @@
 CCamera::CCamera()
 	: m_TargetPos	(0.f, 0.f, 0.f)
 	, m_TargetRotY	(0.f)
-	, m_Position	(0.f,2.f,0.f)	
 	, m_Distance	(4.f)
 	, m_HeightOffset(2.0f)
-	, m_LookAt(0.0f, 2.0f, 0.0f)
 	, m_Up(0.0f, 1.0f, 0.0f)
 
 
@@ -39,28 +37,22 @@ void CCamera::Update()
 	D3DXVec3TransformCoord(&backward, &backward, &rotY);
 
 	//プレイヤーの位置からｍ距離分だけ下がった場所にカメラをおく
-	m_Position = m_TargetPos - (backward * m_Distance);
+	m_Camera.vPosition = m_TargetPos - (backward * m_Distance);
 	//見下ろし視点にする
-	m_Position.y += m_HeightOffset;
+	m_Camera.vPosition.y += m_HeightOffset;
 
 	//視線の先.ターゲット位置+少し前を見るようにする
 	D3DXVECTOR3 forward = backward * 3.0f;
-	m_LookAt = m_TargetPos + forward;
-	m_LookAt.y += 0.5f;	//視線の高さ微調整
+	m_Camera.vLook = m_TargetPos + forward;
+	m_Camera.vLook.y += 0.5f;	//視線の高さ微調整
 
 	//ビュー行列を計算
-	D3DXMatrixLookAtLH(&m_mView, &m_Position, &m_LookAt, &m_Up);
+	D3DXMatrixLookAtLH(&m_mView, &m_Camera.vPosition, &m_Camera.vLook, &m_Up);
 
 	//プロジェクションもここで更新しておく
 	float fovY = D3DXToRadian(45.0f);
 	float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
 	D3DXMatrixPerspectiveFovLH(&m_mProj, fovY, aspect, 0.1f, 100.0f);
-
-
-	//SetCamera.Draw側で使う構造体を追尾結果にあわせて更新
-	m_Camera.vPosition = m_Position;
-	m_Camera.vLook = m_LookAt;
-
 }
 
 
@@ -168,21 +160,21 @@ void CCamera::FreeMove()
 	//カメラ座標のデバックコマンド.
 	float add_value = 0.005f;
 	if (GetAsyncKeyState('G') & 0x8000) {
-		m_Position.y += add_value;
+		m_Camera.vPosition.y += add_value;
 	}
 	if (GetAsyncKeyState('T') & 0x8000) {
-		m_Position.y -= add_value;
+		m_Camera.vPosition.y -= add_value;
 	}
 	if (GetAsyncKeyState('H') & 0x8000) {
-		m_Position.x -= add_value;
+		m_Camera.vPosition.x -= add_value;
 	}
 	if (GetAsyncKeyState('F') & 0x8000) {
-		m_Position.x += add_value;
+		m_Camera.vPosition.x += add_value;
 	}
 	if (GetAsyncKeyState('Q') & 0x8000) {
-		m_Position.z += add_value;
+		m_Camera.vPosition.z += add_value;
 	}
 	if (GetAsyncKeyState('Y') & 0x8000) {
-		m_Position.z -= add_value;
+		m_Camera.vPosition.z -= add_value;
 	}
 }
