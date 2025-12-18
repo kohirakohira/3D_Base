@@ -9,13 +9,32 @@
 class CSoundManager
 {
 public: // 構造体
-    enum SE // 効果音 
+    enum SoundList // 音のリスト 
     {
-        SE_QUACK,    // サンプル1
-        SE_CLEAR,    // サンプル2
-        BGM_sample,  // サンプル3
+        BGM_Title,		//タイトルステージ.
+        BGM_Main,		//ゲームメイン.
+        BGM_Result_Win,	//リザルト(勝利)
+        BGM_Result_Draw,//リザルト(引き分け)
 
-        MAX
+        SE_Select,		//選択肢.
+        SE_Click,		//決定.
+        SE_Connect,		//コントローラー接続.
+        SE_UnConnect,	//コントローラーの接続が切れる.
+
+        SE_GameStart,	//ゲームの開始.
+        SE_GameEnd,		//ゲームの終了.
+        SE_FireWork,	//花火.
+        SE_Spark,		//火花.
+        SE_Door,		//シャッター.
+
+        SE_Shot,		//発射.
+        SE_Damage,		//ダメージ.
+        SE_Explosion,	//爆発.
+        SE_Impact,		//衝突.
+        SE_Move,		//戦車の移動音.
+
+        //音が増えたら「ここ」に追加してください.
+        max,		//最大数.
     };
 
 public:
@@ -28,17 +47,17 @@ public:
     bool Load();
     void Release();
 
-    static void PlaySE(SE id)
+    static void PlaySE(SoundList id)
     {
         GetInstance().m_SoundMap[id]->PlaySE();
     }
 
-    static void PlayLoop(SE id)
+    static void PlayLoop(SoundList id)
     {
         GetInstance().m_SoundMap[id]->PlayLoop();
     }
 
-    static void Stop(SE id)
+    static void Stop(SoundList id)
     {
         GetInstance().m_SoundMap[id]->Stop();
     }
@@ -57,5 +76,5 @@ private:
     IXAudio2MasteringVoice* m_pMasteringVoice;
 
 
-    std::map<SE, CSound*> m_SoundMap;
+    std::map<SoundList, CSound*> m_SoundMap;
 };
