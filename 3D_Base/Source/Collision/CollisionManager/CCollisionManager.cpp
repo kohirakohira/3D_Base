@@ -99,32 +99,56 @@ void CCollisionManager::WalltoPlayer()
 		{
 			push.z -= pushStrength;
 
-			//Õ“ËSE‚ÌÄ¶.
-			CSoundManager::PlaySE(CSoundManager::SE_Impact);
+			if (chara->GetHitWall() == false)
+			{
+				//Õ“ËSE‚ÌÄ¶.
+				CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
+				chara->SetHitWall(true);
+			}
 		}
 		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
 			push.z += pushStrength;
 
-			//Õ“ËSE‚ÌÄ¶.
-			CSoundManager::PlaySE(CSoundManager::SE_Impact);
+			if (chara->GetHitWall() == false)
+			{
+				//Õ“ËSE‚ÌÄ¶.
+				CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
+				chara->SetHitWall(true);
+			}
 		}
 		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
 			push.x += pushStrength;
 
-			//Õ“ËSE‚ÌÄ¶.
-			CSoundManager::PlaySE(CSoundManager::SE_Impact);
+			if (chara->GetHitWall() == false)
+			{
+				//Õ“ËSE‚ÌÄ¶.
+				CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
+				chara->SetHitWall(true);
+			}
 		}
 		if (Coll->CheckCollision(*m_pWallRight->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
 			push.x -= pushStrength;
 
-			//Õ“ËSE‚ÌÄ¶.
-			CSoundManager::PlaySE(CSoundManager::SE_Impact);
+			if (chara->GetHitWall() == false)
+			{
+				//Õ“ËSE‚ÌÄ¶.
+				CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
+				chara->SetHitWall(true);
+			}
 		}
 
 		// ‰Ÿ‚µ•Ô‚µ‚ð³‹K‰»
@@ -363,95 +387,16 @@ void CCollisionManager::WoodBoxtoPlayer()
 					chara->GetBody()->PushBack(dir);
 					chara->GetCannon()->PushBack(dir);
 
-					//Õ“ËSE‚ÌÄ¶.
-					CSoundManager::PlaySE(CSoundManager::SE_Impact);
+					if (chara->GetHitBox() == false)
+					{
+						//Õ“ËSE‚ÌÄ¶.
+						CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+						// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
+						chara->SetHitBox(true);
+					}
 				}
 			}
-		}
-
-		{
-			// ŽÔ‘Ì‚ª•Ç‚ÆÚG‚µ‚½‚Æ‚«
-			//// ¶ã
-			//if (Coll->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
-			//{
-			//	// Õ“ËŽž‚Ì‰Ÿ‚µ•Ô‚µˆ——á
-			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopLeft->GetPosition();
-
-			//	// pushƒxƒNƒgƒ‹‚ð³‹K‰»‚µ‚Ä‰Ÿ‚µ•Ô‚µ‚Ì‹­‚³‚ð‚©‚¯‚é
-			//	float length = D3DXVec3Length(&push);
-			//	if (length > 0.0001f)
-			//	{
-			//		push /= length;
-			//		push *= pushStrength;
-			//		player->GetBody()->PushBack(push);
-			//	}
-			//}
-			//// ‰Eã
-			//if (Coll->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
-			//{
-			//	// Õ“ËŽž‚Ì‰Ÿ‚µ•Ô‚µˆ——á
-			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopRight->GetPosition();
-
-			//	// pushƒxƒNƒgƒ‹‚ð³‹K‰»‚µ‚Ä‰Ÿ‚µ•Ô‚µ‚Ì‹­‚³‚ð‚©‚¯‚é
-			//	float length = D3DXVec3Length(&push);
-			//	if (length > 0.0001f)
-			//	{
-			//		push /= length;
-			//		push *= pushStrength;
-			//		player->GetBody()->PushBack(push);
-			//	}
-			//}
-			//// ’†‰›
-			//if (Coll->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
-			//{
-			//	// Õ“ËŽž‚Ì‰Ÿ‚µ•Ô‚µˆ——á
-			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxCenter->GetPosition();
-
-			//	// pushƒxƒNƒgƒ‹‚ð³‹K‰»‚µ‚Ä‰Ÿ‚µ•Ô‚µ‚Ì‹­‚³‚ð‚©‚¯‚é
-			//	float length = D3DXVec3Length(&push);
-			//	if (length > 0.0001f)
-			//	{
-			//		push /= length;
-			//		push *= pushStrength;
-			//		player->GetBody()->PushBack(push);
-			//	}
-			//}
-			//// ¶‰º
-			//if (Coll->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
-			//{
-			//	// Õ“ËŽž‚Ì‰Ÿ‚µ•Ô‚µˆ——á
-			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomLeft->GetPosition();
-
-			//	// pushƒxƒNƒgƒ‹‚ð³‹K‰»‚µ‚Ä‰Ÿ‚µ•Ô‚µ‚Ì‹­‚³‚ð‚©‚¯‚é
-			//	float length = D3DXVec3Length(&push);
-			//	if (length > 0.0001f)
-			//	{
-			//		push /= length;
-			//		push *= pushStrength;
-			//		player->GetBody()->PushBack(push);
-			//	}
-			//}
-			//// ‰E‰º
-			//if (Coll->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
-			//{
-			//	// Õ“ËŽž‚Ì‰Ÿ‚µ•Ô‚µˆ——á
-			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomRight->GetPosition();
-
-			//	// pushƒxƒNƒgƒ‹‚ð³‹K‰»‚µ‚Ä‰Ÿ‚µ•Ô‚µ‚Ì‹­‚³‚ð‚©‚¯‚é
-			//	float length = D3DXVec3Length(&push);
-			//	if (length > 0.0001f)
-			//	{
-			//		push /= length;
-			//		push *= pushStrength;
-			//		player->GetBody()->PushBack(push);
-			//	}
-			//}
-			//// ‰Ÿ‚µ•Ô‚µ‚ð³‹K‰»
-			//if (D3DXVec3Length(&push) > 0.f)
-			//{
-			//	D3DXVec3Normalize(&push, &push);
-			//	push *= pushStrength;
-			//}
 		}
 	}
 }

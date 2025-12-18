@@ -138,6 +138,9 @@ public:
 	//体力最大値取得.
 	virtual int GetMaxHP() const { return m_Chara.m_MaxHp; }
 
+	// サウンドフラグ初期化
+	virtual void ResetSoundFlg();
+
 protected:
 	//車体クラス.
 	std::shared_ptr<CBody>			m_pBody;
@@ -157,4 +160,7 @@ protected:
 
 	//プレイヤーID
 	int m_PlayerID;
+
+	// サウンドタイマー
+	float m_SoundTimer;
 };

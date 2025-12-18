@@ -131,6 +131,9 @@ void CPlayer::Update()
 		return;
 	}
 
+	// サウンドリセット関数
+	ResetSoundFlg();
+
 	// ダメージ処理の更新
 	Damage();
 	// 死亡処理の更新

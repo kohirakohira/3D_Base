@@ -7,6 +7,7 @@ CCharacterObjectBase::CCharacterObjectBase()
 	, m_IsAlive				( false )
 	, m_HasControl			( false )
 	, m_PlayerID			( -1 )
+	, m_SoundTimer			( 30.0f )
 {
 	// キャラクター初期値.
 	m_Chara = {
@@ -41,6 +42,7 @@ void CCharacterObjectBase::Update()
 	{
 		m_pCannon->Update();
 	}
+
 }
 
 void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
@@ -211,3 +213,19 @@ D3DXVECTOR3 CCharacterObjectBase::GetRotation() const
 	return D3DXVECTOR3(0, 0, 0);
 }
 //========================
+
+// サウンドフラグのリセット
+void CCharacterObjectBase::ResetSoundFlg()
+{
+	if (m_Chara.m_HitWall == true || m_Chara.m_HitBox == true)
+	{
+		m_SoundTimer--;
+		if (m_SoundTimer <= 0.0f)
+		{
+			m_Chara.m_HitWall = false;
+			m_Chara.m_HitBox = false;
+
+			m_SoundTimer = 30.f;
+		}
+	}
+}
