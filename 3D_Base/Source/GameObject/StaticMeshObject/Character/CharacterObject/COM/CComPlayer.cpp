@@ -345,7 +345,7 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
     // 砲口位置を取得
     D3DXVECTOR3 muzzle;
     float currentYaw;
-    m_ComShot.ComputeMuzzle(muzzle, currentYaw, body.get(), cannon.get());
+    m_ComShot.ComputeMuzzle(muzzle, currentYaw, body, cannon);
 
     // 予測位置を計算
     D3DXVECTOR3 targetVel = m_TargetSelector.GetTargetVelocity();
@@ -407,24 +407,6 @@ void CComPlayer::Update()
     }
 
     m_ComShot.TickCooldown();   //クールダウン更新
-
-#if 0
-    //倒した後の動き
-    if (m_KillFrames > 0)
-    {
-        --m_KillFrames;
-        
-        if (cannon)
-        {
-            float cyaw = cannon->GetRotation().y;
-            cyaw += 0.1f;
-            cannon->SetRotation(D3DXVECTOR3(0.f, cyaw, 0.f));
-            cannon->CStaticMeshObject::Update();
-        }
-        return;
-    }
-
-#endif
 
     //死亡したら処理スキップ
     if (m_Chara.m_Death == true)
@@ -576,8 +558,8 @@ bool CComPlayer::HitObjectRay()
 {
     auto tuning = GetTuning();
     auto body = GetBody();
-    auto target = m_TargetSelector.GetCurrentTarget();  //現在のターゲットを取得
-    D3DXVECTOR3 muzzle = m_pCannon->GetMuzzlePosition();       //砲口の向きを取得
+    auto target = m_TargetSelector.GetCurrentTarget();          //現在のターゲットを取得
+    D3DXVECTOR3 muzzle = m_pCannon->GetMuzzlePosition();        //砲口の向きを取得
 
     D3DXVECTOR3 targetPos = target->GetPosition();
     D3DXVECTOR3 targetRot = target->GetRotation();
@@ -646,6 +628,10 @@ void CComPlayer::StepSeek()
 {
     auto body = GetBody();
     if (!body) return;
+
+    auto cannon = GetCannon();
+    if (!cannon) return;
+
     const auto tuning = GetTuning();
 
     const D3DXVECTOR3 center(0.f, 0.f, 0.f);
@@ -679,6 +665,29 @@ void CComPlayer::StepSeek()
         TickAimTo(target->GetPosition());
     }
 
+    //当たっているとレイ側が判定する半径
+    float targetRadius = 3.f;
+    float hitDistance;
+
+    D3DXVECTOR3 collisonTarget;
+
+    //状態取得
+    if (cannon->RaycastToPosition(target->GetPosition(),targetRadius,hitDistance))
+    {
+        auto selfPos = target->GetPosition();
+        auto yaw = target->GetRotation().y;
+        float hitDistance;
+
+        HasObstacleAheadSimple(selfPos, yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitDistance);
+
+#if 0
+        for (auto ob : *m_pSimpleObstacles)
+        {
+            StepEvade();
+        }
+#endif
+    }
+
     SyncCannonToBody();
 }
 
@@ -704,7 +713,7 @@ void CComPlayer::StepChase()
     float hitD;
     float toTargetYaw = std::atan2f((tp - self).x, (tp - self).z);
 
-    if (HasObstacleAheadSimple(self, toTargetYaw, dist, 1.0f, hitD))
+    if (HasObstacleAheadSimple(self, toTargetYaw, dist, 1.0f, hitD) == true)
     {
         usePathfinding = true;
     }
@@ -808,6 +817,39 @@ void CComPlayer::StepAttack()
         }
     }
 
+    /*
+    // 複数敵チェック
+    D3DXVECTOR3 clusterCenter;
+    int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
+    float hpRatio = static_cast<float>(m_Chara.m_Hp) / static_cast<float>(m_Chara.m_MaxHp);
+
+    float desired;
+    float speedMult = 1.0f;
+
+    //性格に応じた複数敵対応
+    if (nearbyCount >= m_MultiEnemyThreshold && m_pPersonality)
+    {
+        BehaviorDecision decision = m_pPersonality->DecideMultiEnemyAction(
+            self, tp, clusterCenter, nearbyCount, hpRatio);
+
+        desired = decision.desiredYaw;
+        speedMult = decision.moveSpeedMultiplier;
+        m_KeepDistance = decision.keepDistance;
+    }
+    else
+    {
+        // 通常の周回攻撃
+        const int period = 60;
+        const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
+        const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
+        desired = Util::Wrap(toYaw + sign * (D3DX_PI * 0.5f));
+
+        const float dist = Util::DistXZ(self, tp);
+        if (dist > m_KeepDistance * 1.2f) desired = toYaw;
+        else if (dist < m_KeepDistance * 0.8f) desired = Util::Wrap(toYaw + D3DX_PI);
+    }
+    */
+
     if (target->GetDeath() == true)
     {
         m_TargetSelector.ClearTarget();
@@ -880,99 +922,30 @@ void CComPlayer::TryAutoFire()
     auto body = GetBody();
     if (!cannon || !body) return;
 
-    float hitD;
+    if (!m_ComShot.IsReady()) return;
 
-    // 射線チェック
-    if (m_pFireLineObstacles && !m_pFireLineObstacles->empty())
+    // 砲塔レイでターゲット位置にヒット判定
+    const float targetRadius = 2.f;  // ターゲットの当たり判定半径
+    float hitDistance;
+
+    if (cannon->RaycastToPosition(target->GetPosition(), targetRadius, hitDistance))
     {
-        D3DXVECTOR3 muzzle;
-        float yaw;
-        m_ComShot.ComputeMuzzle(muzzle, yaw, body.get(), cannon.get());
-
-        D3DXVECTOR3 targetVel = m_TargetSelector.GetTargetVelocity();
-        PredictedShot prediction = m_ComShot.PredictTargetPosition(
-            muzzle, target->GetPosition(), targetVel);
-
-        //障害物があれば無視
-        if (HasObstacleAheadSimple(target->GetPosition(), yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
+        // 障害物チェック
+        float obstacleHitD;
+        if (HasObstacleAheadSimple(body->GetPosition(), cannon->GetRotation().y,
+            hitDistance, m_ObstacleProbeStep, obstacleHitD))
         {
-            //倒したあとは直ぐにターゲットを変更する
-            if (target->GetDeath())
+            // 障害物がターゲットより手前にある
+            if (obstacleHitD < hitDistance)
             {
-                m_TargetSelector.ClearTarget();
+                return;
             }
-            return;
         }
 
+        //レイがターゲットに当たったら発射
+        m_ComShot.TryFireOnRayHit(body, cannon);
     }
-    
-    //戦車が後ろに下がる
-    auto nowPos = target->GetPosition();
-    float offset = -0.1f;
-    D3DXVECTOR3 pos(0.f, offset, 0.f);
-
-    if (m_Shot.GetShotFlag() == true)
-    {
-        nowPos -= pos;
-        SyncCannonToBody();
-    }
-
-    // 射撃実行
-    m_ComShot.TryFire(
-        target->GetPosition(),
-        m_TargetSelector.GetTargetVelocity(),
-        body.get(),
-        cannon.get()
-    );
-
 }
-
-/*
-    auto target = m_TargetSelector.GetCurrentTarget();
-    if (!target) return;
-
-    auto cannon = GetCannon();
-    auto body = GetBody();
-    if (!cannon || !body) return;
-
-    //性格から射撃パラメータを取得して適用
-    if (m_pPersonality)
-    {
-        TurretParams params = m_pPersonality->GetTurretParams();
-        m_ComShot.SetFireAngleTolerance(params.fireAngleTolerance);
-    }
-
-    float hitD;
-
-    // 射線チェック
-    if (m_pFireLineObstacles && !m_pFireLineObstacles->empty())
-    {
-        D3DXVECTOR3 muzzle;
-        float yaw;
-        m_ComShot.ComputeMuzzle(muzzle, yaw, body.get(), cannon.get());
-
-        D3DXVECTOR3 targetVel = m_TargetSelector.GetTargetVelocity();
-        PredictedShot prediction = m_ComShot.PredictTargetPosition(
-            muzzle, target->GetPosition(), targetVel);
-
-        if (HasObstacleAheadSimple(target->GetPosition(), yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
-        {
-            if (target->GetDeath())
-            {
-                m_TargetSelector.ClearTarget();
-            }
-            return;
-        }
-    }
-
-    // 射撃実行
-    m_ComShot.TryFire(
-        target->GetPosition(),
-        m_TargetSelector.GetTargetVelocity(),
-        body.get(),
-        cannon.get()
-    );
-*/
 
 // 砲塔と車体の同期
 void CComPlayer::SyncCannonToBody()
@@ -1341,6 +1314,41 @@ float CComPlayer::ComputeBlendedDirection(
 
 }
 
+
+std::shared_ptr<CCharacterObjectBase> CComPlayer::GetRayHitCharacter() const
+{
+    auto cannon = GetCannon();
+    if (!cannon || !m_pAllPlayer) return nullptr;
+
+    CannonHitRay bestHit;
+    bestHit.bHit = false;
+    bestHit.Distance = 1e9f;
+    std::shared_ptr<CCharacterObjectBase> hitTarget = nullptr;
+
+    for (const auto& player : *m_pAllPlayer)
+    {
+        if (!player) continue;
+        if (player.get() == this) continue;  // 自分は除外
+        if (player->GetDeath()) continue;     // 死亡者は除外
+
+        CStaticMeshObject* mesh = dynamic_cast<CStaticMeshObject*>(player.get());
+        if (!mesh) continue;
+
+        CannonHitRay tempHit;
+        if (cannon->RaycastTo(mesh, tempHit))
+        {
+            // より近いヒットを優先
+            if (tempHit.Distance < bestHit.Distance)
+            {
+                bestHit = tempHit;
+                hitTarget = player;
+            }
+        }
+    }
+
+    return hitTarget;
+}
+
 bool CComPlayer::RequestPath(const D3DXVECTOR3& goal)
 {
     if (!m_pPathfinder) return false;
@@ -1350,6 +1358,21 @@ bool CComPlayer::RequestPath(const D3DXVECTOR3& goal)
 
     m_Path.clear();
     return m_pPathfinder->FindPath(body->GetPosition(), goal, m_Path);
+}
+
+void CComPlayer::SetPosition(const D3DXVECTOR3& pos)
+{
+    if (m_pBody)
+    {
+        m_pBody->SetPosition(pos);
+    }
+    if (m_pCannon)
+    {
+        //砲塔は高さオフセットを適用する
+        D3DXVECTOR3 cannonPos = pos;
+        cannonPos.y += m_Tuning.cannonHeight;
+        m_pCannon->SetPosition(cannonPos);
+    }
 }
 
 void CComPlayer::FindNearestTarget()

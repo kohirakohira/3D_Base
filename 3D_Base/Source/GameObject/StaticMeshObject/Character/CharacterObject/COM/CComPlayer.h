@@ -32,6 +32,7 @@
 
 #include "GameObject/StaticMeshObject/Shot/CShot.h"	//ショット
 
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
@@ -102,11 +103,7 @@ public:
 	}
 
 	//位置設定
-	void SetPosition(const D3DXVECTOR3& pos) override
-	{
-		if (m_pBody)   m_pBody->SetPosition(pos);
-		if (m_pCannon) m_pCannon->SetPosition(pos);
-	}
+	void SetPosition(const D3DXVECTOR3& pos) override;
 
 	//回転取得
 	D3DXVECTOR3 GetRotation() const override { if (m_pBody) return m_pBody->GetPosition(); return D3DXVECTOR3(0, 0, 0); }
@@ -192,9 +189,7 @@ private:
 	//前進
 	void SafeAdvance(float nextYaw, float moveStep);
 
-	//========================================
 	// 危険ゾーン判定
-	//========================================
 	bool IsInDangerZone(const D3DXVECTOR3& pos) const;
 
 
@@ -232,9 +227,7 @@ private:
 	int		m_StateFrames;				//その状態に入ってからの経過フレーム
 	float	m_WanderAngle;
 
-	//========================================
 	// 障害物回避パラメータ
-	//========================================
 	float		m_ProbeDist;			// 探査距離
 	float		m_AvoidHoldFrames;		// 回避を維持するフレーム数
 	int			m_AvoidSide;			// 回避方向（+1:右, -1:左, 0:未決定）
@@ -289,6 +282,8 @@ private:
 
 	int GetPlayerID() override { return m_PlayerID; } 
 
+	// 砲塔レイで最初に当たったキャラクターを取得
+	std::shared_ptr<CCharacterObjectBase> GetRayHitCharacter() const;
 
 	// 目的地へのパスを計算
 	bool RequestPath(const D3DXVECTOR3& goal);
@@ -306,4 +301,6 @@ private:
 	CSimplePathfinder* m_pPathfinder = nullptr;
 	int m_PathRecalcTimer = 0;          // 再計算タイマー
 	static const int PATH_RECALC_INTERVAL = 60;  // 60フレームごとに再計算
+
+
 };

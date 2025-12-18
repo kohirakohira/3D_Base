@@ -114,7 +114,7 @@ void CCharacterManager::Init()
 		}
 	}
 	// 経路探索初期化
-	m_Pathfinder.Initialize(10, 40.0f);
+	m_Pathfinder.Initialize(10, 60.0f);
 
 
 	//COMプレイヤー同士で参照を共有.

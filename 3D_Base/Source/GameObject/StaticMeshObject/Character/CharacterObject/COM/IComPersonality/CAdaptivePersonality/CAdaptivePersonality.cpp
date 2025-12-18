@@ -153,13 +153,69 @@ TurretParams CAdaptivePersonality::GetTurretParames() const
     return params;
 }
 
+//•¡”‚Ìó‘Ô‚ğæ“¾
+float CAdaptivePersonality::GetEscapeWeight(int nearbyEnemyCount, float hpRadius) const
+{
+    return 1.f;
+}
 
-//TurretParams CAdaptivePersonality::GetTurretParams() const
-//{
-//    TurretParams params;
-//    params.turretSpeedMultiplier = 1.5f;    // –C“ƒ‰ñ“]‚ğ‘¬‚­‚µ‚Äü‰ñ’†‚à’Ç]
-//    params.aimAccuracy = 1.0f;              // ¸“x‚‚¢
-//    params.fireAngleTolerance = 10.0f;      // ¸–§ËŒ‚
-//    params.predictionAccuracy = 1.0f;       // Š®àø‚È—\‘ª
-//    return params;
-//}
+float CAdaptivePersonality::GetApproachWeight(int nearbyEnemyCount, float hpRadius) const
+{
+    return 1.f;
+}
+
+
+/*
+BehaviorDecision CAdaptivePersonality::DecideMultiEnemyAction(
+    const D3DXVECTOR3& selfPos,
+    const D3DXVECTOR3& targetPos,
+    const D3DXVECTOR3& clusterCenter,
+    int nearbyEnemyCount,
+    float hpRatio) const
+{
+    BehaviorDecision decision;
+
+    // ó‹µ‚É‰‚¶‚Ä“¦‚°‚ÆU‚ß‚ğƒuƒŒƒ“ƒh
+    float escapeW = GetEscapeWeight(nearbyEnemyCount, hpRatio);
+    float approachW = GetApproachWeight(nearbyEnemyCount, hpRatio);
+
+    // U‚ß•ûŒü
+    D3DXVECTOR3 toTarget = targetPos - selfPos;
+    toTarget.y = 0.0f;
+    float toTargetLen = std::sqrtf(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
+    if (toTargetLen > 1e-6f) { toTarget.x /= toTargetLen; toTarget.z /= toTargetLen; }
+
+    // “¦‚°•ûŒüiŒQ‚ê‚Ì’†S‚©‚ç—£‚ê‚éj
+    D3DXVECTOR3 escape = selfPos - clusterCenter;
+    escape.y = 0.0f;
+    float escapeLen = std::sqrtf(escape.x * escape.x + escape.z * escape.z);
+    if (escapeLen > 1e-6f) { escape.x /= escapeLen; escape.z /= escapeLen; }
+
+    // ƒuƒŒƒ“ƒh
+    D3DXVECTOR3 blended;
+    blended.x = toTarget.x * approachW + escape.x * escapeW;
+    blended.z = toTarget.z * approachW + escape.z * escapeW;
+
+    decision.desiredYaw = std::atan2f(blended.x, blended.z);
+    decision.moveSpeedMultiplier = 0.9f;  // ‚â‚âTd
+    decision.shouldFire = true;
+    decision.shouldEvade = (hpRatio < 0.5f);
+    decision.keepDistance = 10.0f + nearbyEnemyCount * 2.0f;  // “G‚ª‘½‚¢‚Ù‚Ç‹——£‚ğæ‚é
+
+    return decision;
+}
+
+float CAdaptivePersonality::GetEscapeWeight(int nearbyEnemyCount, float hpRatio) const
+{
+    // HP‚ª’á‚¢‚Ù‚ÇA“G‚ª‘½‚¢‚Ù‚Ç“¦‚°‚ğ—Dæ
+    float hpFactor = 1.0f - hpRatio;  // HP50%‚È‚ç0.5
+    float countFactor = std::min(nearbyEnemyCount * 0.3f, 1.0f);
+    return 0.5f + hpFactor * 0.5f + countFactor * 0.5f;
+}
+
+float CAdaptivePersonality::GetApproachWeight(int nearbyEnemyCount, float hpRatio) const
+{
+    // HP‚ª‚‚¢‚Ù‚ÇU‚ß‚ğ—Dæ
+    return 0.5f + hpRatio * 0.5f;
+}
+*/
