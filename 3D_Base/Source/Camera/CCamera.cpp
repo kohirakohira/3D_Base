@@ -4,11 +4,11 @@
 #include <string>
 
 CCamera::CCamera()
-	: m_TargetPos	(0.f, 0.f, 0.f)
-	, m_TargetRotY	(0.f)
-	, m_Distance	(4.f)
-	, m_HeightOffset(2.0f)
-	, m_Up(0.0f, 1.0f, 0.0f)
+	: m_TargetPos			(0.f, 0.f, 0.f)
+	, m_TargetRotY			(0.f)
+	, m_Distance			(4.f)
+	, m_HeightOffset		(2.0f)
+	, m_Up					(0.0f, 1.0f, 0.0f)
 
 
 {
@@ -29,6 +29,7 @@ CCamera::CCamera()
 //Updateではなく授業コードの三人称カメラをベースにする
 void CCamera::Update()
 {
+
 	//回転からZ方向のオフセットを求める
 	D3DXVECTOR3 backward(0.f, 0.f, 1.f);
 	D3DXMATRIX rotY;
@@ -58,29 +59,34 @@ void CCamera::Update()
 
 void CCamera::Info()
 {
-	SetCamera();
 	Projection();
 }
 
 void CCamera::Init()
 {
-	//初期化.
-	ZeroMemory(&m_Camera, sizeof(CAMERA));
-	ZeroMemory(&m_Light, sizeof(LIGHT));
+
+	//カメラの初期化.
+	m_Camera.vPosition	= D3DXVECTOR3(0.0f, 2.0f, -5.0f);
+	m_Camera.vLook		= D3DXVECTOR3(0.0f, 2.0f, 0.0f);
+
+	m_Up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+	Projection();
+
 }
 
-void CCamera::SetCamera()
-{
-	//ビューの設定.
-	D3DXVECTOR3 cam_pos = m_Camera.vPosition;
-	D3DXVECTOR3 cam_look = m_Camera.vLook;
-	D3DXVECTOR3	vUpVec(0.0f, 1.0f, 0.0f);	//上方（ベクトル）.
-
-	//ビュー（カメラ）変換.
-	D3DXMatrixLookAtLH(
-		&m_mView,	//(out)ビュー計算結果.
-		&cam_pos, &cam_look, &vUpVec);
-}
+//void CCamera::SetCamera()
+//{
+//	//ビューの設定.
+//	D3DXVECTOR3 cam_pos = m_Camera.vPosition;
+//	D3DXVECTOR3 cam_look = m_Camera.vLook;
+//	D3DXVECTOR3	vUpVec(0.0f, 1.0f, 0.0f);	//上方（ベクトル）.
+//
+//	//ビュー（カメラ）変換.
+//	D3DXMatrixLookAtLH(
+//		&m_mView,	//(out)ビュー計算結果.
+//		&cam_pos, &cam_look, &vUpVec);
+//}
 
 void CCamera::SetCameraPos(float x, float y, float z)
 {

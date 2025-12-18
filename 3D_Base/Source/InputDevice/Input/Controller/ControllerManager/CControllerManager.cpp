@@ -25,13 +25,22 @@ void CControllerManager::Update()
 	{
 		controller->Update();
 
+		// Ú‘±‚³‚ê‚½uŠÔ
+		if (controller->IsJustConnected())
+		{
+			CSoundManager::PlaySE(CSoundManager::SE_Connect);
+		}
+
+		// Ø’f‚³‚ê‚½uŠÔ
+		if (controller->IsJustDisconnected())
+		{
+			CSoundManager::PlaySE(CSoundManager::SE_UnConnect);
+			controller->ControllerAmputation();
+		}
+
 		if (controller->CheckConnected() == true)
 		{
 			m_ConnectedCount++;
-		}
-		else
-		{
-			controller->ControllerAmputation();
 		}
 	}
 
@@ -78,9 +87,6 @@ void CControllerManager::Reoderring()
 		std::swap(m_Controller[index], m_Controller[nextSlot]);
 
 		nextSlot++;
-
-		// ƒRƒ“ƒgƒ[ƒ‰[‚ÌØ’fSE
-		CSoundManager::PlaySE(CSoundManager::SE_UnConnect);
 	}
 }
 //===================================

@@ -22,6 +22,7 @@ CController::~CController()
 //USBの遅延があるので、Updateは毎回呼ぶべき！！.
 void CController::Update()
 {
+	m_PrevConnected = m_Connected;      // 前回を保存
 	m_Connected = m_Pad->Update();
 
 }
@@ -35,10 +36,22 @@ bool CController::CheckConnected() const
 //切断処理.
 void CController::ControllerAmputation()
 {
-	if (m_Connected != true)
+	if (IsJustDisconnected())
 	{
 		m_Pad->EndProc();
 	}
+}
+
+bool CController::IsJustConnected() const
+{
+	// 未接続 → 接続
+	return (m_PrevConnected == false && m_Connected == true);
+}
+
+bool CController::IsJustDisconnected() const
+{
+	// 接続 → 未接続
+	return (m_PrevConnected == true && m_Connected == false);
 }
 
 bool CController::Down(CXInput::KEY key, bool just) const

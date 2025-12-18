@@ -34,6 +34,7 @@ public:
 	struct SHADER_CONSTANT_BUFFER
 	{
 		D3DXMATRIX	mWVP;		//ワールド,ビュー,プロジェクションの合成変換行列.	
+		D3DXMATRIX	mWorld;		//ワールド行列.
 		D3DXVECTOR4	vColor;		//カラー（RGBAの型に合わせる）.
 		D3DXVECTOR4	vUV;		//UV座標（x,yのみ使用）.
 	};
@@ -42,6 +43,15 @@ public:
 	{
 		D3DXVECTOR3 Pos;	//頂点座標.
 		D3DXVECTOR2	Tex;	//テクスチャ座標.
+	};
+
+	//フォグ構造体.
+	struct FOGBUFFER
+	{
+		D3DXVECTOR3 CameraPos;	//カメラ位置.
+		float		FogStart;	//開始距離.
+		D3DXVECTOR3 FogColor;	//フォグの色.
+		float		FogEnd;		//終了距離.
 	};
 
 public:
@@ -120,6 +130,7 @@ private:
 	ID3D11Buffer*			m_pConstantBuffer;	//コンスタントバッファ.
 
 	ID3D11Buffer*			m_pVertexBuffer;	//頂点バッファ.
+	ID3D11Buffer*			m_pFogConstantBuffer;//Fogバッファ.
 
 	ID3D11ShaderResourceView*	m_pTexture;			//テクスチャ.
 	ID3D11SamplerState*			m_pSampleLinear;	//サンプラ:テクスチャに各種フィルタをかける.
