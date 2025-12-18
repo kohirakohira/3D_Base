@@ -48,4 +48,9 @@ public:
 
     //íÔ‚Ìƒpƒ‰ƒ[ƒ^æ“¾
     TurretParams GetTurretParames() const override;
+
+    //“G•¡”‚Ìó‘Ô‚ğæ“¾
+    virtual float GetEscapeWeight(int nearbyEnemyCount, float hpRadius) const override;
+    virtual float GetApproachWeight(int nearbyEnemyCount, float hpRadius) const override;
+
 };

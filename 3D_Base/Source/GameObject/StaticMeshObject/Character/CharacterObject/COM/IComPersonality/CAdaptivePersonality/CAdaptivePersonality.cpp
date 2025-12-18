@@ -153,6 +153,17 @@ TurretParams CAdaptivePersonality::GetTurretParames() const
     return params;
 }
 
+//•¡”‚Ìó‘Ô‚ğæ“¾
+float CAdaptivePersonality::GetEscapeWeight(int nearbyEnemyCount, float hpRadius) const
+{
+    return 1.f;
+}
+
+float CAdaptivePersonality::GetApproachWeight(int nearbyEnemyCount, float hpRadius) const
+{
+    return 1.f;
+}
+
 
 /*
 BehaviorDecision CAdaptivePersonality::DecideMultiEnemyAction(

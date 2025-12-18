@@ -345,7 +345,7 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
     // 砲口位置を取得
     D3DXVECTOR3 muzzle;
     float currentYaw;
-    m_ComShot.ComputeMuzzle(muzzle, currentYaw, body.get(), cannon.get());
+    m_ComShot.ComputeMuzzle(muzzle, currentYaw, body, cannon);
 
     // 予測位置を計算
     D3DXVECTOR3 targetVel = m_TargetSelector.GetTargetVelocity();
@@ -407,24 +407,6 @@ void CComPlayer::Update()
     }
 
     m_ComShot.TickCooldown();   //クールダウン更新
-
-#if 0
-    //倒した後の動き
-    if (m_KillFrames > 0)
-    {
-        --m_KillFrames;
-        
-        if (cannon)
-        {
-            float cyaw = cannon->GetRotation().y;
-            cyaw += 0.1f;
-            cannon->SetRotation(D3DXVECTOR3(0.f, cyaw, 0.f));
-            cannon->CStaticMeshObject::Update();
-        }
-        return;
-    }
-
-#endif
 
     //死亡したら処理スキップ
     if (m_Chara.m_Death == true)
@@ -576,8 +558,8 @@ bool CComPlayer::HitObjectRay()
 {
     auto tuning = GetTuning();
     auto body = GetBody();
-    auto target = m_TargetSelector.GetCurrentTarget();  //現在のターゲットを取得
-    D3DXVECTOR3 muzzle = m_pCannon->GetMuzzlePosition();       //砲口の向きを取得
+    auto target = m_TargetSelector.GetCurrentTarget();          //現在のターゲットを取得
+    D3DXVECTOR3 muzzle = m_pCannon->GetMuzzlePosition();        //砲口の向きを取得
 
     D3DXVECTOR3 targetPos = target->GetPosition();
     D3DXVECTOR3 targetRot = target->GetRotation();
@@ -646,6 +628,10 @@ void CComPlayer::StepSeek()
 {
     auto body = GetBody();
     if (!body) return;
+
+    auto cannon = GetCannon();
+    if (!cannon) return;
+
     const auto tuning = GetTuning();
 
     const D3DXVECTOR3 center(0.f, 0.f, 0.f);
@@ -679,6 +665,29 @@ void CComPlayer::StepSeek()
         TickAimTo(target->GetPosition());
     }
 
+    //当たっているとレイ側が判定する半径
+    float targetRadius = 3.f;
+    float hitDistance;
+
+    D3DXVECTOR3 collisonTarget;
+
+    //状態取得
+    if (cannon->RaycastToPosition(target->GetPosition(),targetRadius,hitDistance))
+    {
+        auto selfPos = target->GetPosition();
+        auto yaw = target->GetRotation().y;
+        float hitDistance;
+
+        HasObstacleAheadSimple(selfPos, yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitDistance);
+
+#if 0
+        for (auto ob : *m_pSimpleObstacles)
+        {
+            StepEvade();
+        }
+#endif
+    }
+
     SyncCannonToBody();
 }
 
@@ -704,7 +713,7 @@ void CComPlayer::StepChase()
     float hitD;
     float toTargetYaw = std::atan2f((tp - self).x, (tp - self).z);
 
-    if (HasObstacleAheadSimple(self, toTargetYaw, dist, 1.0f, hitD))
+    if (HasObstacleAheadSimple(self, toTargetYaw, dist, 1.0f, hitD) == true)
     {
         usePathfinding = true;
     }
@@ -933,8 +942,8 @@ void CComPlayer::TryAutoFire()
             }
         }
 
-        // レイがターゲットに当たった → 発射！
-        m_ComShot.TryFireOnRayHit(body.get(), cannon.get());
+        //レイがターゲットに当たったら発射
+        m_ComShot.TryFireOnRayHit(body, cannon);
     }
 }
 

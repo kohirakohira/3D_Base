@@ -318,3 +318,35 @@ bool CCannon::RaycastToPosition(const D3DXVECTOR3& targetPos, float targetRadius
 
     return false;
 }
+
+bool CCannon::RaycastToCollision(const D3DXVECTOR3& collitionPos, float collitionRadius, float& outDistance) const
+{
+    D3DXVECTOR3 muzzle = GetMuzzlePosition();
+    D3DXVECTOR3 forward = GetForward();
+
+    D3DXVECTOR3 toTarget = collitionPos - muzzle;
+    toTarget.y = 0.f;
+
+
+    //前方ベクトルへの射影
+    float forwardDist = D3DXVec3Dot(&toTarget, &forward);
+
+    //後方にいる場合は当たらない
+    if (forwardDist <= 0) return false;
+
+    //レイからの横方向の距離
+    D3DXVECTOR3 projected = muzzle + forward * forwardDist;
+    D3DXVECTOR3 lateral = collitionPos - projected;
+    lateral.y = 0.0f;
+    float lateralDist = D3DXVec3Length(&lateral);
+
+    // ターゲットの半径内ならヒット
+    if (lateralDist <= collitionRadius)
+    {
+        outDistance = forwardDist;
+        return true;
+    }
+
+    return false;
+
+}

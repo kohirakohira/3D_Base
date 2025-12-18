@@ -19,7 +19,7 @@ void CComShot::Initialize(int ownerID)
     m_Cooldown = 0;
 }
 
-bool CComShot::TryFire(const D3DXVECTOR3& targetPos, const D3DXVECTOR3& targetVelocity, CBody* body, CCannon* cannon)
+bool CComShot::TryFire(const D3DXVECTOR3& targetPos, const D3DXVECTOR3& targetVelocity, std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon)
 {
     if (!m_pShotManager) return false;
 
@@ -125,8 +125,8 @@ PredictedShot CComShot::PredictTargetPosition(const D3DXVECTOR3& muzzlePos, cons
 void CComShot::ComputeMuzzle(
     D3DXVECTOR3& outPos,
     float& outYaw,
-    CBody* body,
-    CCannon* cannon) const
+    std::shared_ptr<CBody> body,
+    std::shared_ptr<CCannon> cannon) const
 {
     D3DXVECTOR3 base(0, 0, 0);
     float yaw = 0.0f;
@@ -150,7 +150,7 @@ void CComShot::ComputeMuzzle(
     outYaw = yaw;
 }
 
-bool CComShot::TryFireOnRayHit(CBody* body, CCannon* cannon)
+bool CComShot::TryFireOnRayHit(std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon)
 {
     if (!m_pShotManager) return false;
     if (m_Cooldown > 0) return false;

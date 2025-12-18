@@ -58,8 +58,8 @@ public:
 	CAMERA			m_Camera;
 	LIGHT			m_Light;
 	//行列.
-	D3DXMATRIX		m_mView;	//ビュー(カメラ)行列.
-	D3DXMATRIX		m_mProj;	//射影（プロジェクション）行列.
+	D3DXMATRIX		m_mView;			//ビュー(カメラ)行列.
+	D3DXMATRIX		m_mProj;			//射影（プロジェクション）行列.
 private:
 	D3DXVECTOR3		m_TargetPos;		//ターゲットの位置
 	float			m_TargetRotY;		//ターゲットのY軸回転

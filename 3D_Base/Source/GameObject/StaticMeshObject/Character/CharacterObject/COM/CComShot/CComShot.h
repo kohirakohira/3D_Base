@@ -46,8 +46,8 @@ public:
     bool TryFire(
         const D3DXVECTOR3& targetPos,
         const D3DXVECTOR3& targetVelocity,
-        CBody* body,
-        CCannon* cannon);
+        std::shared_ptr<CBody> body,
+        std::shared_ptr<CCannon> cannon);
 
     // クールダウン更新
     void TickCooldown();
@@ -62,8 +62,8 @@ public:
     void ComputeMuzzle(
         D3DXVECTOR3& outPos,
         float& outYaw,
-        CBody* body,
-        CCannon* cannon) const;
+        std::shared_ptr<CBody> body,
+        std::shared_ptr<CCannon> cannon) const;
 
     //状態取得
     bool IsReady() const { return m_Cooldown <= 0; }
@@ -73,7 +73,7 @@ public:
     void SetShotCollDown(int collDown) { m_Config.cooldownFrames = collDown; }
 
     // レイヒット時の発射
-    bool TryFireOnRayHit(CBody* body, CCannon* cannon);
+    bool TryFireOnRayHit(std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon);
 
 private:
     std::shared_ptr<CShotManager> m_pShotManager;
