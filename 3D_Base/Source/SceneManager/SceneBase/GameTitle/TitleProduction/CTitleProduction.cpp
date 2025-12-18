@@ -27,23 +27,26 @@ CTitleProduction::~CTitleProduction()
 //動作関数.
 void CTitleProduction::Update()
 {
-	//カメラの動作.
-	m_Camera->ThirdPersonCamera(&m_Camera->m_Camera, 
-		D3DXVECTOR3{ m_Cannon->GetPosition().x - 20.0f, m_Cannon->GetPosition().y + 10.0f, m_Cannon->GetPosition().z - 60.0f },
-		D3DXToRadian(-5.0f));
+	//ビュー行列・プロジェクション行列更新.
+	m_Camera->Update();
+
+	if (GetAsyncKeyState(VK_F1) & 0x8000)
+	{
+		m_Camera->SetCameraMode(CCamera::CameraMode::Free);
+	}
+	if (GetAsyncKeyState(VK_F2) & 0x8000)
+	{
+		m_Camera->SetCameraMode(CCamera::CameraMode::ThirdPerson);
+	}
 
 	//地面を動かす.
 	MoveGround();
-
 
 }
 
 //描画関数.
 void CTitleProduction::Draw()
 {
-	//カメラの情報更新.
-	m_Camera->Info();
-
 	//背景の描画.
 	m_BackGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 
@@ -94,6 +97,21 @@ void CTitleProduction::Init()
 	//プレイヤーの位置(定数).
 	const float POS_X = 2.0f;
 	const float POS_Z = 2.0f;
+	//地面の設定.
+	D3DXVECTOR3 angle = { 0.0f, 0.0f, 0.0f };
+	angle.x = 90.0f * PI / 180.0f;
+	angle.y = 225.0f * PI / 180.0f;
+	m_SpriteObjGround->SetRotation(angle);
+	m_SpriteObjGround->SetPosition(0.0f, 0.0f, 0.0f);
+	m_SpriteObjGround->SetScale(1.0f, 1.0f, 1.0f);
+
+	//プレイヤーの設定.
+	m_Cannon->SetPosition(POS_X, 8.0f, POS_Z);
+	m_Body->SetPosition(POS_X, 4.0f, POS_Z);
+	m_Cannon->SetRotation(0.0f, angle.y, 0.0f);
+	m_Body->SetRotation(0.0f, angle.y, 0.0f);
+	m_Cannon->SetScale(25.0f, 25.0f, 25.0f);
+	m_Body->SetScale(25.0f, 25.0f, 25.0f);
 
 	//カメラの初期化.
 	m_Camera->Init();
@@ -103,31 +121,19 @@ void CTitleProduction::Init()
 	m_Camera->SetLightIntensity(100.0f);			//ライトの強さ.
 	m_Camera->SetLightRange(1000.0f);				//ライトの長さ.
 	m_Camera->SetLightAtten(0.0f, 0.0f, 0.1f);		//ライトの減衰.
+	m_Camera->SetTargetPos(D3DXVECTOR3(-15.0f, 20.0f, -50.0f));
 
-	//地面の設定.
-	D3DXVECTOR3 angle = { 0.0f, 0.0f, 0.0f };
-	angle.x = 90.0f * PI / 180.0f;
-	angle.y = 225.0f * PI / 180.0f;
-	m_SpriteObjGround->SetRotation(angle);
-	m_SpriteObjGround->SetPosition(0.0f, 0.0f, 0.0f);
-	m_SpriteObjGround->SetScale(1.0f, 1.0f, 1.0f);
-
-	////背景の初期化.
-	//m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
-	//m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
-	//m_pBackImgObject->SetScale(300.0f, 300.0f, 300.0f);
+	{
+		////背景の初期化.
+		//m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
+		//m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
+		//m_pBackImgObject->SetScale(300.0f, 300.0f, 300.0f);
+	}
 
 	m_BackGround->SetPosition(0.0f, 100.0f, 1000.0f);
 	m_BackGround->SetRotation(0.0f, D3DXToRadian(-45), 0.0f);
 	m_BackGround->SetScale(4.0f, 1.0f, 4.0f);
 
-	//プレイヤーの設定.
-	m_Cannon->SetPosition(POS_X, 0.5f, POS_Z);
-	m_Body->SetPosition(POS_X, 0.0f, POS_Z);
-	m_Cannon->SetRotation(0.0f, angle.y, 0.0f);
-	m_Body->SetRotation(0.0f, angle.y, 0.0f);
-	m_Cannon->SetScale(25.0f, 25.0f, 25.0f);
-	m_Body->SetScale(25.0f, 25.0f, 25.0f);
 }
 
 //読み込み関数.

@@ -282,12 +282,12 @@ HRESULT CSprite3D::CreateModel()
 
 	//バッファ構造体.
 	D3D11_BUFFER_DESC bd;
-	bd.Usage			= D3D11_USAGE_DEFAULT;		//使用方法（デフォルト）.
-	bd.ByteWidth		= sizeof(VERTEX) * uVerMax;	//頂点のサイズ.
-	bd.BindFlags		= D3D11_BIND_VERTEX_BUFFER;	//頂点バッファとして扱う.
-	bd.CPUAccessFlags	= 0;	//CPUからはアクセスしない.
-	bd.MiscFlags		= 0;	//その他のフラグ（未使用）.
-	bd.StructureByteStride = 0;	//構造体のサイズ（未使用）.
+	bd.Usage				= D3D11_USAGE_DEFAULT;		//使用方法（デフォルト）.
+	bd.ByteWidth			= sizeof(VERTEX) * uVerMax;	//頂点のサイズ.
+	bd.BindFlags			= D3D11_BIND_VERTEX_BUFFER;	//頂点バッファとして扱う.
+	bd.CPUAccessFlags		= 0;	//CPUからはアクセスしない.
+	bd.MiscFlags			= 0;	//その他のフラグ（未使用）.
+	bd.StructureByteStride	= 0;	//構造体のサイズ（未使用）.
 
 	//サブリソースデータ構造体.
 	D3D11_SUBRESOURCE_DATA InitData;

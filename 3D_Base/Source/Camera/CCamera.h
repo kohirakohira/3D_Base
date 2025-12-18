@@ -9,24 +9,22 @@
 class CCamera
 {
 public:
+	enum class CameraMode
+	{
+		ThirdPerson,	//三人称カメラ.
+		Free			//フリーカメラ.
+	};
+
+public:
 	CCamera();
 	~CCamera() = default;	//特別な処理はないのでデフォルトにしておく
 
 	void Update();	//アップデートを一旦三人称カメラとして使う
-	void Info();
 	void Init();
-	////カメラ関数.
-	//void SetCamera();
 	//カメラの位置設定.
 	void SetCameraPos(float x, float y, float z);
 	//ライトの回転設定.
 	void SetLightRot(float x, float y, float z);
-	//プロジェクション関数.
-	void Projection();
-
-	//三人称カメラ
-	void ThirdPersonCamera(
-		CAMERA* pCamera, const D3DXVECTOR3& TargetPos, float TargetRotY);
 
 	//ビュー行列の取得
 	D3DXMATRIX GetViewMatrix() const { return m_mView; }
@@ -39,8 +37,17 @@ public:
 	D3DXVECTOR3& GetCameraPosition() { return m_Camera.vPosition; }
 	//注視点の位置取得.
 	D3DXVECTOR3& GetLookPosition() { return m_Camera.vLook; }
-	//自由移動.
-	void FreeMove();
+
+	//カメラのモード切り替え.
+	void SetCameraMode(CameraMode mode);
+	//三人称視点.
+	void UpdateThirdPerson();
+	//自由視点.
+	void UpdateFree();
+	//ビュー行列の更新.
+	void ViewMatrixUpdate();
+	//プロジェクション行列の更新.
+	void ProjMatrixUpdate();
 
 public:
 	//ライト情報.
@@ -57,6 +64,9 @@ public:
 	//行列.
 	D3DXMATRIX		m_mView;			//ビュー(カメラ)行列.
 	D3DXMATRIX		m_mProj;			//射影（プロジェクション）行列.
+private:
+	//カメラのモード.
+	CameraMode m_Mode;
 private:
 	D3DXVECTOR3		m_TargetPos;		//ターゲットの位置
 	float			m_TargetRotY;		//ターゲットのY軸回転

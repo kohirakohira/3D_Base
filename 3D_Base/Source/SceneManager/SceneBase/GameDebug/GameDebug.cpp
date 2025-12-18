@@ -57,9 +57,18 @@ void CGameDebug::Update()
 	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
 
 	//カメラの移動.
-	m_pCamera->FreeMove();
+	m_pCamera->Update();
 	//アイテムのマネージャー.
 	m_pItemBoxManager->Update();
+
+	if (GetAsyncKeyState(VK_F1)&0x8000)
+	{
+		m_pCamera->SetCameraMode(CCamera::CameraMode::Free);
+	}
+	if (GetAsyncKeyState(VK_F2)&0x8000)
+	{
+		m_pCamera->SetCameraMode(CCamera::CameraMode::ThirdPerson);
+	}
 
 	////プレイヤーのマネージャー.
 	//m_pCharacterManager->Update();
@@ -78,9 +87,6 @@ void CGameDebug::Draw()
 		return;
 	}
 	
-
-	//カメラの描画.
-	m_pCamera->Info();
 
 	//地面の描画.
 	m_pGround->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);

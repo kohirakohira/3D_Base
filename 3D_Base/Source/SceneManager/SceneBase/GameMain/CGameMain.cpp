@@ -191,6 +191,15 @@ void CGameMain::Update()
 			const D3DXVECTOR3 camPos = chara->GetCannon()->GetPosition();	//砲塔の位置.
 			float yaw = chara->GetCannon()->GetRotation().y;	//砲塔の向きY.
 
+			if (GetAsyncKeyState(VK_F1) & 0x8000)
+			{
+				m_pCameras[i]->SetCameraMode(CCamera::CameraMode::Free);
+			}
+			if (GetAsyncKeyState(VK_F2) & 0x8000)
+			{
+				m_pCameras[i]->SetCameraMode(CCamera::CameraMode::ThirdPerson);
+			}
+
 			m_pCameras[i]->SetTargetPos(camPos);
 			m_pCameras[i]->SetTargetRotY(yaw);
 		}
