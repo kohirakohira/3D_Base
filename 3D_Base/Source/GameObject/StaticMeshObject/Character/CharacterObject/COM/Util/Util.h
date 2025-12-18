@@ -114,4 +114,25 @@ namespace Util	//è»ó™
 		return a.x * b.x + a.z * b.z;
 	}
 
+#if 0
+	static D3DXVECTOR3 NormalizeXZ(const D3DXVECTOR3& v)
+	{
+		float len = std::sqrtf(v.x * v.x + v.z * v.z);
+		if (len < 1e-6f) return { 0, 0, 0 };
+		return { v.x / len, 0.0f, v.z / len };
+	}
+
+	static float LengthXZ(const D3DXVECTOR3& v)
+	{
+		return std::sqrtf(v.x * v.x + v.z * v.z);
+	}
+
+	static float DistXZSq(const D3DXVECTOR3& a, const D3DXVECTOR3& b)
+	{
+		float dx = b.x - a.x;
+		float dz = b.z - a.z;
+		return dx * dx + dz * dz;
+	}
+#endif
+
 };

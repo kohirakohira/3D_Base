@@ -200,6 +200,22 @@ private:
 	//COMの状態変更
 	void ChangeState(State state);
 
+	/*int m_DamageRecoilFrames = 0;
+	const int DAMAGE_RECOIL_DURATION = 20;
+
+	void CComPlayer::OnDamaged()
+	{
+    m_DamageRecoilFrames = DAMAGE_RECOIL_DURATION;
+    
+    // ダメージを受けた方向から逃げる
+    if (m_pPersonality && m_pPersonality->GetType() != PersonalityType::Aggressive)
+    {
+        ChangeState(State::Evade);
+    }
+}
+		
+	*/
+
 	//外部クラス
 	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;		//プレイヤーの一覧取得
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;			//障害物のBoxColliderリスト
@@ -303,4 +319,11 @@ private:
 	static const int PATH_RECALC_INTERVAL = 60;  // 60フレームごとに再計算
 
 
+
+	//bool FindSafeDirection(const D3DXVECTOR3& pos, float baseYaw, float step,
+	//	const D3DXVECTOR3& sep, float& outSafeYaw) const;
+	//float ComputeMoveStep(float safeYaw, float currentYaw, float baseStep) const;
+
+	//
+	//int CountNearbyEnemies(float radius, D3DXVECTOR3& outClusterCenter) const;
 };

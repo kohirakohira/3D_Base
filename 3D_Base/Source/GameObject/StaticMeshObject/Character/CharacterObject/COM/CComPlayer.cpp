@@ -381,6 +381,30 @@ void CComPlayer::Update()
 {
     // ダメージ処理の更新
     Damage();
+
+    #if 0
+    if (m_DamageRecoilFrames > 0)
+    {
+        --m_DamageRecoilFrames;
+
+        auto body = GetBody();
+        if (body)
+        {
+            // 後ろに少し下がる
+            float yaw = body->GetRotation().y;
+            D3DXVECTOR3 back = Util::ForwardFromYaw(yaw) * -0.05f;
+            D3DXVECTOR3 pos = body->GetPosition();
+            pos.x += back.x;
+            pos.z += back.z;
+
+            if (!IsInDangerZone(pos))
+            {
+                body->SetPosition(pos);
+            }
+        }
+    }
+    #endif
+
     // 死亡処理の更新
     Death();
 
@@ -916,7 +940,6 @@ void CComPlayer::TransitionTo(State state)
     }
 }
 
-#if 1
 //危険ゾーン判定
 bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
 {
@@ -1133,6 +1156,58 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
     body->CStaticMeshObject::Update();
     SyncCannonToBody();
 }
+/*
+    auto body = GetBody();
+    if (!body) return;
+
+    const auto tuning = GetTuning();
+    D3DXVECTOR3 pos = body->GetPosition();
+    pos.y = 0.0f;
+    const float curYaw = body->GetRotation().y;
+
+    // COM同士の分離ベクトル
+    D3DXVECTOR3 sep(0, 0, 0);
+    float nearest = 1e9f;
+    ComputeSeparation(pos, sep, nearest);
+
+    // 安全な方向を探す
+    float safeYaw = nextYaw;
+    bool foundSafe = FindSafeDirection(pos, nextYaw, step, sep, safeYaw);
+
+    // 滑らかに回転
+    float targetYaw = foundSafe ? safeYaw : nextYaw;
+    float smoothYaw = Util::Approach(curYaw, curYaw + Util::Wrap(targetYaw - curYaw), tuning.bodyTurnSpeed);
+    body->SetRotation({ 0.f, smoothYaw, 0.f });
+
+    // 安全な方向が見つからなければ回転だけ
+    if (!foundSafe)
+    {
+        body->CStaticMeshObject::Update();
+        SyncCannonToBody();
+        return;
+    }
+
+    // 移動量を決定
+    float actualStep = ComputeMoveStep(safeYaw, smoothYaw, step);
+
+    // 移動実行
+    if (actualStep > 0.0f)
+    {
+        D3DXVECTOR3 nextPos = pos + Util::ForwardFromYaw(smoothYaw) * actualStep;
+        nextPos.x += sep.x * 0.02f;
+        nextPos.z += sep.z * 0.02f;
+        nextPos.y = 0.0f;
+
+        if (!IsInDangerZone(nextPos))
+        {
+            body->SetPosition(nextPos);
+        }
+    }
+
+    body->CStaticMeshObject::Update();
+    SyncCannonToBody();
+    */
+
 
 void CComPlayer::TickWander()
 {
@@ -1149,7 +1224,6 @@ void CComPlayer::TickWander()
     }
 }
 
-#endif
 
 
 //指定半径内の敵の数をカウントし、重心を返す
@@ -1362,3 +1436,42 @@ PersonalityType CComPlayer::GetPersonalityType() const
     }
     return PersonalityType::Adaptive;  // デフォルト
 }
+
+#if 0
+//安全な方向を探す
+bool CComPlayer::FindSafeDirection(const D3DXVECTOR3& pos, float baseYaw, float step,
+    const D3DXVECTOR3& sep, float& outSafeYaw) const
+{
+    static const float offsets[] = {
+        0.f, +0.4f, -0.4f, +0.8f, -0.8f,
+        +D3DX_PI * 0.5f, -D3DX_PI * 0.5f, D3DX_PI
+    };
+
+    for (float offset : offsets)
+    {
+        float tryYaw = baseYaw + offset;
+        D3DXVECTOR3 nextPos = pos + Util::ForwardFromYaw(tryYaw) * step;
+        nextPos.x += sep.x * 0.02f;
+        nextPos.z += sep.z * 0.02f;
+        nextPos.y = 0.0f;
+
+        if (!IsInDangerZone(nextPos))
+        {
+            outSafeYaw = tryYaw;
+            return true;
+        }
+    }
+    return false;
+}
+
+//角度差に応じた移動量を決定
+float CComPlayer::ComputeMoveStep(float safeYaw, float currentYaw, float baseStep) const
+{
+    float angleDiff = std::fabs(Util::Wrap(safeYaw - currentYaw));
+
+    if (angleDiff < D3DX_PI * 0.15f)  return baseStep;        // ほぼ正面
+    if (angleDiff < D3DX_PI * 0.3f)   return baseStep * 0.5f; // やや斜め
+    if (angleDiff < D3DX_PI * 0.5f)   return baseStep * 0.25f;// 斜め
+    return 0.0f;  // 大きくずれている場合回転に専念
+}
+#endif  
