@@ -49,4 +49,17 @@ public:
     //戦車のパラメータ取得
     TurretParams GetTurretParames() const override;
 
+    // 複数敵時の行動を決定
+    BehaviorDecision DecideMultiEnemyAction(
+        const D3DXVECTOR3& selfPos,
+        const D3DXVECTOR3& targetPos,
+        const D3DXVECTOR3& clusterCenter,
+        int nearbyEnemyCount,
+        float hpRatio) const override;
+
+
+    // 複数敵時の重みを取得
+    float GetEscapeWeight(int nearbyEnemyCount, float hpRatio) const override;
+    float GetApproachWeight(int nearbyEnemyCount, float hpRatio) const  override;
+
 };

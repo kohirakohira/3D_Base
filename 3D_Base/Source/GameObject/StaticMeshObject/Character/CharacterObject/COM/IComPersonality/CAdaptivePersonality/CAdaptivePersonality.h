@@ -1,6 +1,10 @@
 #pragma once
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/IComPersonality/IComPersonality.h"
 
+/*
+    ‘‡“I‚É‚İ‚Ä”»’f‚·‚éCOM
+*/
+
 class CAdaptivePersonality : public IComPersonality
 {
 public:
@@ -49,8 +53,16 @@ public:
     //íÔ‚Ìƒpƒ‰ƒ[ƒ^æ“¾
     TurretParams GetTurretParames() const override;
 
-    //“G•¡”‚Ìó‘Ô‚ğæ“¾
-    virtual float GetEscapeWeight(int nearbyEnemyCount, float hpRadius) const override;
-    virtual float GetApproachWeight(int nearbyEnemyCount, float hpRadius) const override;
+    // •¡”“G‚Ìs“®‚ğŒˆ’è
+    BehaviorDecision DecideMultiEnemyAction(
+        const D3DXVECTOR3& selfPos,
+        const D3DXVECTOR3& targetPos,
+        const D3DXVECTOR3& clusterCenter,
+        int nearbyEnemyCount,
+        float hpRatio) const override;
+
+    // •¡”“G‚Ìd‚İ‚ğæ“¾
+    float GetEscapeWeight(int nearbyEnemyCount, float hpRatio) const override;
+    float GetApproachWeight(int nearbyEnemyCount, float hpRatio) const  override;
 
 };

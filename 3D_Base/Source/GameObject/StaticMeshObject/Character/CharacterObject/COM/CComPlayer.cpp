@@ -665,29 +665,6 @@ void CComPlayer::StepSeek()
         TickAimTo(target->GetPosition());
     }
 
-    //“–‚½‚Á‚Ä‚¢‚é‚ÆƒŒƒC‘¤‚ª”»’è‚·‚é”¼Œa
-    float targetRadius = 3.f;
-    float hitDistance;
-
-    D3DXVECTOR3 collisonTarget;
-
-    //ó‘ÔŽæ“¾
-    if (cannon->RaycastToPosition(target->GetPosition(),targetRadius,hitDistance))
-    {
-        auto selfPos = target->GetPosition();
-        auto yaw = target->GetRotation().y;
-        float hitDistance;
-
-        HasObstacleAheadSimple(selfPos, yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitDistance);
-
-#if 0
-        for (auto ob : *m_pSimpleObstacles)
-        {
-            StepEvade();
-        }
-#endif
-    }
-
     SyncCannonToBody();
 }
 
@@ -781,43 +758,7 @@ void CComPlayer::StepAttack()
     const D3DXVECTOR3 tp = target->GetPosition();
     const float cur = body->GetRotation().y;
     float hitD;
-
-    // •¡”“Gƒ`ƒFƒbƒN
-    D3DXVECTOR3 clusterCenter;
-    int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
-
-    float desired;
-
-    if (nearbyCount >= m_MultiEnemyThreshold)
-    {
-        //ˆÍ‚Ü‚ê‚Ä‚¢‚é‚È‚ç“¦‚°‚Â‚ÂU‚ß‚é
-        desired = ComputeBlendedDirection(self, tp, clusterCenter,
-            m_EscapeWeight * 0.8f,      //UŒ‚Žž‚Í“¦‚°‚ðŽã‚ß‚é
-            m_ApproachWeight * 1.2f);   //U‚ß‚ð‹­‚ß‚é
-    }
-    else
-    {
-        // ’Êí‚ÌŽü‰ñUŒ‚
-        const int   period = 60;
-        const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
-        const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
-
-        // Úü•ûŒü
-        desired = Util::Wrap(toYaw + sign * (D3DX_PI * 0.5f));
-
-        // ”¼ŒaŒë·•â³
-        const float dist = Util::DistXZ(self, tp);
-        if (dist > m_KeepDistance * 1.2f)
-        {
-            desired = toYaw; // ŠO‚ê‚·‚¬‚½‚çŠñ‚é
-        }
-        else if (dist < m_KeepDistance * 0.8f)
-        {
-            desired = Util::Wrap(toYaw + D3DX_PI); // ‹ß‚·‚¬‚½‚ç—£‚ê‚é
-        }
-    }
-
-    /*
+    
     // •¡”“Gƒ`ƒFƒbƒN
     D3DXVECTOR3 clusterCenter;
     int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
@@ -848,7 +789,7 @@ void CComPlayer::StepAttack()
         if (dist > m_KeepDistance * 1.2f) desired = toYaw;
         else if (dist < m_KeepDistance * 0.8f) desired = Util::Wrap(toYaw + D3DX_PI);
     }
-    */
+    
 
     if (target->GetDeath() == true)
     {
