@@ -285,7 +285,7 @@ void CGameMain::Draw()
 	{
 		//カメラ更新.
 		camera->Update();
-		auto Camera = camera->GetPosition();
+		auto Camera = camera->GetCameraPosition();
 		//ライト設定
 		camera->SetLightPos(0.f, 100.f, 0.f);			//ライトのポジション
         camera->SetLightColor(1.f, 1.f, 1.f);			//色は通常

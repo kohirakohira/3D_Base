@@ -34,6 +34,7 @@ public:
 	struct SHADER_CONSTANT_BUFFER
 	{
 		D3DXMATRIX	mWVP;		//ワールド,ビュー,プロジェクションの合成変換行列.	
+		D3DXMATRIX	mWorld;		//ワールド行列.
 		D3DXVECTOR4	vColor;		//カラー（RGBAの型に合わせる）.
 		D3DXVECTOR4	vUV;		//UV座標（x,yのみ使用）.
 	};

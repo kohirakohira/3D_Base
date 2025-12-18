@@ -22,7 +22,6 @@ CTitleProduction::CTitleProduction()
 
 CTitleProduction::~CTitleProduction()
 {
-	m_Camera->SetIsFog(false);
 }
 
 //動作関数.
@@ -44,7 +43,6 @@ void CTitleProduction::Draw()
 {
 	//カメラの情報更新.
 	m_Camera->Info();
-	m_Camera->SetFog();
 
 	//背景の描画.
 	m_BackGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
@@ -105,14 +103,6 @@ void CTitleProduction::Init()
 	m_Camera->SetLightIntensity(100.0f);			//ライトの強さ.
 	m_Camera->SetLightRange(1000.0f);				//ライトの長さ.
 	m_Camera->SetLightAtten(0.0f, 0.0f, 0.1f);		//ライトの減衰.
-	//フォグの設定.
-	FOGPARAM fog;
-	fog.Color	= {0.7f, 0.8f, 1.0f};	//空っぽい色にしている.
-	fog.Start	= 30.0f;
-	fog.End		= 200.0f;
-	fog.IsFog	= true;
-	m_Camera->SetIsFog(fog.IsFog);
-	m_Camera->SetFogParam(fog);
 
 	//地面の設定.
 	D3DXVECTOR3 angle = { 0.0f, 0.0f, 0.0f };

@@ -33,8 +33,6 @@ public:
 		return s_Instance;
 	}
 
-public:
-
 	~CDirectX11();
 
 	//DirectX11構築.
@@ -43,9 +41,9 @@ public:
 	void Release();
 
 	//深度（Ｚ）テストON/OFF切り替え.
-	void SetDepth( bool flag );
+	void SetDepth(bool flag);
 	//アルファブレンドON/OFF切り替え.
-	void SetAlphaBlend( bool flag );
+	void SetAlphaBlend(bool flag);
 
 	//バックバッファクリア関数.
 	void ClearBackBuffer();
@@ -69,7 +67,7 @@ private://外部からアクセス不可能.
 
 	//デバイスとスワップチェイン作成.
 	HRESULT CreateDeviceAndSwapChain(
-		HWND hWnd, UINT uFPS, UINT uWidth, UINT uHeight );
+		HWND hWnd, UINT uFPS, UINT uWidth, UINT uHeight);
 
 	//バックバッファ作成:カラー用レンダーターゲットビュー作成.
 	HRESULT CreateColorBackBufferRTV();
@@ -87,18 +85,18 @@ private://外部からアクセス不可能.
 	HRESULT CreateAlphaBlendState();
 
 private:
-	ID3D11Device*				m_pDevice11;			//デバイスオブジェクト.
-	ID3D11DeviceContext*		m_pContext11;			//デバイスコンテキスト.
-	IDXGISwapChain*				m_pSwapChain;			//スワップチェーン.
-	ID3D11RenderTargetView*		m_pBackBuffer_TexRTV;	//レンダーターゲットビュー.
-	ID3D11Texture2D*			m_pBackBuffer_DSTex;	//デプスステンシル用テクスチャ.
-	ID3D11DepthStencilView*		m_pBackBuffer_DSTexDSV;	//デプスステンシルビュー.
+	ID3D11Device* m_pDevice11;			//デバイスオブジェクト.
+	ID3D11DeviceContext* m_pContext11;			//デバイスコンテキスト.
+	IDXGISwapChain* m_pSwapChain;			//スワップチェーン.
+	ID3D11RenderTargetView* m_pBackBuffer_TexRTV;	//レンダーターゲットビュー.
+	ID3D11Texture2D* m_pBackBuffer_DSTex;	//デプスステンシル用テクスチャ.
+	ID3D11DepthStencilView* m_pBackBuffer_DSTexDSV;	//デプスステンシルビュー.
 
 	//深度（Ｚ）テスト設定.
-	ID3D11DepthStencilState*	m_pDepthStencilStateOn;		//有効設定.
-	ID3D11DepthStencilState*	m_pDepthStencilStateOff;	//無効設定.
+	ID3D11DepthStencilState* m_pDepthStencilStateOn;		//有効設定.
+	ID3D11DepthStencilState* m_pDepthStencilStateOff;	//無効設定.
 
 	//アルファブレンド.
-	ID3D11BlendState*		m_pAlphaBlendOn;	//有効設定.
-	ID3D11BlendState*		m_pAlphaBlendOff;	//無効設定.
+	ID3D11BlendState* m_pAlphaBlendOn;	//有効設定.
+	ID3D11BlendState* m_pAlphaBlendOff;	//無効設定.
 };

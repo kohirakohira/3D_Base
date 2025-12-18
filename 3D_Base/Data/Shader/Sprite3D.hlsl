@@ -42,6 +42,9 @@ VS_OUTPUT VS_Main(
 	float2 UV	: TEXCOORD )
 {
 	VS_OUTPUT output = (VS_OUTPUT)0;
+	
+    Pos = float4(Pos.x, Pos.y, Pos.z , 1.0f);
+	
 	output.Pos = mul( Pos, g_mWVP );
 	output.UV = UV;
 	
