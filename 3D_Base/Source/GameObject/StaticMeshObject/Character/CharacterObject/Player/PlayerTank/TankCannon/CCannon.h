@@ -103,6 +103,12 @@ public:
 	// レイのデバッグ描画
 	void DrawRay(D3DXMATRIX& View, D3DXMATRIX& Proj);
 
+	//当たっているものに対して発射する
+	bool RaycastToPosition(const D3DXVECTOR3& targetPos, float targetRadius, float& outDistance) const;
+
+	//当ってい
+	bool RaycastToCollision(const D3DXVECTOR3& collitionPos, float collitionRadius, float& outDistance) const;
+
 private:
 	float		m_TurnSpeed;			// 回転速度
 

@@ -19,7 +19,7 @@ void CComShot::Initialize(int ownerID)
     m_Cooldown = 0;
 }
 
-bool CComShot::TryFire(const D3DXVECTOR3& targetPos, const D3DXVECTOR3& targetVelocity, CBody* body, CCannon* cannon)
+bool CComShot::TryFire(const D3DXVECTOR3& targetPos, const D3DXVECTOR3& targetVelocity, std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon)
 {
     if (!m_pShotManager) return false;
 
@@ -125,23 +125,22 @@ PredictedShot CComShot::PredictTargetPosition(const D3DXVECTOR3& muzzlePos, cons
 void CComShot::ComputeMuzzle(
     D3DXVECTOR3& outPos,
     float& outYaw,
-    CBody* body,
-    CCannon* cannon) const
+    std::shared_ptr<CBody> body,
+    std::shared_ptr<CCannon> cannon) const
 {
     D3DXVECTOR3 base(0, 0, 0);
     float yaw = 0.0f;
-
     if (body)
     {
         base = body->GetPosition();
         yaw = body->GetRotation().y;
     }
 
-    //ñCìÉë§ÇÕà íuÇæÇØå©ÇÈ
+    //ñCìÉÇÕå¸Ç´ÇæÇØäÓèÄÇ…Ç∑ÇÈ
     if (cannon)
     {
-        if (!body) base = cannon->GetPosition();
-        //yaw = cannon->GetRotation().y;  // ñCìÉÇÃå¸Ç´ÇóDêÊ
+        //if (!body) base = cannon->GetPosition();
+        yaw = cannon->GetRotation().y;  // ñCìÉÇÃå¸Ç´ÇóDêÊ
     }
 
     base.y += m_Config.cannonHeight;
@@ -149,4 +148,20 @@ void CComShot::ComputeMuzzle(
 
     outPos = base + forward * m_Config.muzzleOffsetZ;
     outYaw = yaw;
+}
+
+bool CComShot::TryFireOnRayHit(std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon)
+{
+    if (!m_pShotManager) return false;
+    if (m_Cooldown > 0) return false;
+
+    //ñCå˚à íuÇ∆äpìxÇåvéZ
+    D3DXVECTOR3 muzzle;
+    float yaw;
+    ComputeMuzzle(muzzle, yaw, body, cannon);
+
+    //ë¶ç¿Ç…î≠éÀ
+    m_pShotManager->Create(muzzle, yaw, true, m_OwnerID);
+    m_Cooldown = m_Config.cooldownFrames;
+    return true;
 }

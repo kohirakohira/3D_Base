@@ -81,4 +81,22 @@ public:
     // íÔ‚Ìî•ñ‚ğŠe«ŠiƒNƒ‰ƒX‚É“n‚·
     virtual TurretParams GetTurretParames() const = 0;
     
+    //•¡”‚Ì“G‚Ìó‘Ô‚ğæ“¾
+    virtual float GetEscapeWeight(int nearbyEnemyCount, float hpRadius) const { return 1.0f; } 
+    virtual float GetApproachWeight(int nearbyEnemyCount, float hpRadius) const { return 1.0f; }
+
+    /*
+    // •¡”“G‚Ìs“®‚ğŒˆ’è
+virtual BehaviorDecision DecideMultiEnemyAction(
+    const D3DXVECTOR3& selfPos,
+    const D3DXVECTOR3& targetPos,
+    const D3DXVECTOR3& clusterCenter,
+    int nearbyEnemyCount,
+    float hpRatio) const = 0;
+
+
+// •¡”“G‚Ìd‚İ‚ğæ“¾
+virtual float GetEscapeWeight(int nearbyEnemyCount, float hpRatio) const { return 1.0f; }
+virtual float GetApproachWeight(int nearbyEnemyCount, float hpRatio) const { return 1.0f; }
+    */
 };
