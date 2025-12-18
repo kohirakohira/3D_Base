@@ -43,6 +43,8 @@ private:
 	Mp3Data		m_Mp3;
 	SoundType	m_Type;
 	std::vector<IXAudio2SourceVoice*> m_pVoices; // 実行中のソースボイス
+
+	bool m_IsPlaying = false; // 再生中かどうか
 };
 
 //命名規則とハンガリアン記法.

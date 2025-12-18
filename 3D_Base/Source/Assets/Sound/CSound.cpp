@@ -96,6 +96,12 @@ bool CSound::PlaySE()
 //========ループ再生=========
 bool CSound::PlayLoop()
 {
+	if (m_IsPlaying)
+	{
+		// すでに再生中なら何もしない
+		return m_IsPlaying;
+	}
+
 	CleanUpFinishVoices();
 
 	const WAVEFORMATEX* format = nullptr;
@@ -131,6 +137,9 @@ bool CSound::PlayLoop()
 	voice->SubmitSourceBuffer(&buf);
 	voice->Start();
 
+	// 再生フラグを立てる
+	m_IsPlaying = true;
+
 	return true;
 }
 //==========================
@@ -142,5 +151,7 @@ void CSound::Stop()
 	{
 		voice->Stop(0);
 	}
+
+	m_IsPlaying = false;
 }
 //==========================

@@ -54,11 +54,27 @@ bool CSoundManager::Load()
     CFileReader reader;
 
     // 列挙型にファイルパスを読み込む
-    std::map<SE, std::wstring> filePaths =
+    std::map<SoundList, std::wstring> filePaths =
     {
-        {SE::SE_QUACK,      L"Data\\Sound\\SE\\quack_5.wav"},
-        {SE::SE_CLEAR,      L"Data\\Sound\\SE\\Clear.wav"},
-        {SE::BGM_sample,    L"Data\\Sound\\BGM\\Digi_Rock_04.mp3"},
+        { SoundList::BGM_Title,		    _T("Data\\Sound\\BGM\\Title_ver2.mp3"),		},
+        { SoundList::BGM_Main,			_T("Data\\Sound\\BGM\\Main.mp3"),		    },
+        { SoundList::BGM_Result_Win,	_T("Data\\Sound\\BGM\\Result_Win.mp3"),	    },
+        { SoundList::BGM_Result_Draw,	_T("Data\\Sound\\BGM\\Result_Draw.mp3"),    },
+
+        { SoundList::SE_Select,	    _T("Data\\Sound\\SE\\Select.mp3"),			},
+        { SoundList::SE_Click,		_T("Data\\Sound\\SE\\Accept.mp3"),		    },
+        { SoundList::SE_Connect,	_T("Data\\Sound\\SE\\Connect.mp3"),		    },
+        { SoundList::SE_UnConnect,	_T("Data\\Sound\\SE\\UnConnect.mp3"),	    },
+        { SoundList::SE_GameStart,	_T("Data\\Sound\\SE\\GameStart.mp3"),	    },
+        { SoundList::SE_GameEnd,	_T("Data\\Sound\\SE\\GameEnd.mp3"),		    },
+        { SoundList::SE_FireWork,	_T("Data\\Sound\\SE\\FireWork.mp3"),	    },
+        { SoundList::SE_Spark,		_T("Data\\Sound\\SE\\Spark.mp3"),		    },
+        { SoundList::SE_Door,		_T("Data\\Sound\\SE\\Door.mp3"),		    },
+        { SoundList::SE_Shot,		_T("Data\\Sound\\SE\\Shot.mp3"),		    },
+        { SoundList::SE_Damage ,	_T("Data\\Sound\\SE\\damage.mp3"),		    },
+        { SoundList::SE_Explosion,	_T("Data\\Sound\\SE\\explosion_2.mp3"),	    },
+        { SoundList::SE_Impact,	    _T("Data\\Sound\\SE\\Impact.mp3"),		    },
+        { SoundList::SE_Move,		_T("Data\\Sound\\SE\\Move2.mp3"),		    },
     };
 
     for (auto& path : filePaths)

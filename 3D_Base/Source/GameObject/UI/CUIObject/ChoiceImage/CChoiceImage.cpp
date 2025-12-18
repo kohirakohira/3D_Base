@@ -65,22 +65,32 @@ void CChoiceImage::ControllerUpdate()
 		{
 			//戻る処理.
 			m_vPosition.y = WND_H / posAdjustment_1;
+
+			// 一度だけ音を鳴らす
+			if (m_IsSelected == true)
+			{
+				//選択SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Select);
+			}
+
 			//セッティング.
 			m_IsSelected = false;
-
-			//選択SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		//下移動(エンド).
 		if (dirlef == CController::Direction::Down)
 		{
 			//ゲームスタート処理.
 			m_vPosition.y = WND_H / posAdjustment_2;
+
+			// 一度だけ音を鳴らす
+			if (m_IsSelected == false)
+			{
+				//選択SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Select);
+			}
+
 			//閉じる.
 			m_IsSelected = true;
-
-			//選択SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		break;
 	case CSceneType::Debug:
@@ -92,22 +102,32 @@ void CChoiceImage::ControllerUpdate()
 		{
 			//タイトルに戻る処理.
 			m_vPosition.x = WND_W / posAdjustment_3;
+			
+			// 一度だけ音を鳴らす
+			if (m_IsSelected == true)
+			{
+				//選択SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Select);
+			}
+
 			//戻る.
 			m_IsSelected = false;
-
-			//選択SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		//左移動(戻る).
 		if (dirlef == CController::Direction::Left)
 		{
 			//ゲームメイン処理.
 			m_vPosition.x = WND_W / posAdjustment_4;
+
+			// 一度だけ音を鳴らす
+			if (m_IsSelected == false)
+			{
+				//選択SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Select);
+			}
+
 			//メイン.
 			m_IsSelected = true;
-
-			//選択SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		break;
 	case CSceneType::Main:
@@ -133,22 +153,31 @@ void CChoiceImage::KeyUpdate()
 		{
 			//戻る処理.
 			m_vPosition.y = WND_H / posAdjustment_1;
+
+			// 一度だけ音を鳴らす
+			if (m_IsSelected == false)
+			{
+				//選択SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Select);
+			}
 			//セッティング.
 			m_IsSelected = false;
-
-			//選択SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		//下移動(エンド).
 		if (m_Key->NowInputKey('S') == true)
 		{
 			//ゲームスタート処理.
 			m_vPosition.y = WND_H / posAdjustment_2;
+
+			// 一度だけ音を鳴らす
+			if (m_IsSelected == false)
+			{
+				//選択SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Select);
+			}
+
 			//閉じる.
 			m_IsSelected = true;
-
-			//選択SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		break;
 	case CSceneType::Debug:
@@ -160,22 +189,32 @@ void CChoiceImage::KeyUpdate()
 		{
 			//タイトルに戻る処理.
 			m_vPosition.x = WND_W / posAdjustment_3;
+
+			// 一度だけ音を鳴らす
+			if (m_IsSelected == false)
+			{
+				//選択SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Select);
+			}
+
 			//戻る.
 			m_IsSelected = false;
-
-			//選択SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		//左移動(戻る).
 		if (m_Key->NowInputKey('A') == true)
 		{
 			//ゲームメイン処理.
 			m_vPosition.x = WND_W / posAdjustment_4;
+
+			// 一度だけ音を鳴らす
+			if (m_IsSelected == false)
+			{
+				//選択SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Select);
+			}
+
 			//メイン.
 			m_IsSelected = true;
-
-			//選択SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Select);
 		}
 		break;
 	case CSceneType::Main:
