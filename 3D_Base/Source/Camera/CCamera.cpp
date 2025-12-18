@@ -112,7 +112,7 @@ void CCamera::UpdateThirdPerson()
 //自由視点.
 void CCamera::UpdateFree()
 {
-	float add_value = 0.05f;
+	float add_value = 0.5f;
 
 	if (GetAsyncKeyState('G') & 0x8000)
 	{
@@ -161,7 +161,7 @@ void CCamera::ProjMatrixUpdate()
 	//描画する距離(スタート位置).
 	float nearZ		= 0.3f;
 	//描画する距離(エンド位置).
-	float farZ		= 2000.0f;
+	float farZ		= 3000.0f;
 
 	D3DXMatrixPerspectiveFovLH(
 		&m_mProj,	//(out)プロジェクション計算結果.

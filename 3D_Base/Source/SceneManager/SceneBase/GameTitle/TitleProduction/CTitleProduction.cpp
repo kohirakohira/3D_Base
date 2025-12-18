@@ -103,7 +103,7 @@ void CTitleProduction::Init()
 	angle.y = 225.0f * PI / 180.0f;
 	m_SpriteObjGround->SetRotation(angle);
 	m_SpriteObjGround->SetPosition(0.0f, 0.0f, 0.0f);
-	m_SpriteObjGround->SetScale(1.0f, 1.0f, 1.0f);
+	m_SpriteObjGround->SetScale(10.0f, 10.0f, 1.0f);
 
 	//プレイヤーの設定.
 	m_Cannon->SetPosition(POS_X, 8.0f, POS_Z);
@@ -116,7 +116,7 @@ void CTitleProduction::Init()
 	//カメラの初期化.
 	m_Camera->Init();
 	//カメラの設定.
-	m_Camera->SetLightPos(0.0f, 50.0f, 0.0f);		//位置設定.
+	m_Camera->SetLightPos(1.5f, 45.0f, -22.0f);		//位置設定.
 	m_Camera->SetLightColor(1.0f, 1.0f, 1.0f);		//色の設定.
 	m_Camera->SetLightIntensity(100.0f);			//ライトの強さ.
 	m_Camera->SetLightRange(1000.0f);				//ライトの長さ.
@@ -130,9 +130,9 @@ void CTitleProduction::Init()
 		//m_pBackImgObject->SetScale(300.0f, 300.0f, 300.0f);
 	}
 
-	m_BackGround->SetPosition(0.0f, 100.0f, 1000.0f);
-	m_BackGround->SetRotation(0.0f, D3DXToRadian(-45), 0.0f);
-	m_BackGround->SetScale(4.0f, 1.0f, 4.0f);
+	m_BackGround->SetPosition(0.0f, 200.0f, 1000.0f);
+	m_BackGround->SetRotation(0.0f, 0.0f, 0.0f);
+	m_BackGround->SetScale(4.0f, 1.0f, 0.0f);
 
 }
 
