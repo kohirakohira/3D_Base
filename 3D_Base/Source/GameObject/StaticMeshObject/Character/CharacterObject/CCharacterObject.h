@@ -41,6 +41,11 @@ public:
 		bool	m_Kill;			// すでにキル処理したか		
 		bool	m_Muteki;		// 無敵フラグ
 		bool	m_Respawn;		// リスポーンフラグ
+
+		bool	m_HitWall;		// サウンドフラグ：壁に当たっている時
+		bool	m_HitBox;		// サウンドフラグ：箱に当たっている時
+		bool	m_HitBlast;		// サウンドフラグ：爆風に当たっている時
+
 	} m_Chara;
 
 public:
@@ -102,6 +107,16 @@ public:
 	//=====無敵の設定・取得=====
 	virtual void SetMuteki(bool flg) { m_Chara.m_Muteki = flg; }
 	virtual bool GetMuteki() const { return m_Chara.m_Muteki; }
+	//========================
+
+	//=====サウンドフラグの設定・取得=====
+	virtual void SetHitWall (bool flg)	{ m_Chara.m_HitWall = flg; }
+	virtual void SetHitBox  (bool flg)	{ m_Chara.m_HitBox = flg; }
+	virtual void SetHitBlast(bool flg)	{ m_Chara.m_HitBlast = flg; }
+
+	virtual bool GetHitWall () const { return m_Chara.m_HitWall; }
+	virtual bool GetHitBox  () const { return m_Chara.m_HitBox; }
+	virtual bool GetHitBlast() const { return m_Chara.m_HitBlast; }
 	//========================
 
 	//=====位置の設定・取得=====

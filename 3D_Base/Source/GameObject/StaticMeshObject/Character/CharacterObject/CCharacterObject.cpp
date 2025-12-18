@@ -21,6 +21,10 @@ CCharacterObjectBase::CCharacterObjectBase()
 		false,	// すでにキル処理したか	
 		false,	// 無敵フラグ
 		false,	// リスポーンフラグ
+
+		false,	// サウンドフラグ：壁に当たっている時	
+		false,	// サウンドフラグ：箱に当たっている時
+		false,	// サウンドフラグ：爆風に当たっている時
 	};
 }
 
@@ -134,6 +138,9 @@ void CCharacterObjectBase::Damage()
 	}
 	else
 	{
+		// 当たるようになったらサウンドフラグ無効化
+		m_Chara.m_HitBlast = false;
+
 		// 念のためここでも無敵を初期化する
 		m_Chara.m_MutekiCnt = 0;
 		m_Chara.m_MutekiTimer = 0.2;

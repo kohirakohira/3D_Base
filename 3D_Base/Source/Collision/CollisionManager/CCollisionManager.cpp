@@ -614,8 +614,14 @@ void CCollisionManager::PlayertoBlast()
 				// 当たった時の処理
 				chara->Hit();
 
-				// ダメージSEの再生
-				CSoundManager::PlaySE(CSoundManager::SE_Damage);
+				if (chara->GetHitBlast() == false)
+				{
+					// ダメージSEの再生
+					CSoundManager::PlaySE(CSoundManager::SE_Damage);
+
+					// 接触中にフラグをtrueに変更
+					chara->SetHitBlast(true);
+				}
 			}
 
 			if (chara->GetDeath() == true && chara->GetKill() == false)
