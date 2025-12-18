@@ -49,39 +49,50 @@ void CCamera::Update()
 
 	//ビュー行列を計算
 	D3DXMatrixLookAtLH(&m_mView, &m_Camera.vPosition, &m_Camera.vLook, &m_Up);
+	
+	//更新.
+	Projection();
 
-	//プロジェクションもここで更新しておく
-	float fovY = D3DXToRadian(45.0f);
-	float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
-	D3DXMatrixPerspectiveFovLH(&m_mProj, fovY, aspect, 0.1f, 100.0f);
+	////プロジェクションもここで更新しておく
+	//float fovY = D3DXToRadian(45.0f);
+	//float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
+	//D3DXMatrixPerspectiveFovLH(&m_mProj, fovY, aspect, 0.1f, 100.0f);
+
+	m_Camera.vLook = m_LookAt;
+
 }
 
 
 void CCamera::Info()
 {
-	SetCamera();
 	Projection();
 }
 
 void CCamera::Init()
 {
-	//初期化.
-	ZeroMemory(&m_Camera, sizeof(CAMERA));
-	ZeroMemory(&m_Light, sizeof(LIGHT));
+
+	//カメラの初期化.
+	m_Camera.vPosition	= D3DXVECTOR3(0.0f, 2.0f, -5.0f);
+	m_Camera.vLook		= D3DXVECTOR3(0.0f, 2.0f, 0.0f);
+
+	m_Up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+	Projection();
+
 }
 
-void CCamera::SetCamera()
-{
-	//ビューの設定.
-	D3DXVECTOR3 cam_pos = m_Camera.vPosition;
-	D3DXVECTOR3 cam_look = m_Camera.vLook;
-	D3DXVECTOR3	vUpVec(0.0f, 1.0f, 0.0f);	//上方（ベクトル）.
-
-	//ビュー（カメラ）変換.
-	D3DXMatrixLookAtLH(
-		&m_mView,	//(out)ビュー計算結果.
-		&cam_pos, &cam_look, &vUpVec);
-}
+//void CCamera::SetCamera()
+//{
+//	//ビューの設定.
+//	D3DXVECTOR3 cam_pos = m_Camera.vPosition;
+//	D3DXVECTOR3 cam_look = m_Camera.vLook;
+//	D3DXVECTOR3	vUpVec(0.0f, 1.0f, 0.0f);	//上方（ベクトル）.
+//
+//	//ビュー（カメラ）変換.
+//	D3DXMatrixLookAtLH(
+//		&m_mView,	//(out)ビュー計算結果.
+//		&cam_pos, &cam_look, &vUpVec);
+//}
 
 void CCamera::SetCameraPos(float x, float y, float z)
 {

@@ -6,26 +6,27 @@ const TCHAR SHADER_NAME[] = _T( "Data\\Shader\\Sprite3D.hlsl" );
 
 //コンストラクタ.
 CSprite3D::CSprite3D()
-	: m_pDx11			( nullptr )
-	, m_pDevice11		( nullptr )
-	, m_pContext11		( nullptr )
-	, m_pVertexShader	( nullptr )
-	, m_pVertexLayout	( nullptr )
-	, m_pPixelShader	( nullptr )
-	, m_pConstantBuffer	( nullptr )
-	, m_pVertexBuffer	( nullptr )
-	, m_pSampleLinear	( nullptr )
-	, m_pTexture		( nullptr )
-	, m_vPosition		()
-	, m_vRotation		()
-	, m_vScale			( 1.0f, 1.0f, 1.0f )
-	, m_UV				( 0.0f, 0.0f )
-	, m_MoveFlag		( false )
-	, m_Alpha			( 1.0f )
-	, m_SpriteState		()
-	, m_PatternNo		()
-	, m_PatternMax		()
-	, m_Billboard		( false )
+	: m_pDx11					( nullptr )
+	, m_pDevice11				( nullptr )
+	, m_pContext11				( nullptr )
+	, m_pVertexShader			( nullptr )
+	, m_pVertexLayout			( nullptr )
+	, m_pPixelShader			( nullptr )
+	, m_pConstantBuffer			( nullptr )
+	, m_pVertexBuffer			( nullptr )
+	, m_pFogConstantBuffer		( nullptr )
+	, m_pSampleLinear			( nullptr )
+	, m_pTexture				( nullptr )
+	, m_vPosition				()
+	, m_vRotation				()
+	, m_vScale					( 1.0f, 1.0f, 1.0f )
+	, m_UV						( 0.0f, 0.0f )
+	, m_MoveFlag				( false )
+	, m_Alpha					( 1.0f )
+	, m_SpriteState				()
+	, m_PatternNo				()
+	, m_PatternMax				()
+	, m_Billboard				( false )
 {
 }
 
@@ -231,6 +232,22 @@ HRESULT CSprite3D::CreateShader()
 		return E_FAIL;
 	}
 
+	//Fogバッファーの作成.
+	D3D11_BUFFER_DESC fogCb = {};
+	fogCb.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
+	fogCb.ByteWidth			= sizeof(FOGBUFFER);
+	fogCb.CPUAccessFlags	= D3D11_CPU_ACCESS_WRITE;
+	fogCb.Usage				= D3D11_USAGE_DYNAMIC;
+
+	if (FAILED(
+		m_pDevice11->CreateBuffer(
+			&fogCb,
+			nullptr,
+			&m_pFogConstantBuffer )))
+	{
+		_ASSERT_EXPR(false, _T("Fog ConstantBuffer 作成失敗"));
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -377,12 +394,17 @@ void CSprite3D::Render(
 
 	//シェーダのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
+	D3D11_MAPPED_SUBRESOURCE fogData;
 	SHADER_CONSTANT_BUFFER cb;	//コンスタントバッファ.
 	//バッファ内のデータの書き換え開始時にmap.
 	if (SUCCEEDED(
 		m_pContext11->Map( m_pConstantBuffer,
 			0, D3D11_MAP_WRITE_DISCARD, 0, &pData )))
 	{
+		//ワールド行列を渡す.
+		cb.mWorld = mWorld;
+		D3DXMatrixTranspose(&cb.mWorld, &cb.mWorld);
+
 		//ワールド,ビュー,プロジェクション行列を渡す.
 		D3DXMATRIX m = mWorld * mView * mProj;
 		D3DXMatrixTranspose( &m, &m );	//行列を転置する.
@@ -416,10 +438,26 @@ void CSprite3D::Render(
 
 		m_pContext11->Unmap(m_pConstantBuffer, 0);
 	}
+	if (SUCCEEDED(m_pContext11->Map(
+		m_pFogConstantBuffer, 0,
+		D3D11_MAP_WRITE_DISCARD, 0, &fogData)))
+	{
+		FOGBUFFER fog;
+		fog.CameraPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		fog.FogStart	= 50.0f;
+		fog.FogEnd		= 250.0f;
+		fog.FogColor	= D3DXVECTOR3(0.6f, 0.7f, 0.9f);
+
+		memcpy(fogData.pData, &fog, sizeof(fog));
+		m_pContext11->Unmap(m_pFogConstantBuffer, 0);
+
+	}
 
 	//このコンスタントバッファをどのシェーダで使うか？.
 	m_pContext11->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
 	m_pContext11->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+	m_pContext11->VSSetConstantBuffers( 1, 1, &m_pFogConstantBuffer );
+	m_pContext11->PSSetConstantBuffers( 1, 1, &m_pFogConstantBuffer );
 
 	//頂点バッファをセット.
 	UINT stride = sizeof( VERTEX );	//データの間隔.

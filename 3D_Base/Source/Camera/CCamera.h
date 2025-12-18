@@ -15,8 +15,8 @@ public:
 	void Update();	//アップデートを一旦三人称カメラとして使う
 	void Info();
 	void Init();
-	//カメラ関数.
-	void SetCamera();
+	////カメラ関数.
+	//void SetCamera();
 	//カメラの位置設定.
 	void SetCameraPos(float x, float y, float z);
 	//ライトの回転設定.
@@ -56,8 +56,8 @@ public:
 	CAMERA			m_Camera;
 	LIGHT			m_Light;
 	//行列.
-	D3DXMATRIX		m_mView;	//ビュー(カメラ)行列.
-	D3DXMATRIX		m_mProj;	//射影（プロジェクション）行列.
+	D3DXMATRIX		m_mView;			//ビュー(カメラ)行列.
+	D3DXMATRIX		m_mProj;			//射影（プロジェクション）行列.
 private:
 	D3DXVECTOR3		m_TargetPos;		//ターゲットの位置
 	float			m_TargetRotY;		//ターゲットのY軸回転

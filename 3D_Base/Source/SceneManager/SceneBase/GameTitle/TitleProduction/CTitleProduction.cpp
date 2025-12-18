@@ -28,8 +28,9 @@ CTitleProduction::~CTitleProduction()
 void CTitleProduction::Update()
 {
 	//ƒJƒƒ‰‚Ì“®ì.
-	//m_Camera->ThirdPersonCamera(&m_Camera->m_Camera, m_Cannon->GetPosition(), m_Cannon->GetRotation().y);
-	m_Camera->Update();
+	m_Camera->ThirdPersonCamera(&m_Camera->m_Camera, 
+		D3DXVECTOR3{ m_Cannon->GetPosition().x - 20.0f, m_Cannon->GetPosition().y + 10.0f, m_Cannon->GetPosition().z - 60.0f },
+		D3DXToRadian(-5.0f));
 
 	//’n–Ê‚ğ“®‚©‚·.
 	MoveGround();
@@ -48,8 +49,6 @@ void CTitleProduction::Draw()
 
 	//’n–Ê‚ğ•`‰æ‚·‚é.
 	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
-	//”wŒi‚ğ•`‰æ‚·‚é.
-	//m_pBackImgObject->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
 	//ƒvƒŒƒCƒ„[‚ğ•`‰æ‚·‚é.
 	m_Cannon->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
 	m_Body->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
@@ -63,7 +62,7 @@ void CTitleProduction::Create()
 	m_Camera			= std::make_shared<CCamera>();
 
 	//”wŒi‰æ‘œ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX¶¬.
-	m_BackGroundImg = std::make_shared<CSprite3D>();
+	m_BackGroundImg		= std::make_shared<CSprite3D>();
 
 	//”wŒi‚ÌƒCƒ“ƒXƒ^ƒ“ƒX¶¬.
 	m_BackGround = std::make_unique<BackGround>();
@@ -110,8 +109,8 @@ void CTitleProduction::Init()
 	angle.x = 90.0f * PI / 180.0f;
 	angle.y = 225.0f * PI / 180.0f;
 	m_SpriteObjGround->SetRotation(angle);
-	m_SpriteObjGround->SetPosition(0.0f, -100.0f, 200.0f);
-	m_SpriteObjGround->SetScale(8.0f, 8.0f, 8.0f);
+	m_SpriteObjGround->SetPosition(0.0f, 0.0f, 0.0f);
+	m_SpriteObjGround->SetScale(1.0f, 1.0f, 1.0f);
 
 	////”wŒi‚Ì‰Šú‰».
 	//m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
@@ -127,8 +126,8 @@ void CTitleProduction::Init()
 	m_Body->SetPosition(POS_X, 0.0f, POS_Z);
 	m_Cannon->SetRotation(0.0f, angle.y, 0.0f);
 	m_Body->SetRotation(0.0f, angle.y, 0.0f);
-	m_Cannon->SetScale(3.0f, 3.0f, 3.0f);
-	m_Body->SetScale(3.0f, 3.0f, 3.0f);
+	m_Cannon->SetScale(25.0f, 25.0f, 25.0f);
+	m_Body->SetScale(25.0f, 25.0f, 25.0f);
 }
 
 //“Ç‚İ‚İŠÖ”.

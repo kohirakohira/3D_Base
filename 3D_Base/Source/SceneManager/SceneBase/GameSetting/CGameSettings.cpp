@@ -84,12 +84,16 @@ void CGameSettings::Update()
 			{
 				m_SceneType = CSceneType::Title;
 
+				//決定SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Click);
 				return;
 			}
 			else
 			{
 				m_SceneType = CSceneType::Main;
 
+				//決定SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Click);
 				return;
 			}
 		}
@@ -142,7 +146,7 @@ void CGameSettings::Init()
 	//定数宣言.
 	const float windowYW	= WND_W / 4;			//配置をするのにちょうどいい位置※4はマジックナンバー.
 	const float windowNW	= WND_W - (32 * 23);	//配置をするのにちょうどいい位置※32(サイズ) * 23個分の位置にする.
-	const float POS_X		= WND_W / 1.37f;		//配置をするのにちょうどいい位置に設定※選択肢の位置を「いいえ」の位置に調整した.
+	const float POS_X		= WND_W / 1.38f;		//配置をするのにちょうどいい位置に設定※選択肢の位置を「いいえ」の位置に調整した.
 	const float POS_Y		= WND_H / 1.2f;			//配置をするのにちょうどいい位置に設定※高さがちょうどよかった.
 	const float IMG_POS_X	= WND_W / 4.f;
 	const float IMG_POS_Y	= WND_H / 14.f;
@@ -173,9 +177,6 @@ void CGameSettings::Init()
 	m_pSpriteNoSelectImg->SetRotation(0.f, 0.f, 0.f);
 	m_pSpriteNoSelectImg->SetScale(1.f, 1.f, 0.f);
 
-
-
-
 	//画像の設定.
 	for (int i = 0; i < IMAGE; i++)
 	{
@@ -188,18 +189,12 @@ void CGameSettings::Init()
 		m_SpriteConnectionCOMImg[i]->SetScale(1.0f, 1.0f, 0.f);
 
 		posx += 500.0f;
-
 	}
-
-
-
-
 
 	//キー入力.
 	m_InputKey->Init();
 	//使いたいキーを引数に設定.
 	m_InputKey->SetKey({'Z'});
-
 }
 
 //解放関数.
@@ -239,16 +234,12 @@ void CGameSettings::Create()
 	//キー入力.
 	m_InputKey = std::make_shared<CMultiInputKeyManager>();
 
-
-
-
 	//接続画像のインスタンス生成.
 	for (int i = 0; i < IMAGE; i++)
 	{
 		m_SpriteConnection.push_back(std::make_shared<CSprite2D>());
 		m_SpriteCom.push_back(std::make_shared<CSprite2D>());
 	}
-
 
 	//画像インスタンスの複製.
 	for (int i = 0; i < IMAGE; i++)
@@ -278,9 +269,9 @@ HRESULT CGameSettings::LoadData()
 	};
 	//選択肢画像のスプライト設定.
 	CSprite2D::SPRITE_STATE C_SIZE = {
-		16,32,				//描画幅,高さ.
-		16,32,				//元画像の幅,高さ.
-		16,32,				//アニメーションをしないので、0でいい.
+		40,80,		//描画幅,高さ.
+		40,80,		//元画像の幅,高さ.
+		40,80,		//アニメーションをしないので、0でいい.
 	};
 	//選択肢画像のスプライト設定.
 	CSprite2D::SPRITE_STATE S_SIZE = {
@@ -362,8 +353,6 @@ HRESULT CGameSettings::LoadData()
 	//画像の設定(選択※Yes&No).
 	m_pSpriteYesSelectImg->AttachSprite(m_SpriteYesSelect);
 	m_pSpriteNoSelectImg->AttachSprite(m_SpriteNoSelect);
-
-
 
 
 	//画像設定.
