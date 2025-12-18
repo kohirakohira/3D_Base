@@ -155,7 +155,7 @@ void CChoiceImage::KeyUpdate()
 			m_vPosition.y = WND_H / posAdjustment_1;
 
 			// 一度だけ音を鳴らす
-			if (m_IsSelected == false)
+			if (m_IsSelected == true)
 			{
 				//選択SEの再生.
 				CSoundManager::PlaySE(CSoundManager::SE_Select);
@@ -191,7 +191,7 @@ void CChoiceImage::KeyUpdate()
 			m_vPosition.x = WND_W / posAdjustment_3;
 
 			// 一度だけ音を鳴らす
-			if (m_IsSelected == false)
+			if (m_IsSelected == true)
 			{
 				//選択SEの再生.
 				CSoundManager::PlaySE(CSoundManager::SE_Select);
