@@ -671,23 +671,6 @@ void CComPlayer::StepSeek()
 
     D3DXVECTOR3 collisonTarget;
 
-    //ó‘ÔŽæ“¾
-    if (cannon->RaycastToPosition(target->GetPosition(),targetRadius,hitDistance))
-    {
-        auto selfPos = target->GetPosition();
-        auto yaw = target->GetRotation().y;
-        float hitDistance;
-
-        HasObstacleAheadSimple(selfPos, yaw, m_ObstacleProbeDist, m_ObstacleProbeStep, hitDistance);
-
-#if 0
-        for (auto ob : *m_pSimpleObstacles)
-        {
-            StepEvade();
-        }
-#endif
-    }
-
     SyncCannonToBody();
 }
 
