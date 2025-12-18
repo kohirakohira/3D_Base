@@ -137,10 +137,11 @@ void CComShot::ComputeMuzzle(
         yaw = body->GetRotation().y;
     }
 
+    //–C“ƒ‘¤‚ÍˆÊ’u‚¾‚¯Œ©‚é
     if (cannon)
     {
         if (!body) base = cannon->GetPosition();
-        yaw = cannon->GetRotation().y;  // –C“ƒ‚ÌŒü‚«‚ğ—Dæ
+        //yaw = cannon->GetRotation().y;  // –C“ƒ‚ÌŒü‚«‚ğ—Dæ
     }
 
     base.y += m_Config.cannonHeight;
