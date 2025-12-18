@@ -29,7 +29,7 @@ void CTitleProduction::Update()
 {
 	//カメラの動作.
 	m_Camera->ThirdPersonCamera(&m_Camera->m_Camera, 
-		D3DXVECTOR3{ m_Cannon->GetPosition().x - 20.0f, m_Cannon->GetPosition().y + 10.0f, m_Cannon->GetPosition().z - 60.0f },
+		D3DXVECTOR3{ m_Cannon->GetPosition().x - 400.0f, m_Cannon->GetPosition().y + 200.0f, m_Cannon->GetPosition().z - 1200.0f },
 		D3DXToRadian(-5.0f));
 
 	//地面を動かす.
@@ -43,13 +43,12 @@ void CTitleProduction::Draw()
 {
 	//カメラの情報更新.
 	m_Camera->Info();
-	m_Camera->SetFog();
 
-	//背景の描画.
-	m_BackGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
+	////背景の描画.
+	//m_BackGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 
-	//地面を描画する.
-	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
+	////地面を描画する.
+	//m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 	//プレイヤーを描画する.
 	m_Cannon->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
 	m_Body->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
@@ -119,24 +118,24 @@ void CTitleProduction::Init()
 	angle.y = 225.0f * PI / 180.0f;
 	m_SpriteObjGround->SetRotation(angle);
 	m_SpriteObjGround->SetPosition(0.0f, 0.0f, 0.0f);
-	m_SpriteObjGround->SetScale(1.0f, 1.0f, 1.0f);
+	m_SpriteObjGround->SetScale(50.0f, 50.0f, 50.0f);
 
 	//背景の初期化.
 	//m_pBackImgObject->SetPosition(0.0f, 0.0f, 0.0f);
 	//m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
 	//m_pBackImgObject->SetScale(300.0f, 300.0f, 300.0f);
 
-	m_BackGround->SetPosition(0.0f, 0.0f, 150.0f);
-	m_BackGround->SetRotation(0.0f, D3DXToRadian(-45), 0.0f);
-	m_BackGround->SetScale(1.0f, 1.0f, 1.0f);
+	m_BackGround->SetPosition(0.0f, 500.0f, 3000.0f);
+	m_BackGround->SetRotation(0.0f, 0.0f, 0.0f);
+	m_BackGround->SetScale(100.0f, 1.0f, 1.0f);
 
 	//プレイヤーの設定.
 	m_Cannon->SetPosition(POS_X, 8.0f, POS_Z);
 	m_Body->SetPosition(POS_X, 4.5f, POS_Z);
 	m_Cannon->SetRotation(0.0f, angle.y, 0.0f);
 	m_Body->SetRotation(0.0f, angle.y, 0.0f);
-	m_Cannon->SetScale(25.0f, 25.0f, 25.0f);
-	m_Body->SetScale(25.0f, 25.0f, 25.0f);
+	m_Cannon->SetScale(300.0f, 300.0f, 300.0f);
+	m_Body->SetScale(300.0f, 300.0f, 300.0f);
 }
 
 //読み込み関数.

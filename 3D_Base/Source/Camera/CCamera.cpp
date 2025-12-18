@@ -105,7 +105,7 @@ void CCamera::SetLightRot(float x, float y, float z)
 void CCamera::Projection()
 {
 	//y方向の視野角。数値を大きくしたら視野が狭くなる.
-	float fov_y = static_cast<FLOAT>(D3DXToRadian(45.0));	//ラジアン値.
+	float fov_y = static_cast<FLOAT>(D3DXToRadian(45.0f));	//ラジアン値.
 	//アスペクト（幅÷高さ）.
 	float aspect = static_cast<FLOAT>(WND_W) / static_cast<FLOAT>(WND_H);
 	float near_z = 0.3f;
@@ -194,7 +194,7 @@ void CCamera::SetFog()
 		return;
 	}
 
-	CDirectX11::GetInstance().UpdateFogConstantBuffer(m_Fog, m_Camera.vPosition);
+	//CDirectX11::GetInstance().UpdateFogConstantBuffer(m_Fog, m_Camera.vPosition);
 
 }
 

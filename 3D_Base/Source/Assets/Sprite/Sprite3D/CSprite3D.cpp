@@ -14,6 +14,7 @@ CSprite3D::CSprite3D()
 	, m_pPixelShader	( nullptr )
 	, m_pConstantBuffer	( nullptr )
 	, m_pVertexBuffer	( nullptr )
+	, m_pFogBuffer		( nullptr )
 	, m_pSampleLinear	( nullptr )
 	, m_pTexture		( nullptr )
 	, m_vPosition		()
@@ -231,6 +232,24 @@ HRESULT CSprite3D::CreateShader()
 		return E_FAIL;
 	}
 
+	//Fogバッファ作成.
+	D3D11_BUFFER_DESC fogCb;
+	fogCb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;		//コンスタントバッファを指定.
+	fogCb.ByteWidth = sizeof(FOG_CONSTANT_BUFFER);		//コンスタントバッファのサイズ.
+	fogCb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;		//書き込みでアクセス.
+	fogCb.MiscFlags = 0;								//その他のフラグ（未使用）.
+	fogCb.StructureByteStride = 0;						//構造体のサイズ（未使用）.
+	fogCb.Usage = D3D11_USAGE_DYNAMIC;					//使用方法：直接書き込み.
+
+	if (FAILED(m_pDevice11->CreateBuffer(
+		&fogCb,
+		nullptr,
+		&m_pFogBuffer )))
+	{
+		_ASSERT_EXPR(false, _T("FOGコンスタントバッファ作成失敗"));
+		return E_FAIL;
+	}
+
 
 	return S_OK;
 }
@@ -417,9 +436,31 @@ void CSprite3D::Render(
 		m_pContext11->Unmap(m_pConstantBuffer, 0);
 	}
 
+	//----------FOG-------------
+	D3D11_MAPPED_SUBRESOURCE pFogData;
+	FOG_CONSTANT_BUFFER fogCb;	//コンスタントバッファ.
+	if (SUCCEEDED(
+		m_pContext11->Map(m_pFogBuffer,
+			0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+	{
+		fogCb.CameraPos = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
+		fogCb.Start		= D3DXVECTOR4(0.1f, 0.0f, 0.0f, 0.0f);
+		fogCb.Color		= D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+		fogCb.End		= D3DXVECTOR4(500.0f, 0.0f, 0.0f, 0.0f);
+
+		memcpy_s(pData.pData, pData.RowPitch,
+			(void*)(&fogCb), sizeof(fogCb));
+
+		m_pContext11->Unmap(m_pFogBuffer, 0);
+	}
+
 	//このコンスタントバッファをどのシェーダで使うか？.
 	m_pContext11->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
 	m_pContext11->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+
+	m_pContext11->VSSetConstantBuffers( 1, 1, &m_pFogBuffer );
+	m_pContext11->PSSetConstantBuffers( 1, 1, &m_pFogBuffer );
+
 
 	//頂点バッファをセット.
 	UINT stride = sizeof( VERTEX );	//データの間隔.

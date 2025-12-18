@@ -19,11 +19,10 @@ cbuffer per_mesh : register( b0 )	//レジスタ番号.
 //Fog用のコンスタントバッファ.
 cbuffer per_fog : register( b1 )
 {
-    float3	g_CameraPos;
-    float	g_FogStart;
-	
-    float3	g_FogColor;
-    float	g_FogEnd;
+    float4 g_CameraPos;
+    float4 g_FogColor;
+    float4 g_FogStart;
+    float4 g_FogEnd;
 };
 
 //頂点シェーダの出力パラメータ.
@@ -64,10 +63,10 @@ float4 PS_Main( VS_OUTPUT input ) : SV_Target
 	//プログラム制御のα値をテクスチャが持っているα値にかけ合わせる.
 	color.a *= g_Color.a;
 
-	//Fog.
-    float dist = distance(input.WorldPos, g_CameraPos);
-    float fogRate = saturate((dist - g_FogStart) / (g_FogEnd - g_FogStart));
-    color.rgb = lerp(color.rgb, g_FogColor, fogRate);
+	////Fog.
+ //   float dist = distance(input.WorldPos, g_CameraPos.xyz);
+ //   float fogRate = saturate((dist - g_FogStart.x) / (g_FogEnd.x - g_FogStart.x));
+ //   color.rgb = lerp(color.rgb, g_FogColor.rgb, fogRate);
 	
 	return color;
 }

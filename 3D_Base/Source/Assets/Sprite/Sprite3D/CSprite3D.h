@@ -44,6 +44,15 @@ public:
 		D3DXVECTOR2	Tex;	//テクスチャ座標.
 	};
 
+	//FOG構造体.
+	struct FOG_CONSTANT_BUFFER
+	{
+		D3DXVECTOR4 CameraPos;
+		D3DXVECTOR4 Color;
+		D3DXVECTOR4 Start;
+		D3DXVECTOR4 End;
+	};
+
 public:
 	CSprite3D();	//コンストラクタ.
 	~CSprite3D();	//デストラクタ.
@@ -120,6 +129,7 @@ private:
 	ID3D11Buffer*			m_pConstantBuffer;	//コンスタントバッファ.
 
 	ID3D11Buffer*			m_pVertexBuffer;	//頂点バッファ.
+	ID3D11Buffer*			m_pFogBuffer;		//Fogバッファ.
 
 	ID3D11ShaderResourceView*	m_pTexture;			//テクスチャ.
 	ID3D11SamplerState*			m_pSampleLinear;	//サンプラ:テクスチャに各種フィルタをかける.
