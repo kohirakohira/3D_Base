@@ -127,6 +127,7 @@ TargetResult CComTargetSelector::SelectTarget(
     {
         m_pTarget = best;
         m_CurrentTargetDist = bestDist;
+        m_LastTargetPos = best->GetPosition();
     }
     else
     {

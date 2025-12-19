@@ -302,5 +302,8 @@ private:
 	int m_PathRecalcTimer = 0;          // 再計算タイマー
 	static const int PATH_RECALC_INTERVAL = 60;  // 60フレームごとに再計算
 
+	//COMが追尾中にガタガタする対策
+	D3DXVECTOR3 m_SmoothedTargetPos = { 0,0,0 };	//平滑化したターゲット位置
+	float m_AimSmoothFactor = 0.25f;				//平滑化係数
 
 };

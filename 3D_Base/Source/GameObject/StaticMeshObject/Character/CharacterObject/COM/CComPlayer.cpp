@@ -342,6 +342,11 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
         return; //死亡ターゲットは照準しない
     }
 
+    //ターゲット位置を平滑化
+    m_SmoothedTargetPos.x += (targetPos.x - m_SmoothedTargetPos.x) * m_AimSmoothFactor;
+    m_SmoothedTargetPos.y += (targetPos.y - m_SmoothedTargetPos.y) * m_AimSmoothFactor;
+    m_SmoothedTargetPos.z += (targetPos.z - m_SmoothedTargetPos.z) * m_AimSmoothFactor;
+
     //性格クラスから砲塔パラメータを取得
     TurretParams turretParams;
     if (m_pPersonality)
@@ -362,7 +367,7 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
     targetVel.z *= turretParams.predictionAccuracy;
 
     PredictedShot prediction = m_ComShot.PredictTargetPosition(
-        muzzle, targetPos, targetVel);
+        muzzle, m_SmoothedTargetPos, targetVel);
 
     // 砲塔の基準位置
     D3DXVECTOR3 base = body ? body->GetPosition() : cannon->GetPosition();
