@@ -2,13 +2,11 @@
 
 CTitleProduction::CTitleProduction()
 	: m_Camera				( nullptr )
-	, m_BackGroundMesh		( nullptr )
 	, m_BodyMesh			( nullptr )
 	, m_CannonMesh			( nullptr )
 
 	, m_SpriteGround		( nullptr )
 	, m_SpriteObjGround		( nullptr )
-	, m_pBackImgObject		( nullptr )
 	, m_Body				( nullptr )
 	, m_Cannon				( nullptr )
 
@@ -76,11 +74,7 @@ void CTitleProduction::Create()
 	//地面オブジェクトの生成.
 	m_SpriteObjGround	= std::make_unique<CSpriteObject>();
 
-	//背景の生成.
-	m_pBackImgObject	= std::make_unique<CStaticMeshObject>();
-
 	//スタティックメッシュの生成.
-	m_BackGroundMesh	= std::make_shared<CStaticMesh>();
 	m_BodyMesh			= std::make_unique<CStaticMesh>();
 	m_CannonMesh		= std::make_unique<CStaticMesh>();
 
@@ -161,17 +155,12 @@ HRESULT CTitleProduction::LoadData()
 	//スプライトの読み込み.
 	m_SpriteGround->Init(CDirectX11::GetInstance(), _T("Data\\Mesh\\Static\\Ground\\groundex.bmp"), GROUND);
 
-	//背景のメッシュの読み込み.
-	m_BackGroundMesh->Init(_T("Data\\Mesh\\Static\\OutBackImage\\BackImage.x"));
-
 	//プレイヤーメッシュの読み込み.
 	m_BodyMesh->Init(_T("Data\\Mesh\\Static\\Tank_n\\Red\\Body.x"));
 	m_CannonMesh->Init(_T("Data\\Mesh\\Static\\Tank_n\\Red\\Cannon.x"));
 
 	//地面メッシュのアタッチ.
 	m_SpriteObjGround->AttachSprite(*m_SpriteGround);
-	//背景メッシュのアタッチ.
-	m_pBackImgObject->AttachMesh(m_BackGroundMesh);
 	//プレイヤーメッシュのアタッチ.
 	m_Body->AttachMesh(m_BodyMesh);
 	//プレイヤーメッシュのアタッチ.

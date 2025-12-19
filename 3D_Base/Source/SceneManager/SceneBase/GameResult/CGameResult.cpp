@@ -52,9 +52,9 @@ void CGameResult::Update()
 	//キーの判定.
 	m_Key->Update();
 
-	// 勝ちか引き分けのBGM変更
-	if (m_SceneType == CSceneType::ResultWin)
+	switch (m_SceneType)
 	{
+	case CSceneType::ResultWin:
 		//BGMのループ再生.
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Win);
 		//↓-----リザルトの演出-----↓.
@@ -62,9 +62,8 @@ void CGameResult::Update()
 		m_pResultProduction->WinUpdate();
 
 		//↑-----リザルトでの演出-----↑.
-	}
-	else if (m_SceneType == CSceneType::ResultDraw)
-	{
+		break;
+	case CSceneType::ResultDraw:
 		//BGMのループ再生.
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
 		//↓-----リザルトでの演出-----↓.
@@ -72,6 +71,9 @@ void CGameResult::Update()
 		m_pResultProduction->DrawUpdate();
 
 		//↑-----リザルトでの演出-----↑.
+		break;
+	default:
+		break;
 	}
 
 	//シーンの遷移.
@@ -99,12 +101,29 @@ void CGameResult::Draw()
 		return;
 	}
 
-	//プレイヤーの描画.
-	m_pCharacterManager->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
+	switch (m_SceneType)
+	{
+	case CSceneType::ResultWin:
+		//BGMのループ再生.
+		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Win);
+		//↓-----リザルトの演出-----↓.
 
-	//地面の描画.
-	m_pGround->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
+		m_pResultProduction->WinDraw();
 
+		//↑-----リザルトでの演出-----↑.
+		break;
+	case CSceneType::ResultDraw:
+		//BGMのループ再生.
+		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
+		//↓-----リザルトでの演出-----↓.
+
+		m_pResultProduction->DrawDraw();
+
+		//↑-----リザルトでの演出-----↑.
+		break;
+	default:
+		break;
+	}
 
 	//前後関係無視.
 	CDirectX11::GetInstance().SetDepth(false);
@@ -123,8 +142,6 @@ void CGameResult::Init()
 	//カメラの位置.
 	m_pCamera->SetCameraPos(-1.5f, 1.5f, 14.f);
 	m_pCamera->SetLightPos(-1.5f, 2.f, 5.f);
-	//位置の設定.
-	//m_pCharacterManager->SetPosition(0.0f, 1.0f, 6.0f);
 
 	//大きさを設定.
 	m_pSpriteObj->SetPosition(0.0f, 0.0f, 0.0f);
@@ -179,7 +196,7 @@ void CGameResult::Create()
 
 	//リザルトの演出.
 	m_pResultProduction = std::make_unique<CResultProduction>();
-
+	m_pResultProduction->Create();
 }
 
 HRESULT CGameResult::LoadData()

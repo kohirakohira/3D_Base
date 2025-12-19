@@ -72,7 +72,7 @@ void CCharacterManager::Init()
 			connected = ctrl->CheckConnected();
 		}
 
-		if (connected)
+		if (connected == true)
 		{
 			//==============================
 			// Padありプレイヤー生成
@@ -83,7 +83,6 @@ void CCharacterManager::Init()
 			player->Init(i);                             // 車体・砲塔を生成.
 			player->SetControllerIndex(i);               // コントローラー設定.
 			player->SetHasControl(true);                 // コントローラー操作ON.
-			//player->SetKeyBoadEnble(true);               // キーボード操作ON.
 
 			//1人目のBodyCannonをテンプレとして控えておく
 			if (!m_pBody || !m_pCannon)
@@ -246,7 +245,7 @@ void CCharacterManager::SetPlayerPosition(int index, const D3DXVECTOR3& pos)
 	if (index < m_pCharacter.size())
 	{
 		m_pCharacter[index]->GetBody()->SetPosition(pos);
-		m_pCharacter[index]->GetCannon()->SetPosition(pos);
+		m_pCharacter[index]->GetCannon()->SetPosition(D3DXVECTOR3(pos.x, pos.y + 8.0f, pos.z));
 	}
 }
 //==============================

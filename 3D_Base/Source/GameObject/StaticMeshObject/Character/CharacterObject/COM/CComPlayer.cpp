@@ -492,7 +492,6 @@ void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& 
     {
         m_pBody->Draw(View, Proj, Light, Camera);
         m_pCannon->Draw(View, Proj, Light, Camera);
-        m_pCannon->SetScale(D3DXVECTOR3(1.8f, 1.8f, 1.8f));
         m_pCannon->DrawRay(View, Proj);
     }
 }

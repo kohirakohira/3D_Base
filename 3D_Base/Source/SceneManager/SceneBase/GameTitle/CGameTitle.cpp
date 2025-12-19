@@ -33,6 +33,7 @@ CGameTitle::CGameTitle(HWND hWnd)
 CGameTitle::~CGameTitle()
 {
 	m_hWnd = nullptr;
+	m_TitleProduction.reset();
 }
 
 void CGameTitle::Update()
