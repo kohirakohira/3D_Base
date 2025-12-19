@@ -4,6 +4,7 @@
 
 class CComPlayer;
 class CCharacterObjectBase;
+class CComShot;
 
 //性格タイプ
 enum class PersonalityType
@@ -41,6 +42,9 @@ public:
 
     // 性格タイプ取得
     virtual PersonalityType GetType() const = 0;
+
+    // 性格タイプ設定
+    virtual void SetType(PersonalityType peronalityType) = 0 { m_PersonalityType = peronalityType; }
 
     // ターゲット選択の優先度を調整
     virtual float EvaluateTargetPriority(
@@ -85,18 +89,33 @@ public:
     virtual float GetEscapeWeight(int nearbyEnemyCount, float hpRadius) const { return 1.0f; } 
     virtual float GetApproachWeight(int nearbyEnemyCount, float hpRadius) const { return 1.0f; }
 
-    /*
+    
     // 複数敵時の行動を決定
-virtual BehaviorDecision DecideMultiEnemyAction(
-    const D3DXVECTOR3& selfPos,
-    const D3DXVECTOR3& targetPos,
-    const D3DXVECTOR3& clusterCenter,
-    int nearbyEnemyCount,
-    float hpRatio) const = 0;
+    virtual BehaviorDecision DecideMultiEnemyAction(
+        const D3DXVECTOR3& selfPos,
+        const D3DXVECTOR3& targetPos,
+        const D3DXVECTOR3& clusterCenter,
+        int nearbyEnemyCount,
+        float hpRatio) const = 0;
+        
+    //各COMごとの砲塔回転速度
+    virtual void SetTurretTurnSpeed(float turrnSpeed) { m_Tuning.turretTurnSpeed = turrnSpeed; }
 
+    //各COMごとの車体回転速度
+    virtual void SetTurnBodySpeed(float turnSpeed) { m_Tuning.bodyTurnSpeed = turnSpeed; }
 
-// 複数敵時の重みを取得
-virtual float GetEscapeWeight(int nearbyEnemyCount, float hpRatio) const { return 1.0f; }
-virtual float GetApproachWeight(int nearbyEnemyCount, float hpRatio) const { return 1.0f; }
-    */
+    //各COMごとのスピード.一応
+    virtual void SetMoveSpeed(float moveSpeed) { m_Tuning.moveSpeed = moveSpeed; }
+
+    ////COM同士の分離
+    //virtual float ComDistance(
+    //    const std::shared_ptr<CCharacterObjectBase>& targetPos,
+    //    const std::shared_ptr<CCharacterObjectBase>& selfPos,
+    //    float Distance
+    //    ) const = 0;
+
+protected:
+    TankTuning m_Tuning;
+    PersonalityType m_PersonalityType;  //性格タイプ
+    bool m_kill = false;                //キルされたかどうか
 };

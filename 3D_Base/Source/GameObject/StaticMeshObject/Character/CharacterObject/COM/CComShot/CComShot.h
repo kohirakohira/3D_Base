@@ -75,6 +75,9 @@ public:
     // ƒŒƒCƒqƒbƒg‚Ì”­Ë
     bool TryFireOnRayHit(std::shared_ptr<CBody> body, std::shared_ptr<CCannon> cannon);
 
+    //’e‘¬İ’è
+    void SetBulletSpeed(float BulletSpeed) { m_Config.bulletSpeed = BulletSpeed; }
+
 private:
     std::shared_ptr<CShotManager> m_pShotManager;
     ShotConfig m_Config;

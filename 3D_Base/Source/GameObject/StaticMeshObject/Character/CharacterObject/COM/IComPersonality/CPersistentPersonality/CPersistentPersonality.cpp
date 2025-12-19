@@ -118,7 +118,7 @@ TurretParams CPersistentPersonality::GetTurretParames() const
     return prames;
 }
 
-/*
+
 BehaviorDecision CPersistentPersonality::DecideMultiEnemyAction(
     const D3DXVECTOR3& selfPos,
     const D3DXVECTOR3& targetPos,
@@ -163,5 +163,5 @@ float CPersistentPersonality::GetApproachWeight(int nearbyEnemyCount, float hpRa
     // 常にターゲットを追う
     return 1.5f;
 }
-*/
+
 

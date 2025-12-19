@@ -99,7 +99,7 @@ TurretParams CAggressivePersonality::GetTurretParames() const
     return params;
 }
 
-/*
+
 BehaviorDecision CAggressivePersonality::DecideMultiEnemyAction(
     const D3DXVECTOR3& selfPos,
     const D3DXVECTOR3& targetPos,
@@ -135,4 +135,3 @@ float CAggressivePersonality::GetApproachWeight(int nearbyEnemyCount, float hpRa
     // èÌÇ…çUÇﬂ
     return 2.0f;
 }
-*/
