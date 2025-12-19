@@ -47,7 +47,6 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\ItemBoxManager\CItemBoxManager.cpp" />
     <ClCompile Include="Source\InputDevice\Input\KeyInput\CKeyInput.cpp" />
     <ClCompile Include="Source\InputDevice\Key\CMultiInputManager\CMultiInputKeyManager.cpp" />
-    <ClCompile Include="Source\Collision\Shape\Ray\CRay.cpp" />
     <ClCompile Include="Source\SceneManager\SceneBase\CSceneBase.cpp" />
     <ClCompile Include="Source\SceneManager\CSceneManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Shot\CShot.cpp" />
@@ -88,6 +87,11 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComPersonality\CAggressivePersonality\CAggressivePersonality.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComPersonality\CPersistentPersonality\CPersistentPersonality.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CSimplePathfinder\CSimplePathfinder.cpp" />
+    <ClCompile Include="Source\Assets\BackGround\BackGround.cpp" />
+    <ClCompile Include="Source\GameObject\UI\CUIObject\NumberImage\NumberImage.cpp" />
+    <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.cpp" />
+    <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.cpp" />
+    <ClCompile Include="Source\Assets\Data\Singleton\FakeLoad\FakeLoad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -121,7 +125,6 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\ItemBoxManager\CItemBoxManager.h" />
     <ClInclude Include="Source\InputDevice\Input\KeyInput\CKeyInput.h" />
     <ClInclude Include="Source\InputDevice\Key\CMultiInputManager\CMultiInputKeyManager.h" />
-    <ClInclude Include="Source\Collision\Shape\Ray\CRay.h" />
     <ClInclude Include="Source\SceneManager\SceneBase\CSceneBase.h" />
     <ClInclude Include="Source\SceneManager\CSceneManager.h" />
     <ClInclude Include="Source\SceneManager\SceneType\CSceneType.h" />
@@ -168,6 +171,11 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComPersonality\CPersistentPersonality\CPersistentPersonality.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComPersonality\IComPersonality.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CSimplePathfinder\CSimplePathfinder.h" />
+    <ClInclude Include="Source\Assets\BackGround\BackGround.h" />
+    <ClInclude Include="Source\GameObject\UI\CUIObject\NumberImage\NumberImage.h" />
+    <ClInclude Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.h" />
+    <ClInclude Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.h" />
+    <ClInclude Include="Source\Assets\Data\Singleton\FakeLoad\FakeLoad.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />

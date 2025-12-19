@@ -42,6 +42,9 @@ CGameSettings::CGameSettings(HWND hWnd)
 	, m_InputKey					( nullptr )
 
 {
+	//ロード画像の表示.
+	FakeLoad::GetInstance().SetIsDraw(false);
+
 	m_SceneType = CSceneType::Setting;
 	m_UV = { 0.1f, 0.1f };
 }
@@ -54,6 +57,9 @@ CGameSettings::~CGameSettings()
 //動作関数.
 void CGameSettings::Update()
 {
+	//フェイクロード画像の更新.
+	FakeLoad::GetInstance().Update();
+
 	//コントローラーの取得※0番のみ動かせる.
 	CController* controller = CControllerManager::GetInstance().GetController(0);
 
@@ -107,6 +113,9 @@ void CGameSettings::Draw()
 		return;
 	}
 
+	//フェイクロードの描画.
+	FakeLoad::GetInstance().Draw();
+
 	//前後関係無視.
 	CDirectX11::GetInstance().SetDepth(false);
 	//背景の描画.
@@ -143,6 +152,9 @@ void CGameSettings::Draw()
 //初期化関数.
 void CGameSettings::Init()
 {
+	//フェイクロード画像の設定.
+	FakeLoad::GetInstance().Init();
+
 	//定数宣言.
 	const float windowYW	= WND_W / 4;			//配置をするのにちょうどいい位置※4はマジックナンバー.
 	const float windowNW	= WND_W - (32 * 23);	//配置をするのにちょうどいい位置※32(サイズ) * 23個分の位置にする.
@@ -255,6 +267,9 @@ void CGameSettings::Create()
 //データの読み込み.
 HRESULT CGameSettings::LoadData()
 {
+	//フェイクロード画像の読み込み.
+	FakeLoad::GetInstance().LoadData();
+
 	//タイトル画像のスプライト設定.
 	CSprite2D::SPRITE_STATE WH_SIZE = {
 		WND_W,WND_W,		//描画幅,高さ.

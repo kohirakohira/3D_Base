@@ -12,14 +12,12 @@
 // -----外部クラス-----
 #include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX9クラス
 #include "Assets//DirectX//DirectX11//CDirectX11.h" // DirectX11クラス
-
 #include "GameObject//UI//ImageObject//CImageObject.h"	// 画像オブジェクトクラス
 #include "GameObject//UI//CUIObject//CUIObject.h"		// UIオブジェクトクラス
-
 #include "GameObject//UI//CUIObject//ChoiceImage//CChoiceImage.h"  // 選択肢クラス
 #include "GameObject//UI//CUIObject//SelectIcon//CSelectIcon.h"	// 選択アイコンクラス
-
 #include "Assets//Sprite//Sprite2D//CSprite2D.h" // 2Dスプライトクラス.
+#include "../../Assets/Data/Singleton/FakeLoad/FakeLoad.h"	//フェイクロードクラス.
 
 //-----メッシュ-----
 #include "Assets//Mesh//StaticMesh//CStaticMesh.h" // スタティックメッシュクラス

@@ -44,6 +44,9 @@ void CGameTitle::Update()
 	// コントローラーの繰り上げ処理を呼び出し
 	CControllerManager::GetInstance().Reoderring();
 
+	//フェイクロードの更新.
+	FakeLoad::GetInstance().Update();
+
 	//BGMのループ再生.
 	CSoundManager::PlayLoop(CSoundManager::BGM_Title);
 
@@ -75,8 +78,8 @@ void CGameTitle::Update()
 				//ゲーム設定に遷移.
 				m_SceneType = CSceneType::Setting;
 
-				//コンソール文字を消す.
-				system("cls");
+				//ロード画像の表示.
+				FakeLoad::GetInstance().SetIsDraw(true);
 
 			}
 			else
@@ -89,8 +92,6 @@ void CGameTitle::Update()
 
 				DrawFlag = true;
 
-				//コンソール文字を消す.
-				system("cls");
 
 				//ゲームを終了させる.
 				PostMessage(m_hWnd, WM_CLOSE, 0, 0);
@@ -183,6 +184,9 @@ void CGameTitle::Draw()
 		return;
 	}
 
+	//フェイクロードの描画.
+	FakeLoad::GetInstance().Draw();
+
 	//タイトル演出を表示.
 	m_TitleProduction->Draw();
 
@@ -202,6 +206,9 @@ void CGameTitle::Draw()
 
 void CGameTitle::Init()
 {	
+	//フェイクロード画像の設定.
+	FakeLoad::GetInstance().Init();
+
 	//定数宣言.
 	const float POS_X		= WND_W / 8.f;
 	const float POS_Y		= WND_H / 1.2f;
@@ -265,6 +272,9 @@ void CGameTitle::Create()
 
 HRESULT CGameTitle::LoadData()
 {
+	//フェイクロード画像の読み込み.
+	FakeLoad::GetInstance().LoadData();
+
 	//タイトル画像のスプライト設定.
 	CSprite2D::SPRITE_STATE WH_SIZE = {
 		WND_W,WND_H,		//描画幅,高さ.
