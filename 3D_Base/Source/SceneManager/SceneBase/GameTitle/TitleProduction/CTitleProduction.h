@@ -43,24 +43,24 @@ public:
 	//UVを動かす用.
 	D3DXVECTOR2 m_UV;
 
+	//スプライトクラス.
+	//地面画像.
+	std::unique_ptr<CSprite3D>			m_SpriteGround;
+	//板ポリ画像.
+	std::shared_ptr<CSprite3D>			m_BackGroundImg;
+
 	//カメラクラス.
 	std::shared_ptr<CCamera>			m_Camera;
-	//板ポリ画像.
-	std::shared_ptr<CSprite3D>		m_BackGroundImg;
-	//空の板ポリ.
-	std::unique_ptr<BackGround>		m_BackGround;
 
 	//スタティックメッシュクラス.
-	std::shared_ptr<CStaticMesh>		m_BackGroundMesh;	//背景メッシュ.
-	std::shared_ptr<CStaticMesh>		m_BodyMesh;			//ボディメッシュ.
+	std::shared_ptr<CStaticMesh>		m_BodyMesh;				//ボディメッシュ.
 	std::shared_ptr<CStaticMesh>		m_CannonMesh;			//キャノンメッシュ.
-	//スプライトクラス.
-	std::unique_ptr<CSprite3D>			m_SpriteGround;
-
-	//背景.
-	std::unique_ptr<CStaticMeshObject>	m_pBackImgObject;
+	
 	//地面クラス.
 	std::unique_ptr<CSpriteObject>		m_SpriteObjGround;
+	//空の板ポリ.
+	std::unique_ptr<BackGround>			m_BackGround;
+
 	//プレイヤー(車体)クラス.
 	std::unique_ptr<CBody>				m_Body;
 	//プレイヤー(砲塔)クラス.

@@ -19,7 +19,7 @@ CGameResult::CGameResult(HWND hWnd)
 	, m_pStaticMeshGround	( nullptr )
 	, m_pStaticMeshCloud	( nullptr )
 
-	, m_pCharacterManager		( nullptr )
+	, m_pCharacterManager	( nullptr )
 	, m_pGround				( nullptr )
 
 	, m_pCamera				( nullptr )
@@ -29,6 +29,8 @@ CGameResult::CGameResult(HWND hWnd)
 	, DrawFlag				( false )
 
 	, m_Key					( nullptr )
+
+	, m_pResultProduction	( nullptr )
 {
 	//結果がどっちか判定.
 	WinOrDrawFunction();
@@ -50,26 +52,28 @@ void CGameResult::Update()
 	//キーの判定.
 	m_Key->Update();
 
-	// 勝ちか引き分けのBGM変更
-	if (m_SceneType == CSceneType::ResultWin)
+	switch (m_SceneType)
 	{
+	case CSceneType::ResultWin:
 		//BGMのループ再生.
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Win);
 		//↓-----リザルトの演出-----↓.
 
-
+		m_pResultProduction->WinUpdate();
 
 		//↑-----リザルトでの演出-----↑.
-	}
-	else if (m_SceneType == CSceneType::ResultDraw)
-	{
+		break;
+	case CSceneType::ResultDraw:
 		//BGMのループ再生.
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
 		//↓-----リザルトでの演出-----↓.
 
-
+		m_pResultProduction->DrawUpdate();
 
 		//↑-----リザルトでの演出-----↑.
+		break;
+	default:
+		break;
 	}
 
 	//シーンの遷移.
@@ -97,12 +101,29 @@ void CGameResult::Draw()
 		return;
 	}
 
-	//プレイヤーの描画.
-	m_pCharacterManager->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
+	switch (m_SceneType)
+	{
+	case CSceneType::ResultWin:
+		//BGMのループ再生.
+		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Win);
+		//↓-----リザルトの演出-----↓.
 
-	//地面の描画.
-	m_pGround->Draw(m_pCamera->m_mView, m_pCamera->m_mProj, m_pCamera->m_Light, m_pCamera->m_Camera);
+		m_pResultProduction->WinDraw();
 
+		//↑-----リザルトでの演出-----↑.
+		break;
+	case CSceneType::ResultDraw:
+		//BGMのループ再生.
+		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
+		//↓-----リザルトでの演出-----↓.
+
+		m_pResultProduction->DrawDraw();
+
+		//↑-----リザルトでの演出-----↑.
+		break;
+	default:
+		break;
+	}
 
 	//前後関係無視.
 	CDirectX11::GetInstance().SetDepth(false);
@@ -115,11 +136,12 @@ void CGameResult::Draw()
 
 void CGameResult::Init()
 {
+	//初期化.
+	m_pResultProduction->Init();
+
 	//カメラの位置.
 	m_pCamera->SetCameraPos(-1.5f, 1.5f, 14.f);
 	m_pCamera->SetLightPos(-1.5f, 2.f, 5.f);
-	//位置の設定.
-	//m_pCharacterManager->SetPosition(0.0f, 1.0f, 6.0f);
 
 	//大きさを設定.
 	m_pSpriteObj->SetPosition(0.0f, 0.0f, 0.0f);
@@ -172,10 +194,16 @@ void CGameResult::Create()
 	//キーインプット.
 	m_Key = std::make_shared<CMultiInputKeyManager>();
 
+	//リザルトの演出.
+	m_pResultProduction = std::make_unique<CResultProduction>();
+	m_pResultProduction->Create();
 }
 
 HRESULT CGameResult::LoadData()
 {
+	//リザルト演出のデータ読み取り.
+	m_pResultProduction->LoadData();
+
 	//タイトル画像のスプライト設定.
 	CSprite2D::SPRITE_STATE WH_SIZE = {
 		WND_W,WND_H,		//描画幅,高さ.

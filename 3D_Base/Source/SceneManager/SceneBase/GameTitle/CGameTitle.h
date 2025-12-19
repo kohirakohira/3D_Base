@@ -15,13 +15,11 @@
 
 #include "GameObject//UI//CUIObject//CUIObject.h"		// UIオブジェクトクラス
 #include "GameObject//UI//CUIObject//ChoiceImage//CChoiceImage.h"  // 選択肢クラス
-
 #include "Assets//Sprite//Sprite3D//CSprite3D.h" // 3Dスプライトクラス.
-
 #include "Assets/Data/Singleton/GameDataManager/CGameDataManager.h"	//データクラス.
-
-//キーの入力.
 #include "InputDevice//Key\\CMultiInputManager//CMultiInputKeyManager.h" // キー入力用
+#include "../../Assets/Data/Singleton/FakeLoad/FakeLoad.h"	//フェイクロードクラス.
+
 
 //-----演出用クラス-----
 #include "SceneManager//SceneBase//GameTitle//TitleProduction//CTitleProduction.h"	//タイトル演出クラス.

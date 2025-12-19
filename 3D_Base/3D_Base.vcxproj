@@ -167,6 +167,7 @@
     <ClCompile Include="Data\ImGui\Library\imgui_tables.cpp" />
     <ClCompile Include="Data\ImGui\Library\imgui_widgets.cpp" />
     <ClCompile Include="Source\Assets\BackGround\BackGround.cpp" />
+    <ClCompile Include="Source\Assets\Data\Singleton\FakeLoad\FakeLoad.cpp" />
     <ClCompile Include="Source\Assets\DebugText\CDebugText.cpp" />
     <ClCompile Include="Source\Assets\DirectX\DirectX11\CDirectX11.cpp" />
     <ClCompile Include="Source\Assets\DirectX\DirectX9\CDirectX9.cpp" />
@@ -248,6 +249,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Assets\BackGround\BackGround.h" />
     <ClInclude Include="Source\Assets\Data\Singleton\CSingleton.h" />
+    <ClInclude Include="Source\Assets\Data\Singleton\FakeLoad\FakeLoad.h" />
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX11\CDirectX11.h" />
     <ClInclude Include="Source\Assets\DirectX\DirectX9\CDirectX9.h" />

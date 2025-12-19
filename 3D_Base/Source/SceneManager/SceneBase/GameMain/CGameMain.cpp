@@ -16,7 +16,7 @@ static bool prevA = false;
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
 //定数宣言.
-static constexpr int TIME = 90;
+static constexpr int TIME = 20;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 const float FLASH_TIME = 0.5f;			//点滅周期.
@@ -691,7 +691,7 @@ void CGameMain::Create()
 	//COMの障害物判定
 	BuildComObstacles();
 
-	m_pCharacterManager->SetShotManager(m_pShotManager);
+	//m_pCharacterManager->SetShotManager(m_pShotManager);
 }
 
 HRESULT CGameMain::LoadData()
