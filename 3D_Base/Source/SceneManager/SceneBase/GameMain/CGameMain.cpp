@@ -16,7 +16,7 @@ static bool prevA = false;
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
 //定数宣言.
-static constexpr int TIME = 20;
+static constexpr int TIME = 10;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 const float FLASH_TIME = 0.5f;			//点滅周期.

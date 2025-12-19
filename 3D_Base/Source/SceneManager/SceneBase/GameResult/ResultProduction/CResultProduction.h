@@ -6,12 +6,16 @@
 #include "../../../../Camera/CCamera.h" //カメラクラス.
 #include "../../../../Assets/BackGround/BackGround.h"	//背景クラス.
 #include "../../../../GameObject/SpriteObject/CSpriteObject.h"	//スプライトオブジェクトクラス.
+#include "../../../../Assets/Data/Singleton/GameDataManager/CGameDataManager.h"	//ゲームデータクラス.
+#include "../../../../GameObject/UI/CUIObject/NumberImage/NumberImage.h"	//数字クラス.
+#include "../../../../GameObject/UI/CUIObject/CUIObject.h"	//UIクラス.
 //キャラクターマネージャー.
 #include "../../../../GameObject/StaticMeshObject/Character/CharacterObject/Player/CharacterManager/CCharacterManager.h"
 
 //-----メッシュクラス-----
 #include "../../../../Assets/Mesh/StaticMesh/CStaticMesh.h" //スタティックメッシュクラス.
-#include "../../../../Assets/Sprite/Sprite3D/CSprite3D.h" //地面スプライト.
+#include "../../../../Assets/Sprite/Sprite3D/CSprite3D.h" //スプライト3D.
+#include "../../../../Assets/Sprite/Sprite2D/CSprite2D.h" //スプライト2D.
 
 
 //======================================================
@@ -30,6 +34,12 @@ public:
 	//読み込み関数.
 	HRESULT LoadData();
 
+	//勝ったか引き分けか.
+	void SetIsJudge(bool j) { m_IsJudge = j; }
+
+	//勝った時と引き分け時の位置設定.
+	void SetPositionJudge(int playerid);
+
 public:
 	//勝ち抜け.
 	void WinUpdate();
@@ -42,6 +52,9 @@ private:
 	//キャラクターの基準位置.
 	float m_CharaPosX;
 
+	//勝ちか引き分け判定用.
+	bool m_IsJudge;
+
 	//カメラクラス変数.
 	std::shared_ptr<CCamera>		m_Camera;
 
@@ -51,7 +64,13 @@ private:
 	//スプライト3D.
 	std::shared_ptr<CSprite3D>		m_SpriteGround;
 	std::shared_ptr<CSprite3D>		m_SpriteBackGround;
-
+	//スプライト2D.
+	std::shared_ptr<CSprite2D>		m_SpriteNumber;
+	std::shared_ptr<CSprite2D>		m_SpriteKillUI;
+	//数字クラス.
+	std::unique_ptr<NumberImage>	m_Number;
+	//UIクラス.
+	std::unique_ptr<CUIObject>		m_KillUI;
 	//スプライトオブジェクト.
 	//背景クラス変数.
 	std::unique_ptr<BackGround>			m_BackGround;

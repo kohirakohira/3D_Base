@@ -60,6 +60,7 @@ void CGameResult::Update()
 		//↓-----リザルトの演出-----↓.
 
 		m_pResultProduction->WinUpdate();
+		m_pResultProduction->SetIsJudge(true);
 
 		//↑-----リザルトでの演出-----↑.
 		break;
@@ -69,6 +70,7 @@ void CGameResult::Update()
 		//↓-----リザルトでの演出-----↓.
 
 		m_pResultProduction->DrawUpdate();
+		m_pResultProduction->SetIsJudge(false);
 
 		//↑-----リザルトでの演出-----↑.
 		break;
@@ -197,6 +199,7 @@ void CGameResult::Create()
 	//リザルトの演出.
 	m_pResultProduction = std::make_unique<CResultProduction>();
 	m_pResultProduction->Create();
+
 }
 
 HRESULT CGameResult::LoadData()

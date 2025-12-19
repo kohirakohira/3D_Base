@@ -2,6 +2,9 @@
 //-----STL-----.
 #include <iostream>
 #include <unordered_map>
+#include <algorithm>
+#include <vector>
+#include <utility>
 
 //-----基底クラス-----.
 #include "../CSingleton.h"
@@ -19,6 +22,9 @@ public:
 	int GetKillCount(int playerID) const ;
 	//キル数を初期化.
 	void Init();
+
+	//1位の取得.
+	std::pair<int, int> GetTopCharacter();
 
 	//同じキル数なのかを判定する関数.
 	bool SameKill();

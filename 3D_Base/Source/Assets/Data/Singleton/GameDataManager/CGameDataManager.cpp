@@ -42,6 +42,26 @@ void CGameDataManager::Init()
 	m_KillCount.clear();
 }
 
+//1位の取得.
+std::pair<int, int> CGameDataManager::GetTopCharacter()
+{
+	//プレイヤーIDが0からスタートするので-1
+	//プレイヤーIDの保持用.
+	int maxPlayerID = -1;
+	//キル数の最大値の保持用.
+	int maxKills = 0;
+
+	for (const auto& [playerID, kills] : m_KillCount) {
+		//キャラのキル数が最大キル数より多いとき.
+		if (kills > maxKills) {
+			//キル数とプレイヤーIDを保持する.
+			maxKills = kills;
+			maxPlayerID = playerID;
+		}
+	}
+	return { maxPlayerID, maxKills };
+}
+
 //同じキル数なのかを判定する関数.
 bool CGameDataManager::SameKill()
 {
