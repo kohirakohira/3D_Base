@@ -128,6 +128,9 @@ void CGameSettings::Draw()
 	//画像インスタンスの複製.
 	for (int i = 0; i < IMAGE; i++)
 	{
+		// 1Pは常に表示し続ける
+		m_SpriteConnectionImg[0]->Draw();
+
 		//コントローラーの取得
 		if (CControllerManager::GetInstance().GetController(i))
 		{
@@ -156,11 +159,11 @@ void CGameSettings::Init()
 	FakeLoad::GetInstance().Init();
 
 	//定数宣言.
-	const float windowYW	= WND_W / 4;			//配置をするのにちょうどいい位置※4はマジックナンバー.
+	const float windowYW	= WND_W / 5;			//配置をするのにちょうどいい位置※4はマジックナンバー.
 	const float windowNW	= WND_W - (32 * 23);	//配置をするのにちょうどいい位置※32(サイズ) * 23個分の位置にする.
-	const float POS_X		= WND_W / 1.38f;		//配置をするのにちょうどいい位置に設定※選択肢の位置を「いいえ」の位置に調整した.
-	const float POS_Y		= WND_H / 1.2f;			//配置をするのにちょうどいい位置に設定※高さがちょうどよかった.
-	const float IMG_POS_X	= WND_W / 4.f;
+	const float POS_X		= WND_W / 1.325f;		//配置をするのにちょうどいい位置に設定※選択肢の位置を「いいえ」の位置に調整した.
+	const float POS_Y		= WND_H / 1.25f;		//配置をするのにちょうどいい位置に設定※高さがちょうどよかった.
+	const float IMG_POS_X	= WND_W / 5.f;
 	const float IMG_POS_Y	= WND_H / 14.f;
 
 	//タイトル画像の大きさ・位置・回転を設定.
@@ -200,7 +203,7 @@ void CGameSettings::Init()
 		m_SpriteConnectionCOMImg[i]->SetRotation(0.0f, 0.0f, 0.0f);
 		m_SpriteConnectionCOMImg[i]->SetScale(1.0f, 1.0f, 0.f);
 
-		posx += 500.0f;
+		posx += 450.0f;
 	}
 
 	//キー入力.
@@ -278,9 +281,9 @@ HRESULT CGameSettings::LoadData()
 	};
 	//開始する？画像のスプライト設定.
 	CSprite2D::SPRITE_STATE ST_SIZE = {
-		960,160,			//描画幅,高さ.
-		960,160,			//元画像の幅,高さ.
-		960,160,			//アニメーションをしないので、0でいい.
+		1216,224,			//描画幅,高さ.
+		1216,224,			//元画像の幅,高さ.
+		1216,224,			//アニメーションをしないので、0でいい.
 	};
 	//選択肢画像のスプライト設定.
 	CSprite2D::SPRITE_STATE C_SIZE = {
@@ -288,11 +291,17 @@ HRESULT CGameSettings::LoadData()
 		40,80,		//元画像の幅,高さ.
 		40,80,		//アニメーションをしないので、0でいい.
 	};
-	//選択肢画像のスプライト設定.
+	//選択肢のスプライト設定.
+	CSprite2D::SPRITE_STATE Select_SIZE = {
+		320,160,		//描画幅,高さ.
+		320,160,		//元画像の幅,高さ.
+		320,160,		//アニメーションをしないので、0でいい.
+	};
+	//接続確認画像のスプライト設定.
 	CSprite2D::SPRITE_STATE S_SIZE = {
-		256,96,				//描画幅,高さ.
-		256,96,				//元画像の幅,高さ.
-		256,96,				//アニメーションをしないので、0でいい.
+		352,384,	//描画幅,高さ.
+		352,384,	//元画像の幅,高さ.
+		352,384,	//アニメーションをしないので、0でいい.
 	};
 
 	//定数宣言.
@@ -354,8 +363,8 @@ HRESULT CGameSettings::LoadData()
 	//選択肢スプライトの読み込み.
 	m_SpriteChoice->Init(_T("Data\\Texture\\UI\\Select\\Choice.png"), C_SIZE, false);
 	//選択スプライトの読み込み.
-	m_SpriteYesSelect->Init(_T("Data\\Texture\\UI\\Select\\Yes.png"), S_SIZE, false);
-	m_SpriteNoSelect->Init(_T("Data\\Texture\\UI\\Select\\No.png"), S_SIZE, false);
+	m_SpriteYesSelect->Init(_T("Data\\Texture\\UI\\Select\\Yes.png"), Select_SIZE, false);
+	m_SpriteNoSelect->Init(_T("Data\\Texture\\UI\\Select\\No.png"), Select_SIZE, false);
 
 	//画像の設定(設定画像).
 	m_pSpriteSettingImg->AttachSprite(m_pSpriteSetting);
