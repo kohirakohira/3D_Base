@@ -99,6 +99,9 @@ BehaviorDecision CAdaptivePersonality::DecideAttackAction(
     // ï°êîìGéûÇÕì¶Ç∞Ç»Ç™ÇÁçUåÇ
     else if (nearbyEnemyCount >= 2)
     {
+        printf("[DecidAttackAction], decision%d \n",
+            decision.shouldEvade);
+        
         decision.desiredYaw = Util::Wrap(toYaw + D3DX_PI * 0.7f);
         decision.moveSpeedMultiplier = 1.0f;
         decision.keepDistance = 12.0f;
@@ -118,7 +121,7 @@ BehaviorDecision CAdaptivePersonality::DecideAttackAction(
     return decision;
 }
 
-// É^Å[ÉQÉbÉgêÿÇËë÷Ç¶ÅFêTèdÇ…îªíf
+// É^Å[ÉQÉbÉgêÿÇËë÷Ç¶
 bool CAdaptivePersonality::ShouldSwitchTarget(
     const std::shared_ptr<CCharacterObjectBase>& currentTarget,
     const std::shared_ptr<CCharacterObjectBase>& newCandidate,
@@ -138,6 +141,19 @@ bool CAdaptivePersonality::ShouldSwitchTarget(
     float newHpRatio = static_cast<float>(newCandidate->GetHP()) /
         static_cast<float>(newCandidate->GetMaxHP());
     if (newHpRatio < 0.2f && newDist < currentDist * 0.9f) return true;
+    
+    //é©ï™Ç™éÄñSéû
+    float thisDeath;
+
+    //ëäéËÇ™É_ÉÅÅ[ÉWÇéÛÇØÇΩèÍçáÅAnewDistÇ…ÇÕì¸ÇÁÇ∏í«Ç¢ë±ÇØÇÈ
+    if (currentTarget->GetDamage() == true)
+    {
+        newDist = 1000.f;
+        if (newDist < currentDist)
+        {
+            return true;
+        }
+    }
 
     return false;
 }
@@ -205,3 +221,4 @@ float CAdaptivePersonality::GetApproachWeight(int nearbyEnemyCount, float hpRati
     // HPÇ™çÇÇ¢ÇŸÇ«çUÇﬂÇóDêÊ
     return 0.5f + hpRatio * 0.5f;
 }
+

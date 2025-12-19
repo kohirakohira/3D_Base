@@ -42,10 +42,15 @@
 #include <deque>
 
 
+
 class CComPlayer
 	: public CCharacterObjectBase
 {
 public:
+
+	//定数
+	static const int PATH_RECALC_INTERVAL = 60;  // 60フレームごとに再計算
+	const int DAMAGE_RECOIL_DURATION = 20;
 
 	//オブジェクト
 	struct SimpleObstacle
@@ -90,8 +95,6 @@ public:
 	}
 
 	int GetPlayerID() const { return m_PlayerID; }
-
-	void CreateCollider();
 
 	//弾マネージャーの設定.
 	void SetShotManager(std::shared_ptr<CShotManager> shot) override;
@@ -171,9 +174,6 @@ private:
 	//障害物判定用
 	bool SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const;
 
-	//レイでの障害物判定
-	bool HitObjectRay();
-
 	//前方に見えない当たり判定を置く
 	bool HasObstacleAheadWithBox(const CBoxCollider& selfBox,
 		const D3DXVECTOR3& forward,
@@ -200,21 +200,8 @@ private:
 	//COMの状態変更
 	void ChangeState(State state);
 
-	/*int m_DamageRecoilFrames = 0;
-	const int DAMAGE_RECOIL_DURATION = 20;
-
-	void CComPlayer::OnDamaged()
-	{
-    m_DamageRecoilFrames = DAMAGE_RECOIL_DURATION;
-    
-    // ダメージを受けた方向から逃げる
-    if (m_pPersonality && m_pPersonality->GetType() != PersonalityType::Aggressive)
-    {
-        ChangeState(State::Evade);
-    }
-}
-		
-	*/
+	//ダメージを受けたかどうか
+	void OnDamaged();
 
 	//外部クラス
 	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;		//プレイヤーの一覧取得
@@ -253,20 +240,40 @@ private:
 	bool		m_Respawn;				// リスポーン
 
 	D3DXVECTOR3 m_MapCenter;        // マップの中央座標（デフォルト 0,0,0）
-	float m_WanderRadius;           // 中央からこの範囲内を徘徊（デフォルト 15.0）
-	float m_CenterPullStrength;     // 中央への引き寄せ強度（デフォルト 0.3）
+	float		m_WanderRadius;           // 中央からこの範囲内を徘徊（デフォルト 15.0）
+	float		m_CenterPullStrength;     // 中央への引き寄せ強度（デフォルト 0.3）
 
-	float m_ObstacleProbeDist = 8.0f;								// 何メートル先まで見るか
-	float m_ObstacleProbeStep = 0.1f;								// 何メートル刻みでチェックするか
-	float m_ObstacleRadius = 1.5f;									// 自分の半径
-	float m_ProbeAngleRad = D3DXToRadian(25.0f);					// 左右にどれくらい首を振るか
-	float m_LookAheadSkep;
+	float		m_ObstacleProbeDist;									// 何メートル先まで見るか
+	float		m_ObstacleProbeStep;									// 何メートル刻みでチェックするか
+	float		m_ObstacleRadius;										// 自分の半径
+	float		m_ProbeAngleRad;										// 左右にどれくらい首を振るか
+	float		m_LookAheadSkep;
+
+	const float	m_RayHitTargetRadius;									// ターゲットの当たり判定 
 
 	//COMの複数敵判定
-	float m_MultiEnemyRadius = 8.0f;	//この範囲内の敵をカウント
-	float m_EscapeWeight = 0.6f;		//逃げの重み
-	float m_ApproachWeight = 0.4f;		//攻めの重み
-	int	  m_MultiEnemyThreshold = 2;	//この数以上で
+	float		m_MultiEnemyRadius = 8.0f;	//この範囲内の敵をカウント
+	float		m_EscapeWeight = 0.6f;		//逃げの重み
+	float		m_ApproachWeight = 0.4f;		//攻めの重み
+	int			m_MultiEnemyThreshold = 2;	//この数以上で
+
+	int			m_DamegeFrames;
+
+	//追尾クラス
+	CComTargetSelector m_TargetSelector;
+
+	//COMショットクラス
+	CComShot m_ComShot;
+
+	CShot m_Shot;
+
+	std::unique_ptr<IComPersonality> m_pPersonality;
+
+
+	CSimplePathfinder* m_pPathfinder;	//経路探索グリッド
+	int m_PathRecalcTimer;				// 再計算タイマー
+
+
 
 	// 障害物リスト.射線判定用
 	const std::vector<CStaticMeshObject*>* m_pFireLineObstacles = nullptr;
@@ -296,34 +303,20 @@ private:
 	bool GetMuteki() const override { return m_Chara.m_Muteki; }
 	//========================
 
+	//プレイヤー番号
 	int GetPlayerID() override { return m_PlayerID; } 
-
 	// 砲塔レイで最初に当たったキャラクターを取得
 	std::shared_ptr<CCharacterObjectBase> GetRayHitCharacter() const;
 
 	// 目的地へのパスを計算
 	bool RequestPath(const D3DXVECTOR3& goal);
+	
+	bool FindSafeDirection(const D3DXVECTOR3& pos, float baseYaw, float step,
+		const D3DXVECTOR3& sep, float& outSafeYaw) const;
 
-	//追尾クラス
-	CComTargetSelector m_TargetSelector;
-
-	//COMショットクラス
-	CComShot m_ComShot;
-
-	CShot m_Shot;
-
-	std::unique_ptr<IComPersonality> m_pPersonality;
-
-	CSimplePathfinder* m_pPathfinder = nullptr;
-	int m_PathRecalcTimer = 0;          // 再計算タイマー
-	static const int PATH_RECALC_INTERVAL = 60;  // 60フレームごとに再計算
+	//移動量に応じて
+	float ComputeMoveStep(float safeYaw, float currentYaw, float baseStep) const;
 
 
-
-	//bool FindSafeDirection(const D3DXVECTOR3& pos, float baseYaw, float step,
-	//	const D3DXVECTOR3& sep, float& outSafeYaw) const;
-	//float ComputeMoveStep(float safeYaw, float currentYaw, float baseStep) const;
-
-	//
-	//int CountNearbyEnemies(float radius, D3DXVECTOR3& outClusterCenter) const;
+	//int CoutNearbyEnmes(float radius, D3DXVECTOR3& outClusterCenter) const;
 };

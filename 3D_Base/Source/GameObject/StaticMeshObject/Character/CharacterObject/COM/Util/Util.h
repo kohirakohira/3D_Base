@@ -114,7 +114,7 @@ namespace Util	//è»ó™
 		return a.x * b.x + a.z * b.z;
 	}
 
-#if 0
+#if 1
 	static D3DXVECTOR3 NormalizeXZ(const D3DXVECTOR3& v)
 	{
 		float len = std::sqrtf(v.x * v.x + v.z * v.z);

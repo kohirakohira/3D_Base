@@ -10,6 +10,9 @@ public:
     //性格タイプ取得
     PersonalityType GetType() const override { return PersonalityType::Aggressive; }
 
+    //性格タイプ設定
+    void SetType(PersonalityType personalityType) override { m_PersonalityType = personalityType; } 
+
     //ターゲット選択の優先度を調整
     float EvaluateTargetPriority(
         const D3DXVECTOR3& selfPos,
@@ -62,5 +65,6 @@ public:
     // 複数敵時の重みを取得
     float GetEscapeWeight(int nearbyEnemyCount, float hpRatio) const override;
     float GetApproachWeight(int nearbyEnemyCount, float hpRatio) const  override;
+
 
 };
