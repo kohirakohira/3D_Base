@@ -72,13 +72,13 @@ public:
 	// 弾マネージャーのインスタンス設定.
 	virtual void SetShotManager(std::shared_ptr<CShotManager> shot);
 
-	//=====ヒット関数=====
-	virtual void Hit();
-	//===================
-
 	//=====ダメージ関数=====
 	virtual void Damage();
 	//=====================
+	
+	//=====無敵関数=====
+	virtual void Muteki();
+	//=================
 
 	//=====死亡関数=====
 	virtual void Death();

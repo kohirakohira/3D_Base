@@ -63,6 +63,8 @@ public:
 
 	//接続確認画像.
 	std::vector<std::shared_ptr<CSprite2D>>			m_SpriteConnection;
+	//接続確認点滅画像.
+	std::vector<std::shared_ptr<CSprite2D>>			m_SpriteFlash;
 	//COM接続確認画像.
 	std::vector<std::shared_ptr<CSprite2D>>			m_SpriteCom;
 
@@ -80,6 +82,8 @@ public:
 
 	//接続画像.
 	std::vector<std::shared_ptr<CImageObject>>	m_SpriteConnectionImg;
+	//接続確認画像.
+	std::vector<std::shared_ptr<CImageObject>>	m_SpriteConnectionFlashImg;
 	//COM画像.
 	std::vector<std::shared_ptr<CImageObject>>	m_SpriteConnectionCOMImg;
 
@@ -106,6 +110,11 @@ public:
 
 	//描画フラグ.
 	bool DrawFlag;
+
+	// 点滅カウント
+	float m_Flash[IMAGE];
+	// 点滅フラグ
+	bool m_FlashFlg[IMAGE];
 
 private:
 

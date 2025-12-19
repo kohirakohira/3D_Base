@@ -23,9 +23,11 @@ CGameSettings::CGameSettings(HWND hWnd)
 
 
 	, m_SpriteConnection			()
+	, m_SpriteFlash()
 	, m_SpriteCom					()
 
 	, m_SpriteConnectionImg			()
+	, m_SpriteConnectionFlashImg	()
 	, m_SpriteConnectionCOMImg		()
 
 	, m_pSpriteSettingImg			( nullptr )
@@ -114,24 +116,90 @@ void CGameSettings::Draw()
 	m_pSpriteSettingBackGroundImg->Draw();
 	m_pSpriteStartImg->Draw();
 
-
-
 	//画像インスタンスの複製.
 	for (int i = 0; i < IMAGE; i++)
 	{
-		// 1Pは常に表示し続ける
-		m_SpriteConnectionImg[0]->Draw();
-
 		//コントローラーの取得
 		if (CControllerManager::GetInstance().GetController(i))
 		{
-			// 準備完了
-			m_SpriteConnectionImg[i]->Draw();
+			if (m_FlashFlg[i] == true)
+			{
+				m_SpriteConnectionFlashImg[i]->Draw();
+			}
+			else
+			{
+				m_SpriteConnectionImg[i]->Draw();
+			}
 		}
 		else
 		{
+			// 1Pは常に表示する
+			if (!CControllerManager::GetInstance().GetController(0))
+			{
+				if (m_FlashFlg[0] == true)
+				{
+					m_SpriteConnectionFlashImg[0]->Draw();
+				}
+				else
+				{
+					m_SpriteConnectionImg[0]->Draw();
+				}
+			}
+
 			//準備中.
 			m_SpriteConnectionCOMImg[i]->Draw();
+		}
+
+		// コントローラーを取得
+		CController* controller = CControllerManager::GetInstance().GetController(i);
+
+		if (controller)
+		{
+			// Rトリガーを押された時に画像を変更する
+			if (controller->GetRightTrigger(50) == CController::Trigger::RightTrigger)
+			{
+				m_Flash[i]--;
+				if (m_Flash[i] < 0.0f)
+				{
+					if (m_FlashFlg[i] == true)
+					{
+						m_FlashFlg[i] = false;
+					}
+					else
+					{
+						m_FlashFlg[i] = true;
+					}
+
+					// 値を初期化
+					m_Flash[i] = 30.0f;
+				}
+			}
+			else
+			{
+				// 押していないときは初期化
+				m_FlashFlg[i] = false;
+				m_Flash[i] = 30.0f;
+			}
+		}
+		else if (i == 0) // キーボードは1Pだけ点滅させる
+		{
+			// 1Pコントローラー未接続 
+			if (!CControllerManager::GetInstance().GetController(0) &&
+				m_InputKey->InputKey('X') == true)
+			{
+				m_Flash[0]--;
+				if (m_Flash[0] < 0.0f)
+				{
+					m_FlashFlg[0] = !m_FlashFlg[0];
+					m_Flash[0] = 30.0f;
+				}
+			}
+			else
+			{
+				// 押していないときは初期化
+				m_FlashFlg[0] = false;
+				m_Flash[0] = 30.0f;
+			}
 		}
 	}
 
@@ -186,6 +254,10 @@ void CGameSettings::Init()
 		m_SpriteConnectionImg[i]->SetPosition(posx, posy, 0.0f);
 		m_SpriteConnectionImg[i]->SetRotation(0.0f, 0.0f, 0.0f);
 		m_SpriteConnectionImg[i]->SetScale(1.0f, 1.0f, 0.f);
+
+		m_SpriteConnectionFlashImg[i]->SetPosition(posx, posy, 0.0f);
+		m_SpriteConnectionFlashImg[i]->SetRotation(0.0f, 0.0f, 0.0f);
+		m_SpriteConnectionFlashImg[i]->SetScale(1.0f, 1.0f, 0.f);
 		
 		m_SpriteConnectionCOMImg[i]->SetPosition(posx, posy, 0.0f);
 		m_SpriteConnectionCOMImg[i]->SetRotation(0.0f, 0.0f, 0.0f);
@@ -194,10 +266,18 @@ void CGameSettings::Init()
 		posx += 450.0f;
 	}
 
+	//点滅カウントの設定.
+	for (int i = 0; i < IMAGE; i++)
+	{
+		m_Flash[i] = { 30.0f };
+		m_FlashFlg[i] = { false };
+	}
+
 	//キー入力.
 	m_InputKey->Init();
 	//使いたいキーを引数に設定.
-	m_InputKey->SetKey({'Z'});
+	m_InputKey->SetKey({'Z' , 'X'});
+
 }
 
 //解放関数.
@@ -241,6 +321,7 @@ void CGameSettings::Create()
 	for (int i = 0; i < IMAGE; i++)
 	{
 		m_SpriteConnection.push_back(std::make_shared<CSprite2D>());
+		m_SpriteFlash.push_back(std::make_shared<CSprite2D>());
 		m_SpriteCom.push_back(std::make_shared<CSprite2D>());
 	}
 
@@ -248,6 +329,10 @@ void CGameSettings::Create()
 	for (int i = 0; i < IMAGE; i++)
 	{
 		m_SpriteConnectionImg.push_back(std::make_shared<CImageObject>());
+	}
+	for (int i = 0; i < IMAGE; i++)
+	{
+		m_SpriteConnectionFlashImg.push_back(std::make_shared<CImageObject>());
 	}
 	for (int i = 0; i < IMAGE; i++)
 	{
@@ -321,6 +406,27 @@ HRESULT CGameSettings::LoadData()
 		switch (i)
 		{
 		case 0 :
+			m_SpriteFlash[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\1P_flash.png"), S_SIZE, false);
+			break;
+		case 1 :
+			m_SpriteFlash[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\2P_flash.png"), S_SIZE, false);
+			break;
+		case 2 :
+			m_SpriteFlash[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\3P_flash.png"), S_SIZE, false);
+			break;
+		case 3 :
+			m_SpriteFlash[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\4P_flash.png"), S_SIZE, false);
+			break;
+		default:
+			break;
+		}
+	}
+
+	for (int i = 0; i < IMAGE; i++)
+	{
+		switch (i)
+		{
+		case 0 :
 			m_SpriteCom[i]->Init(_T("Data\\Texture\\UI\\SettingImg\\COM_Yellow.png"), S_SIZE, false);
 			break;
 		case 1 :
@@ -371,18 +477,22 @@ HRESULT CGameSettings::LoadData()
 		{
 		case 0:
 			m_SpriteConnectionImg[i]->AttachSprite(m_SpriteConnection[i]);
+			m_SpriteConnectionFlashImg[i]->AttachSprite(m_SpriteFlash[i]);
 			m_SpriteConnectionCOMImg[i]->AttachSprite(m_SpriteCom[i]);
 			break;
 		case 1:
 			m_SpriteConnectionImg[i]->AttachSprite(m_SpriteConnection[i]);
+			m_SpriteConnectionFlashImg[i]->AttachSprite(m_SpriteFlash[i]);
 			m_SpriteConnectionCOMImg[i]->AttachSprite(m_SpriteCom[i]);
 			break;
 		case 2:
 			m_SpriteConnectionImg[i]->AttachSprite(m_SpriteConnection[i]);
+			m_SpriteConnectionFlashImg[i]->AttachSprite(m_SpriteFlash[i]);
 			m_SpriteConnectionCOMImg[i]->AttachSprite(m_SpriteCom[i]);
 			break;
 		case 3:
 			m_SpriteConnectionImg[i]->AttachSprite(m_SpriteConnection[i]);
+			m_SpriteConnectionFlashImg[i]->AttachSprite(m_SpriteFlash[i]);
 			m_SpriteConnectionCOMImg[i]->AttachSprite(m_SpriteCom[i]);
 			break;
 		default:

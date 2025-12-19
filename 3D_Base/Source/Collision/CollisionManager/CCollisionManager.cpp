@@ -612,7 +612,7 @@ void CCollisionManager::PlayertoBlast()
 			if (blast->GetCollider()->CheckCollision(*Coll) && chara->GetDeath() == false)
 			{
 				// “–‚½‚Á‚½‚Ìˆ—
-				chara->Hit();
+				chara->Damage();
 
 				// ƒ_ƒ[ƒWSE‚ÌÄ¶
 				CSoundManager::PlaySE(CSoundManager::SE_Damage);
