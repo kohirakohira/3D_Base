@@ -926,7 +926,7 @@ HRESULT CGameMain::LoadData()
 	// 弾をセット
 	m_pCollisionManager->SetCShotManager(m_pShotManager);
 	// キャラクターマネージャーをセット
-	m_pCollisionManager->SetCPlayerManager(m_pCharacterManager);
+	m_pCollisionManager->SetCCharacterManager(m_pCharacterManager);
 	//爆風マネージャーを設定.
 	m_pCollisionManager->SetCBlastManager(m_pBlastManager);
 

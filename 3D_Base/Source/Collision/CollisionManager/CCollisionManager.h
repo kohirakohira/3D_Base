@@ -34,17 +34,17 @@ public:
 	//-----------------------
 	
 	// 壁とプレイヤーの当たり判定判別
-	void WalltoPlayer();
+	void WalltoCharacter();
 	// 壁と弾の当たり判定
 	void WalltoShot();
 	// プレイヤーとプレイヤー当たり判定判別
-	void PlayertoPlayer();
+	void CharactertoCharacter();
 	// プレイヤーとアイテムボックス
 	void CharactertoItemBox();
 	// プレイヤーと弾
-	void PlayertoShot();
+	void CharactertoShot();
 	// 木箱とプレイヤー
-	void WoodBoxtoPlayer();
+	void WoodBoxtoCharacter();
 	// 木箱と弾
 	void WoodBoxtoShot();
 	// 地面と弾
@@ -52,7 +52,7 @@ public:
 	// 地面とアイテムボックス
 	void GroundtoItemBox();
 	// 爆風とプレイヤーの当たり判定
-	void PlayertoBlast();
+	void CharactertoBlast();
 	//アイテムと木箱.
 	void ItemtoWoodBox();
 
@@ -92,7 +92,7 @@ public:
 	void SetCShotManager(std::shared_ptr<CShotManager> pShot) { m_pShotManager = pShot; }
 
 	// キャラクターマネージャーのセット
-	void SetCPlayerManager(std::shared_ptr<CCharacterManager> pPlayer) { m_pCharacterManager = pPlayer; }
+	void SetCCharacterManager(std::shared_ptr<CCharacterManager> pCharacter) { m_pCharacterManager = pCharacter; }
 
 	// アイテムボックスマネージャーのセット
 	void SetCItemBoxManager(std::shared_ptr<CItemBoxManager> pItemBox) { m_pItemBoxManager = pItemBox; }
@@ -104,7 +104,7 @@ public:
 	void SetBlastMesh(std::shared_ptr<CStaticMesh> mesh) { m_pStaticBlast = mesh; }
 
 	//アイテムの設定.
-	void SetItemInfomation(int Itemindex, int Playerindex);
+	void SetItemInfomation(int Itemindex, int Characterindex);
 
 private:
 	// 爆風用のメッシュ

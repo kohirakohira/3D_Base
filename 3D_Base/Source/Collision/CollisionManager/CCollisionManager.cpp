@@ -44,22 +44,22 @@ CCollisionManager::~CCollisionManager()
 void CCollisionManager::Update()
 {
 	// 壁とプレイヤーの当たり判定
-	WalltoPlayer();
+	WalltoCharacter();
 
 	// 壁と弾の当たり判定
 	WalltoShot();
 
 	// プレイヤーとプレイヤー当たり判定判別
-	PlayertoPlayer();
+	CharactertoCharacter();
 
 	//// キャラクターとアイテムボックス
 	//CharactertoItemBox();
 
 	// プレイヤーと弾
-	PlayertoShot();
+	CharactertoShot();
 
 	// 箱とプレイヤー
-	WoodBoxtoPlayer();
+	WoodBoxtoCharacter();
 
 	// 木箱と弾
 	WoodBoxtoShot();
@@ -75,10 +75,10 @@ void CCollisionManager::Update()
 	//ItemtoWoodBox();
 
 	//爆風とプレイヤーの当たり判定.
-	PlayertoBlast();
+	CharactertoBlast();
 }
 
-void CCollisionManager::WalltoPlayer()
+void CCollisionManager::WalltoCharacter()
 {
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -222,7 +222,7 @@ void CCollisionManager::WalltoShot()
 }
 
 // プレイヤーとプレイヤー当たり判別
-void CCollisionManager::PlayertoPlayer()
+void CCollisionManager::CharactertoCharacter()
 {
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -290,7 +290,7 @@ void CCollisionManager::CharactertoItemBox()
 }
 
 // プレイヤーと弾
-void CCollisionManager::PlayertoShot()
+void CCollisionManager::CharactertoShot()
 {
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -317,7 +317,7 @@ void CCollisionManager::PlayertoShot()
 }
 
 // 木箱とプレイヤー
-void CCollisionManager::WoodBoxtoPlayer()
+void CCollisionManager::WoodBoxtoCharacter()
 {
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -592,7 +592,7 @@ void CCollisionManager::GroundtoItemBox()
 }
 
 // 爆風とプレイヤーの当たり判定
-void CCollisionManager::PlayertoBlast()
+void CCollisionManager::CharactertoBlast()
 {
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
