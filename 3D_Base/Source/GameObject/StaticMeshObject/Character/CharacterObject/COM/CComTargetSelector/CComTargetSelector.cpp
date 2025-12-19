@@ -32,6 +32,15 @@ void CComTargetSelector::Update()
     // ブラックリストの時間を減らす
     TickBlacklist();
 
+    if (m_pTarget && m_pTarget->GetDeath())
+    {
+        m_pTarget.reset();
+        m_CurrentTargetDist = 1e9f;
+        m_LostSightFrames = 0;
+        m_TargetVelocity = { 0, 0 ,0 };
+        return;
+    }
+
     // ターゲットの速度を計算
     if (m_pTarget)
     {

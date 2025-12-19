@@ -336,6 +336,12 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
     auto body = GetBody();
     if (!cannon) return;
 
+    auto target = m_TargetSelector.GetCurrentTarget();
+    if (!target || target->GetDeath())
+    {
+        return; //死亡ターゲットは照準しない
+    }
+
     //性格クラスから砲塔パラメータを取得
     TurretParams turretParams;
     if (m_pPersonality)
@@ -1214,6 +1220,7 @@ int CComPlayer::CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) 
     {
         if (!p) continue;
         if (p.get() == this) continue;  //自分は除外
+        if (p->GetDeath()) continue;    //死亡も除外
 
         const D3DXVECTOR3 enemyPos = p->GetPosition();
         const float dx = enemyPos.x - self.x;
