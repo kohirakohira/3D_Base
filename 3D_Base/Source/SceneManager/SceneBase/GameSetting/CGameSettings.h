@@ -113,7 +113,7 @@ private:
 
 	//Šm”F—p.
 	float posx = 80.0f;
-	float posy = WND_H / 2;
+	float posy = WND_H / 3;
 
 
 };

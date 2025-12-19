@@ -44,8 +44,8 @@ public:
 	//位置の調整用.
 	const float posAdjustment_1 = 1.5f;
 	const float posAdjustment_2 = 1.2f;
-	const float posAdjustment_3 = 1.38f;
-	const float posAdjustment_4 = 2.8f;
+	const float posAdjustment_3 = 1.325f;
+	const float posAdjustment_4 = 2.95f;
 private:
 	//キークラスの宣言.
 	std::unique_ptr<CMultiInputKeyManager>	m_Key;
