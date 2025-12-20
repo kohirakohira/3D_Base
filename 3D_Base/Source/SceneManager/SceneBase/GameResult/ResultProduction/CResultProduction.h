@@ -9,6 +9,7 @@
 #include "../../../../Assets/Data/Singleton/GameDataManager/CGameDataManager.h"	//ゲームデータクラス.
 #include "../../../../GameObject/UI/CUIObject/NumberImage/NumberImage.h"	//数字クラス.
 #include "../../../../GameObject/UI/CUIObject/CUIObject.h"	//UIクラス.
+#include "../../../../Global.h"	//グローバル.
 //キャラクターマネージャー.
 #include "../../../../GameObject/StaticMeshObject/Character/CharacterObject/Player/CharacterManager/CCharacterManager.h"
 
@@ -67,6 +68,10 @@ private:
 	//スプライト2D.
 	std::shared_ptr<CSprite2D>		m_SpriteNumber;
 	std::shared_ptr<CSprite2D>		m_SpriteKillUI;
+	std::array<std::shared_ptr<CSprite2D>, PLAYER_MAX>		m_SpritePlayerUI;
+
+	//キャラクター番号.
+	std::array<std::unique_ptr<CUIObject>, PLAYER_MAX>		m_PlayerUI;
 	//数字クラス.
 	std::unique_ptr<NumberImage>	m_Number;
 	//UIクラス.
