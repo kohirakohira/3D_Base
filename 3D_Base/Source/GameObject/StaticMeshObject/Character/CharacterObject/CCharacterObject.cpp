@@ -64,8 +64,8 @@ void CCharacterObjectBase::SetShotManager(std::shared_ptr<CShotManager> shot)
 	m_pCannon->SetShotManager(m_pShotManager);
 }
 
-//=====ヒット関数=====
-void CCharacterObjectBase::Hit()
+//=====ダメージ関数=====
+void CCharacterObjectBase::Damage()
 {
 	if (m_Chara.m_Muteki == false &&m_Chara.m_Damage == false)
 	{
@@ -81,22 +81,21 @@ void CCharacterObjectBase::Hit()
 		{
 			// ダメージフラグ有効化
 			m_Chara.m_Damage = true;
+			// 無敵フラグ有効化
+			m_Chara.m_Muteki = true;
 		}
 	}
 }
-//===================
+//=====================
 
-//=====ダメージ関数=====
-void CCharacterObjectBase::Damage()
+//=====無敵関数=====
+void CCharacterObjectBase::Muteki()
 {
 	//時間定数宣言.
 	const float TIME = 1.0f / FPS;
 
-	if (m_Chara.m_Damage == true)
+	if (m_Chara.m_Muteki == true)
 	{
-		// 無敵フラグ有効化
-		m_Chara.m_Muteki = true;
-
 		// 無敵タイマーを減少
 		m_Chara.m_MutekiTimer -= TIME;
 
@@ -140,7 +139,8 @@ void CCharacterObjectBase::Damage()
 		m_Chara.m_Muteki = false;
 	}
 }
-//=====================
+//=================
+
 
 //=====死亡関数=====
 void CCharacterObjectBase::Death()
@@ -173,6 +173,8 @@ void CCharacterObjectBase::Death()
 			// 死亡フラグを無効化
 			m_Chara.m_Death = false;
 
+			// 無敵フラグ有効化
+			m_Chara.m_Muteki = true;
 		}
 	}
 }

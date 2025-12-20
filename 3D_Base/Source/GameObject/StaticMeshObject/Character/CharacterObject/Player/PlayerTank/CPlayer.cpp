@@ -91,6 +91,7 @@ void CPlayer::Init(int id)
 	m_Chara.m_Damage  = false;
 	m_Chara.m_Death   = false;
 	m_Chara.m_Kill	  = false;
+	m_Chara.m_Muteki = false;
 	m_Chara.m_Respawn = false;
 
 	//継承したものも初期化
@@ -127,10 +128,10 @@ void CPlayer::Update()
 		return;
 	}
 
-	// ダメージ処理の更新
-	Damage();
 	// 死亡処理の更新
 	Death();
+	// 無敵処理の更新
+	Muteki();
 
 	//playerが死亡していたら処理をスキップ
 	if (m_Chara.m_Death == true)

@@ -86,6 +86,7 @@ void CComPlayer::Create(int id)
     m_Chara.m_Damage  = false;
     m_Chara.m_Death   = false;
     m_Chara.m_Kill    = false;
+    m_Chara.m_Muteki = false;
     m_Chara.m_Respawn = false;
 
     //継承したものも初期化
@@ -379,10 +380,10 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
 
 void CComPlayer::Update()
 {
-    // ダメージ処理の更新
-    Damage();
     // 死亡処理の更新
     Death();
+    // 無敵処理の更新
+    Muteki();
 
     SanitizeParams();
     SyncCannonToBody(); //常に砲塔と車体を同期
