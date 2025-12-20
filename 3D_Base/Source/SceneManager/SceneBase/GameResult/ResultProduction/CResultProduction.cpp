@@ -22,6 +22,8 @@ CResultProduction::CResultProduction()
 
 	, m_CharaPosX			( -75.0f )
 	, m_IsJudge				( false )
+
+	, m_StagingPosition		()
 {
 }
 
