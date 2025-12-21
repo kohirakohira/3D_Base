@@ -133,7 +133,7 @@ void CComPlayer::Create(int id)
         //ˆê”Ô‹ß‚¢“G
         SetPersonalityType(PersonalityType::Aggressive);
         m_TargetSelector.SetForgetDistance(100.0f);     // L‚¢”ÍˆÍ‚Å”F¯
-        m_TargetSelector.SetStickinessRatio(0.0f);      // ”S’…‚µ‚È‚¢
+        m_TargetSelector.SetStickinessRatio(1.0f);      // ”S’…‚µ‚È‚¢
         m_TargetSelector.SetRetargetInterval(30);       // •p”É‚ÉÄ•]‰¿
         m_ComShot.SetShotCollDown(100);                 // ƒVƒ‡ƒbƒg‚ÌƒN[ƒ‹ƒ_ƒEƒ“
         break;
@@ -151,7 +151,7 @@ void CComPlayer::Create(int id)
         //â‘Î‚Éƒ^[ƒQƒbƒg‚ğ•Ï‚¦‚È‚¢
         SetPersonalityType(PersonalityType::Persistent);
         m_TargetSelector.SetForgetDistance(1e9);    //‚Ç‚±‚Ü‚Å‚à’Ç‚¤
-        m_TargetSelector.SetStickinessRatio(1.0f);      //â‘Î‚É”S’…
+        m_TargetSelector.SetStickinessRatio(0.0f);      //â‘Î‚É”S’…
         m_TargetSelector.SetRetargetInterval(9999);     //Ä•]‰¿‚µ‚È‚¢
         m_ComShot.SetShotCollDown(60);          
         break;
