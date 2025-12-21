@@ -59,6 +59,9 @@ public:
 	//勝った時と引き分け時の位置設定.
 	void SetPositionJudge(int playerid);
 
+	//キャラクターの位置設定用.
+	void SetPositionRanking();
+
 public:
 	//勝ち抜け.
 	void WinUpdate();

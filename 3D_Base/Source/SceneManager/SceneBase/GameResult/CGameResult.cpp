@@ -32,6 +32,8 @@ CGameResult::CGameResult(HWND hWnd)
 
 	, m_pResultProduction	( nullptr )
 {
+	//インスタンス生成.
+	m_pResultProduction = std::make_unique<CResultProduction>();
 	//結果がどっちか判定.
 	WinOrDrawFunction();
 }
@@ -60,7 +62,6 @@ void CGameResult::Update()
 		//↓-----リザルトの演出-----↓.
 
 		m_pResultProduction->WinUpdate();
-		m_pResultProduction->SetIsJudge(true);
 
 		//↑-----リザルトでの演出-----↑.
 		break;
@@ -70,7 +71,6 @@ void CGameResult::Update()
 		//↓-----リザルトでの演出-----↓.
 
 		m_pResultProduction->DrawUpdate();
-		m_pResultProduction->SetIsJudge(false);
 
 		//↑-----リザルトでの演出-----↑.
 		break;
@@ -197,7 +197,6 @@ void CGameResult::Create()
 	m_Key = std::make_shared<CMultiInputKeyManager>();
 
 	//リザルトの演出.
-	m_pResultProduction = std::make_unique<CResultProduction>();
 	m_pResultProduction->Create();
 
 }
@@ -271,10 +270,12 @@ CSceneType CGameResult::WinOrDrawFunction()
 	if (CGameDataManager::GetInstance().SameKill() == true)
 	{
 		m_SceneType = CSceneType::ResultWin;
+		m_pResultProduction->SetIsJudge(true);
 	}
 	else
 	{
 		m_SceneType = CSceneType::ResultDraw;
+		m_pResultProduction->SetIsJudge(false);
 	}
 
 	return m_SceneType;
