@@ -92,11 +92,7 @@ private:
 	//勝ちか引き分け判定用.
 	bool m_IsJudge;
 
-<<<<<<< HEAD
-	//プレイヤーの位置.
-=======
 	//プレイヤーの位置. 
->>>>>>> Reslt逕ｻ髱｢縺ｮ貍泌・
 	PLAYER_POS m_StagingPosition;
 
 	//カメラクラス変数.
