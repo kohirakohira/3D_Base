@@ -136,8 +136,26 @@ void CPlayer::Update()
 	//player‚ª€–S‚µ‚Ä‚¢‚½‚çˆ—‚ğƒXƒLƒbƒv
 	if (m_Chara.m_Death == true)
 	{
-		//ˆÚ“®SE‚Ì’â~.
-		CSoundManager::Stop(CSoundManager::SE_Move);
+		if (m_PlayerID == 0)
+		{
+			//ˆÚ“®SE‚ÌÄ¶.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+		}
+		if (m_PlayerID == 1)
+		{
+			//ˆÚ“®SE‚ÌÄ¶.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+		}
+		if (m_PlayerID == 2)
+		{
+			//ˆÚ“®SE‚ÌÄ¶.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+		}
+		if (m_PlayerID == 3)
+		{
+			//ˆÚ“®SE‚ÌÄ¶.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+		}
 
 		return;
 	}
@@ -186,62 +204,226 @@ void CPlayer::Move(const PlayerInput& input)
 			//‘Oi.
 			m_pBody->SetMoveState(CBody::Forward);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
+
 			break;
 		case CController::Direction::Down:
 			//Œã‘Ş.
 			m_pBody->SetMoveState(CBody::Backward);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::Left:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::Right:
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::UpLeft:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Forward);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::UpRight:
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Forward);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::DownLeft:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Backward);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::DownRight:
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Backward);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::Stop:
 			//‰½‚à“ü—Í‚ª–³‚¢‚Ì‚Å’â~‚µ‚Ä‚¨‚­.
 			m_pBody->SetMoveState(CBody::Stop);
 
-			//ˆÚ“®SE‚Ì’â~.
-			CSoundManager::Stop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::Stop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::Stop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::Stop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::Stop(CSoundManager::SE_Move4);
+			}
 			break;
 		default:
 			break;
@@ -253,8 +435,26 @@ void CPlayer::Move(const PlayerInput& input)
 		{
 			m_pBody->SetMoveState(CBody::Forward);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 		}
 		else
 		{
@@ -262,8 +462,26 @@ void CPlayer::Move(const PlayerInput& input)
 				m_Key->InputKey('S') == false &&
 				m_Key->InputKey('D') == false)
 			{
-				//ˆÚ“®SE‚Ì’â~.
-				CSoundManager::Stop(CSoundManager::SE_Move);
+				if (m_PlayerID == 0)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move1);
+				}
+				if (m_PlayerID == 1)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move2);
+				}
+				if (m_PlayerID == 2)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move3);
+				}
+				if (m_PlayerID == 3)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move4);
+				}
 			}
 		}
 
@@ -271,8 +489,26 @@ void CPlayer::Move(const PlayerInput& input)
 		{
 			m_pBody->SetMoveState(CBody::Backward);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 		}
 		else
 		{
@@ -280,8 +516,26 @@ void CPlayer::Move(const PlayerInput& input)
 				m_Key->InputKey('A') == false &&
 				m_Key->InputKey('D') == false)
 			{
-				//ˆÚ“®SE‚Ì’â~.
-				CSoundManager::Stop(CSoundManager::SE_Move);
+				if (m_PlayerID == 0)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move1);
+				}
+				if (m_PlayerID == 1)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move2);
+				}
+				if (m_PlayerID == 2)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move3);
+				}
+				if (m_PlayerID == 3)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move4);
+				}
 			}
 		}
 
@@ -289,8 +543,26 @@ void CPlayer::Move(const PlayerInput& input)
 		{
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 		}
 		else
 		{
@@ -298,8 +570,26 @@ void CPlayer::Move(const PlayerInput& input)
 				m_Key->InputKey('S') == false &&
 				m_Key->InputKey('D') == false)
 			{
-				//ˆÚ“®SE‚Ì’â~.
-				CSoundManager::Stop(CSoundManager::SE_Move);
+				if (m_PlayerID == 0)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move1);
+				}
+				if (m_PlayerID == 1)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move2);
+				}
+				if (m_PlayerID == 2)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move3);
+				}
+				if (m_PlayerID == 3)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move4);
+				}
 			}
 		}
 
@@ -307,8 +597,26 @@ void CPlayer::Move(const PlayerInput& input)
 		{
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 
-			//ˆÚ“®SE‚ÌÄ¶.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//ˆÚ“®SE‚ÌÄ¶.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 		}
 		else
 		{
@@ -316,8 +624,26 @@ void CPlayer::Move(const PlayerInput& input)
 				m_Key->InputKey('A') == false &&
 				m_Key->InputKey('S') == false)
 			{
-				//ˆÚ“®SE‚Ì’â~.
-				CSoundManager::Stop(CSoundManager::SE_Move);
+				if (m_PlayerID == 0)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move1);
+				}
+				if (m_PlayerID == 1)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move2);
+				}
+				if (m_PlayerID == 2)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move3);
+				}
+				if (m_PlayerID == 3)
+				{
+					//ˆÚ“®SE‚ÌÄ¶.
+					CSoundManager::Stop(CSoundManager::SE_Move4);
+				}
 			}
 		}
 

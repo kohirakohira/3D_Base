@@ -16,7 +16,7 @@ static bool prevA = false;
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
 //定数宣言.
-static constexpr int TIME = 10;
+static constexpr int TIME = 100;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 const float FLASH_TIME = 0.5f;			//点滅周期.
@@ -268,7 +268,10 @@ void CGameMain::Update()
 			CSoundManager::Stop(CSoundManager::BGM_Main);
 
 			// 戦車が動いている時のSEを停止
-			CSoundManager::Stop(CSoundManager::SE_Move);
+			CSoundManager::Stop(CSoundManager::SE_Move1);
+			CSoundManager::Stop(CSoundManager::SE_Move2);
+			CSoundManager::Stop(CSoundManager::SE_Move3);
+			CSoundManager::Stop(CSoundManager::SE_Move4);
 
 			m_SceneType = CSceneType::Result;
 		}
