@@ -40,24 +40,6 @@ public: //キャラクターの位置を設定する用の構造体.
 	};
 
 public:
-	//キャラクターの位置を設定する用の構造体.
-	struct PLAYER_POS
-	{
-		D3DXVECTOR3 OnePos;
-		D3DXVECTOR3 TwoPos;
-		D3DXVECTOR3 TreePos;
-		D3DXVECTOR3 Fouros;
-		
-		PLAYER_POS()
-			: OnePos	({ 0.0f, 0.0f, 0.0f })
-			, TwoPos	({ 0.0f, 0.0f, 0.0f })
-			, TreePos	({ 0.0f, 0.0f, 0.0f })
-			, Fouros	({ 0.0f, 0.0f, 0.0f })
-		{
-		}
-	};
-
-public:
 	CResultProduction();
 	~CResultProduction();
 
