@@ -20,6 +20,8 @@ CResultProduction::CResultProduction()
 
 	, m_CharaPosX			( -75.0f )
 	, m_IsJudge				( false )
+
+	, m_StagingPosition		( )
 {
 }
 
@@ -37,9 +39,6 @@ void CResultProduction::WinUpdate()
 	auto [playerID, Kill] = CGameDataManager::GetInstance().GetTopCharacter();
 	m_Number->SetNumber(Kill, 2);
 	m_Number->Update();
-	//勝ちか引き分けでの位置決め.
-	SetPositionJudge(playerID);
-
 }
 
 void CResultProduction::WinDraw()
@@ -65,9 +64,6 @@ void CResultProduction::DrawUpdate()
 	auto [playerID, Kill] = CGameDataManager::GetInstance().GetTopCharacter();
 	m_Number->SetNumber(Kill, 2);
 	m_Number->Update();
-	//勝ちか引き分けでの位置決め.
-	SetPositionJudge(playerID);
-
 }
 
 void CResultProduction::DrawDraw()
@@ -153,6 +149,26 @@ void CResultProduction::Init()
 	m_KillUI->SetPosition(WND_W / 2 - 120.0f, WND_H / 2 - 300.0f, 0.0f);
 	m_KillUI->SetRotation(0.0f, 0.0f, 0.0f);
 	m_KillUI->SetScale(0.5f, 0.5f, 0.5f);
+
+	if (m_IsJudge == true)
+	{
+		//キャラクターの位置設定(順位).
+		m_StagingPosition.OnePos	= { 0.0f,	10.0f, 80.0f };		//中央.
+		m_StagingPosition.TwoPos	= { -45.0f, 10.0f, 130.0f };	//左奥.
+		m_StagingPosition.TreePos	= { 45.0f,	10.0f, 130.0f };	//右の左奥.
+		m_StagingPosition.Fouros	= { 60.0f,	10.0f, 130.0f };	//右の右奥.
+	}
+	else
+	{
+		//キャラクターの位置設定(順位).
+		m_StagingPosition.OnePos	= { -65.0f,	10.0f, 100.0f };	//中央.
+		m_StagingPosition.TwoPos	= { -20.0f, 10.0f, 100.0f };	//左奥.
+		m_StagingPosition.TreePos	= { 25.0f,	10.0f, 100.0f };	//右の左奥.
+		m_StagingPosition.Fouros	= { 70.0f,	10.0f, 100.0f };	//右の右奥.
+	}
+
+	//勝ちか引き分けでの位置決め.
+	SetPositionRanking();
 
 }
 
@@ -276,5 +292,53 @@ void CResultProduction::SetPositionJudge(int playerid)
 			m_CharaPosX += 50.0f;
 		}
 		m_CharaPosX = -75.0f;
+	}
+}
+
+//キャラクターの位置設定用.
+void CResultProduction::SetPositionRanking()
+{
+	//順位を取得.
+	auto ranks = CGameDataManager::GetInstance().GetRanking();
+
+	//回転と大きさを設定.
+	const D3DXVECTOR3 rot = { 0.0f, D3DXToRadian(180), 0.0f };
+	const D3DXVECTOR3 sca = { 50.0f, 50.0f, 50.0f };
+
+	//順位を見て位置を設定.
+	for (int rank = 0; rank < PLAYER_MAX; ++rank)
+	{
+		//今の順位のプレイヤーIDを取得.
+		int playerID = ranks[rank];
+		//例外処理.
+		if (playerID < 0)
+		{
+			continue;
+		}
+		//位置を保存する変数.
+		D3DXVECTOR3 pos;
+
+		//順位に応じて決めておいた位置を選ぶ※1位~4位.
+		switch (rank)
+		{
+		case 0:
+			pos = m_StagingPosition.OnePos;
+			break;
+		case 1:
+			pos = m_StagingPosition.TwoPos;
+			break;
+		case 2:
+			pos = m_StagingPosition.TreePos;
+			break;
+		case 3:
+			pos = m_StagingPosition.Fouros;
+			break;
+		default:
+			break;
+		}
+		//キャラクターに反映.
+		m_CharacterManager->SetPlayerPosition(playerID, pos);
+		m_CharacterManager->SetPlayerRotation(playerID, rot);
+		m_CharacterManager->SetPlayerScale(playerID, sca);
 	}
 }

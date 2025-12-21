@@ -2,6 +2,7 @@
 //-----STL-----.
 #include <iostream>
 #include <unordered_map>
+#include <array>
 #include <algorithm>
 #include <vector>
 #include <utility>
@@ -25,6 +26,9 @@ public:
 
 	//1ˆÊ‚Ìæ“¾.
 	std::pair<int, int> GetTopCharacter();
+
+	//‡ˆÊ‚ğŒˆ‚ß‚Äæ“¾‚·‚éŠÖ”.
+	std::array<int, PLAYER_MAX> GetRanking();
 
 	//“¯‚¶ƒLƒ‹”‚È‚Ì‚©‚ğ”»’è‚·‚éŠÖ”.
 	bool SameKill();
