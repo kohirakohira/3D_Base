@@ -164,6 +164,14 @@ void CResultProduction::Init()
 	m_KillUI->SetRotation(0.0f, 0.0f, 0.0f);
 	m_KillUI->SetScale(0.5f, 0.5f, 0.5f);
 
+	//プレイヤー番号の情報.
+	for (int index = 0; index < PLAYER_MAX; index++)
+	{
+		m_PlayerUI[index]->SetPosition(WND_W / 2 - 450, 100.0f, 0.0f);
+		m_PlayerUI[index]->SetRotation(0.0f, 0.0f, 0.0f);
+		m_PlayerUI[index]->SetScale(0.7f, 0.7f, 0.7f);
+	}
+
 	if (m_IsJudge != true)
 	{
 		//キャラクターの位置設定(順位).
