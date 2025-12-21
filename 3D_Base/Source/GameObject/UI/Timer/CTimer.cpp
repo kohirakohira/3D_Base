@@ -6,7 +6,7 @@ using std::max;
 
 CTimer::CTimer()
 	: m_Time			( 0 )
-	, m_HitTime			()
+	, m_StartGameTime	()
 
 	, m_StartTimer		()
 	, m_TotalTime		( 0 )
@@ -62,14 +62,17 @@ bool CTimer::IsFinished() const
 }
 
 //当たったときに必要な関数.
-void CTimer::HitTimer()
+void CTimer::CountDown()
 {
-	m_HitTime = std::chrono::steady_clock::now();
+	m_StartGameTime = std::chrono::steady_clock::now();
 }
 
 int CTimer::GetElapsed() const
 {
+	// std::chrono::steady_clockは単調増加する時計
 	auto now = std::chrono::steady_clock::now();
-	std::chrono::duration<float> elapsed = now - m_HitTime;
+
+	// std::chorono::durationは時間の長さ(量)を表す型
+	std::chrono::duration<float> elapsed = now - m_StartGameTime;
 	return elapsed.count();
 }

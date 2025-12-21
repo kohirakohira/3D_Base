@@ -17,6 +17,7 @@ static bool prevA = false;
 
 //定数宣言.
 static constexpr int TIME = 20;
+static constexpr int StartCountDown = 4;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 const float FLASH_TIME = 0.5f;			//点滅周期.
@@ -159,20 +160,6 @@ void CGameMain::Update()
 	{
 		m_pCharacterManager->PlayerRespawn(i);
 	}
-
-	// 弾の発射.
-	//for (int i = 0; i < PLAYER_MAX; i++)
-	//{
-	//	if (auto player = m_pCharacterManager->GetControlPlayer(i))
-	//	{
-	//		if (player->GetCannon()->IsShot())
-	//		{
-	//			m_pShotManager->SetReload(i,
-	//				player->GetCannon()->GetPosition(),
-	//				player->GetCannon()->GetRotation().y);
-	//		}
-	//	}
-	//}
 
 #if 0
 	for (int index = 0; index < PLAYER_MAX; ++index)
@@ -1128,6 +1115,9 @@ void CGameMain::EachSettingTimer()
 	//タイマーの数字の情報.
 	m_TimerNumber->SetBasePosition(D3DXVECTOR2{ WND_W / 2, WND_H / 2 - 16 });
 	m_TimerNumber->SetDigitWidth(32);
+
+	// カウントダウン設定
+	m_Timer->CountDown();
 }
 //プレイヤー番号画像の設定..
 void CGameMain::EachSettingPlayerNumber()
