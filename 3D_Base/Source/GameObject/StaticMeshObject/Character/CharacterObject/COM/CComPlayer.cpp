@@ -90,6 +90,10 @@ void CComPlayer::Create(int id)
     m_Chara.m_Kill    = false;
     m_Chara.m_Muteki = false;
     m_Chara.m_Respawn = false;
+    // サウンドフラグの初期化
+    m_Chara.m_HitWall = false;
+    m_Chara.m_HitBox = false;
+    m_Chara.m_HitBlast = false;
 
     //継承したものも初期化
     m_IsActive = true;

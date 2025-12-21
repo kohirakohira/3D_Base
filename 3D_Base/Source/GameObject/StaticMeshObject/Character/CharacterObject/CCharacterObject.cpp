@@ -21,6 +21,9 @@ CCharacterObjectBase::CCharacterObjectBase()
 		false,	// すでにキル処理したか	
 		false,	// 無敵フラグ
 		false,	// リスポーンフラグ
+		false,	// サウンドフラグ：壁に当たっている時
+		false,	// サウンドフラグ：箱に当たっている時
+		false,	// サウンドフラグ：爆風に当たっている時
 	};
 }
 
