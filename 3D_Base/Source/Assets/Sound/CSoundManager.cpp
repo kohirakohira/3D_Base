@@ -51,8 +51,12 @@ bool CSoundManager::Load(HWND hWnd)
 		{ enList::SE_Damage ,	_T("Data\\Sound\\SE\\damage.mp3"),				_T("SE_Damage")		},
 		{ enList::SE_Explosion,	_T("Data\\Sound\\SE\\explosion_2.mp3"),			_T("SE_Explosion")	},
 		{ enList::SE_Impact,	_T("Data\\Sound\\SE\\Impact.mp3"),				_T("SE_Impact")		},
-		{ enList::SE_Move,		_T("Data\\Sound\\SE\\Move2.mp3"),				_T("SE_Move")		},
+		{ enList::SE_Move1,		_T("Data\\Sound\\SE\\Move2.mp3"),				_T("SE_Move1")		},
+		{ enList::SE_Move2,		_T("Data\\Sound\\SE\\Move2.mp3"),				_T("SE_Move2")		},
+		{ enList::SE_Move3,		_T("Data\\Sound\\SE\\Move2.mp3"),				_T("SE_Move3")		},
+		{ enList::SE_Move4,		_T("Data\\Sound\\SE\\Move2.mp3"),				_T("SE_Move4")		},
 	};
+
 	//配列の最大要素数を算出 (配列全体のサイズ/配列1つ分のサイズ).
 	int list_max = sizeof(SList) / sizeof(SList[0]);
 	for (int i = 0; i < list_max; i++)

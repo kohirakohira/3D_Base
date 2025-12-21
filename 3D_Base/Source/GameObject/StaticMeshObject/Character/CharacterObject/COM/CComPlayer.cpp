@@ -11,6 +11,8 @@
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/IComPersonality/CAggressivePersonality/CAggressivePersonality.h"
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/IComPersonality/CPersistentPersonality/CPersistentPersonality.h"
 
+//-----サウンド-----
+#include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
 
 #undef min
 
@@ -88,6 +90,10 @@ void CComPlayer::Create(int id)
     m_Chara.m_Kill    = false;
     m_Chara.m_Muteki = false;
     m_Chara.m_Respawn = false;
+    // サウンドフラグの初期化
+    m_Chara.m_HitWall = false;
+    m_Chara.m_HitBox = false;
+    m_Chara.m_HitBlast = false;
 
     //継承したものも初期化
     m_IsActive = true;
@@ -1178,7 +1184,39 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
         // 移動先が安全かチェック
         if (!IsInDangerZone(nextPos))
         {
+            if (m_PlayerID == 1)
+            {
+                //移動SEの再生.
+                CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+            }
+            if (m_PlayerID == 2)
+            {
+                //移動SEの再生.
+                CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+            }
+            if (m_PlayerID == 3)
+            {
+                //移動SEの再生.
+                CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+            }
+
             body->SetPosition(nextPos);
+        }
+        else
+        {
+            if (m_PlayerID == 1)
+            {
+                // 移動SE停止
+                CSoundManager::Stop(CSoundManager::SE_Move2);
+            }
+            if (m_PlayerID == 2)
+            {
+                CSoundManager::Stop(CSoundManager::SE_Move3);
+            }
+            if (m_PlayerID == 3)
+            {
+                CSoundManager::Stop(CSoundManager::SE_Move4);
+            }
         }
         // 危険なら移動しない
     }

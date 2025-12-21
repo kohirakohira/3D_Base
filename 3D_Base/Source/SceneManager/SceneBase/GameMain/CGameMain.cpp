@@ -160,20 +160,6 @@ void CGameMain::Update()
 		m_pCharacterManager->PlayerRespawn(i);
 	}
 
-	// 弾の発射.
-	//for (int i = 0; i < PLAYER_MAX; i++)
-	//{
-	//	if (auto player = m_pCharacterManager->GetControlPlayer(i))
-	//	{
-	//		if (player->GetCannon()->IsShot())
-	//		{
-	//			m_pShotManager->SetReload(i,
-	//				player->GetCannon()->GetPosition(),
-	//				player->GetCannon()->GetRotation().y);
-	//		}
-	//	}
-	//}
-
 #if 0
 	for (int index = 0; index < PLAYER_MAX; ++index)
 	{
@@ -215,20 +201,6 @@ void CGameMain::Update()
 	float angle = progress * 360.0f;
 	m_pSpriteTimerArrow->SetRotation(0.f, D3DXToRadian(180.0f), D3DXToRadian(angle));
 
-	//const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
-
-	//if (nowC && !prevC)
-	//{
-	//	m_pCharacterManager->SwitchActivePlayer();
-	//}
-	//prevC = nowC;
-
-	//// Cキー押されたら操作プレイヤー切り替え
-	//if (GetAsyncKeyState('C') & 0x0001)
-	//{
-	//	m_pCharacterManager->SwitchActivePlayer();
-	//}
-
 	// 壁の更新
 	m_pWallTop->Update();
 	m_pWallBottom->Update();
@@ -268,7 +240,10 @@ void CGameMain::Update()
 			CSoundManager::Stop(CSoundManager::BGM_Main);
 
 			// 戦車が動いている時のSEを停止
-			CSoundManager::Stop(CSoundManager::SE_Move);
+			CSoundManager::Stop(CSoundManager::SE_Move1);
+			CSoundManager::Stop(CSoundManager::SE_Move2);
+			CSoundManager::Stop(CSoundManager::SE_Move3);
+			CSoundManager::Stop(CSoundManager::SE_Move4);
 
 			m_SceneType = CSceneType::Result;
 		}

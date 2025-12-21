@@ -52,7 +52,6 @@ public:
 	CGameResult(HWND hWnd);
 	~CGameResult()override;
 
-
 	//“®ìŠÖ”.
 	void Update()override;
 	//•`‰æŠÖ”.

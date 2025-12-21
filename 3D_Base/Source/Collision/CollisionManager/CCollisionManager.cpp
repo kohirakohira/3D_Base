@@ -3,37 +3,37 @@
 #include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
 
 CCollisionManager::CCollisionManager()
-	: m_pStaticBlast		()
+	: m_pStaticBlast()
 
 	// 壁
-	, m_pWallTop			()
-	, m_pWallBottom			()
-	, m_pWallLeft			()
-	, m_pWallRight			()
+	, m_pWallTop()
+	, m_pWallBottom()
+	, m_pWallLeft()
+	, m_pWallRight()
 
 	// 地面
-	, m_pGround				()
+	, m_pGround()
 
 	// 木箱
-	, m_pWoodBoxTopLeft		()
-	, m_pWoodBoxTopRight	()
-	, m_pWoodBoxCenter		()
-	, m_pWoodBoxBottomLeft	()
-	, m_pWoodBoxBottomRight	()
+	, m_pWoodBoxTopLeft()
+	, m_pWoodBoxTopRight()
+	, m_pWoodBoxCenter()
+	, m_pWoodBoxBottomLeft()
+	, m_pWoodBoxBottomRight()
 
 	// 弾マネージャー
-	, m_pShotManager		()
+	, m_pShotManager()
 
 	// キャラクターマネージャー
-	, m_pCharacterManager		()
+	, m_pCharacterManager()
 
 	// アイテムボックスマネージャー
-	, m_pItemBoxManager		()
+	, m_pItemBoxManager()
 
 	//爆風マネージャー.
-	, m_pBlastManager		()
+	, m_pBlastManager()
 
-	, m_Speed				( 15.0f )
+	, m_Speed(15.0f)
 {
 }
 
@@ -99,32 +99,79 @@ void CCollisionManager::WalltoPlayer()
 		{
 			push.z -= pushStrength;
 
-			//衝突SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Impact);
+			if (chara->GetHitWall() == false)
+			{
+				//衝突SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+				// 接触時にフラグをtrueにする
+				chara->SetHitWall(true);
+			}
 		}
+		else
+		{
+			// 非接触時にフラグをtrueにする
+			chara->SetHitWall(false);
+		}
+
 		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
 			push.z += pushStrength;
 
-			//衝突SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Impact);
+			if (chara->GetHitWall() == false)
+			{
+				//衝突SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+				// 接触時にフラグをtrueにする
+				chara->SetHitWall(true);
+			}
 		}
+		else
+		{
+			// 非接触時にフラグをtrueにする
+			chara->SetHitWall(false);
+		}
+
 		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
 			push.x += pushStrength;
 
-			//衝突SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Impact);
+			if (chara->GetHitWall() == false)
+			{
+				//衝突SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+				// 接触時にフラグをtrueにする
+				chara->SetHitWall(true);
+			}
 		}
+		else
+		{
+			// 非接触時にフラグをtrueにする
+			chara->SetHitWall(false);
+		}
+
 		if (Coll->CheckCollision(*m_pWallRight->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
 			push.x -= pushStrength;
 
-			//衝突SEの再生.
-			CSoundManager::PlaySE(CSoundManager::SE_Impact);
+			if (chara->GetHitWall() == false)
+			{
+				//衝突SEの再生.
+				CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+				// 接触時にフラグをtrueにする
+				chara->SetHitWall(true);
+			}
+		}
+		else
+		{
+			// 非接触時にフラグをtrueにする
+			chara->SetHitWall(false);
 		}
 
 		// 押し返しを正規化
@@ -161,7 +208,7 @@ void CCollisionManager::WalltoShot()
 				m_pBlastManager->Create(
 					shot->GetPosition(),
 					m_pStaticBlast,
-					m_Speed, 
+					m_Speed,
 					shot->GetPlayerID());
 
 				m_pShotManager->HitShot();
@@ -363,95 +410,21 @@ void CCollisionManager::WoodBoxtoPlayer()
 					chara->GetBody()->PushBack(dir);
 					chara->GetCannon()->PushBack(dir);
 
-					//衝突SEの再生.
-					CSoundManager::PlaySE(CSoundManager::SE_Impact);
+					if (chara->GetHitBox() == false)
+					{
+						//衝突SEの再生.
+						CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+						// 接触時にフラグをtrueにする
+						chara->SetHitBox(true);
+					}
 				}
 			}
-		}
-
-		{
-			// 車体が壁と接触したとき
-			//// 左上
-			//if (Coll->CheckCollision(*m_pWoodBoxTopLeft->GetCollider()))
-			//{
-			//	// 衝突時の押し返し処理例
-			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopLeft->GetPosition();
-
-			//	// pushベクトルを正規化して押し返しの強さをかける
-			//	float length = D3DXVec3Length(&push);
-			//	if (length > 0.0001f)
-			//	{
-			//		push /= length;
-			//		push *= pushStrength;
-			//		player->GetBody()->PushBack(push);
-			//	}
-			//}
-			//// 右上
-			//if (Coll->CheckCollision(*m_pWoodBoxTopRight->GetCollider()))
-			//{
-			//	// 衝突時の押し返し処理例
-			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxTopRight->GetPosition();
-
-			//	// pushベクトルを正規化して押し返しの強さをかける
-			//	float length = D3DXVec3Length(&push);
-			//	if (length > 0.0001f)
-			//	{
-			//		push /= length;
-			//		push *= pushStrength;
-			//		player->GetBody()->PushBack(push);
-			//	}
-			//}
-			//// 中央
-			//if (Coll->CheckCollision(*m_pWoodBoxCenter->GetCollider()))
-			//{
-			//	// 衝突時の押し返し処理例
-			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxCenter->GetPosition();
-
-			//	// pushベクトルを正規化して押し返しの強さをかける
-			//	float length = D3DXVec3Length(&push);
-			//	if (length > 0.0001f)
-			//	{
-			//		push /= length;
-			//		push *= pushStrength;
-			//		player->GetBody()->PushBack(push);
-			//	}
-			//}
-			//// 左下
-			//if (Coll->CheckCollision(*m_pWoodBoxBottomLeft->GetCollider()))
-			//{
-			//	// 衝突時の押し返し処理例
-			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomLeft->GetPosition();
-
-			//	// pushベクトルを正規化して押し返しの強さをかける
-			//	float length = D3DXVec3Length(&push);
-			//	if (length > 0.0001f)
-			//	{
-			//		push /= length;
-			//		push *= pushStrength;
-			//		player->GetBody()->PushBack(push);
-			//	}
-			//}
-			//// 右下
-			//if (Coll->CheckCollision(*m_pWoodBoxBottomRight->GetCollider()))
-			//{
-			//	// 衝突時の押し返し処理例
-			//	D3DXVECTOR3 push = player->GetBody()->GetPosition() - m_pWoodBoxBottomRight->GetPosition();
-
-			//	// pushベクトルを正規化して押し返しの強さをかける
-			//	float length = D3DXVec3Length(&push);
-			//	if (length > 0.0001f)
-			//	{
-			//		push /= length;
-			//		push *= pushStrength;
-			//		player->GetBody()->PushBack(push);
-			//	}
-			//}
-			//// 押し返しを正規化
-			//if (D3DXVec3Length(&push) > 0.f)
-			//{
-			//	D3DXVec3Normalize(&push, &push);
-			//	push *= pushStrength;
-			//}
+			else
+			{
+				// 非接触時にフラグをfalseにする
+				chara->SetHitBox(false);
+			}
 		}
 	}
 }
@@ -614,8 +587,14 @@ void CCollisionManager::PlayertoBlast()
 				// 当たった時の処理
 				chara->Damage();
 
-				// ダメージSEの再生
-				CSoundManager::PlaySE(CSoundManager::SE_Damage);
+				if (chara->GetHitBlast() == false)
+				{
+					// ダメージSEの再生
+					CSoundManager::PlaySE(CSoundManager::SE_Damage);
+
+					// 接触中にフラグをtrueに変更
+					chara->SetHitBlast(true);
+				}
 			}
 
 			if (chara->GetDeath() == true && chara->GetKill() == false)

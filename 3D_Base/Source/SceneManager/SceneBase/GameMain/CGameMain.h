@@ -105,7 +105,6 @@ public:
 	// 定数宣言
 	static constexpr int HP_MAX = 2;			//最大HP..
 	static constexpr int PLAYERNUM_MAX = 4;		//プレイヤー番号..
-	static constexpr int KILLNUM_MAX = 4;		//キル数..
 
 	// ウィンドウハンドル
 	HWND		m_hWnd;
@@ -178,7 +177,6 @@ public:
 
 	// キャラクターマネージャー
 	std::shared_ptr<CCharacterManager>			m_pCharacterManager;
-
 
 	// 弾クラスマネージャー.
 	std::shared_ptr<CShotManager>			m_pShotManager;
