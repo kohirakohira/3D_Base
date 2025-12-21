@@ -79,9 +79,9 @@ void CGameResult::Update()
 	}
 
 	//シーンの遷移.
-	if (controller && controller->CheckConnected())
+	if (controller && controller->CheckConnected() || m_Key != nullptr)
 	{
-		if (m_Key->ReleaseInputKey('Z') == true || controller->Down(CXInput::A, true))
+		if (m_Key->ReleaseInputKey('Z') == true || controller && controller->Down(CXInput::A, true))
 		{
 			//BGMのループ停止.
 			CSoundManager::Stop(CSoundManager::BGM_Result_Win);
@@ -133,6 +133,8 @@ void CGameResult::Draw()
 	m_pSpriteObj->Draw();
 	//選択画像の描画.
 	m_pSelectIcon->Draw();
+	//選択肢画像の描画.
+	m_pChoiceIcon->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
 }
 
@@ -154,6 +156,11 @@ void CGameResult::Init()
 	m_pSelectIcon->SetPosition(WND_W / 2 - 128, WND_H / 1.5 + 128, 0.0f);
 	m_pSelectIcon->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pSelectIcon->SetScale(1.0f, 1.0f, 1.0f);
+	
+	//選択肢の情報.
+	m_pChoiceIcon->SetPosition(WND_W / 2 + 96, WND_H / 1.5 + 128, 0.0f);
+	m_pChoiceIcon->SetRotation(0.0f, 0.0f, 0.0f);
+	m_pChoiceIcon->SetScale(1.0f, 1.0f, 1.0f);
 
 	//キー設定.
 	m_Key->Init();
