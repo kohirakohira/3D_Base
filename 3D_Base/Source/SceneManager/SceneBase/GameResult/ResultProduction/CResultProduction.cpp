@@ -150,21 +150,21 @@ void CResultProduction::Init()
 	m_KillUI->SetRotation(0.0f, 0.0f, 0.0f);
 	m_KillUI->SetScale(0.5f, 0.5f, 0.5f);
 
-	if (m_IsJudge == true)
-	{
-		//キャラクターの位置設定(順位).
-		m_StagingPosition.OnePos	= { 0.0f,	10.0f, 80.0f };		//中央.
-		m_StagingPosition.TwoPos	= { -45.0f, 10.0f, 130.0f };	//左奥.
-		m_StagingPosition.TreePos	= { 45.0f,	10.0f, 130.0f };	//右の左奥.
-		m_StagingPosition.Fouros	= { 60.0f,	10.0f, 130.0f };	//右の右奥.
-	}
-	else
+	if (m_IsJudge != true)
 	{
 		//キャラクターの位置設定(順位).
 		m_StagingPosition.OnePos	= { -65.0f,	10.0f, 100.0f };	//中央.
 		m_StagingPosition.TwoPos	= { -20.0f, 10.0f, 100.0f };	//左奥.
 		m_StagingPosition.TreePos	= { 25.0f,	10.0f, 100.0f };	//右の左奥.
 		m_StagingPosition.Fouros	= { 70.0f,	10.0f, 100.0f };	//右の右奥.
+	}
+	else
+	{
+		//キャラクターの位置設定(順位).
+		m_StagingPosition.OnePos	= { 0.0f,	10.0f, 80.0f };		//中央.
+		m_StagingPosition.TwoPos	= { -50.0f, 10.0f, 150.0f };	//左奥.
+		m_StagingPosition.TreePos	= { 50.0f,	10.0f, 150.0f };	//右の左奥.
+		m_StagingPosition.Fouros	= { 95.0f,	10.0f, 150.0f };	//右の右奥.
 	}
 
 	//勝ちか引き分けでの位置決め.
