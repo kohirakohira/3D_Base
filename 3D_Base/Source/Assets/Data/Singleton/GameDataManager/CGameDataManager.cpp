@@ -3,6 +3,7 @@
 CGameDataManager::CGameDataManager()
 	: m_KillCount		()
 {
+	m_KillCount[0] = 99;
 }
 
 CGameDataManager::~CGameDataManager()

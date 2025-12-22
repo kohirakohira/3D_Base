@@ -130,6 +130,8 @@ void CGameResult::Draw()
 		break;
 	}
 
+
+
 	//前後関係無視.
 	CDirectX11::GetInstance().SetDepth(false);
 	//リザルト画像の描画.
@@ -140,11 +142,14 @@ void CGameResult::Draw()
 	m_pChoiceIcon->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
 
+	CDirectX11::GetInstance().SetAlphaBlend(true);
 	CEffect::GetInstance().Draw(
-		m_pResultProduction->GetCamera()->m_mView, 
+		m_pResultProduction->GetCamera()->m_mView,
 		m_pResultProduction->GetCamera()->m_mProj,
 		m_pResultProduction->GetCamera()->m_Light,
 		m_pResultProduction->GetCamera()->m_Camera);
+	CDirectX11::GetInstance().SetAlphaBlend(false);
+
 }
 
 void CGameResult::Init()
@@ -282,17 +287,19 @@ HRESULT CGameResult::LoadData()
 
 CSceneType CGameResult::WinOrDrawFunction()
 {
-	//一人で勝っていたら.
-	if (CGameDataManager::GetInstance().SameKill() == true)
-	{
-		m_SceneType = CSceneType::ResultWin;
-		m_pResultProduction->SetIsJudge(true);
-	}
-	else
-	{
-		m_SceneType = CSceneType::ResultDraw;
-		m_pResultProduction->SetIsJudge(false);
-	}
+	////一人で勝っていたら.
+	//if (CGameDataManager::GetInstance().SameKill() == true)
+	//{
+	//	m_SceneType = CSceneType::ResultWin;
+	//	m_pResultProduction->SetIsJudge(true);
+	//}
+	//else
+	//{
+	//	m_SceneType = CSceneType::ResultDraw;
+	//	m_pResultProduction->SetIsJudge(false);
+	//}
+	m_SceneType = CSceneType::ResultWin;
+	m_pResultProduction->SetIsJudge(true);
 
 	return m_SceneType;
 }
