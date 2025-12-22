@@ -111,40 +111,7 @@ void CCollisionManager::WalltoPlayer()
 		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
-			if (chara->GetHitWall() == false)
-			{
-				//Õ“ËSE‚ÌÄ¶.
-				CSoundManager::PlaySE(CSoundManager::SE_Impact);
-
-				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
-				chara->SetHitWall(true);
-			}
-
-			if (Coll->CheckCollision(*m_pWallLeft->GetCollider()) &&
-				chara->GetDeath() == false)
-			{
-				push.x += pushStrength;
-				push.z += pushStrength;
-
-				if (chara->GetHitWall() == false)
-				{
-					//Õ“ËSE‚ÌÄ¶.
-					CSoundManager::PlaySE(CSoundManager::SE_Impact);
-
-					// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
-					chara->SetHitWall(true);
-				}
-			}
-			else
-			{
-				push.z += pushStrength;
-			}
-
-		}
-		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()) &&
-			chara->GetDeath() == false)
-		{
-			push.x += pushStrength;
+			push.z += pushStrength;
 
 			if (chara->GetHitWall() == false)
 			{
@@ -155,6 +122,20 @@ void CCollisionManager::WalltoPlayer()
 				chara->SetHitWall(true);
 			}
 		}
+		//if (Coll->CheckCollision(*m_pWallLeft->GetCollider()) &&
+		//	chara->GetDeath() == false)
+		//{
+		//	push.x += pushStrength;
+
+		//	if (chara->GetHitWall() == false)
+		//	{
+		//		//Õ“ËSE‚ÌÄ¶.
+		//		CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+		//		// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
+		//		chara->SetHitWall(true);
+		//	}
+		//}
 		if (Coll->CheckCollision(*m_pWallRight->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
