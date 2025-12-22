@@ -7,6 +7,7 @@ CCharacterObjectBase::CCharacterObjectBase()
 	, m_IsAlive				( false )
 	, m_HasControl			( false )
 	, m_PlayerID			( -1 )
+	, m_SoundTimer			( 30.0f )
 {
 	// キャラクター初期値.
 	m_Chara = {
@@ -21,6 +22,10 @@ CCharacterObjectBase::CCharacterObjectBase()
 		false,	// すでにキル処理したか	
 		false,	// 無敵フラグ
 		false,	// リスポーンフラグ
+
+		false,	// サウンドフラグ：壁に当たっている時	
+		false,	// サウンドフラグ：箱に当たっている時
+		false,	// サウンドフラグ：爆風に当たっている時
 	};
 }
 
@@ -37,6 +42,7 @@ void CCharacterObjectBase::Update()
 	{
 		m_pCannon->Update();
 	}
+
 }
 
 void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
@@ -133,6 +139,9 @@ void CCharacterObjectBase::Muteki()
 	}
 	else
 	{
+		// 当たるようになったらサウンドフラグ無効化
+		m_Chara.m_HitBlast = false;
+
 		// 念のためここでも無敵を初期化する
 		m_Chara.m_MutekiCnt = 0;
 		m_Chara.m_MutekiTimer = 0.2;
@@ -206,3 +215,19 @@ D3DXVECTOR3 CCharacterObjectBase::GetRotation() const
 	return D3DXVECTOR3(0, 0, 0);
 }
 //========================
+
+// サウンドフラグのリセット
+void CCharacterObjectBase::ResetSoundFlg()
+{
+	if (m_Chara.m_HitWall == true || m_Chara.m_HitBox == true)
+	{
+		m_SoundTimer--;
+		if (m_SoundTimer <= 0.0f)
+		{
+			m_Chara.m_HitWall = false;
+			m_Chara.m_HitBox = false;
+
+			m_SoundTimer = 30.f;
+		}
+	}
+}

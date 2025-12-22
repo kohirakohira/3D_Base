@@ -93,6 +93,10 @@ void CPlayer::Init(int id)
 	m_Chara.m_Kill	  = false;
 	m_Chara.m_Muteki = false;
 	m_Chara.m_Respawn = false;
+	// サウンドフラグ
+	m_Chara.m_HitWall	= false;
+	m_Chara.m_HitBox	= false;
+	m_Chara.m_HitBlast	= false;
 
 	//継承したものも初期化
 	m_IsActive = true;
@@ -128,6 +132,11 @@ void CPlayer::Update()
 		return;
 	}
 
+	// サウンドリセット関数
+	ResetSoundFlg();
+
+	// ダメージ処理の更新
+	Damage();
 	// 死亡処理の更新
 	Death();
 	// 無敵処理の更新
