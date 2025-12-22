@@ -1,210 +1,157 @@
 #include "CSound.h"
-#include <stdio.h>  //sprintf_s関数を使用するのに必要.
+#include <stdexcept> // std::runtime_error
 
-//コンストラクタ.
-CSound::CSound()
-	//初期化子リスト.
-	: m_hWnd( nullptr )
-	, m_sAlias()
-	, m_iVolume( 1000 )
+CSound::CSound(IXAudio2* pXAudio2, const WaveData& wave)
+	: m_pXAudio2(pXAudio2)
+	, m_Wave(std::move(const_cast<WaveData&>(wave)))
+	, m_Type(SoundType::Wave)
 {
 }
 
-//デストラクタ.
+CSound::CSound(IXAudio2* pXAudio2, const Mp3Data& mp3)
+	: m_pXAudio2(pXAudio2)
+	, m_Mp3(std::move(const_cast<Mp3Data&>(mp3)))
+	, m_Type(SoundType::Mp3)
+{
+}
+
 CSound::~CSound()
 {
+	for (auto* voice : m_pVoices)
+	{
+		voice->DestroyVoice();
+	}
 }
 
-//================================================================================
-//  音声ファイルを開く関数.
-//================================================================================
-bool CSound::Open( LPCTSTR sFileName, LPCTSTR sAlias, HWND hWnd )
+//=====ソースボイス破棄======
+void CSound::CleanUpFinishVoices()
 {
-	//初期設定.
-	SetInitParam( sAlias, hWnd );
-
-	//コマンド.
-	TCHAR cmd[STR_BUFF_MAX] = _T("");
-
-	wsprintf( cmd, _T("open %s alias %s"), sFileName, m_sAlias );
-
-	if( mciSendString( cmd, nullptr, 0, m_hWnd ) == 0 ){
-		return true;
-	}
-	return false;
+	// 再生が終了したソースボイスを破棄
+	m_pVoices.erase(
+		std::remove_if(
+			m_pVoices.begin(),
+			m_pVoices.end(),
+			[](IXAudio2SourceVoice* voice)
+			{
+				if (voice)
+				{
+					XAUDIO2_VOICE_STATE state;
+					voice->GetState(&state);
+					if (state.BuffersQueued == 0)
+					{
+						voice->DestroyVoice();
+						return true; // 削除対象
+					}
+				}
+				return false; // 削除しない
+			}
+		),
+		m_pVoices.end()
+	);
 }
+//=========================
 
-
-//================================================================================
-//  音声ファイルを閉じる関数.
-//================================================================================
-bool CSound::Close()
-{
-	//コマンド.
-	TCHAR cmd[STR_BUFF_MAX] = _T("");
-
-	wsprintf( cmd, _T("close %s"), m_sAlias );
-
-	if( mciSendString( cmd, nullptr, 0, m_hWnd ) == 0 ){
-		return true;
-	}
-	return false;
-}
-
-
-//==============================================================================
-//  音声を再生する関数.
-//==============================================================================
-bool CSound::Play( bool bNotify )
-{
-	//コマンド.
-	TCHAR cmd[STR_BUFF_MAX] = _T("");
-
-	if( bNotify == true ){
-		wsprintf( cmd, _T("play %s notify"), m_sAlias ); //notify:音声の状態取得で必要.
-	}
-	else{
-		wsprintf( cmd, _T("play %s"), m_sAlias );
-	}
-
-	if( mciSendString( cmd, nullptr, 0, m_hWnd ) == 0 ){
-		return true;
-	}
-	return false;
-}
-
-
-//==============================================================================
-//  音声を再生する(SEで使う).
-//==============================================================================
+//========効果音再生=========
 bool CSound::PlaySE()
 {
-	SeekToStart();
-	if( Play() == true ){
-		return true;
+	CleanUpFinishVoices();
+
+	const WAVEFORMATEX* format = nullptr;
+	const BYTE* buffer = nullptr;
+	DWORD bufferSize = 0;
+
+	if (m_Type == SoundType::Wave)
+	{
+		format = &m_Wave.m_WavFormat;
+		buffer = (BYTE*)m_Wave.m_SoundBuffer;
+		bufferSize = m_Wave.m_Size;
 	}
-	return false;
+	else // MP3
+	{
+		format = &m_Mp3.m_Mp3Format;
+		buffer = (BYTE*)m_Mp3.m_SoundBuffer;
+		bufferSize = m_Mp3.m_Size;
+	}
+
+	IXAudio2SourceVoice* voice;
+	if (FAILED(m_pXAudio2->CreateSourceVoice(&voice, format)))
+	{
+		return false;
+	}
+
+	m_pVoices.push_back(voice);
+
+	XAUDIO2_BUFFER buf{};
+	buf.pAudioData = buffer;
+	buf.AudioBytes = bufferSize;
+	buf.Flags = XAUDIO2_END_OF_STREAM;
+
+	voice->SubmitSourceBuffer(&buf);
+	voice->Start();
+
+	return true;
 }
+//==========================
 
-
-//==============================================================================
-//  音声を再生する(ループ).
-//==============================================================================
+//========ループ再生=========
 bool CSound::PlayLoop()
 {
-	if( IsStopped() == true ){
-		SeekToStart();
-		if( Play( true ) == true ){
-			return true;
-		}
+	if (m_IsPlaying)
+	{
+		// すでに再生中なら何もしない
+		return m_IsPlaying;
 	}
-	return false;
-}
 
+	CleanUpFinishVoices();
 
-//==============================================================================
-//  音声を停止する関数.
-//==============================================================================
-bool CSound::Stop()
-{
-	//コマンド.
-	TCHAR cmd[STR_BUFF_MAX] = _T("");
+	const WAVEFORMATEX* format = nullptr;
+	const BYTE* buffer = nullptr;
+	DWORD bufferSize = 0;
 
-	wsprintf( cmd, _T("stop %s"), m_sAlias );
-
-	if( mciSendString( cmd, nullptr, 0, m_hWnd ) == 0 ){
-		return true;
+	if (m_Type == SoundType::Wave)
+	{
+		format = &m_Wave.m_WavFormat;
+		buffer = (BYTE*)m_Wave.m_SoundBuffer;
+		bufferSize = m_Wave.m_Size;
 	}
-	return false;
-}
-
-
-//==============================================================================
-//  音声の状態を取得する関数.
-//      sStatus の 配列数は 256 以下にすること.
-//  ※ただし、状態を取得する場合は、再生時に「notify」を設定し、
-//    ウィンドウハンドルにメッセージを送っておく必要がある.
-//==============================================================================
-bool CSound::GetStatus( LPTSTR sStatus )
-{
-	//コマンド.
-	TCHAR cmd[STR_BUFF_MAX] = _T("");
-
-	wsprintf( cmd, _T("status %s mode"), m_sAlias );
-
-	if( mciSendString( cmd, sStatus, STR_BUFF_MAX, m_hWnd ) == 0 ){
-		return true;
+	else // MP3
+	{
+		format = &m_Mp3.m_Mp3Format;
+		buffer = (BYTE*)m_Mp3.m_SoundBuffer;
+		bufferSize = m_Mp3.m_Size;
 	}
-	return false;
-}
 
-
-//==============================================================================
-//  音声の停止を確認する関数.
-//==============================================================================
-bool CSound::IsStopped()
-{
-	TCHAR sStatus[STR_BUFF_MAX] = _T("");
-
-	// 状態の取得.
-	if( GetStatus( sStatus ) ){
-		// 文字列比較.
-		if( lstrcmp( sStatus, _T("stopped") ) == 0 ){
-			return true;
-		}
+	IXAudio2SourceVoice* voice;
+	if (FAILED(m_pXAudio2->CreateSourceVoice(&voice, format)))
+	{
+		return false;
 	}
-	return false;
+
+	m_pVoices.push_back(voice);
+
+	XAUDIO2_BUFFER buf{};
+	buf.pAudioData = buffer;
+	buf.AudioBytes = bufferSize;
+	buf.LoopCount = XAUDIO2_LOOP_INFINITE;
+
+	voice->SubmitSourceBuffer(&buf);
+	voice->Start();
+
+	// 再生フラグを立てる
+	m_IsPlaying = true;
+
+	return true;
 }
+//==========================
 
-
-//==============================================================================
-//  音声の再生位置を最初にする関数.
-//==============================================================================
-bool CSound::SeekToStart()
+//========再生停止===========
+void CSound::Stop()
 {
-	//コマンド.
-	TCHAR cmd[STR_BUFF_MAX] = _T("");
-
-	wsprintf( cmd, _T("seek %s to start"), m_sAlias );
-
-	if( mciSendString( cmd, nullptr, 0, m_hWnd ) == 0 ){
-		return true;
+	for (auto* voice : m_pVoices)
+	{
+		voice->Stop(0);
 	}
-	return false;
+
+	m_IsPlaying = false;
 }
-
-
-//==============================================================================
-//  音声の音量を設定する関数.
-//==============================================================================
-bool CSound::SetVolume( int iVolume )
-{
-	//範囲内に丸める.
-	if( iVolume < 0 )       { iVolume = 0; }
-	if( iVolume > 1000 )    { iVolume = 1000; }
-
-	//メンバ変数に設定.
-	m_iVolume = iVolume;
-
-	//コマンド.
-	TCHAR cmd[STR_BUFF_MAX] = _T("");
-
-	wsprintf( cmd, _T("setaudio %s volume to %d"), m_sAlias, m_iVolume );
-
-	if( mciSendString( cmd, nullptr, 0, m_hWnd ) == 0 ){
-		return true;
-	}
-	return false;
-}
-
-//==============================================================================
-//	初期値の設定する関数.
-//==============================================================================
-void CSound::SetInitParam( LPCTSTR sAlias, HWND hWnd )
-{
-	//ウィンドウハンドルを登録.
-	m_hWnd = hWnd;
-
-	//エイリアスを登録(文字列のコピー).
-	lstrcpy( m_sAlias, sAlias );
-}
+//==========================

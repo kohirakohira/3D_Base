@@ -127,11 +127,11 @@ HRESULT CDirectX11::CreateDeviceAndSwapChain(
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;		//フォーマット（32ビットカラー）.
 	sd.BufferDesc.RefreshRate.Numerator = uFPS;				//リフレッシュレート（分母） ※FPS:60.
 	sd.BufferDesc.RefreshRate.Denominator = 1;				//リフレッシュレート（分子）.
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;	//使い方（描画先）.
-	sd.OutputWindow = hWnd;		//ウィンドウハンドル.
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;		//使い方（描画先）.
+	sd.OutputWindow = hWnd;			//ウィンドウハンドル.
 	sd.SampleDesc.Count = 1;		//マルチサンプルの数.
 	sd.SampleDesc.Quality = 0;		//マルチサンプルのクオリティ.
-	sd.Windowed = TRUE;		//ウィンドウモード（フルスクリーン時はFALSE）.
+	sd.Windowed = TRUE;			//ウィンドウモード（フルスクリーン時はFALSE）.
 
 	//作成を試みる機能レベルの優先を指定.
 	// (GPUがサポートする機能セットの定義).

@@ -16,8 +16,7 @@ static bool prevA = false;
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
 //定数宣言.
-static constexpr int TIME = 20;
-static constexpr int StartCountDown = 4;
+static constexpr int TIME = 120;
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;
 const float FLASH_TIME = 0.5f;			//点滅周期.
@@ -202,20 +201,6 @@ void CGameMain::Update()
 	float angle = progress * 360.0f;
 	m_pSpriteTimerArrow->SetRotation(0.f, D3DXToRadian(180.0f), D3DXToRadian(angle));
 
-	//const bool nowC = (GetAsyncKeyState('C') & 0x8000) != 0;
-
-	//if (nowC && !prevC)
-	//{
-	//	m_pCharacterManager->SwitchActivePlayer();
-	//}
-	//prevC = nowC;
-
-	//// Cキー押されたら操作プレイヤー切り替え
-	//if (GetAsyncKeyState('C') & 0x0001)
-	//{
-	//	m_pCharacterManager->SwitchActivePlayer();
-	//}
-
 	// 壁の更新
 	m_pWallTop->Update();
 	m_pWallBottom->Update();
@@ -255,7 +240,6 @@ void CGameMain::Update()
 			CSoundManager::Stop(CSoundManager::BGM_Main);
 
 			// 戦車が動いている時のSEを停止
-			CSoundManager::Stop(CSoundManager::SE_Move);
 
 			m_SceneType = CSceneType::Result;
 		}
@@ -919,7 +903,7 @@ HRESULT CGameMain::LoadData()
 
 	//弾マネージャーを設定.
 	m_pCharacterManager->SetShotManager(m_pShotManager);
-
+	//
 	// バウンディングの作成
 	CreateBounding();
 

@@ -8,12 +8,22 @@ CResultProduction::CResultProduction()
 
 	, m_SpriteBackGround	( nullptr )
 	, m_SpriteGround		( nullptr )
+	, m_SpriteNumber		( nullptr )
+	, m_SpriteKillUI		( nullptr )
+	, m_SpritePlayerUI		( )
 
 	, m_BackGround			( nullptr )
 	, m_SpriteObjGround		( nullptr )
 	, m_CharacterManager	( nullptr )
 
+	, m_Number				( nullptr )
+	, m_KillUI				( nullptr )
+	, m_PlayerUI			( )
+
 	, m_CharaPosX			( -75.0f )
+	, m_IsJudge				( false )
+
+	, m_StagingPosition		()
 {
 }
 
@@ -26,16 +36,30 @@ void CResultProduction::WinUpdate()
 {
 	//ビュー・プロジェクションの更新.
 	m_Camera->Update();
+
+	//1位のデータ.
+	auto [playerID, Kill] = CGameDataManager::GetInstance().GetTopCharacter();
+	m_Number->SetNumber(Kill, 2);
+	m_Number->Update();
 }
 
 void CResultProduction::WinDraw()
 {
+	//1位のデータ.
+	auto [playerID, Kill] = CGameDataManager::GetInstance().GetTopCharacter();
 	//背景描画.
 	m_BackGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 	//地面描画.
 	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 	//キャラクターの表示.
 	m_CharacterManager->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
+	//キル数の表示.
+	m_Number->Draw();
+	//キルUIの表示.
+	m_KillUI->Draw();
+	//キャラクター番号の表示.
+	m_PlayerUI[playerID]->Draw();
+
 }
 
 void CResultProduction::DrawUpdate()
@@ -43,7 +67,10 @@ void CResultProduction::DrawUpdate()
 	//ビュー・プロジェクションの更新.
 	m_Camera->Update();
 
-
+	//最大キル数表示.
+	auto [playerID, Kill] = CGameDataManager::GetInstance().GetTopCharacter();
+	m_Number->SetNumber(Kill, 2);
+	m_Number->Update();
 }
 
 void CResultProduction::DrawDraw()
@@ -54,6 +81,10 @@ void CResultProduction::DrawDraw()
 	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 	//キャラクターの表示.
 	m_CharacterManager->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
+	//キル数の表示.
+	m_Number->Draw();
+	//キルUIの表示.
+	m_KillUI->Draw();
 
 }
 
@@ -71,6 +102,8 @@ void CResultProduction::Create()
 	//スプライトの生成.
 	m_SpriteBackGround	= std::make_shared<CSprite3D>();
 	m_SpriteGround		= std::make_shared<CSprite3D>();
+	m_SpriteNumber		= std::make_shared<CSprite2D>();
+	m_SpriteKillUI		= std::make_shared<CSprite2D>();
 
 	//スタティックメッシュの生成.
 	for (int index = 0; index < PLAYER_MAX; index++)
@@ -80,23 +113,23 @@ void CResultProduction::Create()
 		m_CannonMesh.push_back(std::make_shared<CStaticMesh>());
 	}
 
+	//数字クラスの生成.
+	m_Number			= std::make_unique<NumberImage>();
+	//キルUIの生成.
+	m_KillUI			= std::make_unique<CUIObject>();
+
+	//キャラクター番号.
+	for (int index = 0; index < PLAYER_MAX; index++)
+	{
+		m_PlayerUI[index]		= std::make_unique<CUIObject>();
+		m_SpritePlayerUI[index] = std::make_shared<CSprite2D>();
+	}
+
 }
 
 //初期化.
 void CResultProduction::Init()
 {
-	//キャラクターの情報.
-	for (int index = 0; index < PLAYER_MAX; index++)
-	{
-		D3DXVECTOR3 pos = { m_CharaPosX, 10.0f, 100.0f };
-		D3DXVECTOR3 rot = { 0.0f, D3DXToRadian(180), 0.0f};
-		D3DXVECTOR3 sca = { 50.0f, 50.0f, 50.0f };
-		m_CharacterManager->SetPlayerPosition(index, pos);
-		m_CharacterManager->SetPlayerRotation(index, rot);
-		m_CharacterManager->SetPlayerScale(index, sca);
-		m_CharaPosX += 50.0f;
-	}
-
 	//カメラの初期化.
 	m_Camera->Init();
 	//カメラの設定.
@@ -118,6 +151,47 @@ void CResultProduction::Init()
 	m_BackGround->SetRotation(0.0f, 0.0f, 0.0f);
 	m_BackGround->SetScale(4.0f, 1.0f, 0.0f);
 
+	//数字の情報.
+	D3DXVECTOR2 KillPos = { WND_W / 2 + 16, 310 };
+	m_Number->SetBasePosition(KillPos);
+	m_Number->SetDigitWidth(32);
+	m_Number->SetPosition(0.0f, 0.0f, 0.0f);
+	m_Number->SetRotation(0.0f, 0.0f, 0.0f);
+	m_Number->SetScale(1.0f, 1.0f, 1.0f);
+
+	//キルUIの情報.
+	m_KillUI->SetPosition(WND_W / 2 - 120.0f, WND_H / 2 - 300.0f, 0.0f);
+	m_KillUI->SetRotation(0.0f, 0.0f, 0.0f);
+	m_KillUI->SetScale(0.5f, 0.5f, 0.5f);
+
+	//プレイヤー番号の情報.
+	for (int index = 0; index < PLAYER_MAX; index++)
+	{
+		m_PlayerUI[index]->SetPosition(WND_W / 2 - 450, 100.0f, 0.0f);
+		m_PlayerUI[index]->SetRotation(0.0f, 0.0f, 0.0f);
+		m_PlayerUI[index]->SetScale(0.7f, 0.7f, 0.7f);
+	}
+
+	if (m_IsJudge != true)
+	{
+		//キャラクターの位置設定(順位).
+		m_StagingPosition.OnePos	= { -65.0f,	10.0f, 100.0f };	//中央.
+		m_StagingPosition.TwoPos	= { -20.0f, 10.0f, 100.0f };	//左奥.
+		m_StagingPosition.TreePos	= { 25.0f,	10.0f, 100.0f };	//右の左奥.
+		m_StagingPosition.Fouros	= { 70.0f,	10.0f, 100.0f };	//右の右奥.
+	}
+	else
+	{
+		//キャラクターの位置設定(順位).
+		m_StagingPosition.OnePos	= { 0.0f,	10.0f, 80.0f };		//中央.
+		m_StagingPosition.TwoPos	= { -50.0f, 10.0f, 150.0f };	//左奥.
+		m_StagingPosition.TreePos	= { 50.0f,	10.0f, 150.0f };	//右の左奥.
+		m_StagingPosition.Fouros	= { 95.0f,	10.0f, 150.0f };	//右の右奥.
+	}
+
+	//勝ちか引き分けでの位置決め.
+	SetPositionRanking();
+
 }
 
 //読み込み関数.
@@ -137,16 +211,67 @@ HRESULT CResultProduction::LoadData()
 		256, 256,
 		256, 256
 	};
+	//スプライト2Dの数字サイズ.
+	CSprite2D::SPRITE_STATE NUMSIZE =
+	{
+		33, 32,			//描画幅,高さ..
+		330, 32,		//元画像の幅,高さ..
+		33, 32			//アニメーションをしないので、0でいい..
+	};
+	//スプライト2DのキルUIサイズ.
+	CSprite2D::SPRITE_STATE KILLUISIZE =
+	{
+		256, 256,		//描画幅,高さ..
+		256, 256,		//元画像の幅,高さ..
+		256, 256		//アニメーションをしないので、0でいい..
+	};
+	//スプライト2DのキャラクターUIサイズ.
+	CSprite2D::SPRITE_STATE CHARAUISIZE =
+	{
+		256, 256,		//描画幅,高さ..
+		256, 256,		//元画像の幅,高さ..
+		256, 256		//アニメーションをしないので、0でいい..
+	};
 
-	//スプタイトの読み込み.
+	//スプライトの読み込み.
 	m_SpriteBackGround->Init(CDirectX11::GetInstance(), _T("Data//Mesh//Static//OutBackImage//BackImg.png"), BACKGROUND);
 	m_SpriteGround->Init(CDirectX11::GetInstance(), _T("Data\\Mesh\\Static\\Ground\\groundex.bmp"), GROUND);
+	m_SpriteNumber->Init(_T("Data\\Texture\\UI\\Timer\\number.png"), NUMSIZE, false);
+	m_SpriteKillUI->Init(_T("Data\\Texture\\UI\\KillNum_remake.png"), KILLUISIZE, false);
+	for (int index = 0; index < PLAYER_MAX; index++)
+	{
+		switch (index)
+		{
+		case 0 :
+			m_SpritePlayerUI[index]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\OneP_ver2.png"), CHARAUISIZE, false);
+			break;
+		case 1 :
+			m_SpritePlayerUI[index]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TwoP_ver2.png"), CHARAUISIZE, false);
+			break;
+		case 2 :
+			m_SpritePlayerUI[index]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\TreeP_ver2.png"), CHARAUISIZE, false);
+			break;
+		case 3 :
+			m_SpritePlayerUI[index]->Init(_T("Data\\Texture\\UI\\PlayerNumber\\FourP_ver2.png"), CHARAUISIZE, false);
+			break;
+		default:
+			break;
+		}
+	}
 
 	//背景画像のアタッチ.
 	m_BackGround->AttachSprite(*m_SpriteBackGround);
 	//地面画像のアタッチ.
 	m_SpriteObjGround->AttachSprite(*m_SpriteGround);
-
+	//数字画像のアタッチ.
+	m_Number->AttachSprite(m_SpriteNumber);
+	//キルUI.
+	m_KillUI->AttachSprite(m_SpriteKillUI);
+	//キャラクターUI.
+	for (int index = 0; index < PLAYER_MAX; index++)
+	{
+		m_PlayerUI[index]->AttachSprite(m_SpritePlayerUI[index]);
+	}
 
 	//画像の読み込み.
 	for (int index = 0; index < PLAYER_MAX; index++)
@@ -162,12 +287,12 @@ HRESULT CResultProduction::LoadData()
 			m_CannonMesh[index]->Init(_T("Data\\Mesh\\Static\\Tank_n\\Yellow\\Cannon.x"));
 			break;
 		case 2 :
-			m_BodyMesh[index]->Init(  _T("Data\\Mesh\\Static\\Tank_n\\Blue\\Body.x"));
-			m_CannonMesh[index]->Init(_T("Data\\Mesh\\Static\\Tank_n\\Blue\\Cannon.x"));
-			break;
-		case 3 :
 			m_BodyMesh[index]->Init(  _T("Data\\Mesh\\Static\\Tank_n\\Green\\Body.x"));
 			m_CannonMesh[index]->Init(_T("Data\\Mesh\\Static\\Tank_n\\Green\\Cannon.x"));
+			break;
+		case 3 :
+			m_BodyMesh[index]->Init(  _T("Data\\Mesh\\Static\\Tank_n\\Blue\\Body.x"));
+			m_CannonMesh[index]->Init(_T("Data\\Mesh\\Static\\Tank_n\\Blue\\Cannon.x"));
 			break;
 		default:
 			break;
@@ -178,4 +303,99 @@ HRESULT CResultProduction::LoadData()
 	}
 
 	return S_OK;
+}
+
+//勝った時と引き分け時の位置設定.
+void CResultProduction::SetPositionJudge(int playerid)
+{
+	if (m_IsJudge == true)
+	{
+		//キャラクターの情報.
+		for (int index = 0; index < PLAYER_MAX; index++)
+		{
+			if (index == playerid)
+			{
+				D3DXVECTOR3 pos = { 0.0f, 10.0f, 80.0f };
+				D3DXVECTOR3 rot = { 0.0f, D3DXToRadian(180), 0.0f };
+				D3DXVECTOR3 sca = { 50.0f, 50.0f, 50.0f };
+				m_CharacterManager->SetPlayerPosition(playerid, pos);
+				m_CharacterManager->SetPlayerRotation(playerid, rot);
+				m_CharacterManager->SetPlayerScale(playerid, sca);
+			}
+			else
+			{
+				D3DXVECTOR3 pos = { m_CharaPosX, 10.0f, 500.0f };
+				D3DXVECTOR3 rot = { 0.0f, D3DXToRadian(180), 0.0f };
+				D3DXVECTOR3 sca = { 50.0f, 50.0f, 50.0f };
+				m_CharacterManager->SetPlayerPosition(index, pos);
+				m_CharacterManager->SetPlayerRotation(index, rot);
+				m_CharacterManager->SetPlayerScale(index, sca);
+			}
+			m_CharaPosX += 50.0f;
+		}
+	}
+	else
+	{
+		//キャラクターの情報.
+		for (int index = 0; index < PLAYER_MAX; index++)
+		{
+			D3DXVECTOR3 pos = { m_CharaPosX, 10.0f, 100.0f };
+			D3DXVECTOR3 rot = { 0.0f, D3DXToRadian(180), 0.0f };
+			D3DXVECTOR3 sca = { 50.0f, 50.0f, 50.0f };
+			m_CharacterManager->SetPlayerPosition(index, pos);
+			m_CharacterManager->SetPlayerRotation(index, rot);
+			m_CharacterManager->SetPlayerScale(index, sca);
+			m_CharaPosX += 50.0f;
+		}
+	}
+	m_CharaPosX = -75.0f;
+
+}
+
+//キャラクターの位置設定用.
+void CResultProduction::SetPositionRanking()
+{
+	//順位を取得.
+	auto ranks = CGameDataManager::GetInstance().GetRanking();
+
+	//回転と大きさを設定.
+	const D3DXVECTOR3 rot = { 0.0f, D3DXToRadian(180), 0.0f };
+	const D3DXVECTOR3 sca = { 50.0f, 50.0f, 50.0f };
+
+	//順位を見て位置を設定.
+	for (int rank = 0; rank < PLAYER_MAX; ++rank)
+	{
+		//今の順位のプレイヤーIDを取得.
+		int playerID = ranks[rank];
+		//例外処理.
+		if (playerID < 0)
+		{
+			continue;
+		}
+		//位置を保存する変数.
+		D3DXVECTOR3 pos;
+
+		//順位に応じて決めておいた位置を選ぶ※1位~4位.
+		switch (rank)
+		{
+		case 0:
+			pos = m_StagingPosition.OnePos;
+			break;
+		case 1:
+			pos = m_StagingPosition.TwoPos;
+			break;
+		case 2:
+			pos = m_StagingPosition.TreePos;
+			break;
+		case 3:
+			pos = m_StagingPosition.Fouros;
+			break;
+		default:
+			break;
+		}
+		//キャラクターに反映.
+		m_CharacterManager->SetPlayerPosition(playerID, pos);
+		m_CharacterManager->SetPlayerRotation(playerID, rot);
+		m_CharacterManager->SetPlayerScale(playerID, sca);
+	}
 }

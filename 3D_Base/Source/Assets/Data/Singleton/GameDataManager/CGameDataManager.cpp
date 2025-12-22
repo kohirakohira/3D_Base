@@ -40,6 +40,78 @@ void CGameDataManager::Init()
 {
 	//全初期化.
 	m_KillCount.clear();
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		m_KillCount[i] = 0;
+	}
+}
+
+//1位の取得.
+std::pair<int, int> CGameDataManager::GetTopCharacter()
+{
+	//プレイヤーIDが0からスタートするので-1
+	//プレイヤーIDの保持用.
+	int maxPlayerID = -1;
+	//キル数の最大値の保持用.
+	int maxKills = 0;
+
+	for (const auto& [playerID, kills] : m_KillCount) {
+		//キャラのキル数が最大キル数より多いとき.
+		if (kills > maxKills) {
+			//キル数とプレイヤーIDを保持する.
+			maxKills = kills;
+			maxPlayerID = playerID;
+		}
+	}
+	return { maxPlayerID, maxKills };
+}
+
+//順位を決めて取得する関数.
+std::array<int, PLAYER_MAX> CGameDataManager::GetRanking()
+{
+	//結果を格納する変数※.fill：指定された値で埋める.
+	std::array<int, PLAYER_MAX> result{};
+	result.fill(-1);
+	//選択済みか判別するための変数s.
+	std::array<bool, PLAYER_MAX> selected{};
+	selected.fill(false);
+
+	//プレイヤーの順位決め.
+	for (int rank = 0; rank < PLAYER_MAX; rank++)
+	{
+		//プレイヤーの中で一番キル数が多いID保持用.
+		int firstID		= -1;
+		//その時のキル数保持用.
+		int firstKill	= -1;
+
+		for (auto& [id, kill] : m_KillCount)
+		{
+			//例外処理.
+			if (id < 0 || id >= PLAYER_MAX)
+			{
+				continue;
+			}
+			//選択されていたらスキップ.
+			if (selected[id])
+			{
+				continue;
+			}
+			//未選択、または今までよりキル数が多ければ更新する.
+			if (firstID == -1 || kill > firstKill)
+			{
+				firstID		= id;
+				firstKill	= kill;
+			}
+		}
+		//順位決定.
+		if (firstID != -1)
+		{
+			result[rank] = firstID;
+			selected[firstID] = true;	//選択済みにする.
+		}
+	}
+
+	return result;
 }
 
 //同じキル数なのかを判定する関数.
