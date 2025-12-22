@@ -87,6 +87,7 @@ bool CShot::HitShot()
 	m_Shot.m_DisplayTime = 0.0f;
 	return m_Shot.m_ShotFlag;
 }
+
 bool CShot::IsActive() const
 {
 	if (m_Shot.m_ShotFlag)
