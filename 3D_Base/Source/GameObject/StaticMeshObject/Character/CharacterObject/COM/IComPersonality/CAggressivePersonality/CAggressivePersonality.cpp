@@ -109,7 +109,7 @@ BehaviorDecision CAggressivePersonality::DecideMultiEnemyAction(
 {
     BehaviorDecision decision;
 
-    // Aggressive ‚ÍˆÍ‚Ü‚ê‚Ä‚à“Ë‚Á‚ŞI
+    // Aggressive ‚ÍˆÍ‚Ü‚ê‚Ä‚à“Ë‚Á‚Ş
     // ‚½‚¾‚µAˆê”Ô‹ß‚¢“G‚ÉW’†
     D3DXVECTOR3 toTarget = targetPos - selfPos;
     toTarget.y = 0.0f;
