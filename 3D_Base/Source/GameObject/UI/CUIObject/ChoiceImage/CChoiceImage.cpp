@@ -3,15 +3,15 @@
 #include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
 
 CChoiceImage::CChoiceImage(CSceneType typ)
-	:m_SceneType		( typ )
+	:m_SceneType(typ)
 
-	, m_IsSelected		( false )
+	, m_IsSelected(false)
 {
 	//キーのインスタンス生成.
 	m_Key = std::make_unique<CMultiInputKeyManager>();
 	m_Key->Init();
 	//必要なキーの設定.
-	m_Key->SetKey({'W', 'A', 'S', 'D' });
+	m_Key->SetKey({ 'W', 'A', 'S', 'D' });
 }
 
 CChoiceImage::~CChoiceImage()

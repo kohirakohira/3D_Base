@@ -20,12 +20,12 @@ CTimer::~CTimer()
 
 void CTimer::Draw()
 {
-	//デバッグテキスト(スコア)の描画
-	m_pDbgText->SetColor(1.f, 1.f, 1.f);
-	m_Time = static_cast<int>(GetRemainingTime());
-	TCHAR TimeText[16];
-	_stprintf_s(TimeText, _T("%d"), m_Time);
-	m_pDbgText->Render(TimeText, m_TimerPosition.x, m_TimerPosition.y);
+	////デバッグテキスト(スコア)の描画
+	//m_pDbgText->SetColor(1.f, 1.f, 1.f);
+	//m_Time = static_cast<int>(GetRemainingTime());
+	//TCHAR TimeText[16];
+	//_stprintf_s(TimeText, _T("%d"), m_Time);
+	//m_pDbgText->Render(TimeText, m_TimerPosition.x, m_TimerPosition.y);
 
 }
 

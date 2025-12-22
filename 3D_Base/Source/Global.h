@@ -50,8 +50,9 @@ const int INPUT_COUNT_MAX = 60;	//連続入力阻止のカウントマックス.
 
 //いったん仮でプレイヤーだけの数にしておく
 //プレイヤーの数
-static constexpr int PLAYER_MAX = 4;
-static const int ShotMax = 100;	// 弾の最大数
+static constexpr	int PLAYER_MAX	= 4;
+static const		int ShotMax		= 100;	// 弾の最大数
+static constexpr	int KILLNUM_MAX = 4;		//キル数..
 
 //アイテムの数.
 static constexpr int	ITEM_MAX = 4;

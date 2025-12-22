@@ -3,37 +3,37 @@
 #include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
 
 CCollisionManager::CCollisionManager()
-	: m_pStaticBlast		()
+	: m_pStaticBlast()
 
 	// 壁
-	, m_pWallTop			()
-	, m_pWallBottom			()
-	, m_pWallLeft			()
-	, m_pWallRight			()
+	, m_pWallTop()
+	, m_pWallBottom()
+	, m_pWallLeft()
+	, m_pWallRight()
 
 	// 地面
-	, m_pGround				()
+	, m_pGround()
 
 	// 木箱
-	, m_pWoodBoxTopLeft		()
-	, m_pWoodBoxTopRight	()
-	, m_pWoodBoxCenter		()
-	, m_pWoodBoxBottomLeft	()
-	, m_pWoodBoxBottomRight	()
+	, m_pWoodBoxTopLeft()
+	, m_pWoodBoxTopRight()
+	, m_pWoodBoxCenter()
+	, m_pWoodBoxBottomLeft()
+	, m_pWoodBoxBottomRight()
 
 	// 弾マネージャー
-	, m_pShotManager		()
+	, m_pShotManager()
 
 	// キャラクターマネージャー
-	, m_pCharacterManager		()
+	, m_pCharacterManager()
 
 	// アイテムボックスマネージャー
-	, m_pItemBoxManager		()
+	, m_pItemBoxManager()
 
 	//爆風マネージャー.
-	, m_pBlastManager		()
+	, m_pBlastManager()
 
-	, m_Speed				( 15.0f )
+	, m_Speed(15.0f)
 {
 }
 
@@ -185,7 +185,7 @@ void CCollisionManager::WalltoShot()
 				m_pBlastManager->Create(
 					shot->GetPosition(),
 					m_pStaticBlast,
-					m_Speed, 
+					m_Speed,
 					shot->GetPlayerID());
 
 				m_pShotManager->HitShot();
