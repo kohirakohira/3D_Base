@@ -31,7 +31,10 @@ public: // 構造体
         SE_Damage,		//ダメージ.
         SE_Explosion,	//爆発.
         SE_Impact,		//衝突.
-        SE_Move,		//戦車の移動音.
+        SE_Move1,		//戦車の移動音.
+        SE_Move2,		//戦車の移動音.
+        SE_Move3,		//戦車の移動音.
+        SE_Move4,		//戦車の移動音.
 
         //音が増えたら「ここ」に追加してください.
         max,		//最大数.
