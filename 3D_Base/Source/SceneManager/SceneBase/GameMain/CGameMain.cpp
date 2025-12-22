@@ -932,7 +932,7 @@ HRESULT CGameMain::LoadData()
 
 	//弾マネージャーを設定.
 	m_pCharacterManager->SetShotManager(m_pShotManager);
-
+	//
 	// バウンディングの作成
 	CreateBounding();
 
