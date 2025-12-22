@@ -108,12 +108,6 @@ void CCollisionManager::WalltoPlayer()
 				chara->SetHitWall(true);
 			}
 		}
-		else
-		{
-			// ”ñÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
-			chara->SetHitWall(false);
-		}
-
 		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
@@ -128,12 +122,6 @@ void CCollisionManager::WalltoPlayer()
 				chara->SetHitWall(true);
 			}
 		}
-		else
-		{
-			// ”ñÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
-			chara->SetHitWall(false);
-		}
-
 		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
@@ -148,12 +136,6 @@ void CCollisionManager::WalltoPlayer()
 				chara->SetHitWall(true);
 			}
 		}
-		else
-		{
-			// ”ñÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
-			chara->SetHitWall(false);
-		}
-
 		if (Coll->CheckCollision(*m_pWallRight->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
@@ -167,11 +149,6 @@ void CCollisionManager::WalltoPlayer()
 				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
 				chara->SetHitWall(true);
 			}
-		}
-		else
-		{
-			// ”ñÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
-			chara->SetHitWall(false);
 		}
 
 		// ‰Ÿ‚µ•Ô‚µ‚ð³‹K‰»
@@ -419,11 +396,6 @@ void CCollisionManager::WoodBoxtoPlayer()
 						chara->SetHitBox(true);
 					}
 				}
-			}
-			else
-			{
-				// ”ñÚGŽž‚Éƒtƒ‰ƒO‚ðfalse‚É‚·‚é
-				chara->SetHitBox(false);
 			}
 		}
 	}

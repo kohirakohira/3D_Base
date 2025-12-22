@@ -240,10 +240,6 @@ void CGameMain::Update()
 			CSoundManager::Stop(CSoundManager::BGM_Main);
 
 			// 戦車が動いている時のSEを停止
-			CSoundManager::Stop(CSoundManager::SE_Move1);
-			CSoundManager::Stop(CSoundManager::SE_Move2);
-			CSoundManager::Stop(CSoundManager::SE_Move3);
-			CSoundManager::Stop(CSoundManager::SE_Move4);
 
 			m_SceneType = CSceneType::Result;
 		}
@@ -907,7 +903,7 @@ HRESULT CGameMain::LoadData()
 
 	//弾マネージャーを設定.
 	m_pCharacterManager->SetShotManager(m_pShotManager);
-
+	//
 	// バウンディングの作成
 	CreateBounding();
 

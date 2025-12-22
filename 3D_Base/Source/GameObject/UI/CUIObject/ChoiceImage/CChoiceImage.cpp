@@ -102,7 +102,7 @@ void CChoiceImage::ControllerUpdate()
 		{
 			//タイトルに戻る処理.
 			m_vPosition.x = WND_W / posAdjustment_3;
-
+			
 			// 一度だけ音を鳴らす
 			if (m_IsSelected == true)
 			{

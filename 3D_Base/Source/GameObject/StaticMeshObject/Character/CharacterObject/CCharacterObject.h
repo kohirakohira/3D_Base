@@ -110,12 +110,12 @@ public:
 	//========================
 
 	//=====サウンドフラグの設定・取得=====
-	virtual void SetHitWall(bool flg) { m_Chara.m_HitWall = flg; }
-	virtual void SetHitBox(bool flg) { m_Chara.m_HitBox = flg; }
-	virtual void SetHitBlast(bool flg) { m_Chara.m_HitBlast = flg; }
+	virtual void SetHitWall (bool flg)	{ m_Chara.m_HitWall = flg; }
+	virtual void SetHitBox  (bool flg)	{ m_Chara.m_HitBox = flg; }
+	virtual void SetHitBlast(bool flg)	{ m_Chara.m_HitBlast = flg; }
 
-	virtual bool GetHitWall() const { return m_Chara.m_HitWall; }
-	virtual bool GetHitBox() const { return m_Chara.m_HitBox; }
+	virtual bool GetHitWall () const { return m_Chara.m_HitWall; }
+	virtual bool GetHitBox  () const { return m_Chara.m_HitBox; }
 	virtual bool GetHitBlast() const { return m_Chara.m_HitBlast; }
 	//========================
 
@@ -138,6 +138,9 @@ public:
 	//体力最大値取得.
 	virtual int GetMaxHP() const { return m_Chara.m_MaxHp; }
 
+	// サウンドフラグ初期化
+	virtual void ResetSoundFlg();
+
 protected:
 	//車体クラス.
 	std::shared_ptr<CBody>			m_pBody;
@@ -157,4 +160,7 @@ protected:
 
 	//プレイヤーID
 	int m_PlayerID;
+
+	// サウンドタイマー
+	float m_SoundTimer;
 };

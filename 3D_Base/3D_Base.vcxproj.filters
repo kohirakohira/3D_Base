@@ -91,6 +91,11 @@
     <ClCompile Include="Source\GameObject\UI\CUIObject\NumberImage\NumberImage.cpp" />
     <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.cpp" />
     <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.cpp" />
+    <ClCompile Include="Source\Assets\Sound\FileReader\CFileReader.cpp" />
+    <ClCompile Include="Source\Assets\BackGround\BackGround.cpp" />
+    <ClCompile Include="Source\GameObject\UI\CUIObject\NumberImage\NumberImage.cpp" />
+    <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.cpp" />
+    <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.cpp" />
     <ClCompile Include="Source\Assets\Data\Singleton\FakeLoad\FakeLoad.cpp" />
   </ItemGroup>
   <ItemGroup>

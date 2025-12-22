@@ -1,94 +1,80 @@
 #pragma once
-#include "CSound.h"		//サウンドクラス.
+//-----ライブラリ-----
+#include <map>
 
-/**************************************************
-*	サウンドマネージャークラス.
-*	Manager(マネージャー)：管理者.
-*		Singleton(シングルトン：デザインパターンの１つ)で作成.
-**/
+//-----外部クラス-----
+#include "CSound.h" // サウンドクラス
+#include "Assets//Sound//FileReader//CFileReader.h" // ファイルローダークラス
+
 class CSoundManager
 {
-public:
-	//サウンドリスト列挙型.
-	enum enList
-	{
-		BGM_Title,		//タイトルステージ.
-		BGM_Main,		//ゲームメイン.
-		BGM_Result_Win,	//リザルト(勝利)
-		BGM_Result_Draw,//リザルト(引き分け)
+public: // 構造体
+    enum SoundList // 音のリスト 
+    {
+        BGM_Title,		//タイトルステージ.
+        BGM_Main,		//ゲームメイン.
+        BGM_Result_Win,	//リザルト(勝利)
+        BGM_Result_Draw,//リザルト(引き分け)
 
-		SE_Select,		//選択肢.
-		SE_Click,		//決定.
-		SE_Connect,		//コントローラー接続.
-		SE_UnConnect,	//コントローラーの接続が切れる.
+        SE_Select,		//選択肢.
+        SE_Click,		//決定.
+        SE_Connect,		//コントローラー接続.
+        SE_UnConnect,	//コントローラーの接続が切れる.
 
-		SE_GameStart,	//ゲームの開始.
-		SE_GameEnd,		//ゲームの終了.
-		SE_FireWork,	//花火.
-		SE_Spark,		//火花.
-		SE_Door,		//シャッター.
+        SE_GameStart,	//ゲームの開始.
+        SE_GameEnd,		//ゲームの終了.
+        SE_FireWork,	//花火.
+        SE_Spark,		//火花.
+        SE_Door,		//シャッター.
 
-		SE_Shot,		//発射.
-		SE_Damage,		//ダメージ.
-		SE_Explosion,	//爆発.
-		SE_Impact,		//衝突.
-		SE_Move1,		//戦車の移動音1.
-		SE_Move2,		//戦車の移動音2.
-		SE_Move3,		//戦車の移動音3.
-		SE_Move4,		//戦車の移動音4.
+        SE_Shot,		//発射.
+        SE_Damage,		//ダメージ.
+        SE_Explosion,	//爆発.
+        SE_Impact,		//衝突.
+        SE_Move,		//戦車の移動音.
 
-		//音が増えたら「ここ」に追加してください.
-		max,		//最大数.
-	};
+        //音が増えたら「ここ」に追加してください.
+        max,		//最大数.
+    };
 
 public:
-	//--------------------------------------------------------------------------------------------------------------------------------------
-	//			シングルトン化↓.
-	//--------------------------------------------------------------------------------------------------------------------------------------
+    static CSoundManager& GetInstance()
+    {
+        static CSoundManager instance;
+        return instance;
+    }
 
-		//インスタンス取得(唯一のアクセス経路).
-		//※関数の前にstaticを付けることでインスタンス生成しなくても使用できる.
-	static CSoundManager* GetInstance()
-	{
-		//唯一のインスタンスを作成する.
-		//※staticで作成されたので2回目以降は、下の1行は無視される.
-		static CSoundManager s_Instance;	//s_:staticの意味.
-		return &s_Instance;
-	}
-	//--------------------------------------------------------------------------------------------------------------------------------------
-	//			シングルトン化↑.
-	//--------------------------------------------------------------------------------------------------------------------------------------
+    bool Load();
+    void Release();
 
-	~CSoundManager();
+    static void PlaySE(SoundList id)
+    {
+        GetInstance().m_SoundMap[id]->PlaySE();
+    }
 
-	//サウンドデータ読込関数.
-	bool Load(HWND hWnd);
-	//サウンドデータ解放関数.
-	void Release();
+    static void PlayLoop(SoundList id)
+    {
+        GetInstance().m_SoundMap[id]->PlayLoop();
+    }
 
-	//SEを再生する.
-	static void PlaySE(enList list) {
-		CSoundManager::GetInstance()->m_pSound[list]->PlaySE();
-	}
-	//ループ再生する.
-	static void PlayLoop(enList list) {
-		CSoundManager::GetInstance()->m_pSound[list]->PlayLoop();
-	}
-	//停止する.
-	static void Stop(enList list) {
-		CSoundManager::GetInstance()->m_pSound[list]->Stop();
-	}
-
-private://外部からアクセス不可能.
-	//外部からコンストラクタへのアクセスを禁止する.
-	CSoundManager();
-	//コピーコンストラクタによるコピーを禁止する.
-	//「=delete」で関数の定義を削除できる.
-	CSoundManager(const CSoundManager& rhs) = delete;
-	//代入演算子によるコピーを禁止する.
-	//operator(オペレータ):演算子のオーバーロードで、演算の中身を拡張できる.
-	CSoundManager& operator = (const CSoundManager& rhs) = delete;
+    static void Stop(SoundList id)
+    {
+        GetInstance().m_SoundMap[id]->Stop();
+    }
 
 private:
-	CSound* m_pSound[enList::max];
+    CSoundManager();
+    ~CSoundManager();
+
+    // コピーと代入を禁止
+    // 名前はただの識別子なので、使わないなら書かなくてもよい
+    CSoundManager(const CSoundManager&) = delete;
+    CSoundManager& operator=(const CSoundManager&) = delete;
+
+private:
+    IXAudio2* m_pXAudio2;
+    IXAudio2MasteringVoice* m_pMasteringVoice;
+
+
+    std::map<SoundList, CSound*> m_SoundMap;
 };
