@@ -37,8 +37,8 @@ public:
 	//タイマーが終了したかどうかを返す.
 	bool IsFinished() const;
 
-	//当たったときに必要な関数.
-	void HitTimer();
+	//ゲーム開始時に必要な関数.
+	void CountDown();
 
 	//当たってからの経過時間(無敵時間ととらえてもいい).
 	int GetElapsed() const;
@@ -54,8 +54,9 @@ public:
 		float y;
 	}m_TimerPosition;
 
-	//当たったときに必要な変数.
-	std::chrono::steady_clock::time_point	m_HitTime;
+	// ゲーム開始のに必要な変数.
+	std::chrono::steady_clock::time_point	m_StartGameTime;
+	// steady_clockが表す特定の時点を扱う型。
 
 	//タイマーの開始時間を記録する.
 	std::chrono::steady_clock::time_point	m_StartTimer;
