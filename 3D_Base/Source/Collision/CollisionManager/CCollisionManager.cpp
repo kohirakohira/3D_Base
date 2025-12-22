@@ -108,6 +108,7 @@ void CCollisionManager::WalltoCharacter()
 				chara->SetHitWall(true);
 			}
 		}
+
 		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
@@ -122,20 +123,22 @@ void CCollisionManager::WalltoCharacter()
 				chara->SetHitWall(true);
 			}
 		}
-		//if (Coll->CheckCollision(*m_pWallLeft->GetCollider()) &&
-		//	chara->GetDeath() == false)
-		//{
-		//	push.x += pushStrength;
+		
+		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()) &&
+			chara->GetDeath() == false)
+		{
+			push.x += pushStrength;
 
-		//	if (chara->GetHitWall() == false)
-		//	{
-		//		//Õ“ËSE‚ÌÄ¶.
-		//		CSoundManager::PlaySE(CSoundManager::SE_Impact);
+			if (chara->GetHitWall() == false)
+			{
+				//Õ“ËSE‚ÌÄ¶.
+				CSoundManager::PlaySE(CSoundManager::SE_Impact);
 
-		//		// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
-		//		chara->SetHitWall(true);
-		//	}
-		//}
+				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
+				chara->SetHitWall(true);
+			}
+		}
+
 		if (Coll->CheckCollision(*m_pWallRight->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
@@ -151,12 +154,12 @@ void CCollisionManager::WalltoCharacter()
 			}
 		}
 
-		// ‰Ÿ‚µ•Ô‚µ‚ð³‹K‰»
-		if (D3DXVec3Length(&push) > 0.f)
-		{
-			D3DXVec3Normalize(&push, &push);
-			push *= pushStrength;
-		}
+		//// ‰Ÿ‚µ•Ô‚µ‚ð³‹K‰»
+		//if (D3DXVec3Length(&push) > 0.f)
+		//{
+		//	D3DXVec3Normalize(&push, &push);
+		//	push *= pushStrength;
+		//}
 
 		// •Ç‚É“–‚½‚Á‚½Žž‚É‰Ÿ‚µ•Ô‚·
 		chara->GetBody()->PushBack(push);
