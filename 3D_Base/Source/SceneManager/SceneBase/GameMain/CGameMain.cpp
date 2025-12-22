@@ -221,7 +221,7 @@ void CGameMain::Update()
 	m_pCollisionManager->Update();
 
 	//制限時間の設定.
-	m_TimerNumber->SetNumber(m_Timer->GetRemainingTime(), 2);
+	m_TimerNumber->SetNumber(m_Timer->GetRemainingTime(), 3);
 	m_TimerNumber->Update();
 
 	//キル数の更新.
