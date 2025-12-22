@@ -3,6 +3,9 @@
 //-----サウンド-----
 #include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
 
+//-----エフェクト-----
+#include "../../../Assets/Effect/CEffect.h"
+
 //前方宣言.
 #include "Assets//Sprite//Sprite2D//CSprite2D.h" // 2Dスプライトクラス.
 
@@ -136,6 +139,12 @@ void CGameResult::Draw()
 	//選択肢画像の描画.
 	m_pChoiceIcon->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
+
+	CEffect::GetInstance().Draw(
+		m_pResultProduction->GetCamera()->m_mView, 
+		m_pResultProduction->GetCamera()->m_mProj,
+		m_pResultProduction->GetCamera()->m_Light,
+		m_pResultProduction->GetCamera()->m_Camera);
 }
 
 void CGameResult::Init()

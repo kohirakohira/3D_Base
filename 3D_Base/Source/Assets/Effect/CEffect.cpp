@@ -3,7 +3,7 @@
 //描画スプライト最大数
 constexpr int RENDER_SPRITE_MAX = 8000;
 //エフェクト管理用インスタンス最大数
-constexpr int EFFECT_INSTANCE_MAX = 1000;
+constexpr int EFFECT_INSTANCE_MAX = 2000;
 
 //DirectX Vector3 を Effekseer Vector3 に変換する
 ::EsVec3 CEffect::ToEfkVector3(const D3DXVECTOR3* pSrcVec3Dx)
@@ -175,11 +175,12 @@ HRESULT CEffect::LoadData()
 	EffectList EList[] =
 	{
 		//u""は、UTF-16エンコーディングの文字列リテラルで、const char16_t* に代入可能
-		{ enList::Test0,	u"Data\\Effekseer\\Basic\\Laser01.efk"	},
-		{ enList::Test1,	u"Data\\Effekseer\\Basic\\Laser01.efk"	},
+		{ enList::Test0,	u"Data\\Effekseer\\Basic\\Laser01.efk"		},
+		{ enList::Test1,	u"Data\\Effekseer\\Basic\\Laser01.efk"		},
 		{ enList::Hit,		u"Data\\Effekseer\\AndrewFM01\\fire.efk"	},
-		{ enList::Bakuhatu,	u"Data\\Effekseer\\Tktk03\\bakuhatu.efk"	},
-		{ enList::Mist,		u"Data\\Effekseer\\Pierre01\\ItemMist.efk"	},
+		{ enList::Blast,	u"Data\\Effekseer\\Tktk03\\Blast.efk"		},
+		{ enList::Mist,		u"Data\\Effekseer\\MyEffect\\ItemMist.efk"	},
+		{ enList::Firework,	u"Data\\Effekseer\\MyEffect\\FireWorks.efk"	},
 	};
 	//配列の最大要素数を算出（配列全体のサイズ／配列１つ分のサイズ）
 	int list_max = sizeof(EList) / sizeof(EList[0]);

@@ -1,5 +1,7 @@
 #include "CResultProduction.h"
 #include "../../../../Assets/DirectX/DirectX11/CDirectX11.h"
+//-----エフェクト-----
+#include "../../../../Assets/Effect/CEffect.h"
 
 CResultProduction::CResultProduction()
 	: m_Camera				( nullptr )
@@ -22,6 +24,7 @@ CResultProduction::CResultProduction()
 
 	, m_CharaPosX			( -75.0f )
 	, m_IsJudge				( false )
+	, m_Timer				( 0.0f )
 
 	, m_StagingPosition		()
 {
@@ -34,6 +37,24 @@ CResultProduction::~CResultProduction()
 //勝ち抜け.
 void CResultProduction::WinUpdate()
 {
+	//デルタタイム.
+	const float dt = 1.0f / FPS;
+	//エフェクトのインスタンスごとに必要なハンドル
+	//※３つ表示して制御するなら３つ必要になる
+	static ::EsHandle hEffect_FIRE_1 = -1;
+	static ::EsHandle hEffect_FIRE_2 = -1;
+
+	if (m_Timer >= 2)
+	{
+		hEffect_FIRE_1 = -1;
+		hEffect_FIRE_2 = -1;
+		m_Timer = 0.0f;
+	}
+	else
+	{
+		m_Timer += dt;
+	}
+
 	//ビュー・プロジェクションの更新.
 	m_Camera->Update();
 
@@ -41,10 +62,43 @@ void CResultProduction::WinUpdate()
 	auto [playerID, Kill] = CGameDataManager::GetInstance().GetTopCharacter();
 	m_Number->SetNumber(Kill, 2);
 	m_Number->Update();
+
+	//エフェクト.
+	if (hEffect_FIRE_1 == -1 && hEffect_FIRE_2 == -1)
+	{
+		hEffect_FIRE_1 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ -180.0f, 20.0f, 300.0f });
+		hEffect_FIRE_2 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ 180.0f, 20.0f, 300.0f });
+
+		{
+			//エフェクトの回転を設定.
+			CEffect::GetInstance().SetRotation(hEffect_FIRE_1, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+			//エフェクトのサイズを設定.
+			CEffect::GetInstance().SetScale(hEffect_FIRE_1, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
+			//エフェクトの位置を設定.
+			CEffect::GetInstance().SetLocation(hEffect_FIRE_1, D3DXVECTOR3{ -180.0f, 20.0f, 300.0f });
+			//色の設定.
+			Effekseer::Color col = { 255, 255, 255, 255 };
+			CEffect::GetInstance().SetAlpha(hEffect_FIRE_1, col);
+		}
+		{
+			//エフェクトの回転を設定.
+			CEffect::GetInstance().SetRotation(hEffect_FIRE_2, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+			//エフェクトのサイズを設定.
+			CEffect::GetInstance().SetScale(hEffect_FIRE_2, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
+			//エフェクトの位置を設定.
+			CEffect::GetInstance().SetLocation(hEffect_FIRE_2, D3DXVECTOR3{ 180.0f, 20.0f, 300.0f });
+			//色の設定.
+			Effekseer::Color col = { 255, 255, 255, 255 };
+			CEffect::GetInstance().SetAlpha(hEffect_FIRE_2, col);
+		}
+	}
 }
 
 void CResultProduction::WinDraw()
 {
+	//エフェクトの描画.
+	CEffect::GetInstance().Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
+	
 	//1位のデータ.
 	auto [playerID, Kill] = CGameDataManager::GetInstance().GetTopCharacter();
 	//背景描画.
@@ -53,17 +107,25 @@ void CResultProduction::WinDraw()
 	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 	//キャラクターの表示.
 	m_CharacterManager->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
+	
+	CDirectX11::GetInstance().SetDepth(false);
 	//キル数の表示.
 	m_Number->Draw();
 	//キルUIの表示.
 	m_KillUI->Draw();
 	//キャラクター番号の表示.
 	m_PlayerUI[playerID]->Draw();
+	CDirectX11::GetInstance().SetDepth(true);
 
 }
 
 void CResultProduction::DrawUpdate()
 {
+	//エフェクトのインスタンスごとに必要なハンドル
+	//※３つ表示して制御するなら３つ必要になる
+	static ::EsHandle hEffect_DRAW_1 = -1;
+	static ::EsHandle hEffect_DRAW_2 = -1;
+
 	//ビュー・プロジェクションの更新.
 	m_Camera->Update();
 
@@ -71,20 +133,57 @@ void CResultProduction::DrawUpdate()
 	auto [playerID, Kill] = CGameDataManager::GetInstance().GetTopCharacter();
 	m_Number->SetNumber(Kill, 2);
 	m_Number->Update();
+
+	//エフェクト.
+	//if (hEffect_DRAW_1 == -1 && hEffect_DRAW_2 == -1)
+	//{
+	//	hEffect_FIRE_1 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ -180.0f, 20.0f, 300.0f });
+	//	hEffect_FIRE_2 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ 180.0f, 20.0f, 300.0f });
+
+	//	{
+	//		//エフェクトの回転を設定.
+	//		CEffect::GetInstance().SetRotation(hEffect_FIRE_1, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+	//		//エフェクトのサイズを設定.
+	//		CEffect::GetInstance().SetScale(hEffect_FIRE_1, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
+	//		//エフェクトの位置を設定.
+	//		CEffect::GetInstance().SetLocation(hEffect_FIRE_1, D3DXVECTOR3{ -180.0f, 20.0f, 300.0f });
+	//		//色の設定.
+	//		Effekseer::Color col = { 255, 255, 255, 255 };
+	//		CEffect::GetInstance().SetAlpha(hEffect_FIRE_1, col);
+	//	}
+	//	{
+	//		//エフェクトの回転を設定.
+	//		CEffect::GetInstance().SetRotation(hEffect_FIRE_2, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+	//		//エフェクトのサイズを設定.
+	//		CEffect::GetInstance().SetScale(hEffect_FIRE_2, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
+	//		//エフェクトの位置を設定.
+	//		CEffect::GetInstance().SetLocation(hEffect_FIRE_2, D3DXVECTOR3{ 180.0f, 20.0f, 300.0f });
+	//		//色の設定.
+	//		Effekseer::Color col = { 255, 255, 255, 255 };
+	//		CEffect::GetInstance().SetAlpha(hEffect_FIRE_2, col);
+	//	}
+	//}
+
 }
 
 void CResultProduction::DrawDraw()
 {
+	//エフェクトの描画.
+	CEffect::GetInstance().Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
+
 	//背景描画.
 	m_BackGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 	//地面描画.
 	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 	//キャラクターの表示.
 	m_CharacterManager->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
+	
+	CDirectX11::GetInstance().SetDepth(false);
 	//キル数の表示.
 	m_Number->Draw();
 	//キルUIの表示.
 	m_KillUI->Draw();
+	CDirectX11::GetInstance().SetDepth(true);
 
 }
 

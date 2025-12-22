@@ -59,6 +59,9 @@ public:
 	//キャラクターの位置設定用.
 	void SetPositionRanking();
 
+	//カメラのインスタンス取得.
+	std::shared_ptr<CCamera> const GetCamera() { return m_Camera; }
+
 public:
 	//勝ち抜け.
 	void WinUpdate();
@@ -73,6 +76,9 @@ private:
 
 	//勝ちか引き分け判定用.
 	bool m_IsJudge;
+
+	//時間.
+	float m_Timer;
 
 	//プレイヤーの位置. 
 	PLAYER_POS m_StagingPosition;
