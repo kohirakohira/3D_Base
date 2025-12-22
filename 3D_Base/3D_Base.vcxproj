@@ -175,6 +175,7 @@
     <ClCompile Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.cpp" />
     <ClCompile Include="Source\Assets\Sound\CSound.cpp" />
     <ClCompile Include="Source\Assets\Sound\CSoundManager.cpp" />
+    <ClCompile Include="Source\Assets\Sound\FileReader\CFileReader.cpp" />
     <ClCompile Include="Source\Assets\Sprite\Sprite2D\CSprite2D.cpp" />
     <ClCompile Include="Source\Assets\Sprite\Sprite3D\CSprite3D.cpp" />
     <ClCompile Include="Source\Collision\Collider\BoxCollider\CBoxCollider.cpp" />
@@ -257,6 +258,8 @@
     <ClInclude Include="Source\Assets\Data\Singleton\GameDataManager\CGameDataManager.h" />
     <ClInclude Include="Source\Assets\Sound\CSound.h" />
     <ClInclude Include="Source\Assets\Sound\CSoundManager.h" />
+    <ClInclude Include="Source\Assets\Sound\FileReader\CFileReader.h" />
+    <ClInclude Include="Source\Assets\Sound\FileReader\FileType\CFileType.h" />
     <ClInclude Include="Source\Assets\Sprite\Sprite2D\CSprite2D.h" />
     <ClInclude Include="Source\Assets\Sprite\Sprite3D\CSprite3D.h" />
     <ClInclude Include="Source\Collision\Collider\BoxCollider\CBoxCollider.h" />

@@ -11,6 +11,8 @@
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/IComPersonality/CAggressivePersonality/CAggressivePersonality.h"
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/IComPersonality/CPersistentPersonality/CPersistentPersonality.h"
 
+//-----サウンド-----
+#include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
 
 #undef min
 
@@ -88,6 +90,10 @@ void CComPlayer::Create(int id)
     m_Chara.m_Kill    = false;
     m_Chara.m_Muteki = false;
     m_Chara.m_Respawn = false;
+    // サウンドフラグ
+	m_Chara.m_HitWall	= false;
+	m_Chara.m_HitBox	= false;
+	m_Chara.m_HitBlast	= false;
 
     //継承したものも初期化
     m_IsActive = true;
@@ -127,7 +133,7 @@ void CComPlayer::Create(int id)
         //一番近い敵
         SetPersonalityType(PersonalityType::Aggressive);
         m_TargetSelector.SetForgetDistance(100.0f);     // 広い範囲で認識
-        m_TargetSelector.SetStickinessRatio(0.0f);      // 粘着しない
+        m_TargetSelector.SetStickinessRatio(1.0f);      // 粘着しない
         m_TargetSelector.SetRetargetInterval(30);       // 頻繁に再評価
         m_ComShot.SetShotCollDown(100);                 // ショットのクールダウン
         break;
@@ -145,7 +151,7 @@ void CComPlayer::Create(int id)
         //絶対にターゲットを変えない
         SetPersonalityType(PersonalityType::Persistent);
         m_TargetSelector.SetForgetDistance(1e9);    //どこまでも追う
-        m_TargetSelector.SetStickinessRatio(1.0f);      //絶対に粘着
+        m_TargetSelector.SetStickinessRatio(0.0f);      //絶対に粘着
         m_TargetSelector.SetRetargetInterval(9999);     //再評価しない
         m_ComShot.SetShotCollDown(60);          
         break;
@@ -336,6 +342,17 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
     auto body = GetBody();
     if (!cannon) return;
 
+    auto target = m_TargetSelector.GetCurrentTarget();
+    if (!target || target->GetDeath())
+    {
+        return; //死亡ターゲットは照準しない
+    }
+
+    //ターゲット位置を平滑化
+    m_SmoothedTargetPos.x += (targetPos.x - m_SmoothedTargetPos.x) * m_AimSmoothFactor;
+    m_SmoothedTargetPos.y += (targetPos.y - m_SmoothedTargetPos.y) * m_AimSmoothFactor;
+    m_SmoothedTargetPos.z += (targetPos.z - m_SmoothedTargetPos.z) * m_AimSmoothFactor;
+
     //性格クラスから砲塔パラメータを取得
     TurretParams turretParams;
     if (m_pPersonality)
@@ -356,7 +373,7 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
     targetVel.z *= turretParams.predictionAccuracy;
 
     PredictedShot prediction = m_ComShot.PredictTargetPosition(
-        muzzle, targetPos, targetVel);
+        muzzle, m_SmoothedTargetPos, targetVel);
 
     // 砲塔の基準位置
     D3DXVECTOR3 base = body ? body->GetPosition() : cannon->GetPosition();
@@ -1167,7 +1184,39 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
         // 移動先が安全かチェック
         if (!IsInDangerZone(nextPos))
         {
+            if (m_PlayerID == 1)
+            {
+                //移動SEの再生.
+                CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+            }
+            if (m_PlayerID == 2)
+            {
+                //移動SEの再生.
+                CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+            }
+            if (m_PlayerID == 3)
+            {
+                //移動SEの再生.
+                CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+            }
+
             body->SetPosition(nextPos);
+        }
+        else
+        {
+            if (m_PlayerID == 1)
+            {
+                // 移動SE停止
+                CSoundManager::Stop(CSoundManager::SE_Move2);
+            }
+            if (m_PlayerID == 2)
+            {
+                CSoundManager::Stop(CSoundManager::SE_Move3);
+            }
+            if (m_PlayerID == 3)
+            {
+                CSoundManager::Stop(CSoundManager::SE_Move4);
+            }
         }
         // 危険なら移動しない
     }
@@ -1214,6 +1263,7 @@ int CComPlayer::CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) 
     {
         if (!p) continue;
         if (p.get() == this) continue;  //自分は除外
+        if (p->GetDeath()) continue;    //死亡も除外
 
         const D3DXVECTOR3 enemyPos = p->GetPosition();
         const float dx = enemyPos.x - self.x;

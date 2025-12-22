@@ -91,8 +91,12 @@ void CPlayer::Init(int id)
 	m_Chara.m_Damage  = false;
 	m_Chara.m_Death   = false;
 	m_Chara.m_Kill	  = false;
-	m_Chara.m_Muteki = false;
+	m_Chara.m_Muteki= false;
 	m_Chara.m_Respawn = false;
+	// サウンドフラグ
+	m_Chara.m_HitWall	= false;
+	m_Chara.m_HitBox	= false;
+	m_Chara.m_HitBlast	= false;
 
 	//継承したものも初期化
 	m_IsActive = true;
@@ -128,6 +132,11 @@ void CPlayer::Update()
 		return;
 	}
 
+	// サウンドリセット関数
+	ResetSoundFlg();
+
+	// ダメージ処理の更新
+	Damage();
 	// 死亡処理の更新
 	Death();
 	// 無敵処理の更新
@@ -136,8 +145,26 @@ void CPlayer::Update()
 	//playerが死亡していたら処理をスキップ
 	if (m_Chara.m_Death == true)
 	{
-		//移動SEの停止.
-		CSoundManager::Stop(CSoundManager::SE_Move);
+		if (m_PlayerID == 0)
+		{
+			//移動SEの再生.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+		}
+		if (m_PlayerID == 1)
+		{
+			//移動SEの再生.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+		}
+		if (m_PlayerID == 2)
+		{
+			//移動SEの再生.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+		}
+		if (m_PlayerID == 3)
+		{
+			//移動SEの再生.
+			CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+		}
 
 		return;
 	}
@@ -186,62 +213,226 @@ void CPlayer::Move(const PlayerInput& input)
 			//前進.
 			m_pBody->SetMoveState(CBody::Forward);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
+
 			break;
 		case CController::Direction::Down:
 			//後退.
 			m_pBody->SetMoveState(CBody::Backward);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::Left:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::Right:
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::UpLeft:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Forward);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::UpRight:
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Forward);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::DownLeft:
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Backward);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::DownRight:
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Backward);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 			break;
 		case CController::Direction::Stop:
 			//何も入力が無いので停止しておく.
 			m_pBody->SetMoveState(CBody::Stop);
 
-			//移動SEの停止.
-			CSoundManager::Stop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::Stop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::Stop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::Stop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::Stop(CSoundManager::SE_Move4);
+			}
 			break;
 		default:
 			break;
@@ -253,8 +444,26 @@ void CPlayer::Move(const PlayerInput& input)
 		{
 			m_pBody->SetMoveState(CBody::Forward);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 		}
 		else
 		{
@@ -262,8 +471,26 @@ void CPlayer::Move(const PlayerInput& input)
 				m_Key->InputKey('S') == false &&
 				m_Key->InputKey('D') == false)
 			{
-				//移動SEの停止.
-				CSoundManager::Stop(CSoundManager::SE_Move);
+				if (m_PlayerID == 0)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move1);
+				}
+				if (m_PlayerID == 1)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move2);
+				}
+				if (m_PlayerID == 2)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move3);
+				}
+				if (m_PlayerID == 3)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move4);
+				}
 			}
 		}
 
@@ -271,8 +498,26 @@ void CPlayer::Move(const PlayerInput& input)
 		{
 			m_pBody->SetMoveState(CBody::Backward);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 		}
 		else
 		{
@@ -280,8 +525,26 @@ void CPlayer::Move(const PlayerInput& input)
 				m_Key->InputKey('A') == false &&
 				m_Key->InputKey('D') == false)
 			{
-				//移動SEの停止.
-				CSoundManager::Stop(CSoundManager::SE_Move);
+				if (m_PlayerID == 0)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move1);
+				}
+				if (m_PlayerID == 1)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move2);
+				}
+				if (m_PlayerID == 2)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move3);
+				}
+				if (m_PlayerID == 3)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move4);
+				}
 			}
 		}
 
@@ -289,8 +552,26 @@ void CPlayer::Move(const PlayerInput& input)
 		{
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 		}
 		else
 		{
@@ -298,8 +579,26 @@ void CPlayer::Move(const PlayerInput& input)
 				m_Key->InputKey('S') == false &&
 				m_Key->InputKey('D') == false)
 			{
-				//移動SEの停止.
-				CSoundManager::Stop(CSoundManager::SE_Move);
+				if (m_PlayerID == 0)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move1);
+				}
+				if (m_PlayerID == 1)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move2);
+				}
+				if (m_PlayerID == 2)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move3);
+				}
+				if (m_PlayerID == 3)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move4);
+				}
 			}
 		}
 
@@ -307,8 +606,26 @@ void CPlayer::Move(const PlayerInput& input)
 		{
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 
-			//移動SEの再生.
-			CSoundManager::PlayLoop(CSoundManager::SE_Move);
+			if (m_PlayerID == 0)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+			}
+			if (m_PlayerID == 1)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+			}
+			if (m_PlayerID == 2)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+			}
+			if (m_PlayerID == 3)
+			{
+				//移動SEの再生.
+				CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+			}
 		}
 		else
 		{
@@ -316,8 +633,26 @@ void CPlayer::Move(const PlayerInput& input)
 				m_Key->InputKey('A') == false &&
 				m_Key->InputKey('S') == false)
 			{
-				//移動SEの停止.
-				CSoundManager::Stop(CSoundManager::SE_Move);
+				if (m_PlayerID == 0)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move1);
+				}
+				if (m_PlayerID == 1)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move2);
+				}
+				if (m_PlayerID == 2)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move3);
+				}
+				if (m_PlayerID == 3)
+				{
+					//移動SEの再生.
+					CSoundManager::Stop(CSoundManager::SE_Move4);
+				}
 			}
 		}
 
