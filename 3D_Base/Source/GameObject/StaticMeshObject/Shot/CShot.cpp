@@ -45,6 +45,7 @@ void CShot::Update()
 			//見えない所に置いておく
 			m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
 			m_Shot.m_ShotFlag = false;
+			m_Shot.m_IsDelete = true; // 破棄を有効化
 		}
 	}
 	CStaticMeshObject::Update();
@@ -85,6 +86,9 @@ bool CShot::HitShot()
 	m_vPosition = D3DXVECTOR3(0.f, -10.f, 0.f);
 	m_Shot.m_ShotFlag = false;
 	m_Shot.m_DisplayTime = 0.0f;
+
+	m_Shot.m_IsDelete = true; // 破棄を有効化
+
 	return m_Shot.m_ShotFlag;
 }
 

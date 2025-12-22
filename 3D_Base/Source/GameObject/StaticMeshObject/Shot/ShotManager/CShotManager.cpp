@@ -37,6 +37,19 @@ void CShotManager::Update()
 	{
 		shot->Update();
 	}
+
+	m_pShots.erase(
+		std::remove_if(
+			m_pShots.begin(),
+			m_pShots.end(),
+			[](const std::shared_ptr<CShot>& shot)
+			{
+				return shot->IsDelete();
+			}
+		),
+		m_pShots.end()
+	);
+
 }
 
 // 描画処理
@@ -50,18 +63,14 @@ void CShotManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA
 
 void CShotManager::HitShot()
 {
-
-	// 1. 削除対象の要素を末尾に移動させ、新しい終端イテレータ(it)を取得
 	auto it = std::remove_if(
 		m_pShots.begin(),
 		m_pShots.end(),
-		// ラムダ式: Bulletを引数に取り、削除するならtrueを返す
-		[](const std::shared_ptr<CShot>& b) {
-			return b->HitShot();
+		[](const std::shared_ptr<CShot>& shot)
+		{
+			return !shot->GetShotFlag() ;
 		}
 	);
-
-	// 2. 新しい終端イテレータ(it)から元の終端までを削除
 	m_pShots.erase(it, m_pShots.end());
 }
 

@@ -191,7 +191,7 @@ void CCollisionManager::WalltoShot()
 					m_Speed,
 					shot->GetPlayerID());
 
-				m_pShotManager->HitShot();
+				shot->HitShot();
 			}
 		}
 		{

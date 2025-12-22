@@ -31,16 +31,20 @@ public:
 	// 発射フラグの取得
 	bool GetShotFlag() const { return m_Shot.m_ShotFlag; }
 
+	// 破棄フラグを返す
+	bool IsDelete() const { return m_Shot.m_IsDelete; }
 public:
 	//弾構造体.
 	struct Shot
 	{
-		bool		m_ShotFlag;				// 発射フラグ
-		D3DXVECTOR3 m_MoveDirection;		// 移動方向
-		float		m_MoveSpeed;			// 移動速度
-		float		m_DisplayTime;			// 約3秒くらい表示する
-		float		m_Gravity;				// 弾の重力
-		float		m_Velocity;				// 加速度
+		bool		m_ShotFlag;		 // 発射フラグ
+		D3DXVECTOR3 m_MoveDirection; // 移動方向
+		float		m_MoveSpeed;	 // 移動速度
+		float		m_DisplayTime;	 // 約3秒くらい表示する
+		float		m_Gravity;		 // 弾の重力
+		float		m_Velocity;		 // 加速度
+
+		bool		m_IsDelete; // 破棄フラグ
 	};
 
 	//プレイヤーID.
