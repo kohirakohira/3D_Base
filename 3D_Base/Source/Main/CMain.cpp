@@ -235,7 +235,8 @@ HRESULT CMain::InitWindow(
 	rect.left = 0;			//左.
 	rect.right = width;		//右.
 	rect.bottom = height;	//下.
-	dwStyle = WS_POPUP;		//ウィンドウ種別
+	dwStyle = WS_OVERLAPPEDWINDOW;		//ウィンドウ種別
+ 
 							//※フルスクリーン->WS_POPUP、ウィンドウ->WS_OVERLAPPEDWINDOW.
 
 	if( AdjustWindowRect(
