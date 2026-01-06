@@ -34,6 +34,7 @@ CGameResult::CGameResult(HWND hWnd)
 	, m_Key					( nullptr )
 
 	, m_pResultProduction	( nullptr )
+	, m_WinOrDraw			( )
 {
 	//インスタンス生成.
 	m_pResultProduction = std::make_unique<CResultProduction>();
@@ -113,7 +114,7 @@ void CGameResult::Draw()
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Win);
 		//↓-----リザルトの演出-----↓.
 
-		m_pResultProduction->WinDraw();
+		m_pResultProduction->WinDraw(m_WinOrDraw);
 
 		//↑-----リザルトでの演出-----↑.
 		break;
@@ -122,7 +123,7 @@ void CGameResult::Draw()
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
 		//↓-----リザルトでの演出-----↓.
 
-		m_pResultProduction->DrawDraw();
+		m_pResultProduction->DrawDraw(m_WinOrDraw);
 
 		//↑-----リザルトでの演出-----↑.
 		break;
@@ -287,19 +288,20 @@ HRESULT CGameResult::LoadData()
 
 CSceneType CGameResult::WinOrDrawFunction()
 {
-	////一人で勝っていたら.
-	//if (CGameDataManager::GetInstance().SameKill() == true)
-	//{
-	//	m_SceneType = CSceneType::ResultWin;
-	//	m_pResultProduction->SetIsJudge(true);
-	//}
-	//else
-	//{
-	//	m_SceneType = CSceneType::ResultDraw;
-	//	m_pResultProduction->SetIsJudge(false);
-	//}
-	m_SceneType = CSceneType::ResultWin;
-	m_pResultProduction->SetIsJudge(true);
+	//判定用.
+	bool IsSingleWin = CGameDataManager::GetInstance().WinOrDrawJudgment(m_WinOrDraw);
+
+	//一人で勝っていたら.
+	if (IsSingleWin == true)
+	{
+		m_SceneType = CSceneType::ResultWin;
+		m_pResultProduction->SetIsJudge(true);
+	}
+	else
+	{
+		m_SceneType = CSceneType::ResultDraw;
+		m_pResultProduction->SetIsJudge(false);
+	}
 
 	return m_SceneType;
 }

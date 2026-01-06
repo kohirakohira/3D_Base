@@ -131,7 +131,7 @@ HRESULT CDirectX11::CreateDeviceAndSwapChain(
 	sd.OutputWindow = hWnd;			//ウィンドウハンドル.
 	sd.SampleDesc.Count = 1;		//マルチサンプルの数.
 	sd.SampleDesc.Quality = 0;		//マルチサンプルのクオリティ.
-	sd.Windowed = FALSE;			//ウィンドウモード（フルスクリーン時はFALSE）.
+	sd.Windowed = TRUE;			//ウィンドウモード（フルスクリーン時はFALSE）.
 
 	//作成を試みる機能レベルの優先を指定.
 	// (GPUがサポートする機能セットの定義).

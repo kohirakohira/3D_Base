@@ -36,6 +36,7 @@ public:
 	void Init(); // 初期化
 	void Update() override;// 更新関数	
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;// 描画関数
+	void DrawResult(std::vector<int>& playerID, D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera);	 //リザルト専用.
 	//==============================
 
 	//=======メッシュをアタッチ=======

@@ -54,7 +54,7 @@ std::pair<int, int> CGameDataManager::GetTopCharacter()
 	//プレイヤーIDの保持用.
 	int maxPlayerID = -1;
 	//キル数の最大値の保持用.
-	int maxKills = 0;
+	int maxKills = -1;
 
 	for (const auto& [playerID, kills] : m_KillCount) {
 		//キャラのキル数が最大キル数より多いとき.
@@ -147,4 +147,40 @@ bool CGameDataManager::SameKill()
 
 	//もし最大キル数が同じならfalse、一人だけならtrue.
 	return (maxCount == 1);
+}
+
+//勝ちor引き分け・情報取得関数※引数：.
+bool CGameDataManager::WinOrDrawJudgment(DrawResult outDraw)
+{
+	outDraw.players.clear();
+	outDraw.Kill = 0;
+
+	if (m_KillCount.empty())
+	{
+		return false;
+	}
+
+	// 最大キル数を取得
+	int maxKill = -1;
+	for (const auto& [id, kill] : m_KillCount)
+	{
+		if (kill > maxKill)
+		{
+			maxKill = kill;
+		}
+	}
+
+	// 最大キル数のプレイヤーを集める
+	for (const auto& [id, kill] : m_KillCount)
+	{
+		if (kill == maxKill)
+		{
+			outDraw.players.push_back(id);
+		}
+	}
+
+	outDraw.Kill = maxKill;
+
+	// 1人なら勝者
+	return (outDraw.players.size() == 1);
 }

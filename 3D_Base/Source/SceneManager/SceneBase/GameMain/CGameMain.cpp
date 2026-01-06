@@ -16,9 +16,9 @@ static bool prevA = false;
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
 //定数宣言.
-static constexpr int TIME = 10;
+static constexpr int TIME = 10;		//時間は調整してください.
 const float deltaTime = 1.0f / FPS;
-const float DIALMETER = 360.0f;
+const float DIALMETER = 360.0f;			//時計の回転する針に使用.
 const float FLASH_TIME = 0.5f;			//点滅周期.
 
 CGameMain::CGameMain(HWND hWnd)
@@ -221,7 +221,7 @@ void CGameMain::Update()
 	m_pCollisionManager->Update();
 
 	//制限時間の設定.
-	m_TimerNumber->SetNumber(m_Timer->GetRemainingTime(), 2);
+	m_TimerNumber->SetNumber(m_Timer->GetRemainingTime(), 3);
 	m_TimerNumber->Update();
 
 	//キル数の更新.

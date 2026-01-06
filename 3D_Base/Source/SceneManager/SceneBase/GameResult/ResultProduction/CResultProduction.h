@@ -15,8 +15,8 @@
 
 //-----メッシュクラス-----
 #include "../../../../Assets/Mesh/StaticMesh/CStaticMesh.h" //スタティックメッシュクラス.
-#include "../../../../Assets/Sprite/Sprite3D/CSprite3D.h" //スプライト3D.
-#include "../../../../Assets/Sprite/Sprite2D/CSprite2D.h" //スプライト2D.
+#include "../../../../Assets/Sprite/Sprite3D/CSprite3D.h"	//スプライト3D.
+#include "../../../../Assets/Sprite/Sprite2D/CSprite2D.h"	//スプライト2D.
 
 
 //======================================================
@@ -65,10 +65,10 @@ public:
 public:
 	//勝ち抜け.
 	void WinUpdate();
-	void WinDraw();
+	void WinDraw(DrawResult draw);
 	//引き分け.
 	void DrawUpdate();
-	void DrawDraw();
+	void DrawDraw(DrawResult draw);
 
 private:
 	//キャラクターの基準位置.

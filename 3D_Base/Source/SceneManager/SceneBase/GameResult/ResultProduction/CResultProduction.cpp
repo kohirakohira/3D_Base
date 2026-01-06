@@ -94,7 +94,7 @@ void CResultProduction::WinUpdate()
 	}
 }
 
-void CResultProduction::WinDraw()
+void CResultProduction::WinDraw(DrawResult draw)
 {
 	//エフェクトの描画.
 	CEffect::GetInstance().Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
@@ -106,7 +106,7 @@ void CResultProduction::WinDraw()
 	//地面描画.
 	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 	//キャラクターの表示.
-	m_CharacterManager->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
+	m_CharacterManager->DrawResult( draw.players, m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
 	
 	CDirectX11::GetInstance().SetDepth(false);
 	//キル数の表示.
@@ -166,7 +166,7 @@ void CResultProduction::DrawUpdate()
 
 }
 
-void CResultProduction::DrawDraw()
+void CResultProduction::DrawDraw(DrawResult draw)
 {
 	//エフェクトの描画.
 	CEffect::GetInstance().Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
@@ -176,8 +176,8 @@ void CResultProduction::DrawDraw()
 	//地面描画.
 	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 	//キャラクターの表示.
-	m_CharacterManager->Draw(m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
-	
+	m_CharacterManager->DrawResult(draw.players, m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
+
 	CDirectX11::GetInstance().SetDepth(false);
 	//キル数の表示.
 	m_Number->Draw();
