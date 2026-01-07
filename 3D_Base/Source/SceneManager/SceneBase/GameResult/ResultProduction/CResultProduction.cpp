@@ -163,34 +163,34 @@ void CResultProduction::DrawUpdate()
 	m_Number->SetNumber(Kill, 2);
 	m_Number->Update();
 
-	////エフェクト.
-	//if (hEffect_DRAW_1 == -1 && hEffect_DRAW_2 == -1)
-	//{
-	//	hEffect_FIRE_1 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ -180.0f, 20.0f, 300.0f });
-	//	hEffect_FIRE_2 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ 180.0f, 20.0f, 300.0f });
-	//	{
-	//		//エフェクトの回転を設定.
-	//		CEffect::GetInstance().SetRotation(hEffect_FIRE_1, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-	//		//エフェクトのサイズを設定.
-	//		CEffect::GetInstance().SetScale(hEffect_FIRE_1, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
-	//		//エフェクトの位置を設定.
-	//		CEffect::GetInstance().SetLocation(hEffect_FIRE_1, D3DXVECTOR3{ -180.0f, 20.0f, 300.0f });
-	//		//色の設定.
-	//		Effekseer::Color col = { 255, 255, 255, 255 };
-	//		CEffect::GetInstance().SetAlpha(hEffect_FIRE_1, col);
-	//	}
-	//	{
-	//		//エフェクトの回転を設定.
-	//		CEffect::GetInstance().SetRotation(hEffect_FIRE_2, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-	//		//エフェクトのサイズを設定.
-	//		CEffect::GetInstance().SetScale(hEffect_FIRE_2, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
-	//		//エフェクトの位置を設定.
-	//		CEffect::GetInstance().SetLocation(hEffect_FIRE_2, D3DXVECTOR3{ 180.0f, 20.0f, 300.0f });
-	//		//色の設定.
-	//		Effekseer::Color col = { 255, 255, 255, 255 };
-	//		CEffect::GetInstance().SetAlpha(hEffect_FIRE_2, col);
-	//	}
-	//}
+	//エフェクト.
+	if (hEffect_DRAW_1 == -1 && hEffect_DRAW_2 == -1)
+	{
+		hEffect_DRAW_1 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ -180.0f, 20.0f, 300.0f });
+		hEffect_DRAW_2 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ 180.0f, 20.0f, 300.0f });
+		{
+			//エフェクトの回転を設定.
+			CEffect::GetInstance().SetRotation(hEffect_DRAW_1, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+			//エフェクトのサイズを設定.
+			CEffect::GetInstance().SetScale(hEffect_DRAW_1, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
+			//エフェクトの位置を設定.
+			CEffect::GetInstance().SetLocation(hEffect_DRAW_1, D3DXVECTOR3{ -180.0f, 20.0f, 300.0f });
+			//色の設定.
+			Effekseer::Color col = { 255, 255, 255, 255 };
+			CEffect::GetInstance().SetAlpha(hEffect_DRAW_1, col);
+		}
+		{
+			//エフェクトの回転を設定.
+			CEffect::GetInstance().SetRotation(hEffect_DRAW_2, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+			//エフェクトのサイズを設定.
+			CEffect::GetInstance().SetScale(hEffect_DRAW_2, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
+			//エフェクトの位置を設定.
+			CEffect::GetInstance().SetLocation(hEffect_DRAW_2, D3DXVECTOR3{ 180.0f, 20.0f, 300.0f });
+			//色の設定.
+			Effekseer::Color col = { 255, 255, 255, 255 };
+			CEffect::GetInstance().SetAlpha(hEffect_DRAW_2, col);
+		}
+	}
 
 }
 
