@@ -111,6 +111,7 @@ void CPlayer::SetPushBack(const D3DXVECTOR3& push)
 
 void CPlayer::Update()
 {
+
 	//キーの更新.
 	m_Key->Update();
 
@@ -256,7 +257,6 @@ void CPlayer::Move(const PlayerInput& input)
 		if (m_Key->InputKey('A') == true)
 		{
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
-
 		}
 		else
 		{

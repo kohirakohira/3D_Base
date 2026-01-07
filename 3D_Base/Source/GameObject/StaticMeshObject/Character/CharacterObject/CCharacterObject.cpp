@@ -221,13 +221,13 @@ void CCharacterObjectBase::ResetSoundFlg()
 {
 	if (m_Chara.m_HitWall == true || m_Chara.m_HitBox == true)
 	{
-		m_SoundTimer--;
-		if (m_SoundTimer <= 0.0f)
-		{
-			m_Chara.m_HitWall = false;
-			m_Chara.m_HitBox = false;
+		//m_SoundTimer--;
+		//if (m_SoundTimer <= 0.0f)
+		//{
+		//	m_Chara.m_HitWall = false;
+		//	m_Chara.m_HitBox = false;
 
-			m_SoundTimer = 30.f;
-		}
+		//	m_SoundTimer = 30.f;
+		//}
 	}
 }

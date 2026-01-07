@@ -82,6 +82,8 @@ void CCollisionManager::WalltoCharacter()
 {
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
+		bool isHitWall = false; // •Ç‚ÆÕ“Ë‚µ‚Ä‚¢‚é‚©?
+
 		// ‰Ÿ‚µ•Ô‚µ‚Ì‹­‚³
 		const float pushStrength = m_pCharacterManager->GetTuning(i).moveSpeed;
 
@@ -98,60 +100,28 @@ void CCollisionManager::WalltoCharacter()
 			chara->GetDeath() == false)
 		{
 			push.z -= pushStrength;
-
-			if (chara->GetHitWall() == false)
-			{
-				//Õ“ËSE‚ÌÄ¶.
-				CSoundManager::PlaySE(CSoundManager::SE_Impact);
-
-				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
-				chara->SetHitWall(true);
-			}
+			isHitWall = true;
 		}
 
 		if (Coll->CheckCollision(*m_pWallBottom->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
 			push.z += pushStrength;
-
-			if (chara->GetHitWall() == false)
-			{
-				//Õ“ËSE‚ÌÄ¶.
-				CSoundManager::PlaySE(CSoundManager::SE_Impact);
-
-				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
-				chara->SetHitWall(true);
-			}
+			isHitWall = true;
 		}
 		
 		if (Coll->CheckCollision(*m_pWallLeft->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
 			push.x += pushStrength;
-
-			if (chara->GetHitWall() == false)
-			{
-				//Õ“ËSE‚ÌÄ¶.
-				CSoundManager::PlaySE(CSoundManager::SE_Impact);
-
-				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
-				chara->SetHitWall(true);
-			}
+			isHitWall = true;
 		}
 
 		if (Coll->CheckCollision(*m_pWallRight->GetCollider()) &&
 			chara->GetDeath() == false)
 		{
 			push.x -= pushStrength;
-
-			if (chara->GetHitWall() == false)
-			{
-				//Õ“ËSE‚ÌÄ¶.
-				CSoundManager::PlaySE(CSoundManager::SE_Impact);
-
-				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
-				chara->SetHitWall(true);
-			}
+			isHitWall = true;
 		}
 
 		//// ‰Ÿ‚µ•Ô‚µ‚ð³‹K‰»
@@ -160,6 +130,23 @@ void CCollisionManager::WalltoCharacter()
 		//	D3DXVec3Normalize(&push, &push);
 		//	push *= pushStrength;
 		//}
+
+		if (isHitWall == true)
+		{
+			if (chara->GetHitWall() == false)
+			{
+				//Õ“ËSE‚ÌÄ¶.
+				CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+				// ÚGŽž‚Éƒtƒ‰ƒO‚ðtrue‚É‚·‚é
+				chara->SetHitWall(true);
+			}
+		}
+		else
+		{
+			// •Ç‚©‚ç—£‚ê‚½uŠÔ‚É–ß‚·
+			chara->SetHitWall(false);
+		}
 
 		// •Ç‚É“–‚½‚Á‚½Žž‚É‰Ÿ‚µ•Ô‚·
 		chara->GetBody()->PushBack(push);
