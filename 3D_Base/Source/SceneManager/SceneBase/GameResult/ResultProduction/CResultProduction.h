@@ -46,18 +46,21 @@ public:
 	//生成関数.
 	void Create();
 	//初期化.
-	void Init();
+	void Init(DrawResult result);
 	//読み込み関数.
 	HRESULT LoadData();
 
 	//勝ったか引き分けか.
 	void SetIsJudge(bool j) { m_IsJudge = j; }
 
-	//勝った時と引き分け時の位置設定.
-	void SetPositionJudge(int playerid);
+	//引き分け時の位置設定.
+	void SetPositionJudge(const DrawResult& result);
 
 	//キャラクターの位置設定用.
 	void SetPositionRanking();
+
+	//キャラクターのX座標を決める関数.
+	std::vector<float> CalcCenterPosition(int count, float spacing);
 
 	//カメラのインスタンス取得.
 	std::shared_ptr<CCamera> const GetCamera() { return m_Camera; }
@@ -79,6 +82,9 @@ private:
 
 	//時間.
 	float m_Timer;
+
+	//引き分け時構造体.
+	DrawResult m_Result;
 
 	//プレイヤーの位置. 
 	PLAYER_POS m_StagingPosition;

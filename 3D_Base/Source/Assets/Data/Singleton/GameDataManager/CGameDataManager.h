@@ -41,7 +41,7 @@ public:
 	bool SameKill();
 
 	//勝ちor引き分け・情報取得関数※引数：.
-	bool WinOrDrawJudgment(DrawResult outDraw);
+	bool WinOrDrawJudgment(DrawResult& outDraw);
 	
 private:
 	//friend：クラスや関数に「private/protectedメンバへのアクセス権」を与えることができる.

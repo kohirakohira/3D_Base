@@ -150,7 +150,7 @@ bool CGameDataManager::SameKill()
 }
 
 //Ÿ‚¿orˆø‚«•ª‚¯Eî•ñæ“¾ŠÖ”¦ˆø”F.
-bool CGameDataManager::WinOrDrawJudgment(DrawResult outDraw)
+bool CGameDataManager::WinOrDrawJudgment(DrawResult& outDraw)
 {
 	outDraw.players.clear();
 	outDraw.Kill = 0;

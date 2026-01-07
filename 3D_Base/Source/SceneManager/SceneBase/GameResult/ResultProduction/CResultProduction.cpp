@@ -27,6 +27,7 @@ CResultProduction::CResultProduction()
 	, m_Timer				( 0.0f )
 
 	, m_StagingPosition		()
+	, m_Result				()
 {
 }
 
@@ -43,11 +44,15 @@ void CResultProduction::WinUpdate()
 	//※３つ表示して制御するなら３つ必要になる
 	static ::EsHandle hEffect_FIRE_1 = -1;
 	static ::EsHandle hEffect_FIRE_2 = -1;
+	static ::EsHandle hEffect_FIRE_3 = -1;
+	static ::EsHandle hEffect_FIRE_4 = -1;
 
 	if (m_Timer >= 2)
 	{
 		hEffect_FIRE_1 = -1;
 		hEffect_FIRE_2 = -1;
+		hEffect_FIRE_3 = -1;
+		hEffect_FIRE_4 = -1;
 		m_Timer = 0.0f;
 	}
 	else
@@ -64,10 +69,12 @@ void CResultProduction::WinUpdate()
 	m_Number->Update();
 
 	//エフェクト.
-	if (hEffect_FIRE_1 == -1 && hEffect_FIRE_2 == -1)
+	if (hEffect_FIRE_1 == -1 && hEffect_FIRE_2 == -1 && hEffect_FIRE_3 == -1 && hEffect_FIRE_4 == -1)
 	{
-		hEffect_FIRE_1 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ -180.0f, 20.0f, 300.0f });
-		hEffect_FIRE_2 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ 180.0f, 20.0f, 300.0f });
+		hEffect_FIRE_1 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ -180.0f,	20.0f, 300.0f });
+		hEffect_FIRE_2 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{  180.0f,	20.0f, 200.0f });
+		hEffect_FIRE_3 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ -110.0f,	-20.0f, 300.0f });
+		hEffect_FIRE_4 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{  110.0f,	-20.0f, 200.0f });
 
 		{
 			//エフェクトの回転を設定.
@@ -82,6 +89,17 @@ void CResultProduction::WinUpdate()
 		}
 		{
 			//エフェクトの回転を設定.
+			CEffect::GetInstance().SetRotation(hEffect_FIRE_3, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+			//エフェクトのサイズを設定.
+			CEffect::GetInstance().SetScale(hEffect_FIRE_3, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
+			//エフェクトの位置を設定.
+			CEffect::GetInstance().SetLocation(hEffect_FIRE_3, D3DXVECTOR3{ -110.0f, -20.0f, 200.0f });
+			//色の設定.
+			Effekseer::Color col = { 255, 255, 255, 255 };
+			CEffect::GetInstance().SetAlpha(hEffect_FIRE_3, col);
+		}
+		{
+			//エフェクトの回転を設定.
 			CEffect::GetInstance().SetRotation(hEffect_FIRE_2, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
 			//エフェクトのサイズを設定.
 			CEffect::GetInstance().SetScale(hEffect_FIRE_2, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
@@ -90,6 +108,17 @@ void CResultProduction::WinUpdate()
 			//色の設定.
 			Effekseer::Color col = { 255, 255, 255, 255 };
 			CEffect::GetInstance().SetAlpha(hEffect_FIRE_2, col);
+		}
+		{
+			//エフェクトの回転を設定.
+			CEffect::GetInstance().SetRotation(hEffect_FIRE_4, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+			//エフェクトのサイズを設定.
+			CEffect::GetInstance().SetScale(hEffect_FIRE_4, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
+			//エフェクトの位置を設定.
+			CEffect::GetInstance().SetLocation(hEffect_FIRE_4, D3DXVECTOR3{ 110.0f, -20.0f, 200.0f });
+			//色の設定.
+			Effekseer::Color col = { 255, 255, 255, 255 };
+			CEffect::GetInstance().SetAlpha(hEffect_FIRE_4, col);
 		}
 	}
 }
@@ -134,12 +163,11 @@ void CResultProduction::DrawUpdate()
 	m_Number->SetNumber(Kill, 2);
 	m_Number->Update();
 
-	//エフェクト.
+	////エフェクト.
 	//if (hEffect_DRAW_1 == -1 && hEffect_DRAW_2 == -1)
 	//{
 	//	hEffect_FIRE_1 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ -180.0f, 20.0f, 300.0f });
 	//	hEffect_FIRE_2 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ 180.0f, 20.0f, 300.0f });
-
 	//	{
 	//		//エフェクトの回転を設定.
 	//		CEffect::GetInstance().SetRotation(hEffect_FIRE_1, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
@@ -227,7 +255,7 @@ void CResultProduction::Create()
 }
 
 //初期化.
-void CResultProduction::Init()
+void CResultProduction::Init(DrawResult result)
 {
 	//カメラの初期化.
 	m_Camera->Init();
@@ -288,9 +316,18 @@ void CResultProduction::Init()
 		m_StagingPosition.Fouros	= { 95.0f,	10.0f, 150.0f };	//右の右奥.
 	}
 
-	//勝ちか引き分けでの位置決め.
-	SetPositionRanking();
+	//リザルト結果を保存.
+	m_Result = result;
 
+	//勝ちか引き分けでの位置決め.
+	if (m_Result.players.size() == 1)
+	{
+		SetPositionRanking();
+	}
+	else
+	{
+		SetPositionJudge(m_Result);
+	}
 }
 
 //読み込み関数.
@@ -404,50 +441,30 @@ HRESULT CResultProduction::LoadData()
 	return S_OK;
 }
 
-//勝った時と引き分け時の位置設定.
-void CResultProduction::SetPositionJudge(int playerid)
+//引き分け時の位置設定.
+void CResultProduction::SetPositionJudge(const DrawResult& result)
 {
-	if (m_IsJudge == true)
+	//間隔.
+	const float spacing = 50.0f;
+
+	//回転と大きさ.
+	const D3DXVECTOR3 rot = {0.0f, D3DXToRadian(180.0f), 0.0f};
+	const D3DXVECTOR3 sca = { 50.0f, 50.0f, 50.0f };
+
+	auto xs = CalcCenterPosition(result.players.size(), spacing);
+
+	for (int i = 0; i < result.players.size(); i++)
 	{
-		//キャラクターの情報.
-		for (int index = 0; index < PLAYER_MAX; index++)
-		{
-			if (index == playerid)
-			{
-				D3DXVECTOR3 pos = { 0.0f, 10.0f, 80.0f };
-				D3DXVECTOR3 rot = { 0.0f, D3DXToRadian(180), 0.0f };
-				D3DXVECTOR3 sca = { 50.0f, 50.0f, 50.0f };
-				m_CharacterManager->SetPlayerPosition(playerid, pos);
-				m_CharacterManager->SetPlayerRotation(playerid, rot);
-				m_CharacterManager->SetPlayerScale(playerid, sca);
-			}
-			else
-			{
-				D3DXVECTOR3 pos = { m_CharaPosX, 10.0f, 500.0f };
-				D3DXVECTOR3 rot = { 0.0f, D3DXToRadian(180), 0.0f };
-				D3DXVECTOR3 sca = { 50.0f, 50.0f, 50.0f };
-				m_CharacterManager->SetPlayerPosition(index, pos);
-				m_CharacterManager->SetPlayerRotation(index, rot);
-				m_CharacterManager->SetPlayerScale(index, sca);
-			}
-			m_CharaPosX += 50.0f;
-		}
+		int playerID = result.players[i];
+
+		//位置.
+		D3DXVECTOR3 pos = {xs[i], 10.0f, 100.0f};
+
+		m_CharacterManager->SetPlayerPosition(playerID, pos);
+		m_CharacterManager->SetPlayerRotation(playerID, rot);
+		m_CharacterManager->SetPlayerScale(playerID, sca);
+
 	}
-	else
-	{
-		//キャラクターの情報.
-		for (int index = 0; index < PLAYER_MAX; index++)
-		{
-			D3DXVECTOR3 pos = { m_CharaPosX, 10.0f, 100.0f };
-			D3DXVECTOR3 rot = { 0.0f, D3DXToRadian(180), 0.0f };
-			D3DXVECTOR3 sca = { 50.0f, 50.0f, 50.0f };
-			m_CharacterManager->SetPlayerPosition(index, pos);
-			m_CharacterManager->SetPlayerRotation(index, rot);
-			m_CharacterManager->SetPlayerScale(index, sca);
-			m_CharaPosX += 50.0f;
-		}
-	}
-	m_CharaPosX = -75.0f;
 
 }
 
@@ -497,4 +514,25 @@ void CResultProduction::SetPositionRanking()
 		m_CharacterManager->SetPlayerRotation(playerID, rot);
 		m_CharacterManager->SetPlayerScale(playerID, sca);
 	}
+}
+
+//キャラクターのX座標を決める関数.
+std::vector<float> CResultProduction::CalcCenterPosition(int count, float spacing)
+{
+	//X座標を格納する変数.
+	std::vector<float> result;
+
+	//例外処理.
+	if (count <= 0) return result;
+
+	//開始位置の計算.
+	float start = -(count - 1) * 0.5f * spacing;
+
+	//X座標を順番に作る.
+	for (int i = 0; i < count; i++)
+	{
+		result.push_back(start + i * spacing);
+	}
+
+	return result;
 }

@@ -156,7 +156,7 @@ void CGameResult::Draw()
 void CGameResult::Init()
 {
 	//‰Šú‰».
-	m_pResultProduction->Init();
+	m_pResultProduction->Init(m_WinOrDraw);
 
 	//ƒJƒƒ‰‚ÌˆÊ’u.
 	m_pCamera->SetCameraPos(-1.5f, 1.5f, 14.f);
