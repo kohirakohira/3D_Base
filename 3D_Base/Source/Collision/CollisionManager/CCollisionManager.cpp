@@ -33,7 +33,7 @@ CCollisionManager::CCollisionManager()
 	//爆風マネージャー.
 	, m_pBlastManager()
 
-	, m_Speed(15.0f)
+	, m_Speed(30.0f)
 {
 }
 

@@ -16,11 +16,16 @@ static bool prevA = false;
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
 //定数宣言.
-static constexpr int TIME = 5;		//時間は調整してください.
+static constexpr int TIME = 30;		//時間は調整してください.
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;			//時計の回転する針に使用.
 const float FLASH_TIME = 0.5f;			//点滅周期.
-
+const float dt = 1.0f / FPS;
+//staticメンバ変数の定義(実体).
+::EsHandle CGameMain::hEffect_Player_Smoke[PLAYER_MAX] =
+{
+	-1, -1, -1, -1
+};
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd						( hWnd )
 
@@ -98,6 +103,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_Flashing					( false )
 	, m_FlashingTime				( 0.0f )
 
+	, m_EffectTime					( 0.0f )
 {
 	//最初のシーンをメインにする..
 	m_SceneType = CSceneType::Main;
@@ -111,6 +117,9 @@ CGameMain::~CGameMain()
 
 void CGameMain::Update()
 {
+	//色の設定.
+	Effekseer::Color color = { 255, 255, 255, 255 };
+
 	//BGMのループ再生..
 	CSoundManager::PlayLoop(CSoundManager::BGM_Main);
 
@@ -230,6 +239,43 @@ void CGameMain::Update()
 		m_KillCountNumber[i]->Update();
 	}
 
+	//エフェクトの動き.
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		auto player = m_pCharacterManager->GetControlPlayer(i);
+		//例外処理.
+		if (player == nullptr)
+		{
+			continue;
+		}
+		//位置・回転.
+		D3DXVECTOR3 pos = { m_pCharacterManager->GetPosition(i).x,
+							m_pCharacterManager->GetPosition(i).y,
+							m_pCharacterManager->GetPosition(i).z};
+		D3DXVECTOR3 rot = { D3DXToRadian(-45.0f), m_pCharacterManager->GetRotation(i).y, D3DXToRadian(45.0f) };
+
+		//体力が1になった瞬間.
+		if (player->GetHP() == 1 && hEffect_Player_Smoke[i] == -1)
+		{
+			//エフェクト.
+			hEffect_Player_Smoke[i] = CEffect::GetInstance().Play(CEffect::Smoke, pos);
+			//エフェクトのサイズを設定.
+			CEffect::GetInstance().SetScale(hEffect_Player_Smoke[i], D3DXVECTOR3{ 0.1f, 0.1f, 0.1f });
+			CEffect::GetInstance().SetAlpha(hEffect_Player_Smoke[i], color);
+		}
+		//エフェクトの位置を設定.
+		CEffect::GetInstance().SetLocation(hEffect_Player_Smoke[i], pos);
+		//エフェクトの回転を設定.
+		CEffect::GetInstance().SetRotation(hEffect_Player_Smoke[i], rot);
+
+		//死亡した時.
+		if (player->GetHP() <= 0)
+		{
+			CEffect::GetInstance().Stop(hEffect_Player_Smoke[i]);
+			hEffect_Player_Smoke[i] = -1;
+		}
+	}
+
 	//勝敗条件(確認用)..
 	//勝ち..
 	//敗北..
@@ -287,20 +333,12 @@ void CGameMain::Draw()
 			}
 		}
 
-		//m_pCharacterManager->Draw(view, proj, light, paramC);
-
 //オブジェクトの描画..
 		//弾描画..
 		m_pShotManager->Draw(view, proj, light, paramC);
 
 		//地面描画.
 		m_pStage->Draw(view, proj, light, paramC);
-
-		////壁の表示.
-		//m_pWallTop->Draw(view, proj, light, paramC);
-		//m_pWallBottom->Draw(view, proj, light, paramC);
-		//m_pWallLeft->Draw(view, proj, light, paramC);
-		//m_pWallRight->Draw(view, proj, light, paramC);
 
 		// 木箱の描画
 		m_pWoodBoxTopLeft->Draw(view, proj, light, paramC);
@@ -309,8 +347,6 @@ void CGameMain::Draw()
 		m_pWoodBoxBottomLeft->Draw(view, proj, light, paramC);
 		m_pWoodBoxBottomRight->Draw(view, proj, light, paramC);
 
-		//// 地面の描画
-		//m_pGround->Draw(view, proj, light, paramC);
 
 #ifdef ENABLE_ITEMS
 
@@ -497,6 +533,13 @@ void CGameMain::Init()
 	m_pBackImgObject->SetRotation(0.0f, 0.0f, 0.0f);
 
 	SetPosition();
+
+	//エフェクトの初期化.
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		hEffect_Player_Smoke[i] = -1;
+	}
+
 }
 
 void CGameMain::Destroy()
