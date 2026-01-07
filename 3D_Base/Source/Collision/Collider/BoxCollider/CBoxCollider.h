@@ -2,7 +2,7 @@
 #include "Collision//Collider//CCollider.h"
 #include "Vector3.h"
 
-class SohereCollider;
+class CSphereCollider;
 
 class CBoxCollider
 	: public CCollider

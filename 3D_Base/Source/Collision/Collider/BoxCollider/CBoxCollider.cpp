@@ -49,6 +49,7 @@ bool CBoxCollider::CheckCollisionBox(const CBoxCollider& box) const
 	return CheckCollisionOBBtoOBB(&m_OBB, &box.m_OBB);
 }
 
+
 bool CBoxCollider::CheckCollisionOBBtoOBB(const OBB* A, const OBB* B)
 {
 	// ゼロに近い微小な量(誤差)
