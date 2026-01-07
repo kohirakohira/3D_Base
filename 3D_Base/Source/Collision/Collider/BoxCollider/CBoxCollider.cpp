@@ -49,6 +49,110 @@ bool CBoxCollider::CheckCollisionBox(const CBoxCollider& box) const
 	return CheckCollisionOBBtoOBB(&m_OBB, &box.m_OBB);
 }
 
+CollisionResultOBB 
+CBoxCollider::CheckCollisionBoxDetail(const CBoxCollider& box) const
+{
+	return CheckCollisionOBBtoOBB_depth(&m_OBB, &box.m_OBB);
+}
+
+// 衝突深度結果付き判定
+CollisionResultOBB
+CBoxCollider::CheckCollisionOBBtoOBB_depth(const OBB* A, const OBB* B)
+{
+	CollisionResultOBB result;
+	const float EPSILON = 1e-6f;
+
+	float R[3][3], AbsR[3][3];
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			R[i][j] = D3DXVec3Dot(&A->LocalAxes[i], &B->LocalAxes[j]);
+			AbsR[i][j] = fabsf(R[i][j]) + EPSILON;
+		}
+	}
+
+	D3DXVECTOR3 T = B->CenterPos - A->CenterPos;
+	T = D3DXVECTOR3(
+		D3DXVec3Dot(&T, &A->LocalAxes[0]),
+		D3DXVec3Dot(&T, &A->LocalAxes[1]),
+		D3DXVec3Dot(&T, &A->LocalAxes[2])
+	);
+
+	auto TestAxis = [&](float dist, float ra, float rb, const D3DXVECTOR3& axis)
+		{
+			float overlap = (ra + rb) - fabsf(dist);
+			if (overlap < 0.0f)
+				return false;
+
+			if (overlap < result.Penetration)
+			{
+				result.Penetration = overlap;
+				result.Normal = axis * (dist < 0 ? -1.0f : 1.0f);
+			}
+			return true;
+		};
+
+	float RA, RB;
+
+	// A軸
+	for (int i = 0; i < 3; i++)
+	{
+		RA = A->HarfLength[i];
+		RB = B->HarfLength[0] * AbsR[i][0] +
+			B->HarfLength[1] * AbsR[i][1] +
+			B->HarfLength[2] * AbsR[i][2];
+
+		if (!TestAxis(T[i], RA, RB, A->LocalAxes[i]))
+			return result;
+	}
+
+	// B軸
+	for (int i = 0; i < 3; i++)
+	{
+		RA = A->HarfLength[0] * AbsR[0][i] +
+			A->HarfLength[1] * AbsR[1][i] +
+			A->HarfLength[2] * AbsR[2][i];
+
+		RB = B->HarfLength[i];
+
+		float dist = T.x * R[0][i] + T.y * R[1][i] + T.z * R[2][i];
+		if (!TestAxis(dist, RA, RB, B->LocalAxes[i]))
+			return result;
+	}
+
+	// 外積軸
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			D3DXVECTOR3 axis;
+			D3DXVec3Cross(&axis, &A->LocalAxes[i], &B->LocalAxes[j]);
+
+			if (D3DXVec3LengthSq(&axis) < EPSILON)
+				continue;
+
+			D3DXVec3Normalize(&axis, &axis);
+
+			RA = A->HarfLength[(i + 1) % 3] * AbsR[(i + 2) % 3][j] +
+				A->HarfLength[(i + 2) % 3] * AbsR[(i + 1) % 3][j];
+
+			RB = B->HarfLength[(j + 1) % 3] * AbsR[i][(j + 2) % 3] +
+				B->HarfLength[(j + 2) % 3] * AbsR[i][(j + 1) % 3];
+
+			float dist = fabsf(
+				T[(i + 2) % 3] * R[(i + 1) % 3][j] -
+				T[(i + 1) % 3] * R[(i + 2) % 3][j]);
+
+			if (!TestAxis(dist, RA, RB, axis))
+				return result;
+		}
+	}
+
+	result.Hit = true;
+	return result;
+}
 
 bool CBoxCollider::CheckCollisionOBBtoOBB(const OBB* A, const OBB* B)
 {

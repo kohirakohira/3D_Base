@@ -53,6 +53,11 @@ bool CSphereCollider::CheckCollisionBox(const CBoxCollider& box) const
 	return box.CheckCollisionSphere(*this);
 }
 
+CollisionResultOBB CSphereCollider::CheckCollisionBoxDetail(const CBoxCollider& box) const
+{
+	return CollisionResultOBB();
+}
+
 void CSphereCollider::SetRadius(float radius)
 {
 	m_Radius = radius;

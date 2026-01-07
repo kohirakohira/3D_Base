@@ -8,6 +8,13 @@ enum class ColliderType
 	Box,
 };
 
+struct CollisionResultOBB
+{
+	bool Hit = false;
+	float Penetration = FLT_MAX;	// 衝突深度
+	D3DXVECTOR3 Normal;				// 押し出し方向(A→B)
+};
+
 //基底クラス.
 class CCollider
 {
@@ -24,6 +31,8 @@ public:
 	virtual bool CheckCollisionSphere(const class CSphereCollider& sphere)const = 0;
 	virtual bool CheckCollisionBox(const class CBoxCollider& box)const = 0;
 	
+	virtual CollisionResultOBB CheckCollisionBoxDetail(const CBoxCollider& box) const = 0;
+
 	// 中心座標を取得.
 	virtual const D3DXVECTOR3& GetPosition()const = 0;
 	// 中心座標を設定.

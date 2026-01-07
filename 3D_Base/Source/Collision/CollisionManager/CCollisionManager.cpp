@@ -82,6 +82,7 @@ void CCollisionManager::WalltoCharacter()
 {
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
+#if 0
 		bool isHitWall = false; // •Ç‚ÆÕ“Ë‚µ‚Ä‚¢‚é‚©?
 
 		// ‰Ÿ‚µ•Ô‚µ‚Ì‹­‚³
@@ -151,7 +152,63 @@ void CCollisionManager::WalltoCharacter()
 		// •Ç‚É“–‚½‚Á‚½‚É‰Ÿ‚µ•Ô‚·
 		chara->GetBody()->PushBack(push);
 		chara->GetCannon()->PushBack(push);
+#else
+		bool isHitWall = false;
+
+		auto chara = m_pCharacterManager->GetControlPlayer(i);
+		if (!chara) continue;
+
+		auto playerColl = chara->GetBody()->GetCollider();
+		if (!playerColl) continue;
+
+		auto playerBox =
+			std::dynamic_pointer_cast<CBoxCollider>(playerColl);
+		if (!playerBox) continue;
+
+		std::shared_ptr<CCollider> Allwall[] =
+		{
+			m_pWallTop->GetCollider(),
+			m_pWallBottom->GetCollider(),
+			m_pWallLeft->GetCollider(),
+			m_pWallRight->GetCollider(),
+		};
+
+		float maxPenetration = 0.0f;
+		D3DXVECTOR3 bestNormal(0, 0, 0);
+
+		for (auto& wallBase : Allwall)
+		{
+			auto wallBox =
+				std::dynamic_pointer_cast<CBoxCollider>(wallBase);
+			if (!wallBox) continue;
+
+			auto result =
+				m_pWallBottom->GetCollider()->CheckCollisionBoxDetail(*playerBox);
+
+			if (result.Hit)
+			{
+				isHitWall = true;
+
+				// ˆê”Ô[‚¢Õ“Ë‚¾‚¯Ì—p
+				if (result.Penetration > maxPenetration)
+				{
+					maxPenetration = result.Penetration;
+					bestNormal = result.Normal;
+				}
+			}
+		}
+
+		if (isHitWall)
+		{
+			constexpr float SLOP = 0.001f; // ”÷¬Œë·‘Îô
+
+			auto pos = chara->GetPosition();
+			pos += bestNormal * (maxPenetration + SLOP);
+			chara->GetBody()->SetPosition(pos);
+		}
+#endif
 	}
+
 }
 
 // •Ç‚Æ’e‚Ì“–‚½‚è”»’è
@@ -159,7 +216,7 @@ void CCollisionManager::WalltoShot()
 {
 	for (auto& shot : m_pShotManager->GetShot())
 	{
-		//–Ø” ‚ğ‚Ü‚Æ‚ß‚ÄŠÇ—.
+		//•Ç‚ğ‚Ü‚Æ‚ß‚ÄŠÇ—.
 		std::shared_ptr<CCollider> Allwall[] = {
 			m_pWallTop->GetCollider(),
 			m_pWallBottom->GetCollider(),

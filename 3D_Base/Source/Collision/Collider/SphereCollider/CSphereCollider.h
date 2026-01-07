@@ -27,6 +27,10 @@ public:
 	bool CheckCollisionSphere(const class CSphereCollider& sphere)const override;
 	bool CheckCollisionBox(const class CBoxCollider& box)const override;
 
+	// 衝突深度付き判定
+	CollisionResultOBB CheckCollisionBoxDetail(const CBoxCollider& box) const override;
+
+
 	//中心座標を取得する
 	const D3DXVECTOR3& GetPosition() const override { return m_CenterPos; }
 	//半径(長さ)を取得する

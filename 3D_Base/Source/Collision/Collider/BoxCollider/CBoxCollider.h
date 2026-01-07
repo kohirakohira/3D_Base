@@ -31,6 +31,8 @@ public:
 	bool CheckCollisionSphere(const class CSphereCollider& sphere)const override;
 	bool CheckCollisionBox(const class CBoxCollider& box)const override;
 
+	// 衝突深度付き判定
+	CollisionResultOBB CheckCollisionBoxDetail(const CBoxCollider& box) const override;
 	// 中心座標を取得する.
 	const D3DXVECTOR3& GetPosition()const override { return m_CenterPos; }
 	// 受け取った中心座標から、最小、最大座標を設定.
@@ -60,6 +62,9 @@ public:
 	{
 		return m_OBB.CenterPos + m_OBB.HarfLength;
 	}
+
+	// 衝突深度結果付き判定
+	static CollisionResultOBB CheckCollisionOBBtoOBB_depth(const OBB* A, const OBB* B);
 
 private:
 	// OBB同士の判定
