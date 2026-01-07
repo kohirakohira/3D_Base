@@ -1,7 +1,5 @@
 #include "CResultProduction.h"
 #include "../../../../Assets/DirectX/DirectX11/CDirectX11.h"
-//-----エフェクト-----
-#include "../../../../Assets/Effect/CEffect.h"
 
 //デルタタイム.
 const float dt = 1.0f / FPS;
@@ -31,6 +29,9 @@ CResultProduction::CResultProduction()
 
 	, m_StagingPosition		()
 	, m_Result				()
+
+	, hEffect_SMOKE			()
+	, hEffect_FIRE			()
 {
 }
 
@@ -41,31 +42,6 @@ CResultProduction::~CResultProduction()
 //勝ち抜け.
 void CResultProduction::WinUpdate()
 {
-	//エフェクトのインスタンスごとに必要なハンドル
-	//※３つ表示して制御するなら３つ必要になる
-	static ::EsHandle hEffect_FIRE_1 = -1;
-	static ::EsHandle hEffect_FIRE_2 = -1;
-	static ::EsHandle hEffect_FIRE_3 = -1;
-	static ::EsHandle hEffect_FIRE_4 = -1;
-
-	if (m_Timer >= 2.0f)
-	{
-		//エフェクトを止める.
-		CEffect::GetInstance().Stop(hEffect_FIRE_1);
-		CEffect::GetInstance().Stop(hEffect_FIRE_2);
-		CEffect::GetInstance().Stop(hEffect_FIRE_3);
-		CEffect::GetInstance().Stop(hEffect_FIRE_4);
-		hEffect_FIRE_1 = -1;
-		hEffect_FIRE_2 = -1;
-		hEffect_FIRE_3 = -1;
-		hEffect_FIRE_4 = -1;
-		m_Timer = 0.0f;
-	}
-	else
-	{
-		m_Timer += dt;
-	}
-
 	//ビュー・プロジェクションの更新.
 	m_Camera->Update();
 
@@ -74,57 +50,42 @@ void CResultProduction::WinUpdate()
 	m_Number->SetNumber(Kill, 2);
 	m_Number->Update();
 
-	//エフェクト.
-	if (hEffect_FIRE_1 == -1 && hEffect_FIRE_2 == -1 && hEffect_FIRE_3 == -1 && hEffect_FIRE_4 == -1)
-	{
-		hEffect_FIRE_1 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ -180.0f,	20.0f, 300.0f });
-		hEffect_FIRE_2 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{  180.0f,	20.0f, 200.0f });
-		hEffect_FIRE_3 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{ -110.0f,	-20.0f, 300.0f });
-		hEffect_FIRE_4 = CEffect::GetInstance().Play(CEffect::Firework, D3DXVECTOR3{  110.0f,	-20.0f, 200.0f });
+	//位置.
+	D3DXVECTOR3 pos[4] = {};
+	//色の設定.
+	Effekseer::Color col = { 255, 255, 255, 255 };
 
+	//エフェクト.
+	for (int i = 0; i < 4; i++)
+	{
+		if (hEffect_FIRE[i] == -1)
 		{
+			//位置設定.
+			switch (i)
+			{
+			case 0:
+				pos[0] = {-180.0f,	20.0f, 300.0f};
+				break;
+			case 1:
+				pos[1] = { 180.0f,	20.0f, 200.0f };
+				break;
+			case 2:
+				pos[2] = { -110.0f,	-20.0f, 300.0f };
+				break;
+			case 3:
+				pos[3] = { 110.0f,	-20.0f, 200.0f };
+				break;
+			default:
+				break;
+			}
+			hEffect_FIRE[i] = CEffect::GetInstance().Play(CEffect::Firework, pos[i]);
 			//エフェクトの回転を設定.
-			CEffect::GetInstance().SetRotation(hEffect_FIRE_1, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+			CEffect::GetInstance().SetRotation(hEffect_FIRE[i], D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
 			//エフェクトのサイズを設定.
-			CEffect::GetInstance().SetScale(hEffect_FIRE_1, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
+			CEffect::GetInstance().SetScale(hEffect_FIRE[i], D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
 			//エフェクトの位置を設定.
-			CEffect::GetInstance().SetLocation(hEffect_FIRE_1, D3DXVECTOR3{ -180.0f, 20.0f, 300.0f });
-			//色の設定.
-			Effekseer::Color col = { 255, 255, 255, 255 };
-			CEffect::GetInstance().SetAlpha(hEffect_FIRE_1, col);
-		}
-		{
-			//エフェクトの回転を設定.
-			CEffect::GetInstance().SetRotation(hEffect_FIRE_3, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-			//エフェクトのサイズを設定.
-			CEffect::GetInstance().SetScale(hEffect_FIRE_3, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
-			//エフェクトの位置を設定.
-			CEffect::GetInstance().SetLocation(hEffect_FIRE_3, D3DXVECTOR3{ -110.0f, -20.0f, 200.0f });
-			//色の設定.
-			Effekseer::Color col = { 255, 255, 255, 255 };
-			CEffect::GetInstance().SetAlpha(hEffect_FIRE_3, col);
-		}
-		{
-			//エフェクトの回転を設定.
-			CEffect::GetInstance().SetRotation(hEffect_FIRE_2, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-			//エフェクトのサイズを設定.
-			CEffect::GetInstance().SetScale(hEffect_FIRE_2, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
-			//エフェクトの位置を設定.
-			CEffect::GetInstance().SetLocation(hEffect_FIRE_2, D3DXVECTOR3{ 180.0f, 20.0f, 300.0f });
-			//色の設定.
-			Effekseer::Color col = { 255, 255, 255, 255 };
-			CEffect::GetInstance().SetAlpha(hEffect_FIRE_2, col);
-		}
-		{
-			//エフェクトの回転を設定.
-			CEffect::GetInstance().SetRotation(hEffect_FIRE_4, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-			//エフェクトのサイズを設定.
-			CEffect::GetInstance().SetScale(hEffect_FIRE_4, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
-			//エフェクトの位置を設定.
-			CEffect::GetInstance().SetLocation(hEffect_FIRE_4, D3DXVECTOR3{ 110.0f, -20.0f, 200.0f });
-			//色の設定.
-			Effekseer::Color col = { 255, 255, 255, 255 };
-			CEffect::GetInstance().SetAlpha(hEffect_FIRE_4, col);
+			CEffect::GetInstance().SetLocation(hEffect_FIRE[i], pos[i]);
+			CEffect::GetInstance().SetAlpha(hEffect_FIRE[i], col);
 		}
 	}
 }
@@ -156,44 +117,8 @@ void CResultProduction::WinDraw()
 
 void CResultProduction::DrawUpdate()
 {
-	//エフェクトのインスタンスごとに必要なハンドル
-	//※３つ表示して制御するなら３つ必要になる
-	static ::EsHandle hEffect_SMOKE_1 = -1;
-	static ::EsHandle hEffect_SMOKE_2 = -1;
-	static ::EsHandle hEffect_SMOKE_3 = -1;
-	static ::EsHandle hEffect_SMOKE_4 = -1;
-	static ::EsHandle hEffect_SMOKE_5 = -1;
-	static ::EsHandle hEffect_SMOKE_6 = -1;
-	static ::EsHandle hEffect_SMOKE_7 = -1;
-	static ::EsHandle hEffect_SMOKE_8 = -1;
 	//色の設定.
 	Effekseer::Color col = { 255, 255, 255, 255 };
-
-	if (m_Timer >= 15.0f)
-	{
-		//エフェクトを止める.
-		CEffect::GetInstance().Stop(hEffect_SMOKE_1);
-		CEffect::GetInstance().Stop(hEffect_SMOKE_2);
-		CEffect::GetInstance().Stop(hEffect_SMOKE_3);
-		CEffect::GetInstance().Stop(hEffect_SMOKE_4);
-		CEffect::GetInstance().Stop(hEffect_SMOKE_5);
-		CEffect::GetInstance().Stop(hEffect_SMOKE_6);
-		CEffect::GetInstance().Stop(hEffect_SMOKE_7);
-		CEffect::GetInstance().Stop(hEffect_SMOKE_8);
-		hEffect_SMOKE_1 = -1;
-		hEffect_SMOKE_2 = -1;
-		hEffect_SMOKE_3 = -1;
-		hEffect_SMOKE_4 = -1;
-		hEffect_SMOKE_5 = -1;
-		hEffect_SMOKE_6 = -1;
-		hEffect_SMOKE_7 = -1;
-		hEffect_SMOKE_8 = -1;
-		m_Timer = 0.0f;
-	}
-	else
-	{
-		m_Timer += dt;
-	}
 
 	//ビュー・プロジェクションの更新.
 	m_Camera->Update();
@@ -203,125 +128,45 @@ void CResultProduction::DrawUpdate()
 	m_Number->SetNumber(Kill, 2);
 	m_Number->Update();
 
-	//引き分けのキャラ分回す.
-	for (int i = 0; i < m_Result.players.size(); i++)
+	//位置.
+	D3DXVECTOR3 pos[2] = {};
+	for (int i = 0; i <= 1; i++)
 	{
 		//位置.
-		D3DXVECTOR3 pos_1 = {	m_CharacterManager->GetPosition(i).x - 10.0f,
-								m_CharacterManager->GetPosition(i).y - 10.0f,
-								m_CharacterManager->GetPosition(i).z + 20.0f};
-		D3DXVECTOR3 pos_2 = {	m_CharacterManager->GetPosition(i).x + 10.0f,
-								m_CharacterManager->GetPosition(i).y - 10.0f,
-								m_CharacterManager->GetPosition(i).z - 20.0f};
-
 		switch (i)
 		{
 		case 0:
-			if (hEffect_SMOKE_1 == -1 || hEffect_SMOKE_1 <= 3)
-			{
-				//エフェクト.
-				hEffect_SMOKE_1 = CEffect::GetInstance().Play(CEffect::Smoke, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトの回転を設定.
-				CEffect::GetInstance().SetRotation(hEffect_SMOKE_1, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトのサイズを設定.
-				CEffect::GetInstance().SetScale(hEffect_SMOKE_1, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
-				//エフェクトの位置を設定.
-				CEffect::GetInstance().SetLocation(hEffect_SMOKE_1, pos_1);
-				CEffect::GetInstance().SetAlpha(hEffect_SMOKE_1, col);
-			}
-			if (hEffect_SMOKE_5 == -1 || hEffect_SMOKE_5 <= 3)
-			{
-				//エフェクト.
-				hEffect_SMOKE_5 = CEffect::GetInstance().Play(CEffect::Smoke, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトの回転を設定.
-				CEffect::GetInstance().SetRotation(hEffect_SMOKE_5, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトのサイズを設定.
-				CEffect::GetInstance().SetScale(hEffect_SMOKE_5, D3DXVECTOR3{ 1.5f, 1.5f, 1.5f });
-				//エフェクトの位置を設定.
-				CEffect::GetInstance().SetLocation(hEffect_SMOKE_5, pos_2);
-				CEffect::GetInstance().SetAlpha(hEffect_SMOKE_5, col);
-			}
+			pos[0] = {	m_CharacterManager->GetPosition(i).x - 10.0f,
+						m_CharacterManager->GetPosition(i).y - 10.0f,
+						m_CharacterManager->GetPosition(i).z + 20.0f };
 			break;
 		case 1:
-			if (hEffect_SMOKE_2 == -1 || hEffect_SMOKE_2 <= 3)
-			{
-				//エフェクト.
-				hEffect_SMOKE_2 = CEffect::GetInstance().Play(CEffect::Smoke, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトの回転を設定.
-				CEffect::GetInstance().SetRotation(hEffect_SMOKE_2, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトのサイズを設定.
-				CEffect::GetInstance().SetScale(hEffect_SMOKE_2, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
-				//エフェクトの位置を設定.
-				CEffect::GetInstance().SetLocation(hEffect_SMOKE_2, pos_1);
-				CEffect::GetInstance().SetAlpha(hEffect_SMOKE_2, col);
-			}
-			if (hEffect_SMOKE_6 == -1 || hEffect_SMOKE_6 <= 3)
-			{
-				//エフェクト.
-				hEffect_SMOKE_6 = CEffect::GetInstance().Play(CEffect::Smoke, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトの回転を設定.
-				CEffect::GetInstance().SetRotation(hEffect_SMOKE_6, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトのサイズを設定.
-				CEffect::GetInstance().SetScale(hEffect_SMOKE_6, D3DXVECTOR3{ 1.5f, 1.5f, 1.5f });
-				//エフェクトの位置を設定.
-				CEffect::GetInstance().SetLocation(hEffect_SMOKE_6, pos_2);
-				CEffect::GetInstance().SetAlpha(hEffect_SMOKE_6, col);
-			}
-			break;
-		case 2:
-			if (hEffect_SMOKE_3 == -1 || hEffect_SMOKE_3 <= 3)
-			{
-				//エフェクト.
-				hEffect_SMOKE_3 = CEffect::GetInstance().Play(CEffect::Smoke, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトの回転を設定.
-				CEffect::GetInstance().SetRotation(hEffect_SMOKE_3, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトのサイズを設定.
-				CEffect::GetInstance().SetScale(hEffect_SMOKE_3, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
-				//エフェクトの位置を設定.
-				CEffect::GetInstance().SetLocation(hEffect_SMOKE_3, pos_1);
-				CEffect::GetInstance().SetAlpha(hEffect_SMOKE_3, col);
-			}
-			if (hEffect_SMOKE_7 == -1 || hEffect_SMOKE_7 <= 3)
-			{
-				//エフェクト.
-				hEffect_SMOKE_7 = CEffect::GetInstance().Play(CEffect::Smoke, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトの回転を設定.
-				CEffect::GetInstance().SetRotation(hEffect_SMOKE_7, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトのサイズを設定.
-				CEffect::GetInstance().SetScale(hEffect_SMOKE_7, D3DXVECTOR3{ 1.5f, 1.5f, 1.5f });
-				//エフェクトの位置を設定.
-				CEffect::GetInstance().SetLocation(hEffect_SMOKE_7, pos_2);
-				CEffect::GetInstance().SetAlpha(hEffect_SMOKE_7, col);
-			}
-			break;
-		case 3:
-			if (hEffect_SMOKE_4 == -1 || hEffect_SMOKE_4 <= 3)
-			{
-				//エフェクト.
-				hEffect_SMOKE_4 = CEffect::GetInstance().Play(CEffect::Smoke, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトの回転を設定.
-				CEffect::GetInstance().SetRotation(hEffect_SMOKE_4, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトのサイズを設定.
-				CEffect::GetInstance().SetScale(hEffect_SMOKE_4, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
-				//エフェクトの位置を設定.
-				CEffect::GetInstance().SetLocation(hEffect_SMOKE_4, pos_1);
-				CEffect::GetInstance().SetAlpha(hEffect_SMOKE_4, col);
-			}
-			if (hEffect_SMOKE_8 == -1 || hEffect_SMOKE_8 <= 3)
-			{
-				//エフェクト.
-				hEffect_SMOKE_8 = CEffect::GetInstance().Play(CEffect::Smoke, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトの回転を設定.
-				CEffect::GetInstance().SetRotation(hEffect_SMOKE_8, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトのサイズを設定.
-				CEffect::GetInstance().SetScale(hEffect_SMOKE_8, D3DXVECTOR3{ 1.5f, 1.5f, 1.5f });
-				//エフェクトの位置を設定.
-				CEffect::GetInstance().SetLocation(hEffect_SMOKE_8, pos_2);
-				CEffect::GetInstance().SetAlpha(hEffect_SMOKE_8, col);
-			}
+			pos[1] = {	m_CharacterManager->GetPosition(i).x + 10.0f,
+						m_CharacterManager->GetPosition(i).y - 10.0f,
+						m_CharacterManager->GetPosition(i).z - 20.0f };
 			break;
 		default:
 			break;
+		}
+	}
+
+	//引き分けのキャラ分回す.
+	for (int p = 0; p < 2; p++)
+	{
+		for (int i = 0; i < m_Result.players.size(); i++)
+		{
+			if (hEffect_SMOKE[i] == -1 || hEffect_SMOKE[i] <= 3)
+			{
+				//エフェクト.
+				hEffect_SMOKE[i] = CEffect::GetInstance().Play(CEffect::Smoke, pos[p]);
+				//エフェクトの回転を設定.
+				CEffect::GetInstance().SetRotation(hEffect_SMOKE[i], D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+				//エフェクトのサイズを設定.
+				CEffect::GetInstance().SetScale(hEffect_SMOKE[i], D3DXVECTOR3{ 2.0f, 2.0f, 2.0f });
+				//エフェクトの位置を設定.
+				CEffect::GetInstance().SetLocation(hEffect_SMOKE[i], pos[p]);
+				CEffect::GetInstance().SetAlpha(hEffect_SMOKE[i], col);
+			}
 		}
 	}
 }
@@ -382,6 +227,16 @@ void CResultProduction::Create()
 	{
 		m_PlayerUI[index]		= std::make_unique<CUIObject>();
 		m_SpritePlayerUI[index] = std::make_shared<CSprite2D>();
+	}
+
+	//エフェクト.
+	for (int i = 0; i < 4; i++)
+	{
+		hEffect_FIRE[i] = -1;
+	}
+	for (int i = 0; i < 8; i++)
+	{
+		hEffect_SMOKE[i] = -1;
 	}
 
 }

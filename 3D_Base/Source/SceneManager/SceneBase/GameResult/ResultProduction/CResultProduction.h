@@ -17,6 +17,8 @@
 #include "../../../../Assets/Mesh/StaticMesh/CStaticMesh.h" //スタティックメッシュクラス.
 #include "../../../../Assets/Sprite/Sprite3D/CSprite3D.h"	//スプライト3D.
 #include "../../../../Assets/Sprite/Sprite2D/CSprite2D.h"	//スプライト2D.
+//-----エフェクト-----
+#include "../../../../Assets/Effect/CEffect.h"
 
 
 //======================================================
@@ -72,6 +74,11 @@ public:
 	//引き分け.
 	void DrawUpdate();
 	void DrawDraw();
+
+private:
+	//エフェクト.
+	::EsHandle hEffect_FIRE[4];
+	::EsHandle hEffect_SMOKE[8];
 
 private:
 	//キャラクターの基準位置.
