@@ -50,6 +50,7 @@ public:
 		Blast,		//”š”­i”í’ej
 		Mist,		//‰Œ.
 		Firework,	//‰Ô‰Î.
+		Smoke,		//‰Œ–‹.
 
 		Max			//Å‘å”
 	};

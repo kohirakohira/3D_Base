@@ -68,10 +68,10 @@ public:
 public:
 	//勝ち抜け.
 	void WinUpdate();
-	void WinDraw(DrawResult draw);
+	void WinDraw();
 	//引き分け.
 	void DrawUpdate();
-	void DrawDraw(DrawResult draw);
+	void DrawDraw();
 
 private:
 	//キャラクターの基準位置.

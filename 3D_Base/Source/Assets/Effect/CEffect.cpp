@@ -181,6 +181,7 @@ HRESULT CEffect::LoadData()
 		{ enList::Blast,	u"Data\\Effekseer\\Tktk03\\Blast.efk"		},
 		{ enList::Mist,		u"Data\\Effekseer\\MyEffect\\ItemMist.efk"	},
 		{ enList::Firework,	u"Data\\Effekseer\\MyEffect\\FireWorks.efk"	},
+		{ enList::Smoke,	u"Data\\Effekseer\\MyEffect\\Smoke.efk"		},
 	};
 	//配列の最大要素数を算出（配列全体のサイズ／配列１つ分のサイズ）
 	int list_max = sizeof(EList) / sizeof(EList[0]);

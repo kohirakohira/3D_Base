@@ -114,7 +114,7 @@ void CGameResult::Draw()
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Win);
 		//↓-----リザルトの演出-----↓.
 
-		m_pResultProduction->WinDraw(m_WinOrDraw);
+		m_pResultProduction->WinDraw();
 
 		//↑-----リザルトでの演出-----↑.
 		break;
@@ -123,7 +123,7 @@ void CGameResult::Draw()
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
 		//↓-----リザルトでの演出-----↓.
 
-		m_pResultProduction->DrawDraw(m_WinOrDraw);
+		m_pResultProduction->DrawDraw();
 
 		//↑-----リザルトでの演出-----↑.
 		break;
