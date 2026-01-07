@@ -10,6 +10,13 @@
 //-----基底クラス-----.
 #include "../CSingleton.h"
 
+//引き分け判断用.
+struct DrawResult
+{
+	int Kill;					//引き分け時のキル数.
+	std::vector<int> players;	//引き分けしているプレイヤーID.
+};
+
 //=================================================================
 //		データ保存クラス※シングルトン化.
 //=================================================================
@@ -33,6 +40,9 @@ public:
 	//同じキル数なのかを判定する関数.
 	bool SameKill();
 
+	//勝ちor引き分け・情報取得関数※引数：.
+	bool WinOrDrawJudgment(DrawResult& outDraw);
+	
 private:
 	//friend：クラスや関数に「private/protectedメンバへのアクセス権」を与えることができる.
 	friend class CSingleton<CGameDataManager>;

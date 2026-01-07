@@ -47,8 +47,10 @@ public:
 		Test1,		//仮で設定
 		Hit,		//当たった時
 		Explosion,	//爆発
-		Bakuhatu,	//爆発（被弾）
-		Mist,		//アイテムの煙.
+		Blast,		//爆発（被弾）
+		Mist,		//煙.
+		Firework,	//花火.
+		Smoke,		//煙幕.
 
 		Max			//最大数
 	};

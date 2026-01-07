@@ -1,6 +1,8 @@
 #include "CGameTitle.h"
 //-----サウンド-----
 #include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
+//-----エフェクト-----
+#include "../../../Assets/Effect/CEffect.h"
 
 //前方宣言.
 #include "Assets//Sprite//Sprite2D//CSprite2D.h" // 2Dスプライトクラス.
@@ -34,6 +36,7 @@ CGameTitle::~CGameTitle()
 {
 	m_hWnd = nullptr;
 	m_TitleProduction.reset();
+	CEffect::GetInstance().~CEffect();
 }
 
 void CGameTitle::Update()
