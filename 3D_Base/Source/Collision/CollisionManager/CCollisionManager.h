@@ -23,6 +23,16 @@
 class CCollisionManager
 {
 public:
+
+	// “–‚½‚è”»’è‚ÌŒ‹‰Ê‚ð‚Ü‚Æ‚ß‚é
+	struct HitInfo
+	{
+		bool hit;
+		D3DXVECTOR3 normal;
+		float penetration;
+	};
+
+public:
 	CCollisionManager();
 	~CCollisionManager();
 
