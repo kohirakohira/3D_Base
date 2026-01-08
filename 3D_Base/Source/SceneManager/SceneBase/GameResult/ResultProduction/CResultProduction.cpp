@@ -57,7 +57,22 @@ void CResultProduction::WinUpdate()
 	Effekseer::Color col = { 255, 255, 255, 255 };
 
 	//エフェクトの時間.
-	m_Timer += dt;
+	if (m_Timer >= 3.0f)
+	{
+		for (auto& fire : m_FireworkEffects)
+		{
+			for (auto& effect : fire.effects)
+			{
+				CEffect::GetInstance().Stop(effect.handle);
+				effect.handle = -1;
+			}
+		}
+		m_Timer = 0.0f;
+	}
+	else
+	{
+		m_Timer += dt;
+	}
 
 	//エフェクト.
 	for (int i = 0; i < m_FireworkEffects.size(); i++)
@@ -68,12 +83,6 @@ void CResultProduction::WinUpdate()
 		//エフェクト処理.
 		for (auto& effect : m_FireworkEffects[i].effects)
 		{
-			if (m_Timer >= 3.0f)
-			{
-				CEffect::GetInstance().Stop(effect.handle);
-				effect.handle = -1;
-				m_Timer = 0.0f;
-			}
 			//再生されていないとき.
 			if (effect.handle == -1)
 			{
@@ -96,9 +105,7 @@ void CResultProduction::WinUpdate()
 				//色とα値を設定.
 				CEffect::GetInstance().SetAlpha(effect.handle, col);
 			}
-
 		}
-
 	}
 }
 

@@ -1,7 +1,7 @@
 #include "CEffect.h"
 
 //描画スプライト最大数
-constexpr int RENDER_SPRITE_MAX = 8000;
+constexpr int RENDER_SPRITE_MAX = 6000;
 //エフェクト管理用インスタンス最大数
 constexpr int EFFECT_INSTANCE_MAX = 2000;
 
