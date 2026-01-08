@@ -93,9 +93,9 @@ void CCollisionManager::WalltoCharacter()
 		if (!playerBox) continue;
 
 		// コライダーの当たり判定確認
-		auto WallTop_result = m_pWallTop->GetCollider()->CheckCollisionBoxDetail(*playerBox);
-		auto WallBottom_result = m_pWallBottom->GetCollider()->CheckCollisionBoxDetail(*playerBox);
-		auto WallLeft_result = m_pWallLeft->GetCollider()->CheckCollisionBoxDetail(*playerBox);
+		auto WallTop_result	  = m_pWallTop->GetCollider()->CheckCollisionBoxDetail(*playerBox);
+		auto WallBottom_result= m_pWallBottom->GetCollider()->CheckCollisionBoxDetail(*playerBox);
+		auto WallLeft_result  = m_pWallLeft->GetCollider()->CheckCollisionBoxDetail(*playerBox);
 		auto WallRight_result = m_pWallRight->GetCollider()->CheckCollisionBoxDetail(*playerBox);
 		
 		// 当たり判定の情報を格納
@@ -394,20 +394,20 @@ void CCollisionManager::WoodBoxtoCharacter()
 		if (!playerBox) continue;
 
 		// コライダーの当たり判定確認
-		auto WoodBoxTopLeft_result = m_pWoodBoxTopLeft->GetCollider()->CheckCollisionBoxDetail(*playerBox);
-		auto WoodBoxTopRight_result = m_pWoodBoxTopRight->GetCollider()->CheckCollisionBoxDetail(*playerBox);
-		auto WoodBoxCenter_result = m_pWoodBoxCenter->GetCollider()->CheckCollisionBoxDetail(*playerBox);
-		auto WoodBoxBottomLeft_result = m_pWoodBoxBottomLeft->GetCollider()->CheckCollisionBoxDetail(*playerBox);
+		auto WoodBoxTopLeft_result	   = m_pWoodBoxTopLeft->GetCollider()->CheckCollisionBoxDetail(*playerBox);
+		auto WoodBoxTopRight_result	   = m_pWoodBoxTopRight->GetCollider()->CheckCollisionBoxDetail(*playerBox);
+		auto WoodBoxCenter_result	   = m_pWoodBoxCenter->GetCollider()->CheckCollisionBoxDetail(*playerBox);
+		auto WoodBoxBottomLeft_result  = m_pWoodBoxBottomLeft->GetCollider()->CheckCollisionBoxDetail(*playerBox);
 		auto WoodBoxBottomRight_result = m_pWoodBoxBottomRight->GetCollider()->CheckCollisionBoxDetail(*playerBox);
 
 		// 当たり判定の情報を格納
 		HitInfo hits[] =
 		{
-			{ WoodBoxTopLeft_result.Hit,  WoodBoxTopLeft_result.Normal,  WoodBoxTopLeft_result.Penetration },
-			{ WoodBoxTopRight_result.Hit, WoodBoxTopRight_result.Normal, WoodBoxTopRight_result.Penetration },
-			{ WoodBoxCenter_result.Hit,   WoodBoxCenter_result.Normal,   WoodBoxCenter_result.Penetration },
+			{ WoodBoxTopLeft_result.Hit,	 WoodBoxTopLeft_result.Normal,     WoodBoxTopLeft_result.Penetration },
+			{ WoodBoxTopRight_result.Hit,	 WoodBoxTopRight_result.Normal,    WoodBoxTopRight_result.Penetration },
+			{ WoodBoxCenter_result.Hit,		 WoodBoxCenter_result.Normal,	   WoodBoxCenter_result.Penetration },
 			{ WoodBoxBottomLeft_result.Hit,  WoodBoxBottomLeft_result.Normal,  WoodBoxBottomLeft_result.Penetration },
-			{ WoodBoxBottomRight_result.Hit,  WoodBoxBottomRight_result.Normal,  WoodBoxBottomRight_result.Penetration },
+			{ WoodBoxBottomRight_result.Hit, WoodBoxBottomRight_result.Normal, WoodBoxBottomRight_result.Penetration },
 		};
 
 		// 押し返し
