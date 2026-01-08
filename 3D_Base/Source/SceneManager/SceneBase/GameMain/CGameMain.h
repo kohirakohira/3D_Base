@@ -51,6 +51,9 @@
 #include "../../../Assets/Effect/CEffect.h"		//エフェクト.
 #include "Global.h"
 
+//-----エフェクト-----.
+#include "Assets//Effect//CEffect.h"	//Effekseerを使うためのクラス.
+
 //当たり判定.
 #include "Collision/CollisionManager/CCollisionManager.h"
 
@@ -223,7 +226,7 @@ private:
 
 public:	
 	//エフェクト.
-	static ::EsHandle hEffect_Player_Smoke[PLAYER_MAX];
+	::EsHandle hEffect_Player_Smoke[PLAYER_MAX];
 public:		
 	// 変数用
 	//Iconの回転用..

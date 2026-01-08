@@ -30,13 +30,16 @@ CResultProduction::CResultProduction()
 	, m_StagingPosition		()
 	, m_Result				()
 
-	, hEffect_SMOKE			()
-	, hEffect_FIRE			()
+	, m_CharacterEffects	()
+	, m_FireworkEffects		()
 {
 }
 
 CResultProduction::~CResultProduction()
 {
+	//中を消す.
+	m_CharacterEffects.clear();
+	m_FireworkEffects.clear();
 }
 
 //勝ち抜け.
@@ -50,43 +53,52 @@ void CResultProduction::WinUpdate()
 	m_Number->SetNumber(Kill, 2);
 	m_Number->Update();
 
-	//位置.
-	D3DXVECTOR3 pos[4] = {};
 	//色の設定.
 	Effekseer::Color col = { 255, 255, 255, 255 };
 
+	//エフェクトの時間.
+	m_Timer += dt;
+
 	//エフェクト.
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < m_FireworkEffects.size(); i++)
 	{
-		if (hEffect_FIRE[i] == -1)
+		//キャラ位置の取得.
+		D3DXVECTOR3 firePos = { 0.0f, 0.0f, 0.0f };
+
+		//エフェクト処理.
+		for (auto& effect : m_FireworkEffects[i].effects)
 		{
-			//位置設定.
-			switch (i)
+			if (m_Timer >= 3.0f)
 			{
-			case 0:
-				pos[0] = {-180.0f,	20.0f, 300.0f};
-				break;
-			case 1:
-				pos[1] = { 180.0f,	20.0f, 200.0f };
-				break;
-			case 2:
-				pos[2] = { -110.0f,	-20.0f, 300.0f };
-				break;
-			case 3:
-				pos[3] = { 110.0f,	-20.0f, 200.0f };
-				break;
-			default:
-				break;
+				CEffect::GetInstance().Stop(effect.handle);
+				effect.handle = -1;
+				m_Timer = 0.0f;
 			}
-			hEffect_FIRE[i] = CEffect::GetInstance().Play(CEffect::Firework, pos[i]);
-			//エフェクトの回転を設定.
-			CEffect::GetInstance().SetRotation(hEffect_FIRE[i], D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-			//エフェクトのサイズを設定.
-			CEffect::GetInstance().SetScale(hEffect_FIRE[i], D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
-			//エフェクトの位置を設定.
-			CEffect::GetInstance().SetLocation(hEffect_FIRE[i], pos[i]);
-			CEffect::GetInstance().SetAlpha(hEffect_FIRE[i], col);
+			//再生されていないとき.
+			if (effect.handle == -1)
+			{
+				//キャラ位置 + オフセット = エフェクト位置.
+				D3DXVECTOR3 worldPos =
+				{
+					firePos.x + effect.offset.x,
+					firePos.y + effect.offset.y,
+					firePos.z + effect.offset.z
+				};
+
+				//再生.
+				effect.handle = CEffect::GetInstance().Play(CEffect::Firework, worldPos);
+				//エフェクトの回転を設定.
+				CEffect::GetInstance().SetRotation(effect.handle, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+				//エフェクトのサイズを設定.
+				CEffect::GetInstance().SetScale(effect.handle, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
+				//エフェクトの位置を設定.
+				CEffect::GetInstance().SetLocation(effect.handle, worldPos);
+				//色とα値を設定.
+				CEffect::GetInstance().SetAlpha(effect.handle, col);
+			}
+
 		}
+
 	}
 }
 
@@ -128,46 +140,51 @@ void CResultProduction::DrawUpdate()
 	m_Number->SetNumber(Kill, 2);
 	m_Number->Update();
 
-	//位置.
-	D3DXVECTOR3 pos[2] = {};
-	for (int i = 0; i <= 1; i++)
-	{
-		//位置.
-		switch (i)
-		{
-		case 0:
-			pos[0] = {	m_CharacterManager->GetPosition(i).x - 10.0f,
-						m_CharacterManager->GetPosition(i).y - 10.0f,
-						m_CharacterManager->GetPosition(i).z + 20.0f };
-			break;
-		case 1:
-			pos[1] = {	m_CharacterManager->GetPosition(i).x + 10.0f,
-						m_CharacterManager->GetPosition(i).y - 10.0f,
-						m_CharacterManager->GetPosition(i).z - 20.0f };
-			break;
-		default:
-			break;
-		}
-	}
+	//エフェクトの時間.
+	m_Timer += dt;
 
-	//引き分けのキャラ分回す.
-	for (int p = 0; p < 2; p++)
+	//エフェクト.
+	for (int i = 0; i < m_CharacterEffects.size(); i++)
 	{
-		for (int i = 0; i < m_Result.players.size(); i++)
+		//プレイヤーID.
+		int playerID = m_Result.players[i];
+
+		//キャラ位置の取得.
+		D3DXVECTOR3 charPos = m_CharacterManager->GetPosition(playerID);
+
+		//エフェクト処理.
+		for (auto& effect : m_CharacterEffects[i].effects)
 		{
-			if (hEffect_SMOKE[i] == -1 || hEffect_SMOKE[i] <= 3)
+			//再生されていないとき.
+			if (effect.handle == -1)
 			{
-				//エフェクト.
-				hEffect_SMOKE[i] = CEffect::GetInstance().Play(CEffect::Smoke, pos[p]);
+				//キャラ位置 + オフセット = エフェクト位置.
+				D3DXVECTOR3 worldPos =
+				{
+					charPos.x + effect.offset.x,
+					charPos.y + effect.offset.y,
+					charPos.z + effect.offset.z
+				};
+
+				//再生.
+				effect.handle = CEffect::GetInstance().Play(CEffect::Smoke, worldPos);
 				//エフェクトの回転を設定.
-				CEffect::GetInstance().SetRotation(hEffect_SMOKE[i], D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+				CEffect::GetInstance().SetRotation(effect.handle, D3DXVECTOR3{ D3DXToRadian(25.0f), 0.0f, 0.0f });
 				//エフェクトのサイズを設定.
-				CEffect::GetInstance().SetScale(hEffect_SMOKE[i], D3DXVECTOR3{ 2.0f, 2.0f, 2.0f });
+				CEffect::GetInstance().SetScale(effect.handle, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
 				//エフェクトの位置を設定.
-				CEffect::GetInstance().SetLocation(hEffect_SMOKE[i], pos[p]);
-				CEffect::GetInstance().SetAlpha(hEffect_SMOKE[i], col);
+				CEffect::GetInstance().SetLocation(effect.handle, worldPos);
+				//色とα値を設定.
+				CEffect::GetInstance().SetAlpha(effect.handle, col);
+			}
+			if (m_Timer >= 5.0f)
+			{
+				CEffect::GetInstance().Stop(effect.handle);
+				effect.handle = -1;
+				m_Timer = 0.0f;
 			}
 		}
+
 	}
 }
 
@@ -228,17 +245,6 @@ void CResultProduction::Create()
 		m_PlayerUI[index]		= std::make_unique<CUIObject>();
 		m_SpritePlayerUI[index] = std::make_shared<CSprite2D>();
 	}
-
-	//エフェクト.
-	for (int i = 0; i < 4; i++)
-	{
-		hEffect_FIRE[i] = -1;
-	}
-	for (int i = 0; i < 8; i++)
-	{
-		hEffect_SMOKE[i] = -1;
-	}
-
 }
 
 //初期化.
@@ -305,6 +311,35 @@ void CResultProduction::Init(DrawResult result)
 
 	//リザルト結果を保存.
 	m_Result = result;
+
+	//キャラ分演出管理を用意.
+	m_CharacterEffects.resize(m_Result.players.size());
+	//花火演出管理を用意※4つ用意.
+	m_FireworkEffects.resize(4);
+
+	//エフェクト.
+	for (auto& charEff : m_CharacterEffects)
+	{
+		//出す位置.
+		charEff.effects =
+		{
+			//ハンドル初期化, { x座標, y座標, z座標 }.
+			{ -1, {-10.0f, -10.0f,  25.0f} },	//左後ろ.
+			{ -1, { 15.0f, -10.0f, -25.0f} }	//右前.
+		};
+	}
+	for (auto& fireEff : m_FireworkEffects)
+	{
+		//出す位置.
+		fireEff.effects =
+		{
+			{ -1, {-180.0f,	 20.0f, 300.0f} },
+			{ -1, { 180.0f,	 20.0f, 200.0f} },
+			{ -1, {-110.0f,	-20.0f, 300.0f} },
+			{ -1, { 110.0f,	-20.0f, 200.0f} }
+		};
+	}
+
 
 	//勝ちか引き分けでの位置決め.
 	if (m_Result.players.size() == 1)

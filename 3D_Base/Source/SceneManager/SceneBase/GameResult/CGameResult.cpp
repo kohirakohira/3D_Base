@@ -45,6 +45,7 @@ CGameResult::CGameResult(HWND hWnd)
 CGameResult::~CGameResult()
 {
 	m_hWnd = nullptr;
+	m_pResultProduction = nullptr;
 }
 
 void CGameResult::Update()
@@ -143,6 +144,7 @@ void CGameResult::Draw()
 	m_pChoiceIcon->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
 
+	//エフェクトの表示.
 	CDirectX11::GetInstance().SetAlphaBlend(true);
 	CEffect::GetInstance().Draw(
 		m_pResultProduction->GetCamera()->m_mView,

@@ -40,6 +40,26 @@ public: //キャラクターの位置を設定する用の構造体.
 			, Fouros ({ 0.0f, 0.0f, 0.0f }) 
 		{ } 
 	};
+private:
+	//1つのエフェクトを管理する構造体.
+	struct EffectManagement
+	{
+		//再生用ハンドル.
+		::EsHandle handle;
+		//キャラ位置.
+		D3DXVECTOR3 offset;
+	};
+
+	//キャラ1人分のエフェクト演出管理.
+	struct AllEffects
+	{
+		//キャラの持つエフェクトのコンテナ.
+		std::vector<EffectManagement> effects;
+	};
+	//リザルトの花火の演出データ.
+	std::vector<AllEffects> m_FireworkEffects;
+	//リザルトの全キャラ分の演出データ.
+	std::vector<AllEffects> m_CharacterEffects;
 
 public:
 	CResultProduction();
@@ -75,10 +95,10 @@ public:
 	void DrawUpdate();
 	void DrawDraw();
 
-private:
-	//エフェクト.
-	::EsHandle hEffect_FIRE[4];
-	::EsHandle hEffect_SMOKE[8];
+//private:
+//	//エフェクト.
+//	::EsHandle hEffect_FIRE[4];
+//	::EsHandle hEffect_SMOKE[PLAYER_MAX][2];
 
 private:
 	//キャラクターの基準位置.

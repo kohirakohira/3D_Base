@@ -7,7 +7,6 @@ static bool prevA = false;
 #include "CGameMain.h"
 //-----サウンド-----.
 #include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス.
-#include "Assets//Effect//CEffect.h"	//Effekseerを使うためのクラス.
 
 //-----DirectX-----.
 #include "Assets//DirectX//DirectX9//CDirectX9.h" // DirectX9クラス.
@@ -16,16 +15,12 @@ static bool prevA = false;
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
 //定数宣言.
-static constexpr int TIME = 30;		//時間は調整してください.
+static constexpr int TIME = 10;		//時間は調整してください.
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;			//時計の回転する針に使用.
 const float FLASH_TIME = 0.5f;			//点滅周期.
 const float dt = 1.0f / FPS;
-//staticメンバ変数の定義(実体).
-::EsHandle CGameMain::hEffect_Player_Smoke[PLAYER_MAX] =
-{
-	-1, -1, -1, -1
-};
+
 CGameMain::CGameMain(HWND hWnd)
 	: m_hWnd						( hWnd )
 
@@ -104,6 +99,7 @@ CGameMain::CGameMain(HWND hWnd)
 	, m_FlashingTime				( 0.0f )
 
 	, m_EffectTime					( 0.0f )
+	, hEffect_Player_Smoke			()
 {
 	//最初のシーンをメインにする..
 	m_SceneType = CSceneType::Main;
