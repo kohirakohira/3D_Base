@@ -114,5 +114,5 @@ private:
 	//キーバインド.
 	std::shared_ptr<CMultiInputKeyManager>	m_Key;
 
-	float soundcount = 300.0f;
+	float soundcount = 120.0f;
 };

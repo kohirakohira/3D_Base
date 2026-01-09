@@ -70,7 +70,9 @@ void CGameResult::Update()
 		if (soundcount <= 0.0f)
 		{
 			// SE‚ÌÄ¶
-			//CSoundManager::PlaySE(CSoundManager::SE_FireWork);
+			CSoundManager::PlaySE(CSoundManager::SE_FireWork);
+
+			soundcount = 120.f;
 		}
 
 		m_pResultProduction->WinUpdate();
