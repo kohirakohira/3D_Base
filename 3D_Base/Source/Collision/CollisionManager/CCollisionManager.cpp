@@ -328,7 +328,6 @@ void CCollisionManager::WoodBoxtoCharacter()
 {
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-#if 0
 		// 押し返しの強さ
 		const float pushStrength = m_pCharacterManager->GetTuning(i).moveSpeed;
 
@@ -373,81 +372,26 @@ void CCollisionManager::WoodBoxtoCharacter()
 
 					if (chara->GetHitBox() == false)
 					{
-						//衝突SEの再生.
-						CSoundManager::PlaySE(CSoundManager::SE_Impact);
+						if (chara->GetSoundCount() <= 0.0f)
+						{
+							//衝突SEの再生.
+							CSoundManager::PlaySE(CSoundManager::SE_Impact);
+							
+							// サウンドカウントの設定
+							chara->SetSoundCount(90.f);
+						}
 
 						// 接触時にフラグをtrueにする
 						chara->SetHitBox(true);
 					}
 				}
 			}
-		}
-#else
-		bool isHitWoodBox = false; // 木箱と衝突しているか?
-
-		auto chara = m_pCharacterManager->GetControlPlayer(i);
-		if (!chara) continue;
-
-		auto Coll = chara->GetBody()->GetCollider();
-
-		auto playerBox = std::dynamic_pointer_cast<CBoxCollider>(Coll);
-		if (!playerBox) continue;
-
-		// コライダーの当たり判定確認
-		auto WoodBoxTopLeft_result	   = m_pWoodBoxTopLeft->GetCollider()->CheckCollisionBoxDetail(*playerBox);
-		auto WoodBoxTopRight_result	   = m_pWoodBoxTopRight->GetCollider()->CheckCollisionBoxDetail(*playerBox);
-		auto WoodBoxCenter_result	   = m_pWoodBoxCenter->GetCollider()->CheckCollisionBoxDetail(*playerBox);
-		auto WoodBoxBottomLeft_result  = m_pWoodBoxBottomLeft->GetCollider()->CheckCollisionBoxDetail(*playerBox);
-		auto WoodBoxBottomRight_result = m_pWoodBoxBottomRight->GetCollider()->CheckCollisionBoxDetail(*playerBox);
-
-		// 当たり判定の情報を格納
-		HitInfo hits[] =
-		{
-			{ WoodBoxTopLeft_result.Hit,	 WoodBoxTopLeft_result.Normal,     WoodBoxTopLeft_result.Penetration },
-			{ WoodBoxTopRight_result.Hit,	 WoodBoxTopRight_result.Normal,    WoodBoxTopRight_result.Penetration },
-			{ WoodBoxCenter_result.Hit,		 WoodBoxCenter_result.Normal,	   WoodBoxCenter_result.Penetration },
-			{ WoodBoxBottomLeft_result.Hit,  WoodBoxBottomLeft_result.Normal,  WoodBoxBottomLeft_result.Penetration },
-			{ WoodBoxBottomRight_result.Hit, WoodBoxBottomRight_result.Normal, WoodBoxBottomRight_result.Penetration },
-		};
-
-		// 押し返し
-		D3DXVECTOR3 push(0, 0, 0);
-
-		for (auto& h : hits)
-		{
-			if (!h.hit) continue;
-
-			isHitWoodBox = true;
-
-			// 各面分、法線方向に押し戻しを加算
-			push += h.normal * h.penetration;
-		}
-
-		if (isHitWoodBox == true)
-		{
-			// 念のため微小量
-			constexpr float SLOP = 0.001f;
-
-			auto pos = chara->GetPosition();
-			pos += push + (D3DXVec3Length(&push) > 0 ? (push / D3DXVec3Length(&push)) * SLOP : D3DXVECTOR3(0, 0, 0));
-
-			// 押し出しを車体:砲塔に設定
-			chara->GetBody()->SetPosition(pos);
-			pos.y += chara->GetTuning().cannonHeight;
-			chara->GetCannon()->SetPosition(pos);
-
-			// サウンドフラグの判定
-			if (chara->GetHitBox() == false)
+			else
 			{
-				//CSoundManager::PlaySE(CSoundManager::SE_Impact);
-				//chara->SetHitWall(true);
+				// 非接触時にフラグをfalseにする
+				chara->SetHitBox(false);
 			}
 		}
-		else
-		{
-			chara->SetHitBox(false);
-		}
-#endif
 	}
 }
 

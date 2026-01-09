@@ -136,6 +136,9 @@ void CPlayer::Update()
 	// サウンドリセット関数
 	ResetSoundFlg();
 
+	// サウンドカウント
+	SoundCoolDown();
+
 	// 死亡処理の更新
 	Death();
 	// 無敵処理の更新

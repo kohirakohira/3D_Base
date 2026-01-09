@@ -26,6 +26,8 @@ CCharacterObjectBase::CCharacterObjectBase()
 		false,	// サウンドフラグ：壁に当たっている時	
 		false,	// サウンドフラグ：箱に当たっている時
 		false,	// サウンドフラグ：爆風に当たっている時
+
+		0.0f,	// サウンドカウント
 	};
 }
 
@@ -61,6 +63,16 @@ void CCharacterObjectBase::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light
 		m_pCannon->Draw(View, Proj, Light, Camera);
 	}
 #endif
+}
+
+// サウンドクールダウン
+void CCharacterObjectBase::SoundCoolDown()
+{
+	m_Chara.Soundcount--;
+	if (m_Chara.Soundcount <= 0.0f && m_Chara.m_HitBox == true)
+	{
+		m_Chara.Soundcount = 90.f;
+	}
 }
 
 // 弾マネージャーのインスタンス設定

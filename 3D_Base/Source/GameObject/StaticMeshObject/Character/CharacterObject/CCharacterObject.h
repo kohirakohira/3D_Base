@@ -45,6 +45,8 @@ public:
 		bool	m_HitWall;		// サウンドフラグ：壁に当たっている時
 		bool	m_HitBox;		// サウンドフラグ：箱に当たっている時
 		bool	m_HitBlast;		// サウンドフラグ：爆風に当たっている時
+				
+		float Soundcount = 0.0f;// サウンドカウント
 
 	} m_Chara;
 
@@ -61,6 +63,13 @@ public:
 	virtual std::shared_ptr<CBody> GetBody() const { return m_pBody; }
 	// 砲塔の取得
 	virtual std::shared_ptr<CCannon> GetCannon() const { return m_pCannon; }
+
+	// サウンドクールダウン
+	virtual void SoundCoolDown();
+	// サウンドカウントの設定
+	virtual void SetSoundCount(float soundcount) { m_Chara.Soundcount = soundcount; }
+	// サウンドカウントの取得
+	virtual float GetSoundCount() const { return m_Chara.Soundcount; }
 
 	//プレイヤーかCOMを判定する用.
 	virtual bool IsPlayer() const = 0;
