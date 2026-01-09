@@ -32,6 +32,9 @@ CResultProduction::CResultProduction()
 
 	, m_CharacterEffects	()
 	, m_FireworkEffects		()
+
+	, EffectInterval		( 0.2f )
+	, FireIndex				( 0 )
 {
 }
 
@@ -57,55 +60,46 @@ void CResultProduction::WinUpdate()
 	Effekseer::Color col = { 255, 255, 255, 255 };
 
 	//エフェクトの時間.
-	if (m_Timer >= 3.0f)
-	{
-		for (auto& fire : m_FireworkEffects)
-		{
-			for (auto& effect : fire.effects)
-			{
-				CEffect::GetInstance().Stop(effect.handle);
-				effect.handle = -1;
-			}
-		}
-		m_Timer = 0.0f;
-	}
-	else
-	{
-		m_Timer += dt;
-	}
-
+	m_Timer += dt;
 	//エフェクト.
-	for (int i = 0; i < m_FireworkEffects.size(); i++)
+	if (m_Timer >= EffectInterval)
 	{
-		//キャラ位置の取得.
+		m_Timer -= EffectInterval;
+
+		//順番.
+		auto& fire = m_FireworkEffects[FireIndex];
+		auto& effect = fire.effects[rand() % fire.effects.size()];
+
+		//ハンドルが使われていたら.
+		if (effect.handle != -1)
+		{
+			effect.handle = -1;
+		}
+
+		//花火の位置設定用.
 		D3DXVECTOR3 firePos = { 0.0f, 0.0f, 0.0f };
 
-		//エフェクト処理.
-		for (auto& effect : m_FireworkEffects[i].effects)
+		//原点(xyz = 0.0f) + オフセット = エフェクト位置.
+		D3DXVECTOR3 worldPos =
 		{
-			//再生されていないとき.
-			if (effect.handle == -1)
-			{
-				//キャラ位置 + オフセット = エフェクト位置.
-				D3DXVECTOR3 worldPos =
-				{
-					firePos.x + effect.offset.x,
-					firePos.y + effect.offset.y,
-					firePos.z + effect.offset.z
-				};
+			firePos.x + effect.offset.x,
+			firePos.y + effect.offset.y,
+			firePos.z + effect.offset.z
+		};
 
-				//再生.
-				effect.handle = CEffect::GetInstance().Play(CEffect::Firework, worldPos);
-				//エフェクトの回転を設定.
-				CEffect::GetInstance().SetRotation(effect.handle, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
-				//エフェクトのサイズを設定.
-				CEffect::GetInstance().SetScale(effect.handle, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
-				//エフェクトの位置を設定.
-				CEffect::GetInstance().SetLocation(effect.handle, worldPos);
-				//色とα値を設定.
-				CEffect::GetInstance().SetAlpha(effect.handle, col);
-			}
-		}
+		//再生.
+		effect.handle = CEffect::GetInstance().Play(CEffect::Firework, worldPos);
+		//エフェクトの回転を設定.
+		CEffect::GetInstance().SetRotation(effect.handle, D3DXVECTOR3{ 0.0f, 0.0f, 0.0f });
+		//エフェクトのサイズを設定.
+		CEffect::GetInstance().SetScale(effect.handle, D3DXVECTOR3{ 3.0f, 3.0f, 3.0f });
+		//エフェクトの位置を設定.
+		CEffect::GetInstance().SetLocation(effect.handle, worldPos);
+		//色とα値を設定.
+		CEffect::GetInstance().SetAlpha(effect.handle, col);
+
+		FireIndex = (FireIndex + 1) % 4;
+
 	}
 }
 
@@ -340,10 +334,10 @@ void CResultProduction::Init(DrawResult result)
 		//出す位置.
 		fireEff.effects =
 		{
-			{ -1, {-180.0f,	 20.0f, 300.0f} },
-			{ -1, { 180.0f,	 20.0f, 200.0f} },
-			{ -1, {-110.0f,	-20.0f, 300.0f} },
-			{ -1, { 110.0f,	-20.0f, 200.0f} }
+			{ -1, {-250.0f,	 20.0f, 400.0f} },
+			{ -1, { 150.0f,	 20.0f, 250.0f} },
+			{ -1, {-150.0f,	-20.0f, 400.0f} },
+			{ -1, { 90.0f,	-20.0f, 250.0f} }
 		};
 	}
 

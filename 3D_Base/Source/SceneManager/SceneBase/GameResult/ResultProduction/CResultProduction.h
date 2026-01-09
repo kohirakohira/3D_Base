@@ -61,6 +61,11 @@ private:
 	//リザルトの全キャラ分の演出データ.
 	std::vector<AllEffects> m_CharacterEffects;
 
+	//エフェクトの間隔.
+	float EffectInterval;
+	//花火インデックス.
+	int FireIndex;
+
 public:
 	CResultProduction();
 	~CResultProduction();
@@ -94,11 +99,6 @@ public:
 	//引き分け.
 	void DrawUpdate();
 	void DrawDraw();
-
-//private:
-//	//エフェクト.
-//	::EsHandle hEffect_FIRE[4];
-//	::EsHandle hEffect_SMOKE[PLAYER_MAX][2];
 
 private:
 	//キャラクターの基準位置.
