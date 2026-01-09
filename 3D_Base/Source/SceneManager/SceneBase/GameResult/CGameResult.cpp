@@ -84,6 +84,15 @@ void CGameResult::Update()
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Draw);
 		//↓-----リザルトでの演出-----↓.
 
+		soundcount--;
+		if (soundcount <= 0.0f)
+		{
+			// SEの再生
+			CSoundManager::PlaySE(CSoundManager::SE_Spark);
+
+			soundcount = 240.f;
+		}
+
 		m_pResultProduction->DrawUpdate();
 
 		//↑-----リザルトでの演出-----↑.
@@ -100,6 +109,9 @@ void CGameResult::Update()
 			//BGMのループ停止.
 			CSoundManager::Stop(CSoundManager::BGM_Result_Win);
 			CSoundManager::Stop(CSoundManager::BGM_Result_Draw);
+
+			// SEの停止
+			CSoundManager::Stop(CSoundManager::SE_Spark);
 
 			//SEの再生.
 			CSoundManager::PlaySE(CSoundManager::SE_Click);
