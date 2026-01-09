@@ -3,6 +3,9 @@
 //-----サウンド-----
 #include "Assets//Sound//CSoundManager.h" // サウンドマネージャークラス
 
+//-----エフェクト-----
+#include "../../../Assets/Effect/CEffect.h"
+
 //前方宣言.
 #include "Assets//Sprite//Sprite2D//CSprite2D.h" // 2Dスプライトクラス.
 
@@ -31,6 +34,7 @@ CGameResult::CGameResult(HWND hWnd)
 	, m_Key					( nullptr )
 
 	, m_pResultProduction	( nullptr )
+	, m_WinOrDraw			( )
 {
 	//インスタンス生成.
 	m_pResultProduction = std::make_unique<CResultProduction>();
@@ -41,6 +45,7 @@ CGameResult::CGameResult(HWND hWnd)
 CGameResult::~CGameResult()
 {
 	m_hWnd = nullptr;
+	m_pResultProduction = nullptr;
 }
 
 void CGameResult::Update()
@@ -134,6 +139,8 @@ void CGameResult::Draw()
 		break;
 	}
 
+
+
 	//前後関係無視.
 	CDirectX11::GetInstance().SetDepth(false);
 	//リザルト画像の描画.
@@ -143,12 +150,22 @@ void CGameResult::Draw()
 	//選択肢画像の描画.
 	m_pChoiceIcon->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
+
+	//エフェクトの表示.
+	CDirectX11::GetInstance().SetAlphaBlend(true);
+	CEffect::GetInstance().Draw(
+		m_pResultProduction->GetCamera()->m_mView,
+		m_pResultProduction->GetCamera()->m_mProj,
+		m_pResultProduction->GetCamera()->m_Light,
+		m_pResultProduction->GetCamera()->m_Camera);
+	CDirectX11::GetInstance().SetAlphaBlend(false);
+
 }
 
 void CGameResult::Init()
 {
 	//初期化.
-	m_pResultProduction->Init();
+	m_pResultProduction->Init(m_WinOrDraw);
 
 	//カメラの位置.
 	m_pCamera->SetCameraPos(-1.5f, 1.5f, 14.f);
@@ -280,8 +297,11 @@ HRESULT CGameResult::LoadData()
 
 CSceneType CGameResult::WinOrDrawFunction()
 {
+	//判定用.
+	bool IsSingleWin = CGameDataManager::GetInstance().WinOrDrawJudgment(m_WinOrDraw);
+
 	//一人で勝っていたら.
-	if (CGameDataManager::GetInstance().SameKill() == true)
+	if (IsSingleWin == true)
 	{
 		m_SceneType = CSceneType::ResultWin;
 		m_pResultProduction->SetIsJudge(true);

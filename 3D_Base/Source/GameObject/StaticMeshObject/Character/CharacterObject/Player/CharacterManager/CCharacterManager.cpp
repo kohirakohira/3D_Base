@@ -229,6 +229,24 @@ void CCharacterManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, C
 		player->Draw(View, Proj, Light, Camera);
 	}
 }
+//リザルト専用.
+void CCharacterManager::DrawResult(
+	std::vector<int>& playerID,
+	D3DXMATRIX& View,
+	D3DXMATRIX& Proj,
+	LIGHT& Light,
+	CAMERA& Camera)
+{
+	for (int id : playerID)
+	{
+		//0より小さいか、キャラクターサイズ以上の場合やり直し.
+		if (id < 0 || id >= m_pCharacter.size())
+		{
+			continue;
+		}
+		m_pCharacter[id]->Draw(View, Proj, Light, Camera);
+	}
+}
 //==================
 
 //=======メッシュをアタッチ=======

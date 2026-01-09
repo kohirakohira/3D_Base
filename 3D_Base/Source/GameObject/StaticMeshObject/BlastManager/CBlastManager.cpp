@@ -3,7 +3,7 @@
 
 CBlastManager::CBlastManager()
 	: m_Blast			( )
-	, m_NormalRadius	( 4.0f )
+	, m_NormalRadius	( 6.0f )
 	, m_MaxRadius		( 10.0f )
 {
 }

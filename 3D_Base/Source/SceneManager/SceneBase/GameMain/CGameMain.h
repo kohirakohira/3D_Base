@@ -48,8 +48,11 @@
 
 //コントローラー
 #include "InputDevice/Input/Controller/ControllerManager/CControllerManager.h"
-
+#include "../../../Assets/Effect/CEffect.h"		//エフェクト.
 #include "Global.h"
+
+//-----エフェクト-----.
+#include "Assets//Effect//CEffect.h"	//Effekseerを使うためのクラス.
 
 //当たり判定.
 #include "Collision/CollisionManager/CCollisionManager.h"
@@ -221,6 +224,9 @@ private:
 
 	void BuildComObstacles();
 
+public:	
+	//エフェクト.
+	::EsHandle hEffect_Player_Smoke[PLAYER_MAX];
 public:		
 	// 変数用
 	//Iconの回転用..
@@ -230,6 +236,9 @@ public:
 	bool m_Flashing;
 	//点滅用カウント.
 	float m_FlashingTime;
+
+	//エフェクトの時間.
+	float m_EffectTime;
 
 	//これは何用？
 	D3DXVECTOR3 push;

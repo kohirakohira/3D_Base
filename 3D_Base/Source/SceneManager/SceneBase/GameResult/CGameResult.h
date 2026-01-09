@@ -109,6 +109,8 @@ public:
 	bool DrawFlag;
 
 private:
+	//勝ちor引き分け.
+	DrawResult m_WinOrDraw;
 	//キーバインド.
 	std::shared_ptr<CMultiInputKeyManager>	m_Key;
 
