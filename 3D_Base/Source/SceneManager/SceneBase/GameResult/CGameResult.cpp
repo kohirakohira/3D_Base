@@ -61,6 +61,13 @@ void CGameResult::Update()
 		CSoundManager::PlayLoop(CSoundManager::BGM_Result_Win);
 		//↓-----リザルトの演出-----↓.
 
+		soundcount--;
+		if (soundcount <= 0.0f)
+		{
+			// SEの再生
+			//CSoundManager::PlaySE(CSoundManager::SE_FireWork);
+		}
+
 		m_pResultProduction->WinUpdate();
 
 		//↑-----リザルトでの演出-----↑.

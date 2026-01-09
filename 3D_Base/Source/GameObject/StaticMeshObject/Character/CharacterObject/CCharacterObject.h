@@ -45,6 +45,7 @@ public:
 		bool	m_HitWall;		// サウンドフラグ：壁に当たっている時
 		bool	m_HitBox;		// サウンドフラグ：箱に当たっている時
 		bool	m_HitBlast;		// サウンドフラグ：爆風に当たっている時
+		bool	m_HitCharacter;	// サウンドフラグ：キャラクターに当たっている時
 				
 		float Soundcount = 0.0f;// サウンドカウント
 

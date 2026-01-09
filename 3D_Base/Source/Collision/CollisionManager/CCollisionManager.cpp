@@ -87,6 +87,9 @@ void CCollisionManager::WalltoCharacter()
 		auto chara = m_pCharacterManager->GetControlPlayer(i);
 		if (!chara) continue;
 
+		// キャラが死んでいたらスキップ
+		if (chara->GetDeath())continue;
+
 		auto Coll = chara->GetBody()->GetCollider();
 
 		auto playerBox = std::dynamic_pointer_cast<CBoxCollider>(Coll);
@@ -251,6 +254,10 @@ void CCollisionManager::CharactertoCharacter()
 			if (!charaB->IsPlayer())continue;
 			auto CollB = charaB->GetBody()->GetCollider();
 
+			// キャラが死んでいる時はスキップ
+			if (charaA->GetDeath()) continue;
+			if (charaB->GetDeath()) continue;
+
 			if (CollA->CheckCollision(*CollB))
 			{
 				// 衝突時の押し返し処理例
@@ -264,6 +271,29 @@ void CCollisionManager::CharactertoCharacter()
 					push *= pushStrength;
 					charaA->GetBody()->PushBack(push);
 				}
+
+				if (charaA->GetHitBox() == false || charaB->GetHitBox() == false)
+				{
+					if (charaA->GetSoundCount() <= 0.0f || charaB->GetSoundCount() <= 0.0f)
+					{
+						//衝突SEの再生.
+						CSoundManager::PlaySE(CSoundManager::SE_Impact);
+
+						// サウンドカウントの設定
+						charaA->SetSoundCount(90.f);
+						charaB->SetSoundCount(90.f);
+					}
+
+					// 接触時にフラグをtrueにする
+					charaA->SetHitBox(true);
+					charaB->SetHitBox(true);
+				}
+			}
+			else
+			{
+				// 非接触時にフラグをfalseにする
+				charaA->SetHitBox(false);
+				charaB->SetHitBox(false);
 			}
 		}
 	}
@@ -304,6 +334,10 @@ void CCollisionManager::CharactertoShot()
 		// プレイヤーのコライダー取得
 		auto chara = m_pCharacterManager->GetControlPlayer(i);
 		if (!chara)continue;
+
+		// キャラが死んでいたらスキップ
+		if (chara->GetDeath())continue;
+
 		auto Coll = chara->GetBody()->GetCollider();
 
 		for (auto& shot : m_pShotManager->GetShot())
@@ -336,6 +370,8 @@ void CCollisionManager::WoodBoxtoCharacter()
 		if (!chara)continue;
 		auto charaColl = chara->GetBody()->GetCollider();
 
+		// キャラが死んでいたらスキップ
+		if (chara->GetDeath())continue;
 
 		//木箱をまとめて管理.
 		std::shared_ptr<CCollider> woodbox[] = {
@@ -539,6 +575,9 @@ void CCollisionManager::CharactertoBlast()
 		auto chara = m_pCharacterManager->GetControlPlayer(i);
 		if (!chara)continue;
 		auto Coll = chara->GetBody()->GetCollider();
+
+		// キャラが死んでいたらスキップ
+		if (chara->GetDeath())continue;
 
 		for (auto& blast : m_pBlastManager->GetAllBlast())
 		{
