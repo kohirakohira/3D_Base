@@ -97,6 +97,7 @@
     <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.cpp" />
     <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.cpp" />
     <ClCompile Include="Source\Assets\Data\Singleton\FakeLoad\FakeLoad.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComObstacleAvoidance\CComObstacleAvoidance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -181,6 +182,9 @@
     <ClInclude Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.h" />
     <ClInclude Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.h" />
     <ClInclude Include="Source\Assets\Data\Singleton\FakeLoad\FakeLoad.h" />
+    <ClInclude Include="Source\Assets\Sound\FileReader\CFileReader.h" />
+    <ClInclude Include="Source\Assets\Sound\FileReader\FileType\CFileType.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComObstacleAvoidance\CComObstacleAvoidance.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />

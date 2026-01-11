@@ -46,9 +46,7 @@ CComPlayer::CComPlayer()
     , m_CenterPullStrength(0.3f)                   // 引き寄せ強度
     , m_pSimpleObstacles(nullptr)
     , m_LookAheadSkep(2.0f)
-    //========================================
     // 障害物回避パラメータ
-    //========================================
     , m_ProbeDist(8.0f)                         // 8メートル先まで探査
     , m_AvoidHoldFrames(0.0f)
     , m_AvoidSide(0)

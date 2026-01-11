@@ -186,6 +186,7 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\BlastManager\Blast\CBlast.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\BlastManager\CBlastManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComObstacleAvoidance\CComObstacleAvoidance.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComShot\CComShot.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComTargetSelector\CComTargetSelector.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CSimplePathfinder\CSimplePathfinder.cpp" />
@@ -270,6 +271,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\BlastManager\Blast\CBlast.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\BlastManager\CBlastManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComObstacleAvoidance\CComObstacleAvoidance.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComShot\CComShot.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComTargetSelector\CComTargetSelector.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CSimplePathfinder\CSimplePathfinder.h" />
