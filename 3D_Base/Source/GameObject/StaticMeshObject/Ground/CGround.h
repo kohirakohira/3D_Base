@@ -20,16 +20,6 @@ public:
 	//初期化.
 	void Init();
 
-	// リスポーン可能エリアに
-	// プレイヤーの座標を指定する
-	void RespawnArea();
-
-	// マップの中央を跨がないように計算する
-	int GetAreaIndex(float x, float z);
-
-	//プレイヤーを設定.
-	void SetPlayer(std::shared_ptr<CCharacterManager> pPlayer) { m_pCharacterManager = pPlayer; }
-
 protected:
 	// キャラクターマネージャークラス
 	std::shared_ptr<CCharacterManager>		m_pCharacterManager;
