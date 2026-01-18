@@ -1185,11 +1185,63 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
         if (!IsInDangerZone(nextPos))
         {
             body->SetPosition(nextPos);
+
+			// ˆÚ“®ƒtƒ‰ƒO‚ð—§‚Ä‚é
+            SetMove(true);
         }
         else
         {
+			// ˆÚ“®ƒtƒ‰ƒO‚ð‰º‚ë‚·
+			SetMove(false);
         }
         // ŠëŒ¯‚È‚çˆÚ“®‚µ‚È‚¢
+    }
+
+    if (GetMove() == true)
+    {
+        if (m_PlayerID == 0)
+        {
+            // ˆÚ“®Œø‰Ê‰¹Ä¶
+            CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+        }
+        if (m_PlayerID == 1)
+        {
+            // ˆÚ“®Œø‰Ê‰¹Ä¶
+            CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+        }
+        if (m_PlayerID == 2)
+        {
+            // ˆÚ“®Œø‰Ê‰¹Ä¶
+            CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+        }
+        if (m_PlayerID == 3)
+        {
+            // ˆÚ“®Œø‰Ê‰¹Ä¶
+            CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+        }
+    }
+    else
+    {
+        if (m_PlayerID == 0)
+        {
+		    // ’âŽ~Œø‰Ê‰¹’âŽ~
+		    CSoundManager::Stop(CSoundManager::SE_Move1);
+        }
+        if (m_PlayerID == 1)
+        {
+            // ’âŽ~Œø‰Ê‰¹’âŽ~
+            CSoundManager::Stop(CSoundManager::SE_Move2);
+        }
+        if (m_PlayerID == 2)
+        {
+            // ’âŽ~Œø‰Ê‰¹’âŽ~
+            CSoundManager::Stop(CSoundManager::SE_Move3);
+        }
+        if (m_PlayerID == 3)
+        {
+            // ’âŽ~Œø‰Ê‰¹’âŽ~
+            CSoundManager::Stop(CSoundManager::SE_Move4);
+        }
     }
 
     body->CStaticMeshObject::Update();

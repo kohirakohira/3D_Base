@@ -46,6 +46,7 @@ public:
 		bool	m_HitBox;		// サウンドフラグ：箱に当たっている時
 		bool	m_HitBlast;		// サウンドフラグ：爆風に当たっている時
 		bool	m_HitCharacter;	// サウンドフラグ：キャラクターに当たっている時
+		bool	m_Move;			// サウンドフラグ：キャラクターが移動している時
 				
 		float Soundcount = 0.0f;// サウンドカウント
 
@@ -123,10 +124,14 @@ public:
 	virtual void SetHitWall (bool flg)	{ m_Chara.m_HitWall = flg; }
 	virtual void SetHitBox  (bool flg)	{ m_Chara.m_HitBox = flg; }
 	virtual void SetHitBlast(bool flg)	{ m_Chara.m_HitBlast = flg; }
+	virtual void SetHitCharacter(bool flg)	{ m_Chara.m_HitCharacter = flg; }
+	virtual void SetMove(bool flg)	{ m_Chara.m_Move = flg; }
 
 	virtual bool GetHitWall () const { return m_Chara.m_HitWall; }
 	virtual bool GetHitBox  () const { return m_Chara.m_HitBox; }
 	virtual bool GetHitBlast() const { return m_Chara.m_HitBlast; }
+	virtual bool GetHitCharacter() const { return m_Chara.m_HitCharacter; }
+	virtual bool GetMove() const { return m_Chara.m_Move; }
 	//========================
 
 	//=====位置の設定・取得=====

@@ -148,36 +148,6 @@ void CGameTitle::Update()
 
 		//}
 #endif
-
-	if (m_KeyInput->ReleaseInputKey('1') == true)
-	{
-		//ゲームスタートSEの再生(仮).
-		CSoundManager::PlaySE(CSoundManager::SE_GameStart);
-	}
-
-	if (m_KeyInput->ReleaseInputKey('2') == true)
-	{
-		//ゲーム終了SEの再生(仮).
-		CSoundManager::PlaySE(CSoundManager::SE_GameEnd);
-	}
-
-	if (m_KeyInput->ReleaseInputKey('3') == true)
-	{
-		//シャッターSEの再生(仮).
-		CSoundManager::PlaySE(CSoundManager::SE_Door);
-	}
-
-	if (m_KeyInput->ReleaseInputKey('4') == true)
-	{
-		//花火SEの再生(仮).
-		CSoundManager::PlaySE(CSoundManager::SE_FireWork);
-	}
-
-	if (m_KeyInput->ReleaseInputKey('5') == true)
-	{
-		//火花SEの再生(仮).
-		CSoundManager::PlaySE(CSoundManager::SE_Spark);
-	}
 }
 
 void CGameTitle::Draw()

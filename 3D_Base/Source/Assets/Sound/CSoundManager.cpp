@@ -74,7 +74,10 @@ bool CSoundManager::Load()
         { SoundList::SE_Damage ,	_T("Data\\Sound\\SE\\damage.mp3"),		    },
         { SoundList::SE_Explosion,	_T("Data\\Sound\\SE\\explosion_2.mp3"),	    },
         { SoundList::SE_Impact,	    _T("Data\\Sound\\SE\\Impact.mp3"),		    },
-        { SoundList::SE_Move,		_T("Data\\Sound\\SE\\Move.mp3"),		    },
+        { SoundList::SE_Move1,		_T("Data\\Sound\\SE\\Move.mp3"),		    },
+        { SoundList::SE_Move2,		_T("Data\\Sound\\SE\\Move.mp3"),		    },
+        { SoundList::SE_Move3,		_T("Data\\Sound\\SE\\Move.mp3"),		    },
+        { SoundList::SE_Move4,		_T("Data\\Sound\\SE\\Move.mp3"),		    },
     };
 
     for (auto& path : filePaths)

@@ -234,54 +234,20 @@ void CPlayer::Move(const PlayerInput& input)
 		{
 			m_pBody->SetMoveState(CBody::Forward);
 		}
-		else
-		{
-			if (m_Key->InputKey('A') == false &&
-				m_Key->InputKey('S') == false &&
-				m_Key->InputKey('D') == false)
-			{
-			}
-		}
 
 		if (m_Key->InputKey('S') == true)
 		{
 			m_pBody->SetMoveState(CBody::Backward);
-
-		}
-		else
-		{
-			if (m_Key->InputKey('W') == false &&
-				m_Key->InputKey('A') == false &&
-				m_Key->InputKey('D') == false)
-			{
-			}
 		}
 
 		if (m_Key->InputKey('A') == true)
 		{
 			m_pBody->AddRotationY(-m_Tuning.turretTurnSpeed);
 		}
-		else
-		{
-			if (m_Key->InputKey('W') == false &&
-				m_Key->InputKey('S') == false &&
-				m_Key->InputKey('D') == false)
-			{
-			}
-		}
 
 		if (m_Key->InputKey('D') == true)
 		{
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
-
-		}
-		else
-		{
-			if (m_Key->InputKey('W') == false &&
-				m_Key->InputKey('A') == false &&
-				m_Key->InputKey('S') == false)
-			{
-			}
 		}
 
 		if (m_Key->InputKey('W') == true && m_Key->InputKey('A') == true)
@@ -306,6 +272,69 @@ void CPlayer::Move(const PlayerInput& input)
 		{
 			m_pBody->AddRotationY(m_Tuning.turretTurnSpeed);
 			m_pBody->SetMoveState(CBody::Backward);
+		}
+	}
+
+	// ‰¹º”»’è—pƒtƒ‰ƒOÝ’è
+	if (m_Key->InputKey('W') == true ||
+		m_Key->InputKey('A') == true ||
+		m_Key->InputKey('S') == true ||
+		m_Key->InputKey('D') == true)
+	{
+		// ˆÚ“®’†ƒtƒ‰ƒOON
+		SetMove(true);
+	}
+	else
+	{
+		// ˆÚ“®’†ƒtƒ‰ƒOOFF
+		SetMove(false);
+	}
+
+	// ƒTƒEƒ“ƒhÄ¶”»’è
+	if (GetMove() == true)
+	{
+		if (m_PlayerID == 0)
+		{
+			// ˆÚ“®Œø‰Ê‰¹Ä¶
+			CSoundManager::PlayLoop(CSoundManager::SE_Move1);
+		}
+		if (m_PlayerID == 1)
+		{
+			// ˆÚ“®Œø‰Ê‰¹Ä¶
+			CSoundManager::PlayLoop(CSoundManager::SE_Move2);
+		}
+		if (m_PlayerID == 2)
+		{
+			// ˆÚ“®Œø‰Ê‰¹Ä¶
+			CSoundManager::PlayLoop(CSoundManager::SE_Move3);
+		}
+		if (m_PlayerID == 3)
+		{
+			// ˆÚ“®Œø‰Ê‰¹Ä¶
+			CSoundManager::PlayLoop(CSoundManager::SE_Move4);
+		}
+	}
+	else
+	{
+		if (m_PlayerID == 0)
+		{
+			// ’âŽ~Œø‰Ê‰¹’âŽ~
+			CSoundManager::Stop(CSoundManager::SE_Move1);
+		}
+		if (m_PlayerID == 1)
+		{
+			// ’âŽ~Œø‰Ê‰¹’âŽ~
+			CSoundManager::Stop(CSoundManager::SE_Move2);
+		}
+		if (m_PlayerID == 2)
+		{
+			// ’âŽ~Œø‰Ê‰¹’âŽ~
+			CSoundManager::Stop(CSoundManager::SE_Move3);
+		}
+		if (m_PlayerID == 3)
+		{
+			// ’âŽ~Œø‰Ê‰¹’âŽ~
+			CSoundManager::Stop(CSoundManager::SE_Move4);
 		}
 	}
 	
@@ -377,9 +406,7 @@ void CPlayer::RotateTurretByPad()
 
 	}
 
-	m_pCannon->SetRotation(rot);
-	
-	
+	m_pCannon->SetRotation(rot);	
 }
 
 void CPlayer::UpdateHumanInputAndMove(PlayerInput input)
