@@ -281,6 +281,12 @@ void CGameMain::Update()
 			//BGMのループ停止..
 			CSoundManager::Stop(CSoundManager::BGM_Main);
 
+			//SEのループ停止
+			CSoundManager::Stop(CSoundManager::SE_Move1);
+			CSoundManager::Stop(CSoundManager::SE_Move2);
+			CSoundManager::Stop(CSoundManager::SE_Move3);
+			CSoundManager::Stop(CSoundManager::SE_Move4);
+
 			// 戦車が動いている時のSEを停止
 
 			m_SceneType = CSceneType::Result;

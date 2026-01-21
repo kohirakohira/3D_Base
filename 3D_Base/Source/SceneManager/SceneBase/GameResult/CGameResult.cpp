@@ -112,6 +112,7 @@ void CGameResult::Update()
 
 			// SE‚Ì’â~
 			CSoundManager::Stop(CSoundManager::SE_Spark);
+			CSoundManager::Stop(CSoundManager::SE_FireWork);
 
 			//SE‚ÌÄ¶.
 			CSoundManager::PlaySE(CSoundManager::SE_Click);
