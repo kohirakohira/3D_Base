@@ -399,6 +399,12 @@ void CComPlayer::Update()
 {
     // 死亡処理の更新
     Death();
+
+    if (m_Chara.m_Death)
+    {
+        return;
+    }
+
     // 無敵処理の更新
     Muteki();
 
