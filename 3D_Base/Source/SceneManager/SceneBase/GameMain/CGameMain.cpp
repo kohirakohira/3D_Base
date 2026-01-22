@@ -1233,7 +1233,7 @@ void CGameMain::BuildComObstacles()
 
 	auto addObstacle = [&](float x, float z, float radius)
 		{
-			CComPlayer::SimpleObstacle o;
+			SimpleObstacle o;
 			o.pos = D3DXVECTOR3(x, 0.0f, z);
 			o.radius = radius;
 			m_ComObstacles.push_back(o);
@@ -1260,7 +1260,7 @@ void CGameMain::BuildComObstacles()
 	auto addBoxObstacle = [&](const std::shared_ptr<CStaticMeshObject>& obj, float radius)
 		{
 			if (!obj) return;
-			CComPlayer::SimpleObstacle o;
+			SimpleObstacle o;
 			o.pos = obj->GetPosition();
 			o.pos.y = 0.0f;
 			o.radius = radius;

@@ -108,12 +108,12 @@ public:
 	//==========================
 
 	//áŠQ•¨ƒŠƒXƒg‚ğ“n‚·.
-	void SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles);
+	void SetComObstacles(const std::vector<SimpleObstacle>* obstacles);
 
 private:
 
 	// áŠQ•¨İ’è
-	void SetObstaclesForPathfinding(const std::vector<CComPlayer::SimpleObstacle>* obstacles);
+	void SetObstaclesForPathfinding(const std::vector<SimpleObstacle>* obstacles);
 
 	struct Area {
 		bool Taken = false;
@@ -150,6 +150,6 @@ private:
 	int m_keyboardPlayer = 0;
 
 	CSimplePathfinder m_Pathfinder;
-	const std::vector<CComPlayer::SimpleObstacle>* m_pObstaclesRef;
+	const std::vector<SimpleObstacle>* m_pObstaclesRef;
 	bool m_PathfinderNeedsUpdate;
 };

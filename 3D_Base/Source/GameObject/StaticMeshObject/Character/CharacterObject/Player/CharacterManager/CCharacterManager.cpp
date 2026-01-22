@@ -769,7 +769,7 @@ void CCharacterManager::SetPushBackPosision(int index, const D3DXVECTOR3& push)
 }
 
 
-void CCharacterManager::SetComObstacles(const std::vector<CComPlayer::SimpleObstacle>* obstacles)
+void CCharacterManager::SetComObstacles(const std::vector<SimpleObstacle>* obstacles)
 {
 	for (auto& up : m_pCharacter)
 	{
@@ -783,7 +783,7 @@ void CCharacterManager::SetComObstacles(const std::vector<CComPlayer::SimpleObst
 	SetObstaclesForPathfinding(obstacles);
 }
 
-void CCharacterManager::SetObstaclesForPathfinding(const std::vector<CComPlayer::SimpleObstacle>* obstacles)
+void CCharacterManager::SetObstaclesForPathfinding(const std::vector<SimpleObstacle>* obstacles)
 {
 	m_pObstaclesRef = obstacles;
 	m_PathfinderNeedsUpdate = true;

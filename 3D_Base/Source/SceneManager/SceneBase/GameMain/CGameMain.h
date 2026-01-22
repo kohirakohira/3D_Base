@@ -220,7 +220,7 @@ public:
 
 private:
 	std::vector<std::shared_ptr<CBoxCollider>> m_ObstacleColliders;
-	std::vector<CComPlayer::SimpleObstacle> m_ComObstacles;
+	std::vector<SimpleObstacle> m_ComObstacles;
 
 	void BuildComObstacles();
 
