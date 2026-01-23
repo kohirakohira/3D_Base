@@ -32,6 +32,8 @@
 
 #include "GameObject/StaticMeshObject/Shot/CShot.h"	//ショット
 
+//ステートマシンクラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComStateMachine/CComStateMachine.h"
 
 //-----ライブラリ-----
 #include <d3dx9math.h>
@@ -143,15 +145,7 @@ public:
 
 private:
 
-	//列挙型
-	//COMの状態
-	enum class State
-	{
-		Seek,		//探索
-		Chase,		//追跡
-		Attack,		//攻撃
-		Evade,		//離脱
-	};
+
 
 	//関数
 	//フレームごとのステート処理
@@ -165,8 +159,6 @@ private:
 	void TickAimTo(const D3DXVECTOR3& targetPos);						//砲塔追尾
 	void TickWander();													//引数なし
 	void SyncCannonToBody();											//砲塔を車体に追従させる
-	void TransitionTo(State state);										//ステータスを変更する
-	void EvaluateTransitions(float dist);								//条件に応じて状態変更	
 
 	//障害物判定用
 	bool SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const;
@@ -197,9 +189,6 @@ private:
 	void ComputeSeparation(const D3DXVECTOR3& selfPos,
 		D3DXVECTOR3& outSep, float& outNearest) const;
 
-	//COMの状態変更
-	void ChangeState(State state);
-
 	//外部クラス
 	const std::vector<std::shared_ptr<CCharacterObjectBase>>* m_pAllPlayer;		//プレイヤーの一覧取得
 	const std::vector<std::shared_ptr<CBoxCollider>>* m_pBoxCollider;			//障害物のBoxColliderリスト
@@ -223,8 +212,6 @@ private:
 	bool	m_Registered;				//インスタンス登録管理
 
 	//探索処理パラメータ
-	State	m_State;
-	int		m_StateFrames;				//その状態に入ってからの経過フレーム
 	float	m_WanderAngle;
 
 	// 障害物回避パラメータ
@@ -305,5 +292,8 @@ private:
 	//COMが追尾中にガタガタする対策
 	D3DXVECTOR3 m_SmoothedTargetPos = { 0,0,0 };	//平滑化したターゲット位置
 	float m_AimSmoothFactor = 0.25f;				//平滑化係数
+
+	//ステートマシンクラス
+	CComStateMachine m_StateMachine;
 
 };
