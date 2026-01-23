@@ -46,9 +46,7 @@ CComPlayer::CComPlayer()
     , m_CenterPullStrength(0.3f)                   // 引き寄せ強度
     , m_pSimpleObstacles(nullptr)
     , m_LookAheadSkep(2.0f)
-    //========================================
     // 障害物回避パラメータ
-    //========================================
     , m_ProbeDist(8.0f)                         // 8メートル先まで探査
     , m_AvoidHoldFrames(0.0f)
     , m_AvoidSide(0)
@@ -220,13 +218,10 @@ void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
 
         const float distSq = offset.x * offset.x + offset.z * offset.z;
         if (distSq <= 1e-6f) {
-            float angle = (m_PlayerID * 1.57f) + (std::rand() % 100) * 0.01f;
-            outSep.x += std::cosf(angle) * 2.0f;
-            outSep.z += std::sinf(angle) * 2.0f;
-            outNearest = 0.01f;
+            //ほぼ同一点のため少し押す
+            outSep.x += 0.1f;
             continue;
         }
-
         //一番近い相手までの距離を更新
         outNearest = std::min(outNearest, std::sqrtf(distSq));
 
@@ -775,57 +770,107 @@ void CComPlayer::StepChase()
 #endif
 void CComPlayer::StepAttack()
 {
-    auto target = m_TargetSelector.GetCurrentTarget();
-    if (!target) return;
-
-    auto cannon = GetCannon();
     auto body = GetBody();
-    if (!cannon || !body) return;
 
-    if (!m_ComShot.IsReady()) return;
-
-    const D3DXVECTOR3 selfPos = body->GetPosition();
-    const D3DXVECTOR3 targetPos = target->GetPosition();
-
-    // ターゲットまでの距離を計算
-    const float distToTarget = Util::DistXZ(selfPos, targetPos);
-
-    // 砲塔レイでターゲット位置にヒット判定
-    const float targetRadius = 2.f;
-    float hitDistance;
-
-    if (cannon->RaycastToPosition(targetPos, targetRadius, hitDistance))
+    auto target = m_TargetSelector.GetCurrentTarget();
+    if (!body || !target)
     {
-        // 障害物チェック
-        float obstacleHitD;
-        bool hasObstacle = HasObstacleAheadSimple(
-            selfPos,
-            cannon->GetRotation().y,
-            hitDistance,
-            m_ObstacleProbeStep,
-            obstacleHitD);
-
-        if (hasObstacle)
-        {
-            // ターゲットが障害物より明らかに奥にある場合のみキャンセル
-            const float margin = 1.5f;  // 1.5メートルのマージン
-
-            if (obstacleHitD + margin < hitDistance)
-            {
-                // 障害物が明らかにターゲットより手前にある
-                return;
-            }
-
-            // 壁際のターゲットを攻撃するため
-            if (distToTarget > 5.0f && obstacleHitD < hitDistance)
-            {
-                return;
-            }
-        }
-
-        // レイがターゲットに当たったら発射
-        m_ComShot.TryFireOnRayHit(body, cannon);
+        StepSeek();
+        return;
     }
+
+    const auto t = GetTuning();
+
+    const D3DXVECTOR3 self = body->GetPosition();
+    const D3DXVECTOR3 tp = target->GetPosition();
+    const float cur = body->GetRotation().y;
+    float hitD;
+
+    // 複数敵チェック
+    D3DXVECTOR3 clusterCenter;
+    int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
+
+    float desired;
+
+    if (nearbyCount >= m_MultiEnemyThreshold)
+    {
+        //囲まれているなら逃げつつ攻める
+        desired = ComputeBlendedDirection(self, tp, clusterCenter,
+            m_EscapeWeight * 0.8f,      //攻撃時は逃げを弱める
+            m_ApproachWeight * 1.2f);   //攻めを強める
+    }
+    else
+    {
+        // 通常の周回攻撃
+        const int   period = 60;
+        const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
+        const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
+
+        // 接線方向
+        desired = Util::Wrap(toYaw + sign * (D3DX_PI * 0.5f));
+
+        // 半径誤差補正
+        const float dist = Util::DistXZ(self, tp);
+        if (dist > m_KeepDistance * 1.2f)
+        {
+            desired = toYaw; // 外れすぎたら寄る
+        }
+        else if (dist < m_KeepDistance * 0.8f)
+        {
+            desired = Util::Wrap(toYaw + D3DX_PI); // 近すぎたら離れる
+        }
+    }
+
+    /*
+    // 複数敵チェック
+    D3DXVECTOR3 clusterCenter;
+    int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
+    float hpRatio = static_cast<float>(m_Chara.m_Hp) / static_cast<float>(m_Chara.m_MaxHp);
+
+    float desired;
+    float speedMult = 1.0f;
+
+    //性格に応じた複数敵対応
+    if (nearbyCount >= m_MultiEnemyThreshold && m_pPersonality)
+    {
+        BehaviorDecision decision = m_pPersonality->DecideMultiEnemyAction(
+            self, tp, clusterCenter, nearbyCount, hpRatio);
+
+        desired = decision.desiredYaw;
+        speedMult = decision.moveSpeedMultiplier;
+        m_KeepDistance = decision.keepDistance;
+    }
+    else
+    {
+        // 通常の周回攻撃
+        const int period = 60;
+        const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
+        const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
+        desired = Util::Wrap(toYaw + sign * (D3DX_PI * 0.5f));
+
+        const float dist = Util::DistXZ(self, tp);
+        if (dist > m_KeepDistance * 1.2f) desired = toYaw;
+        else if (dist < m_KeepDistance * 0.8f) desired = Util::Wrap(toYaw + D3DX_PI);
+    }
+    */
+
+    if (target->GetDeath() == true)
+    {
+        m_TargetSelector.ClearTarget();
+        return;
+    }
+
+    const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
+    SafeAdvance(next, t.moveSpeed);
+
+    TickAimTo(tp);
+
+    if (HasObstacleAheadSimple(self, cur, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
+    {
+        return;
+    }
+
+    TryAutoFire();
 }
 
 
@@ -1076,10 +1121,9 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
         float tryYaw = nextYaw + offset;
 
         D3DXVECTOR3 nextPos = pos + Util::ForwardFromYaw(tryYaw) * step;
-        float separationStrength = 0.0f;
-        if (nearest < m_AvoidRadius && nearest > 0.0f) {
-            separationStrength = 0.05f + (1.0f - nearest / m_AvoidRadius) * 0.25f;
-        }
+        nextPos.x += sep.x * 0.05f;
+        nextPos.z += sep.z * 0.02f;
+        nextPos.y = 0.0f;
 
         if (!IsInDangerZone(nextPos))
         {
