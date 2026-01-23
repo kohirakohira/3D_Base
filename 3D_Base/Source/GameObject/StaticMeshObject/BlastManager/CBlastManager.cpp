@@ -19,7 +19,7 @@ void CBlastManager::Create(const D3DXVECTOR3& pos, std::shared_ptr<CStaticMesh> 
 	auto blast = std::make_shared<CBlast>();
 
 	//ƒƒbƒVƒ…‚Ìİ’è.
-	//blast->AttachMesh(mesh);
+	blast->AttachMesh(mesh);
 	//•b”‚Ìİ’è.
 	blast->SetSpeed(s);
 	//”¼Œa‚Ìİ’è.

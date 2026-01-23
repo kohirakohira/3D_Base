@@ -15,7 +15,7 @@ static bool prevA = false;
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
 //定数宣言.
-static constexpr int TIME = 120;		//時間は調整してください.
+static constexpr int TIME = 10;		//時間は調整してください.
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;			//時計の回転する針に使用.
 const float FLASH_TIME = 0.5f;			//点滅周期.
@@ -356,8 +356,8 @@ void CGameMain::Draw()
 
 #endif//#ifdef ENABLE_ITEMS
 
-		//爆風の描画.
-		m_pBlastManager->Draw(view, proj, light, paramC);
+		////爆風の描画.
+		//m_pBlastManager->Draw(view, proj, light, paramC);
 
 		//背景の表示.
 		m_pBackImgObject->Draw(view, proj, light, paramC);
