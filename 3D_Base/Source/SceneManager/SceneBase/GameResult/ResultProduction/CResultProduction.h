@@ -40,6 +40,13 @@ public: //キャラクターの位置を設定する用の構造体.
 			, Fouros ({ 0.0f, 0.0f, 0.0f }) 
 		{ } 
 	};
+	//キル数UI構造体.
+	struct RESULT_UI
+	{
+		D3DXVECTOR3 KillUIPos;
+		D3DXVECTOR2 NumUIPos;
+	};
+
 private:
 	//1つのエフェクトを管理する構造体.
 	struct EffectManagement
@@ -86,11 +93,16 @@ public:
 	//キャラクターの位置設定用.
 	void SetPositionRanking();
 
-	//キャラクターのX座標を決める関数.
+	//キャラクターのX座標を決める関数※引き分け時.
 	std::vector<float> CalcCenterPosition(int count, float spacing);
 
 	//カメラのインスタンス取得.
 	std::shared_ptr<CCamera> const GetCamera() { return m_Camera; }
+
+	//勝利のキル数UI.
+	RESULT_UI SetResultNumUIPosition(int index);
+	//勝利のキルUI.
+	RESULT_UI SetResultUIPosition(int index);
 
 public:
 	//勝ち抜け.
@@ -133,9 +145,9 @@ private:
 	//キャラクター番号.
 	std::array<std::unique_ptr<CUIObject>, PLAYER_MAX>		m_PlayerUI;
 	//数字クラス.
-	std::unique_ptr<NumberImage>	m_Number;
+	std::array<std::unique_ptr<NumberImage>, PLAYER_MAX>	m_Number;
 	//UIクラス.
-	std::unique_ptr<CUIObject>		m_KillUI;
+	std::array<std::unique_ptr<CUIObject>, PLAYER_MAX>		m_KillUI;
 	//スプライトオブジェクト.
 	//背景クラス変数.
 	std::unique_ptr<BackGround>			m_BackGround;

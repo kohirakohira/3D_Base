@@ -19,8 +19,8 @@ CResultProduction::CResultProduction()
 	, m_SpriteObjGround		( nullptr )
 	, m_CharacterManager	( nullptr )
 
-	, m_Number				( nullptr )
-	, m_KillUI				( nullptr )
+	, m_Number				( )
+	, m_KillUI				( )
 	, m_PlayerUI			( )
 
 	, m_CharaPosX			( -75.0f )
@@ -45,16 +45,91 @@ CResultProduction::~CResultProduction()
 	m_FireworkEffects.clear();
 }
 
+//勝利のキル数UI.
+CResultProduction::RESULT_UI CResultProduction::SetResultNumUIPosition(int index)
+{
+	//キル数表示位置.
+	RESULT_UI pos;
+
+	//勝者のキル数※1位から4位まで.
+	switch (index)
+	{
+	case 0:
+		pos.NumUIPos.x = WND_W / 2 + 16;
+		pos.NumUIPos.y = 315;
+		return pos;
+	case 1:
+		pos.NumUIPos.x = WND_W / 2 - 300;
+		pos.NumUIPos.y = 350;
+		return pos;
+	case 2:
+		pos.NumUIPos.x = WND_W / 2 + 350;
+		pos.NumUIPos.y = 350;
+		return pos;
+	case 3:
+		pos.NumUIPos.x = WND_W / 2 + 650;
+		pos.NumUIPos.y = 350;
+		return pos;
+	}
+}
+
+//勝利のキルUI.
+CResultProduction::RESULT_UI CResultProduction::SetResultUIPosition(int index)
+{
+	//キル表示位置.
+	RESULT_UI pos;
+
+	//Z座標はないので初期化.
+	pos.KillUIPos.z = 0.0f;
+
+	//勝者のキル数※1位から4位まで.
+	switch (index)
+	{
+	case 0:
+		pos.KillUIPos.x = static_cast<float>(WND_W / 2 - 120);
+		pos.KillUIPos.y = 240.0f;
+		return pos;
+	case 1:
+		pos.KillUIPos.x = static_cast<float>(WND_W / 2 - 435);
+		pos.KillUIPos.y = 275.0f;
+		return pos;
+	case 2:
+		pos.KillUIPos.x = static_cast<float>(WND_W / 2 + 215);
+		pos.KillUIPos.y = 275.0f;
+		return pos;
+	case 3:
+		pos.KillUIPos.x = static_cast<float>(WND_W / 2 + 515);
+		pos.KillUIPos.y = 275.0f;
+		return pos;
+	}
+}
+
 //勝ち抜け.
 void CResultProduction::WinUpdate()
 {
 	//ビュー・プロジェクションの更新.
 	m_Camera->Update();
+	
+	//順位データ.
+	auto ranks = CGameDataManager::GetInstance().GetRanking();
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		//プレイヤーID.
+		int playerID = ranks[i];
+		//例外処理.
+		if (playerID < 0) continue;
+		
+		//キル数UIの位置決め.
+		auto NumPos = SetResultNumUIPosition(i);
+		m_Number[playerID]->SetBasePosition(NumPos.NumUIPos);
+		//キルUIの位置決め.
+		auto KillPos = SetResultUIPosition(i);
+		m_KillUI[playerID]->SetPosition(KillPos.KillUIPos);
 
-	//1位のデータ.
-	auto [playerID, Kill] = CGameDataManager::GetInstance().GetTopCharacter();
-	m_Number->SetNumber(Kill, 2);
-	m_Number->Update();
+		int kill = CGameDataManager::GetInstance().GetKillCount(playerID);
+		m_Number[playerID]->SetNumber(kill, 2);
+		m_Number[playerID]->Update();
+	}
 
 	//色の設定.
 	Effekseer::Color col = { 255, 255, 255, 255 };
@@ -114,14 +189,28 @@ void CResultProduction::WinDraw()
 	m_BackGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
 	//地面描画.
 	m_SpriteObjGround->Draw(m_Camera->m_mView, m_Camera->m_mProj);
+	
+	//描画をするために型を変更.
+	auto ranks = CGameDataManager::GetInstance().GetRanking();
+	std::vector<int> drawIDs;
+	for (int id : ranks)
+	{
+		if (id >= 0)
+		{
+			drawIDs.push_back(id);
+		}
+	}
 	//キャラクターの表示.
-	m_CharacterManager->DrawResult(m_Result.players, m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
+	m_CharacterManager->DrawResult(drawIDs, m_Camera->m_mView, m_Camera->m_mProj, m_Camera->m_Light, m_Camera->m_Camera);
 	
 	CDirectX11::GetInstance().SetDepth(false);
 	//キル数の表示.
-	m_Number->Draw();
-	//キルUIの表示.
-	m_KillUI->Draw();
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		//キルUIの表示.
+		m_Number[i]->Draw();
+		m_KillUI[i]->Draw();
+	}
 	//キャラクター番号の表示.
 	m_PlayerUI[playerID]->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
@@ -136,10 +225,18 @@ void CResultProduction::DrawUpdate()
 	//ビュー・プロジェクションの更新.
 	m_Camera->Update();
 
-	//最大キル数表示.
-	auto [playerID, Kill] = CGameDataManager::GetInstance().GetTopCharacter();
-	m_Number->SetNumber(Kill, 2);
-	m_Number->Update();
+	//引き分け時のプレイヤーID.
+	auto drawPlayers = m_Result.players;
+
+	//引き分けプレイヤーIDとキル数.
+	int playerID = drawPlayers[0];
+	int killNum = CGameDataManager::GetInstance().GetKillCount(playerID);
+	//数字設定.
+	m_Number[0]->SetBasePosition(D3DXVECTOR2(WND_W / 2 + 16, 315));
+	m_Number[0]->SetNumber(killNum, 2);
+	m_Number[0]->Update();
+	//UI設定.
+	m_KillUI[0]->SetPosition(D3DXVECTOR3(static_cast<float>(WND_W / 2 - 120), 240.0f, 0.0f));
 
 	//エフェクトの時間.
 	m_Timer += dt;
@@ -203,9 +300,9 @@ void CResultProduction::DrawDraw()
 
 	CDirectX11::GetInstance().SetDepth(false);
 	//キル数の表示.
-	m_Number->Draw();
+	m_Number[0]->Draw();
 	//キルUIの表示.
-	m_KillUI->Draw();
+	m_KillUI[0]->Draw();
 	CDirectX11::GetInstance().SetDepth(true);
 
 }
@@ -236,9 +333,12 @@ void CResultProduction::Create()
 	}
 
 	//数字クラスの生成.
-	m_Number			= std::make_unique<NumberImage>();
-	//キルUIの生成.
-	m_KillUI			= std::make_unique<CUIObject>();
+	for (int i = 0; i< PLAYER_MAX; i++)
+	{
+		//キルUIの生成.
+		m_Number[i] = std::make_unique<NumberImage>();
+		m_KillUI[i] = std::make_unique<CUIObject>();
+	}
 
 	//キャラクター番号.
 	for (int index = 0; index < PLAYER_MAX; index++)
@@ -273,17 +373,17 @@ void CResultProduction::Init(DrawResult result)
 	m_BackGround->SetScale(4.0f, 1.0f, 0.0f);
 
 	//数字の情報.
-	D3DXVECTOR2 KillPos = { WND_W / 2 + 16, 310 };
-	m_Number->SetBasePosition(KillPos);
-	m_Number->SetDigitWidth(32);
-	m_Number->SetPosition(0.0f, 0.0f, 0.0f);
-	m_Number->SetRotation(0.0f, 0.0f, 0.0f);
-	m_Number->SetScale(1.0f, 1.0f, 1.0f);
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		m_Number[i]->SetDigitWidth(32);
+		m_Number[i]->SetPosition(0.0f, 0.0f, 0.0f);
+		m_Number[i]->SetRotation(0.0f, 0.0f, 0.0f);
+		m_Number[i]->SetScale(1.0f, 1.0f, 1.0f);
+		//キルUIの情報.
+		m_KillUI[i]->SetRotation(0.0f, 0.0f, 0.0f);
+		m_KillUI[i]->SetScale(0.5f, 0.5f, 0.5f);
 
-	//キルUIの情報.
-	m_KillUI->SetPosition(WND_W / 2 - 120.0f, WND_H / 2 - 300.0f, 0.0f);
-	m_KillUI->SetRotation(0.0f, 0.0f, 0.0f);
-	m_KillUI->SetScale(0.5f, 0.5f, 0.5f);
+	}
 
 	//プレイヤー番号の情報.
 	for (int index = 0; index < PLAYER_MAX; index++)
@@ -423,9 +523,12 @@ HRESULT CResultProduction::LoadData()
 	//地面画像のアタッチ.
 	m_SpriteObjGround->AttachSprite(*m_SpriteGround);
 	//数字画像のアタッチ.
-	m_Number->AttachSprite(m_SpriteNumber);
-	//キルUI.
-	m_KillUI->AttachSprite(m_SpriteKillUI);
+	for (int i = 0; i < PLAYER_MAX; i++) 
+	{
+		//キルUI.
+		m_Number[i]->AttachSprite(m_SpriteNumber);
+		m_KillUI[i]->AttachSprite(m_SpriteKillUI);
+	}
 	//キャラクターUI.
 	for (int index = 0; index < PLAYER_MAX; index++)
 	{
