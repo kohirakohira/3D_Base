@@ -27,7 +27,6 @@ CComPlayer::CComPlayer()
     , m_AvoidRadius(10.0f)
     , m_AvoidWeight(2.0f)
     , m_Registered(false)
-    , m_StateFrames(0)
     , m_SeekRadius(5.0f)
     , m_AttacRadius(50.0f)
     , m_FireConeDeg(10.0f)
@@ -38,7 +37,6 @@ CComPlayer::CComPlayer()
     , m_IsTarget(false)   //最初はターゲットではない
     , m_pAllPlayer(nullptr)
     , m_LastSeenPos(D3DXVECTOR3(0, 0, 0))
-    , m_State(State::Seek)
     , m_WanderAngle(0.f)
     , m_pBoxCollider(nullptr)
     , m_MapCenter(D3DXVECTOR3(0.0f, 0.0f, 0.0f))  // マップ中央
@@ -46,9 +44,7 @@ CComPlayer::CComPlayer()
     , m_CenterPullStrength(0.3f)                   // 引き寄せ強度
     , m_pSimpleObstacles(nullptr)
     , m_LookAheadSkep(2.0f)
-    //========================================
     // 障害物回避パラメータ
-    //========================================
     , m_ProbeDist(8.0f)                         // 8メートル先まで探査
     , m_AvoidHoldFrames(0.0f)
     , m_AvoidSide(0)
@@ -113,6 +109,16 @@ void CComPlayer::Create(int id)
     m_TargetSelector.SetStickinessRatio(0.8f);
     m_TargetSelector.SetBlacklistDuration(120);
     m_TargetSelector.SetRetargetInterval(120);
+
+    //ステートマシンの設定
+    CComStateMachine::TransitionConfig stateConfig;
+    stateConfig.keepDistance = m_KeepDistance;
+    stateConfig.evadeMultiplier = 0.60f;
+    stateConfig.attackEnterMultiplier = 1.05f;
+    stateConfig.attackExitMultiplier = 1.25f;
+    stateConfig.loseFrames = 120;
+    m_StateMachine.SetConfig(stateConfig);
+
 
     //射撃の初期化
     m_ComShot.Initialize(id);
@@ -237,12 +243,6 @@ void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
     //正規化は呼び出し側でブレンド時にやる
 }
 
-//COMの状態変更
-void CComPlayer::ChangeState(State state)
-{
-    m_State = state;
-    m_StateFrames = 0;
-}
 
 // 本体を常にターゲットへ回頭＋前進
 void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
@@ -451,17 +451,28 @@ void CComPlayer::Update()
         dist2 = d.x * d.x + d.z * d.z;
     }
 
-    //状態遷移はここだけで行う
-    EvaluateTransitions(dist2);
+    if (m_pPersonality)
+    {
+        auto& config = m_StateMachine.GetConfig();
+        config.keepDistance = m_KeepDistance;
+        config.evadeMultiplier = m_pPersonality->GetEvadeDistanceMultiplier();
+        config.attackEnterMultiplier = m_pPersonality->GetAttackEnterDistanceMultiplier();
+    }
+
+    m_StateMachine.EvaluateTransitions(
+        dist2,
+        m_TargetSelector.HasTarget(),
+        m_TargetSelector.GetLostSightFrames()
+    );
 
     //実行
-    switch (m_State) {
-    case State::Seek:     StepSeek();     break;
-    case State::Chase:    StepChase();    break;
-    case State::Attack:   StepAttack();   break;
-    case State::Evade:    StepEvade();    break;
+    switch (m_StateMachine.GetState()) {
+    case CComStateMachine::State::Seek:     StepSeek();     break;
+    case CComStateMachine::State::Chase:    StepChase();    break;
+    case CComStateMachine::State::Attack:   StepAttack();   break;
+    case CComStateMachine::State::Evade:    StepEvade();    break;
     }
-    ++m_StateFrames;
+    m_StateMachine.Update();
 }
 
 
@@ -805,7 +816,7 @@ void CComPlayer::StepAttack()
     {
         // 通常の周回攻撃
         const int   period = 60;
-        const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
+        const float sign = ((m_StateMachine.GetStateFrames() / period) % 2 == 0) ? +1.f : -1.f;
         const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
 
         // 接線方向
@@ -823,38 +834,6 @@ void CComPlayer::StepAttack()
         }
     }
 
-    /*
-    // 複数敵チェック
-    D3DXVECTOR3 clusterCenter;
-    int nearbyCount = CountNeardyEnemies(m_MultiEnemyRadius, clusterCenter);
-    float hpRatio = static_cast<float>(m_Chara.m_Hp) / static_cast<float>(m_Chara.m_MaxHp);
-
-    float desired;
-    float speedMult = 1.0f;
-
-    //性格に応じた複数敵対応
-    if (nearbyCount >= m_MultiEnemyThreshold && m_pPersonality)
-    {
-        BehaviorDecision decision = m_pPersonality->DecideMultiEnemyAction(
-            self, tp, clusterCenter, nearbyCount, hpRatio);
-
-        desired = decision.desiredYaw;
-        speedMult = decision.moveSpeedMultiplier;
-        m_KeepDistance = decision.keepDistance;
-    }
-    else
-    {
-        // 通常の周回攻撃
-        const int period = 60;
-        const float sign = ((m_StateFrames / period) % 2 == 0) ? +1.f : -1.f;
-        const float toYaw = std::atan2f((tp - self).x, (tp - self).z);
-        desired = Util::Wrap(toYaw + sign * (D3DX_PI * 0.5f));
-
-        const float dist = Util::DistXZ(self, tp);
-        if (dist > m_KeepDistance * 1.2f) desired = toYaw;
-        else if (dist < m_KeepDistance * 0.8f) desired = Util::Wrap(toYaw + D3DX_PI);
-    }
-    */
 
     if (target->GetDeath() == true)
     {
@@ -873,50 +852,6 @@ void CComPlayer::StepAttack()
     }
 
     TryAutoFire();
-}
-
-
-void CComPlayer::EvaluateTransitions(float dist2)
-{
-     float evadeMult = 0.60f;
-    float attackEnterMult = 1.05f;
-
-    if (m_pPersonality)
-    {
-        evadeMult = m_pPersonality->GetEvadeDistanceMultiplier();
-        attackEnterMult = m_pPersonality->GetAttackEnterDistanceMultiplier();
-    }
-
-    const float attackEnter2 = Util::Sqr(std::max(m_KeepDistance * attackEnterMult, 3.f));
-    const float attackExit2 = Util::Sqr(std::max(m_KeepDistance * 1.25f, 5.f));
-    const float evadeDist2 = Util::Sqr(m_KeepDistance * evadeMult);
-
-    const int   loseFrames = 120;
-
-    const bool hasTarget = m_TargetSelector.HasTarget();
-    const int lostFrames = m_TargetSelector.GetLostSightFrames();
-
-    switch (m_State) {
-    case State::Seek:
-        if (hasTarget) ChangeState(State::Chase);
-        break;
-    case State::Chase:
-        if (!hasTarget) { ChangeState(State::Seek);  break; }
-        if (dist2 <= evadeDist2) { ChangeState(State::Evade); break; }
-        if (dist2 <= attackEnter2) { ChangeState(State::Attack); break; }
-        break;
-    case State::Attack:
-        if (!hasTarget) { ChangeState(State::Seek);  break; }
-        if (dist2 < evadeDist2) { ChangeState(State::Evade); break; }
-        if (dist2 > attackExit2) { ChangeState(State::Chase); break; }
-        break;
-    case State::Evade:
-        if (!hasTarget) { ChangeState(State::Seek);  break; }
-        if (dist2 >= attackEnter2) { ChangeState(State::Chase); break; }
-        else if (dist2 >= evadeDist2) { ChangeState(State::Attack); break; }
-        if (lostFrames > loseFrames) { ChangeState(State::Seek); }
-        break;
-    }
 }
 
 void CComPlayer::TryAutoFire()
@@ -963,22 +898,6 @@ void CComPlayer::SyncCannonToBody()
     D3DXVECTOR3 pos = body->GetPosition();
     pos.y += m_Tuning.cannonHeight;   // 砲塔の高さオフセット
     cannon->SetPosition(pos);         // 位置を同期
-}
-
-// ステータスを変更する
-void CComPlayer::TransitionTo(State state)
-{
-    // ステータスが同じであればスキップ
-    if (m_State == state) return;
-
-    // ステータス更新
-    m_State = state;
-    m_StateFrames = 0;
-
-    if (state == State::Evade)
-    {
-        m_EvadeFrames = m_EvadeDuration;
-    }
 }
 
 #if 1
@@ -1123,7 +1042,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
         float tryYaw = nextYaw + offset;
 
         D3DXVECTOR3 nextPos = pos + Util::ForwardFromYaw(tryYaw) * step;
-        nextPos.x += sep.x * 0.02f;
+        nextPos.x += sep.x * 0.05f;
         nextPos.z += sep.z * 0.02f;
         nextPos.y = 0.0f;
 
