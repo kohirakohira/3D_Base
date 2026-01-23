@@ -91,6 +91,9 @@ void CComPlayer::Create(int id)
 	m_Chara.m_HitBox	= false;
 	m_Chara.m_HitBlast	= false;
 
+    //ƒTƒEƒ“ƒhƒRƒ“ƒgƒ[ƒ‰[‚Ì‰Šú‰»
+    m_SoundController.SetPlayerID(id);
+
     //Œp³‚µ‚½‚à‚Ì‚à‰Šú‰»
     m_IsActive = true;
     m_IsAlive = true;
@@ -1119,55 +1122,8 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
 			// ˆÚ“®ƒtƒ‰ƒO‚ð‰º‚ë‚·
 			SetMove(false);
         }
-        // ŠëŒ¯‚È‚çˆÚ“®‚µ‚È‚¢
     }
-
-    if (GetMove() == true)
-    {
-        if (m_PlayerID == 0)
-        {
-            // ˆÚ“®Œø‰Ê‰¹Ä¶
-            CSoundManager::PlayLoop(CSoundManager::SE_Move1);
-        }
-        if (m_PlayerID == 1)
-        {
-            // ˆÚ“®Œø‰Ê‰¹Ä¶
-            CSoundManager::PlayLoop(CSoundManager::SE_Move2);
-        }
-        if (m_PlayerID == 2)
-        {
-            // ˆÚ“®Œø‰Ê‰¹Ä¶
-            CSoundManager::PlayLoop(CSoundManager::SE_Move3);
-        }
-        if (m_PlayerID == 3)
-        {
-            // ˆÚ“®Œø‰Ê‰¹Ä¶
-            CSoundManager::PlayLoop(CSoundManager::SE_Move4);
-        }
-    }
-    else
-    {
-        if (m_PlayerID == 0)
-        {
-		    // ’âŽ~Œø‰Ê‰¹’âŽ~
-		    CSoundManager::Stop(CSoundManager::SE_Move1);
-        }
-        if (m_PlayerID == 1)
-        {
-            // ’âŽ~Œø‰Ê‰¹’âŽ~
-            CSoundManager::Stop(CSoundManager::SE_Move2);
-        }
-        if (m_PlayerID == 2)
-        {
-            // ’âŽ~Œø‰Ê‰¹’âŽ~
-            CSoundManager::Stop(CSoundManager::SE_Move3);
-        }
-        if (m_PlayerID == 3)
-        {
-            // ’âŽ~Œø‰Ê‰¹’âŽ~
-            CSoundManager::Stop(CSoundManager::SE_Move4);
-        }
-    }
+    m_SoundController.UpdateMoveSound(GetMove());
 
     body->CStaticMeshObject::Update();
     SyncCannonToBody();

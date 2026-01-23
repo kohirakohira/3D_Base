@@ -35,6 +35,9 @@
 //ステートマシンクラス
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComStateMachine/CComStateMachine.h"
 
+//COMサウンド管理クラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComSoundController/CComSoundController.h"
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
@@ -295,5 +298,8 @@ private:
 
 	//ステートマシンクラス
 	CComStateMachine m_StateMachine;
+
+	//COMのサウンド管理クラス
+	CComSoundController m_SoundController;
 
 };
