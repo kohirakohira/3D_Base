@@ -178,7 +178,7 @@ HRESULT CEffect::LoadData()
 		{ enList::Test0,	u"Data\\Effekseer\\Basic\\Laser01.efk"		},
 		{ enList::Test1,	u"Data\\Effekseer\\Basic\\Laser01.efk"		},
 		{ enList::Hit,		u"Data\\Effekseer\\AndrewFM01\\fire.efk"	},
-		{ enList::Blast,	u"Data\\Effekseer\\Tktk03\\Blast.efk"		},
+		{ enList::Blast,	u"Data\\Effekseer\\MyEffect\\Blast.efk"		},
 		{ enList::Mist,		u"Data\\Effekseer\\MyEffect\\ItemMist.efk"	},
 		{ enList::Firework,	u"Data\\Effekseer\\MyEffect\\FireWorks.efk"	},
 		{ enList::Smoke,	u"Data\\Effekseer\\MyEffect\\Smoke.efk"		},

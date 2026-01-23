@@ -33,6 +33,14 @@ void CBlast::Update()
 
 		//半径の上限を設定.
 		m_Radius = std::clamp(m_Radius, m_MinimumSize, m_MaxSize);
+
+		//エフェクトの再生.
+		if (handle != -1)
+		{
+			D3DXVECTOR3 scale = { m_Radius * 0.09f, m_Radius * 0.09f, m_Radius * 0.09f };
+			CEffect::GetInstance().SetScale(handle, scale);
+		}
+
 #else
 		m_Radius = m_MaxSize;
 #endif
@@ -40,6 +48,11 @@ void CBlast::Update()
 		CStaticMeshObject::SetScale(m_Radius);
 		if (m_Radius >= m_MaxSize)
 		{
+			if (handle != -1)
+			{
+				CEffect::GetInstance().Stop(handle);
+				handle = -1;
+			}
 			m_BomStart = false;
 			m_BomFinish = true;
 		}
@@ -87,4 +100,10 @@ bool CBlast::IsBomStart() const
 bool CBlast::IsBomFinish() const
 {
 	return m_BomFinish;
+}
+
+//エフェクトの初期位置を設定.
+void CBlast::InitEffectPosition(const D3DXVECTOR3& pos)
+{
+	handle = CEffect::GetInstance().Play( CEffect::Blast, pos);
 }

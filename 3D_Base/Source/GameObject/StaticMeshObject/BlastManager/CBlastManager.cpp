@@ -19,7 +19,7 @@ void CBlastManager::Create(const D3DXVECTOR3& pos, std::shared_ptr<CStaticMesh> 
 	auto blast = std::make_shared<CBlast>();
 
 	//メッシュの設定.
-	blast->AttachMesh(mesh);
+	//blast->AttachMesh(mesh);
 	//秒数の設定.
 	blast->SetSpeed(s);
 	//半径の設定.
@@ -29,6 +29,8 @@ void CBlastManager::Create(const D3DXVECTOR3& pos, std::shared_ptr<CStaticMesh> 
 
 	//初期位置.
 	blast->SetPosition(pos);
+	//エフェクトの位置.
+	blast->InitEffectPosition(pos);
 	//爆発開始フラグ.
 	blast->SetBomStart(true);
 

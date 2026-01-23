@@ -235,7 +235,7 @@ void CGameMain::Update()
 		m_KillCountNumber[i]->Update();
 	}
 
-	//エフェクトの動き.
+	//エフェクト(車体の煙)の動き.
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		auto player = m_pCharacterManager->GetControlPlayer(i);
@@ -272,7 +272,6 @@ void CGameMain::Update()
 		}
 	}
 
-	//勝敗条件(確認用)..
 	//勝ち..
 	//敗北..
 	{
@@ -1072,21 +1071,8 @@ void CGameMain::CreateBounding()
 	m_pWoodBoxBottomLeft->CreateBoxCollider(m_pWoodBoxBottomLeft->GetMinPos(), m_pWoodBoxBottomLeft->GetMaxPos());
 	m_pWoodBoxBottomRight->CreateBoxCollider(m_pWoodBoxBottomRight->GetMinPos(), m_pWoodBoxBottomRight->GetMaxPos());
 
-	//// 弾の当たり判定生成
-	//m_pShotManager->CreateBounding(m_pStaticMesh_BulletRed);
-	//// 当たり判定設定
-	//m_pShotManager->CreateCollider();
-
-	////爆風の当たり判定生成.
-	//m_pBlastManager->CreateBSphereForMesh(m_pStaticMesh_BulletRed);
-	////当たり判定設定.
-	//m_pBlastManager->CreateSpehreCollider(m_pBlastManager->GetBlastRadius());
-
 	// プレイヤーの初期座標設定
 	m_pCharacterManager->SetStartPosition();
-
-	//BuildObstacleColliders();
-	//m_pCharacterManager->SetComObstacles(&m_ObstacleColliders);
 
 }
 
