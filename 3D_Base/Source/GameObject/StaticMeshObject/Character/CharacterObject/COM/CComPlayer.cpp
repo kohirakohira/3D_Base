@@ -134,6 +134,13 @@ void CComPlayer::Create(int id)
     shotCfg.bulletSpeed = 0.8f;
     m_ComShot.SetConfig(shotCfg);
 
+    //Æ€Ý’è
+    CComAiming::Config aimConfig;
+    aimConfig.turretTurnSpeed = m_Tuning.turretTurnSpeed;
+    aimConfig.cannonHeight = m_Tuning.cannonHeight;
+    aimConfig.smoothFactor = 0.25f;
+    m_Aiming.SetConfig(aimConfig);
+
     m_pCannon->Init();
 
     switch (id)
@@ -339,63 +346,6 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
     body->CStaticMeshObject::Update();
 }
 
-void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
-{
-    auto cannon = GetCannon();
-    auto body = GetBody();
-    if (!cannon) return;
-
-    auto target = m_TargetSelector.GetCurrentTarget();
-    if (!target || target->GetDeath())
-    {
-        return; //Ž€–Sƒ^[ƒQƒbƒg‚ÍÆ€‚µ‚È‚¢
-    }
-
-    //ƒ^[ƒQƒbƒgˆÊ’u‚ð•½ŠŠ‰»
-    m_SmoothedTargetPos.x += (targetPos.x - m_SmoothedTargetPos.x) * m_AimSmoothFactor;
-    m_SmoothedTargetPos.y += (targetPos.y - m_SmoothedTargetPos.y) * m_AimSmoothFactor;
-    m_SmoothedTargetPos.z += (targetPos.z - m_SmoothedTargetPos.z) * m_AimSmoothFactor;
-
-    //«ŠiƒNƒ‰ƒX‚©‚ç–C“ƒƒpƒ‰ƒ[ƒ^‚ðŽæ“¾
-    TurretParams turretParams;
-    if (m_pPersonality)
-    {
-        turretParams = m_pPersonality->GetTurretParames();
-    }
-
-    // –CŒûˆÊ’u‚ðŽæ“¾
-    D3DXVECTOR3 muzzle;
-    float currentYaw;
-    m_ComShot.ComputeMuzzle(muzzle, currentYaw, body, cannon);
-
-    // —\‘ªˆÊ’u‚ðŒvŽZ
-    D3DXVECTOR3 targetVel = m_TargetSelector.GetTargetVelocity();
-    
-    //—\‘ª¸“x‚ð“K—p
-    targetVel.x *= turretParams.predictionAccuracy;
-    targetVel.z *= turretParams.predictionAccuracy;
-
-    PredictedShot prediction = m_ComShot.PredictTargetPosition(
-        muzzle, m_SmoothedTargetPos, targetVel);
-
-    // –C“ƒ‚ÌŠî€ˆÊ’u
-    D3DXVECTOR3 base = body ? body->GetPosition() : cannon->GetPosition();
-    base.y += m_Tuning.cannonHeight;
-
-    // –Ú•W•û
-    const D3DXVECTOR3 toAim = prediction.aimPoint - base;
-    const float desiredYaw = std::atan2f(toAim.x, toAim.z);
-
-    //–C“ƒ‰ñ“]‘¬“x‚ð«Ši‚Å’²®
-    float turretSpeed = (m_Tuning.turretTurnSpeed + 0.02f) * turretParams.turretSpeedMultiplier;
-
-    float cyaw = cannon->GetRotation().y;
-    cyaw = Util::Approach(cyaw, cyaw + Util::Wrap(desiredYaw - cyaw), turretSpeed);
-
-    cannon->SetPosition(base);
-    cannon->SetRotation(D3DXVECTOR3(0.0f, cyaw, 0.0f));
-    cannon->CStaticMeshObject::Update();
-}
 
 
 void CComPlayer::Update()
@@ -412,7 +362,7 @@ void CComPlayer::Update()
     Muteki();
 
     SanitizeParams();
-    SyncCannonToBody(); //í‚É–C“ƒ‚ÆŽÔ‘Ì‚ð“¯Šú
+    m_Aiming.SyncToBody(m_pCannon, m_pBody);    //–C“ƒ‚ÆŽÔ‘Ì“¯Šú
 
     auto tuning = GetTuning();
 
@@ -699,7 +649,14 @@ void CComPlayer::StepSeek()
     //ƒ^[ƒQƒbƒg‚ª‚¢‚éŽž“_‚Å–C“ƒ‚Í‚Þ‚­
     if (target)
     {
-        TickAimTo(target->GetPosition());
+        TurretParams turretParams;
+        if (m_pPersonality)
+        {
+            turretParams = m_pPersonality->GetTurretParames();
+        }
+        m_Aiming.AimAt(m_pCannon, m_pBody, target->GetPosition(),
+            m_TargetSelector.GetTargetVelocity(), turretParams, m_ComShot);
+
     }
 
     //“–‚½‚Á‚Ä‚¢‚é‚ÆƒŒƒC‘¤‚ª”»’è‚·‚é”¼Œa
@@ -708,7 +665,7 @@ void CComPlayer::StepSeek()
 
     D3DXVECTOR3 collisonTarget;
 
-    SyncCannonToBody();
+    m_Aiming.SyncToBody(m_pCannon, m_pBody);
 }
 
 #if 1
@@ -721,6 +678,13 @@ void CComPlayer::StepChase()
         StepSeek();
         return;
     }
+
+    TurretParams turretParams;
+    if (m_pPersonality)
+    {
+        turretParams = m_pPersonality->GetTurretParames();
+    }
+
 
     const auto t = GetTuning();
     const D3DXVECTOR3 self = body->GetPosition();
@@ -749,7 +713,9 @@ void CComPlayer::StepChase()
 
         if (FollowPath(t.bodyTurnSpeed, t.moveSpeed))
         {
-            TickAimTo(tp);
+            m_Aiming.AimAt(m_pCannon, m_pBody, tp,
+                m_TargetSelector.GetTargetVelocity(), turretParams, m_ComShot);
+
             TryAutoFire();
             return;
         }
@@ -779,7 +745,8 @@ void CComPlayer::StepChase()
     const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
     SafeAdvance(next, t.moveSpeed * speedMult);
 
-    TickAimTo(tp);
+    m_Aiming.AimAt(m_pCannon, m_pBody, tp,
+        m_TargetSelector.GetTargetVelocity(), turretParams, m_ComShot);
     TryAutoFire();
 }
 
@@ -794,6 +761,13 @@ void CComPlayer::StepAttack()
         StepSeek();
         return;
     }
+
+    TurretParams turretParams;
+    if (m_pPersonality)
+    {
+        turretParams = m_pPersonality->GetTurretParames();
+    }
+
 
     const auto t = GetTuning();
 
@@ -847,7 +821,9 @@ void CComPlayer::StepAttack()
     const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
     SafeAdvance(next, t.moveSpeed);
 
-    TickAimTo(tp);
+    m_Aiming.AimAt(m_pCannon, m_pBody, tp,
+        m_TargetSelector.GetTargetVelocity(), turretParams, m_ComShot);
+
 
     if (HasObstacleAheadSimple(self, cur, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
     {
@@ -889,18 +865,6 @@ void CComPlayer::TryAutoFire()
         //ƒŒƒC‚ªƒ^[ƒQƒbƒg‚É“–‚½‚Á‚½‚ç”­ŽË
         m_ComShot.TryFireOnRayHit(body, cannon);
     }
-}
-
-// –C“ƒ‚ÆŽÔ‘Ì‚Ì“¯Šú
-void CComPlayer::SyncCannonToBody()
-{
-    auto body = GetBody();
-    auto cannon = GetCannon();
-    if (!body || !cannon) return;
-
-    D3DXVECTOR3 pos = body->GetPosition();
-    pos.y += m_Tuning.cannonHeight;   // –C“ƒ‚Ì‚‚³ƒIƒtƒZƒbƒg
-    cannon->SetPosition(pos);         // ˆÊ’u‚ð“¯Šú
 }
 
 #if 1
@@ -1069,7 +1033,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
     {
         // ˆÀ‘S‚È•ûŒü‚ªŒ©‚Â‚©‚ç‚È‚¢‚È‚ç‰ñ“]‚¾‚¯‚µ‚Ä’âŽ~
         body->CStaticMeshObject::Update();
-        SyncCannonToBody();
+        m_Aiming.SyncToBody(m_pCannon, m_pBody);
         return;
     }
 
@@ -1126,7 +1090,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
     m_SoundController.UpdateMoveSound(GetMove());
 
     body->CStaticMeshObject::Update();
-    SyncCannonToBody();
+    m_Aiming.SyncToBody(m_pCannon, m_pBody);
 }
 
 void CComPlayer::TickWander()
