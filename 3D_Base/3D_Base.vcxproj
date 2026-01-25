@@ -191,6 +191,7 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComSoundController\CComSoundController.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComStateMachine\CComStateMachine.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComTargetSelector\CComTargetSelector.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComTuning\CComTuning.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CSimplePathfinder\CSimplePathfinder.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComPersonality\CAdaptivePersonality\CAdaptivePersonality.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComPersonality\CAggressivePersonality\CAggressivePersonality.cpp" />
@@ -278,6 +279,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComSoundController\CComSoundController.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComStateMachine\CComStateMachine.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComTargetSelector\CComTargetSelector.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComTuning\CComTuning.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CSimplePathfinder\CSimplePathfinder.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComPersonality\CAdaptivePersonality\CAdaptivePersonality.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\IComPersonality\CAggressivePersonality\CAggressivePersonality.h" />

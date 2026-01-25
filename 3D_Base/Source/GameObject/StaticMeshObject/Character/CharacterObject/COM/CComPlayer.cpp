@@ -151,7 +151,7 @@ void CComPlayer::Create(int id)
         m_TargetSelector.SetForgetDistance(100.0f);     // 広い範囲で認識
         m_TargetSelector.SetStickinessRatio(1.0f);      // 粘着しない
         m_TargetSelector.SetRetargetInterval(30);       // 頻繁に再評価
-        m_ComShot.SetShotCollDown(100);                 // ショットのクールダウン
+        m_ComShot.SetShotCollDown(120);                 // ショットのクールダウン
         break;
 
     case 2:
@@ -169,7 +169,7 @@ void CComPlayer::Create(int id)
         m_TargetSelector.SetForgetDistance(1e9);    //どこまでも追う
         m_TargetSelector.SetStickinessRatio(0.0f);      //絶対に粘着
         m_TargetSelector.SetRetargetInterval(9999);     //再評価しない
-        m_ComShot.SetShotCollDown(60);          
+        m_ComShot.SetShotCollDown(120);          
         break;
 
     default:
@@ -334,7 +334,7 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
         step *= scale;
     }
 
-    // 前進（ヨーに沿って +Z 基準で）
+    // 前進
     if (step > 0.0f) {
         const D3DXVECTOR3 fwd = Util::ForwardFromYaw(yaw);
         pos += fwd * step;
