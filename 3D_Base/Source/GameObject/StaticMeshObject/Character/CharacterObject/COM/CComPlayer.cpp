@@ -214,45 +214,6 @@ void CComPlayer::SanitizeParams()
 }
 
 
-//COM同士の分離ベクトルを計算
-void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
-    D3DXVECTOR3& outSep, float& outNearest)const
-{
-    outSep = D3DXVECTOR3(0, 0, 0);
-    outNearest = 1e9f;  //大きい値.fをつけてるのはfloat型にするから
-
-    if (m_AvoidRadius <= 0.0f)return;   //回避半径が0以下なら何もしない
-
-    const float avoidRadius = m_AvoidRadius;
-    const float avoidRadiusSq = avoidRadius * avoidRadius;
-
-    for (CComPlayer* other : Instances()) {
-        if (other == this) continue;
-        std::shared_ptr<CBody> ob = other ? other->GetBody() : nullptr;
-        if (!ob)continue;   //位置が取れない相手は無視する
-
-        D3DXVECTOR3 offset = selfPos - ob->GetPosition();
-        offset.y = 0.0f; //高さは無視
-
-        const float distSq = offset.x * offset.x + offset.z * offset.z;
-        if (distSq <= 1e-6f) {
-            //ほぼ同一点のため少し押す
-            outSep.x += 0.1f;
-            continue;
-        }
-        //一番近い相手までの距離を更新
-        outNearest = std::min(outNearest, std::sqrtf(distSq));
-
-        if (distSq < avoidRadiusSq) {
-            //近いほど強い反発
-            const float invDistSq = 1.0f / distSq;
-            outSep.x += offset.x * invDistSq;
-            outSep.z += offset.z * invDistSq;
-        }
-    }
-    //正規化は呼び出し側でブレンド時にやる
-}
-
 
 // 本体を常にターゲットへ回頭＋前進
 void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
@@ -484,32 +445,6 @@ void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& 
     }
 }
 
-// 前方に当たり判定を設置する
-bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
-    const D3DXVECTOR3& forward,
-    float  probeDist,
-    float  step,
-    float& outHitDist)const
-{
-    if (!m_pBoxCollider || m_pBoxCollider->empty()) return false;
-
-    CBoxCollider ghost = selfBox;
-    const D3DXVECTOR3 base = selfBox.GetPosition();
-
-    for (float d = step; d <= probeDist; d += step)
-    {
-        ghost.SetPosition(base + forward * d);
-        for (const auto& object : *m_pBoxCollider)
-        {
-            if (object && ghost.CheckCollisionBox(*object))
-            {
-                outHitDist = d;
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 // 障害物を検知
 bool CComPlayer::SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const
@@ -868,24 +803,6 @@ void CComPlayer::TryAutoFire()
 }
 
 #if 1
-//危険ゾーン判定
-bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
-{
-    if (!m_pSimpleObstacles) return false;
-
-    for (const auto& z : *m_pSimpleObstacles)
-    {
-        const float dx = pos.x - z.pos.x;
-        const float dz = pos.z - z.pos.z;
-        const float r = z.radius + m_ObstacleRadius; // 自分の大きさも足す
-        if (dx * dx + dz * dz < r * r)
-        {
-            return true; // 危険ゾーンに入っている
-        }
-    }
-    return false;
-}
-
 float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep)
 {
     auto body = GetBody();
@@ -1093,20 +1010,6 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
     m_Aiming.SyncToBody(m_pCannon, m_pBody);
 }
 
-void CComPlayer::TickWander()
-{
-    const float WanderDelta = 0.10f;
-    const float WanderClamp = 0.6f;
-
-    // たまにだけ方向を揺らす
-    if ((std::rand() & 31) == 0) // 1/32フレームぐらい
-    {
-        const float sign = (std::rand() & 1) ? +1.f : -1.f;
-        m_WanderAngle += sign * WanderDelta;
-        if (m_WanderAngle > WanderClamp) m_WanderAngle = WanderClamp;
-        if (m_WanderAngle < -WanderClamp) m_WanderAngle = -WanderClamp;
-    }
-}
 
 #endif
 
@@ -1160,60 +1063,6 @@ int CComPlayer::CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) 
     return count;
 }
 
-// 逃げと攻めをブレンドした方向を計算
-float CComPlayer::ComputeBlendedDirection(
-    const D3DXVECTOR3& self,
-    const D3DXVECTOR3& targetPos,
-    const D3DXVECTOR3& clusterCenter,
-    float escapeWeight,
-    float approachWeight) const
-{
-    // 攻め方向：ターゲットへ向かう
-    D3DXVECTOR3 toTarget = targetPos - self;
-    toTarget.y = 0.0f;
-    float toTargetLen = std::sqrtf(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
-    if (toTargetLen > 1e-6f)
-    {
-        toTarget.x /= toTargetLen;
-        toTarget.z /= toTargetLen;
-    }
-
-    // 逃げ方向：敵の群れの中心から離れる
-    D3DXVECTOR3 escape = self - clusterCenter;
-    escape.y = 0.0f;
-    float escapeLen = std::sqrtf(escape.x * escape.x + escape.z * escape.z);
-    if (escapeLen > 1e-6f)
-    {
-        escape.x /= escapeLen;
-        escape.z /= escapeLen;
-    }
-    else
-    {
-        // 群れの中心と自分が同じ位置なら、ランダムに逃げる
-        escape.x = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
-        escape.z = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
-    }
-
-    // ブレンド
-    D3DXVECTOR3 blended;
-    blended.x = toTarget.x * approachWeight + escape.x * escapeWeight;
-    blended.z = toTarget.z * approachWeight + escape.z * escapeWeight;
-    blended.y = 0.0f;
-
-    // 正規化
-    float blendLen = std::sqrtf(blended.x * blended.x + blended.z * blended.z);
-    if (blendLen > 1e-6f)
-    {
-        blended.x /= blendLen;
-        blended.z /= blendLen;
-    }
-
-    m_ComShot.IsReady();
-
-    // Yaw に変換
-    return std::atan2f(blended.x, blended.z);
-
-}
 
 
 std::shared_ptr<CCharacterObjectBase> CComPlayer::GetRayHitCharacter() const
@@ -1276,8 +1125,10 @@ void CComPlayer::SetPosition(const D3DXVECTOR3& pos)
     }
 }
 
+
 void CComPlayer::FindNearestTarget()
 {
+#if 1
     //m_pAllPlayer から人間プレイヤーを探す
     if (m_pAllPlayer) {
         for (auto& p : *m_pAllPlayer) {
@@ -1289,6 +1140,7 @@ void CComPlayer::FindNearestTarget()
     for (CComPlayer* other : Instances()) {
         // 距離比較してbestを更新
     }
+#endif
 }
 
 
@@ -1321,4 +1173,163 @@ PersonalityType CComPlayer::GetPersonalityType() const
         return m_pPersonality->GetType();
     }
     return PersonalityType::Adaptive;  // デフォルト
+}
+
+
+// 前方に当たり判定を設置する
+bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
+    const D3DXVECTOR3& forward,
+    float  probeDist,
+    float  step,
+    float& outHitDist)const
+{
+    if (!m_pBoxCollider || m_pBoxCollider->empty()) return false;
+
+    CBoxCollider ghost = selfBox;
+    const D3DXVECTOR3 base = selfBox.GetPosition();
+
+    for (float d = step; d <= probeDist; d += step)
+    {
+        ghost.SetPosition(base + forward * d);
+        for (const auto& object : *m_pBoxCollider)
+        {
+            if (object && ghost.CheckCollisionBox(*object))
+            {
+                outHitDist = d;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+//危険ゾーン判定
+bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
+{
+    if (!m_pSimpleObstacles) return false;
+
+    for (const auto& z : *m_pSimpleObstacles)
+    {
+        const float dx = pos.x - z.pos.x;
+        const float dz = pos.z - z.pos.z;
+        const float r = z.radius + m_ObstacleRadius; // 自分の大きさも足す
+        if (dx * dx + dz * dz < r * r)
+        {
+            return true; // 危険ゾーンに入っている
+        }
+    }
+    return false;
+}
+
+//COM同士の分離ベクトルを計算
+void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
+    D3DXVECTOR3& outSep, float& outNearest)const
+{
+    outSep = D3DXVECTOR3(0, 0, 0);
+    outNearest = 1e9f;  //大きい値.fをつけてるのはfloat型にするから
+
+    if (m_AvoidRadius <= 0.0f)return;   //回避半径が0以下なら何もしない
+
+    const float avoidRadius = m_AvoidRadius;
+    const float avoidRadiusSq = avoidRadius * avoidRadius;
+
+    for (CComPlayer* other : Instances()) {
+        if (other == this) continue;
+        std::shared_ptr<CBody> ob = other ? other->GetBody() : nullptr;
+        if (!ob)continue;   //位置が取れない相手は無視する
+
+        D3DXVECTOR3 offset = selfPos - ob->GetPosition();
+        offset.y = 0.0f; //高さは無視
+
+        const float distSq = offset.x * offset.x + offset.z * offset.z;
+        if (distSq <= 1e-6f) {
+            //ほぼ同一点のため少し押す
+            outSep.x += 0.1f;
+            continue;
+        }
+        //一番近い相手までの距離を更新
+        outNearest = std::min(outNearest, std::sqrtf(distSq));
+
+        if (distSq < avoidRadiusSq) {
+            //近いほど強い反発
+            const float invDistSq = 1.0f / distSq;
+            outSep.x += offset.x * invDistSq;
+            outSep.z += offset.z * invDistSq;
+        }
+    }
+    //正規化は呼び出し側でブレンド時にやる
+}
+
+
+//Utilに後でうつす
+// 逃げと攻めをブレンドした方向を計算
+float CComPlayer::ComputeBlendedDirection(
+    const D3DXVECTOR3& self,
+    const D3DXVECTOR3& targetPos,
+    const D3DXVECTOR3& clusterCenter,
+    float escapeWeight,
+    float approachWeight) const
+{
+    // 攻め方向：ターゲットへ向かう
+    D3DXVECTOR3 toTarget = targetPos - self;
+    toTarget.y = 0.0f;
+    float toTargetLen = std::sqrtf(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
+    if (toTargetLen > 1e-6f)
+    {
+        toTarget.x /= toTargetLen;
+        toTarget.z /= toTargetLen;
+    }
+
+    // 逃げ方向：敵の群れの中心から離れる
+    D3DXVECTOR3 escape = self - clusterCenter;
+    escape.y = 0.0f;
+    float escapeLen = std::sqrtf(escape.x * escape.x + escape.z * escape.z);
+    if (escapeLen > 1e-6f)
+    {
+        escape.x /= escapeLen;
+        escape.z /= escapeLen;
+    }
+    else
+    {
+        // 群れの中心と自分が同じ位置なら、ランダムに逃げる
+        escape.x = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
+        escape.z = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
+    }
+
+    // ブレンド
+    D3DXVECTOR3 blended;
+    blended.x = toTarget.x * approachWeight + escape.x * escapeWeight;
+    blended.z = toTarget.z * approachWeight + escape.z * escapeWeight;
+    blended.y = 0.0f;
+
+    // 正規化
+    float blendLen = std::sqrtf(blended.x * blended.x + blended.z * blended.z);
+    if (blendLen > 1e-6f)
+    {
+        blended.x /= blendLen;
+        blended.z /= blendLen;
+    }
+
+    m_ComShot.IsReady();
+
+    // Yaw に変換
+    return std::atan2f(blended.x, blended.z);
+
+}
+
+//Wnderクラス
+void CComPlayer::TickWander()
+{
+    const float WanderDelta = 0.10f;
+    const float WanderClamp = 0.6f;
+
+    // たまにだけ方向を揺らす
+    if ((std::rand() & 31) == 0) // 1/32フレームぐらい
+    {
+        const float sign = (std::rand() & 1) ? +1.f : -1.f;
+        m_WanderAngle += sign * WanderDelta; //DELTA
+
+        if (m_WanderAngle > WanderClamp) m_WanderAngle = WanderClamp;
+        if (m_WanderAngle < -WanderClamp) m_WanderAngle = -WanderClamp;
+    }
 }
