@@ -29,6 +29,8 @@ void CBlastManager::Create(const D3DXVECTOR3& pos, std::shared_ptr<CStaticMesh> 
 
 	//初期位置.
 	blast->SetPosition(pos);
+	//エフェクトの位置.
+	blast->InitEffectPosition(pos);
 	//爆発開始フラグ.
 	blast->SetBomStart(true);
 

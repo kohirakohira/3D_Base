@@ -5,6 +5,8 @@
 
 //-----継承クラス.-----
 #include "../../CStaticMeshObject.h"
+//-----クラス-----
+#include "../../../../Assets/Effect/CEffect.h"
 
 //=============================================================
 //		爆発クラス.
@@ -43,6 +45,9 @@ public:
 	//半径の取得.
 	float GetBlastRadius() { return m_Radius; }
 
+	//エフェクトの初期位置を設定.
+	void InitEffectPosition(const D3DXVECTOR3& pos);
+
 public:
 	//半径の最大サイズ.
 	float	m_MaxSize;
@@ -55,6 +60,9 @@ public:
 	float	m_PlayerID;
 
 private:
+	//再生用ハンドル.
+	::EsHandle handle;
+
 	//半径の最低サイズ.
 	float	m_MinimumSize;
 	//半径.

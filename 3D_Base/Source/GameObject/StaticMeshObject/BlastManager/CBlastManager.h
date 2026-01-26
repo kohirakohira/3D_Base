@@ -3,8 +3,9 @@
 #include <iostream>
 #include <vector>
 
-//-----子クラス-----
+//-----クラス-----
 #include "Blast/CBlast.h"
+#include "../../../Assets/Effect/CEffect.h"
 
 //==================================================================================
 //			爆風マネージャークラス.
@@ -37,5 +38,6 @@ public:
 	float m_MaxRadius;
 
 private:
+	//爆風.
 	std::vector <std::shared_ptr<CBlast>>		m_Blast;
 };

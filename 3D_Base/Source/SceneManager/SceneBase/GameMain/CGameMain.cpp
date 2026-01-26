@@ -15,7 +15,7 @@ static bool prevA = false;
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 
 //定数宣言.
-static constexpr int TIME = 120;		//時間は調整してください.
+static constexpr int TIME = 30;		//時間は調整してください.
 const float deltaTime = 1.0f / FPS;
 const float DIALMETER = 360.0f;			//時計の回転する針に使用.
 const float FLASH_TIME = 0.5f;			//点滅周期.
@@ -235,7 +235,7 @@ void CGameMain::Update()
 		m_KillCountNumber[i]->Update();
 	}
 
-	//エフェクトの動き.
+	//エフェクト(車体の煙)の動き.
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		auto player = m_pCharacterManager->GetControlPlayer(i);
@@ -272,7 +272,6 @@ void CGameMain::Update()
 		}
 	}
 
-	//勝敗条件(確認用)..
 	//勝ち..
 	//敗北..
 	{
@@ -357,8 +356,8 @@ void CGameMain::Draw()
 
 #endif//#ifdef ENABLE_ITEMS
 
-		//爆風の描画.
-		m_pBlastManager->Draw(view, proj, light, paramC);
+		////爆風の描画.
+		//m_pBlastManager->Draw(view, proj, light, paramC);
 
 		//背景の表示.
 		m_pBackImgObject->Draw(view, proj, light, paramC);
@@ -1072,21 +1071,8 @@ void CGameMain::CreateBounding()
 	m_pWoodBoxBottomLeft->CreateBoxCollider(m_pWoodBoxBottomLeft->GetMinPos(), m_pWoodBoxBottomLeft->GetMaxPos());
 	m_pWoodBoxBottomRight->CreateBoxCollider(m_pWoodBoxBottomRight->GetMinPos(), m_pWoodBoxBottomRight->GetMaxPos());
 
-	//// 弾の当たり判定生成
-	//m_pShotManager->CreateBounding(m_pStaticMesh_BulletRed);
-	//// 当たり判定設定
-	//m_pShotManager->CreateCollider();
-
-	////爆風の当たり判定生成.
-	//m_pBlastManager->CreateBSphereForMesh(m_pStaticMesh_BulletRed);
-	////当たり判定設定.
-	//m_pBlastManager->CreateSpehreCollider(m_pBlastManager->GetBlastRadius());
-
 	// プレイヤーの初期座標設定
 	m_pCharacterManager->SetStartPosition();
-
-	//BuildObstacleColliders();
-	//m_pCharacterManager->SetComObstacles(&m_ObstacleColliders);
 
 }
 
