@@ -1,5 +1,6 @@
 #include "CComObstacle.h"
 
+#if 0
 CComObstacle::CComObstacle()
 	: m_pObstacles			(nullptr)
 	, m_SelfRadius			(1.0f)
@@ -8,3 +9,4 @@ CComObstacle::CComObstacle()
 	, m_ProbeAngleRad		(0.785f)
 {
 }
+#endif
