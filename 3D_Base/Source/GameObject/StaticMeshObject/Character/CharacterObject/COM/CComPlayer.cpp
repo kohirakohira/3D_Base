@@ -574,7 +574,7 @@ void CComPlayer::StepSeek()
     else
     {
         //中心にいく.中心を優先しやすい
-        TickWander();
+        m_Wander.Update();
         desiredYaw = curYaw + m_WanderAngle;
     }
 
@@ -938,8 +938,19 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
         }
     }
 
+    float targetYaw;
+
+    if (foundSafe)
+    {
+        targetYaw = safeYaw;
+    }
+    else
+    {
+        nextYaw;
+    }
+
     // 滑らかに回転
-    float targetYaw = foundSafe ? safeYaw : nextYaw;
+    //float targetYaw = foundSafe ? safeYaw : nextYaw;
     float smoothYaw = Util::Approach(curYaw, curYaw + Util::Wrap(targetYaw - curYaw), tuning.bodyTurnSpeed);
 
     // 回転を先に反映
@@ -1234,9 +1245,30 @@ void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
     const float avoidRadiusSq = avoidRadius * avoidRadius;
 
     for (CComPlayer* other : Instances()) {
-        if (other == this) continue;
-        std::shared_ptr<CBody> ob = other ? other->GetBody() : nullptr;
-        if (!ob)continue;   //位置が取れない相手は無視する
+
+        if (other == this)
+        {
+            continue;
+        }
+
+        std::shared_ptr<CBody> ob;
+
+        if (other)
+        {
+            ob = other->GetBody();
+        }
+        else
+        {
+            ob = nullptr;
+        }
+
+        if (!ob)
+        {
+            continue;
+        }
+
+        //std::shared_ptr<CBody> ob = other ? other->GetBody() : nullptr;
+        //if (!ob)continue;   //位置が取れない相手は無視する
 
         D3DXVECTOR3 offset = selfPos - ob->GetPosition();
         offset.y = 0.0f; //高さは無視
@@ -1315,21 +1347,4 @@ float CComPlayer::ComputeBlendedDirection(
     // Yaw に変換
     return std::atan2f(blended.x, blended.z);
 
-}
-
-//Wnderクラス
-void CComPlayer::TickWander()
-{
-    const float WanderDelta = 0.10f;
-    const float WanderClamp = 0.6f;
-
-    // たまにだけ方向を揺らす
-    if ((std::rand() & 31) == 0) // 1/32フレームぐらい
-    {
-        const float sign = (std::rand() & 1) ? +1.f : -1.f;
-        m_WanderAngle += sign * WanderDelta; //DELTA
-
-        if (m_WanderAngle > WanderClamp) m_WanderAngle = WanderClamp;
-        if (m_WanderAngle < -WanderClamp) m_WanderAngle = -WanderClamp;
-    }
 }

@@ -41,6 +41,9 @@
 //砲塔の動き
 #include "GameObject/StaticMeshObject/Character//CharacterObject/COM/CComAiming/CComAiming.h"
 
+//ランダムな動きを管理
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComWander/CComWander.h"
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
@@ -159,7 +162,6 @@ private:
 	void TryAutoFire();													//COMの弾発射処理
 	void SanitizeParams();												//パラメータ調整
 	void TickChaseTo(const D3DXVECTOR3& targetPos);						//追尾
-	void TickWander();													//引数なし
 
 	//障害物判定用
 	bool SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const;
@@ -288,7 +290,7 @@ private:
 
 	CSimplePathfinder* m_pPathfinder = nullptr;
 	int m_PathRecalcTimer = 0;          // 再計算タイマー
-	static const int PATH_RECALC_INTERVAL = 60;  // 60フレームごとに再計算
+	static constexpr int PATH_RECALC_INTERVAL = 60;  // 60フレームごとに再計算
 
 	//ステートマシンクラス
 	CComStateMachine m_StateMachine;
@@ -299,4 +301,6 @@ private:
 	//AIM制御クラス
 	CComAiming m_Aiming;
 
+	//ランダムな動き制御
+	CComWander m_Wander;
 };
