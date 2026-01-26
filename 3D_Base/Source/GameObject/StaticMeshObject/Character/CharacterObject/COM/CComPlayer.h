@@ -35,6 +35,12 @@
 //ステートマシンクラス
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComStateMachine/CComStateMachine.h"
 
+//COMサウンド管理クラス
+#include "GameObject/StaticMeshObject/Character/CharacterObject/COM/CComSoundController/CComSoundController.h"
+
+//砲塔の動き
+#include "GameObject/StaticMeshObject/Character//CharacterObject/COM/CComAiming/CComAiming.h"
+
 //-----ライブラリ-----
 #include <d3dx9math.h>
 #include <unordered_map>
@@ -144,9 +150,6 @@ public:
 
 
 private:
-
-
-
 	//関数
 	//フレームごとのステート処理
 	void StepSeek();													//探索処理
@@ -156,9 +159,7 @@ private:
 	void TryAutoFire();													//COMの弾発射処理
 	void SanitizeParams();												//パラメータ調整
 	void TickChaseTo(const D3DXVECTOR3& targetPos);						//追尾
-	void TickAimTo(const D3DXVECTOR3& targetPos);						//砲塔追尾
 	void TickWander();													//引数なし
-	void SyncCannonToBody();											//砲塔を車体に追従させる
 
 	//障害物判定用
 	bool SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const;
@@ -289,11 +290,13 @@ private:
 	int m_PathRecalcTimer = 0;          // 再計算タイマー
 	static const int PATH_RECALC_INTERVAL = 60;  // 60フレームごとに再計算
 
-	//COMが追尾中にガタガタする対策
-	D3DXVECTOR3 m_SmoothedTargetPos = { 0,0,0 };	//平滑化したターゲット位置
-	float m_AimSmoothFactor = 0.25f;				//平滑化係数
-
 	//ステートマシンクラス
 	CComStateMachine m_StateMachine;
+
+	//COMのサウンド管理クラス
+	CComSoundController m_SoundController;
+
+	//AIM制御クラス
+	CComAiming m_Aiming;
 
 };
