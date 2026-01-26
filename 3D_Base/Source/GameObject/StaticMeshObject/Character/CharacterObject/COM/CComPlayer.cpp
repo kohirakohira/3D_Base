@@ -95,6 +95,9 @@ void CComPlayer::Create(int id)
     m_IsActive = true;
     m_IsAlive = true;
 
+    // 移動速度設定
+    SetMoveSpeed(m_pBody->GetMoveSpeed());
+
     //自分がまだ登録されていなければ、全体リストに登録する
     if (!m_Registered) {
         Instances().push_back(this);
@@ -397,6 +400,7 @@ void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
 
 void CComPlayer::Update()
 {
+#if 0
     // 死亡処理の更新
     Death();
 
@@ -473,6 +477,8 @@ void CComPlayer::Update()
     case CComStateMachine::State::Evade:    StepEvade();    break;
     }
     m_StateMachine.Update();
+
+#endif
 }
 
 

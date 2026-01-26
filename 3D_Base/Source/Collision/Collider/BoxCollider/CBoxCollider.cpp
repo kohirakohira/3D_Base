@@ -59,8 +59,12 @@ CBoxCollider::CheckCollisionBoxDetail(const CBoxCollider& box) const
 CollisionResultOBB
 CBoxCollider::CheckCollisionOBBtoOBB_depth(const OBB* A, const OBB* B)
 {
-	CollisionResultOBB result;
-	const float EPSILON = 1e-6f;
+    CollisionResultOBB result{};
+    result.Hit = false;
+    result.Penetration = FLT_MAX;
+    result.Normal = D3DXVECTOR3(0, 0, 0);
+
+    const float EPSILON = 1e-6f;
 
 	float R[3][3], AbsR[3][3];
 

@@ -30,6 +30,8 @@ public:
 		int		m_Hp;			// プレイヤーのHP
 		int		m_MaxHp;		// プレイヤーの最大HP
 
+		float   m_MoveSpeed;	// 移動速度
+
 		int		m_MutekiCnt;	// 無敵カウント
 		float	m_MutekiTimer;	// 無敵時間
 
@@ -65,6 +67,10 @@ public:
 	virtual std::shared_ptr<CBody> GetBody() const { return m_pBody; }
 	// 砲塔の取得
 	virtual std::shared_ptr<CCannon> GetCannon() const { return m_pCannon; }
+
+	// 移動速度の設定・取得
+	virtual void SetMoveSpeed(float speed) { m_Chara.m_MoveSpeed = speed; }
+	virtual float GetMoveSpeed() { return m_Chara.m_MoveSpeed; }
 
 	// サウンドクールダウン
 	virtual void SoundCoolDown();
@@ -178,4 +184,5 @@ protected:
 
 	// サウンドタイマー
 	float m_SoundTimer;
+
 };

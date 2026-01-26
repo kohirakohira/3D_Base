@@ -360,6 +360,7 @@ void CCollisionManager::CharactertoShot()
 // 木箱とプレイヤー
 void CCollisionManager::WoodBoxtoCharacter()
 {
+#if 0
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		// 押し返しの強さ
@@ -429,6 +430,95 @@ void CCollisionManager::WoodBoxtoCharacter()
 			}
 		}
 	}
+#else
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		//==============================
+		// プレイヤー取得
+		//==============================
+		auto chara = m_pCharacterManager->GetControlPlayer(i);
+		if (!chara) continue;
+		if (chara->GetDeath()) continue;
+
+		auto collider = chara->GetBody()->GetCollider();
+		auto playerBox = std::dynamic_pointer_cast<CBoxCollider>(collider);
+		if (!playerBox) continue;
+
+		//==============================
+		// 左下木箱コライダー
+		//==============================
+		auto boxCollider =
+			std::dynamic_pointer_cast<CBoxCollider>(
+				m_pWoodBoxBottomLeft->GetCollider()
+			);
+		if (!boxCollider) continue;
+
+		//==============================
+		// 衝突判定（Hit と penetration だけ使う）
+		//==============================
+		auto result =
+			boxCollider->CheckCollisionBoxDetail(*playerBox);
+
+		if (!result.Hit)
+			continue;
+
+		//==============================
+		// 押し返し方向を「中心 → 中心」で決定
+		//==============================
+		D3DXVECTOR3 boxCenter =
+			m_pWoodBoxBottomLeft->GetPosition();
+
+		D3DXVECTOR3 playerCenter =
+			chara->GetPosition();
+
+		D3DXVECTOR3 dir = playerCenter - boxCenter;
+
+		// Y は使わない
+		dir.y = 0.0f;
+
+		if (D3DXVec3LengthSq(&dir) < 0.00001f)
+			continue;
+
+		//==============================
+		// 軸固定（壁と同じ）
+		//==============================
+		if (fabs(dir.x) > fabs(dir.z))
+		{
+			dir.x = (dir.x > 0.0f) ? 1.0f : -1.0f;
+			dir.z = 0.0f;
+		}
+		else
+		{
+			dir.z = (dir.z > 0.0f) ? 1.0f : -1.0f;
+			dir.x = 0.0f;
+		}
+
+		//==============================
+		// penetration 下限（貫通防止）
+		//==============================
+		float pushLen = result.Penetration;
+
+		// penetration が小さすぎる or 飛び越え対策
+		const float MIN_PUSH = 0.099f;   // ← プレイヤー半径相当
+		if (pushLen < MIN_PUSH)
+		{
+			pushLen = MIN_PUSH;
+		}
+
+		constexpr float SLOP = 0.001f;
+		//==============================
+		// 押し返し（位置のみ）
+		//==============================
+		auto pos = chara->GetPosition();
+		pos += dir * (pushLen + SLOP);
+
+		chara->GetBody()->SetPosition(pos);
+
+		pos.y += chara->GetTuning().cannonHeight;
+		chara->GetCannon()->SetPosition(pos);
+	}
+
+#endif
 }
 
 

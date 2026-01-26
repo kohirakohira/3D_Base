@@ -13,6 +13,7 @@ CCharacterObjectBase::CCharacterObjectBase()
 	m_Chara = {
 		2,		// キャラクターの体力
 		2,		// キャラクターの最大体力
+		0.1f,	// キャラクターの移動速度
 		0,		// 無敵カウント
 		0.3f,	// 無敵時間
 		3.0f,	// リスポーン時間
@@ -26,6 +27,8 @@ CCharacterObjectBase::CCharacterObjectBase()
 		false,	// サウンドフラグ：壁に当たっている時	
 		false,	// サウンドフラグ：箱に当たっている時
 		false,	// サウンドフラグ：爆風に当たっている時
+		false,	// サウンドフラグ：キャラクターに当たっている時
+		false,	// サウンドフラグ：キャラクターが移動している時
 
 		0.0f,	// サウンドカウント
 	};

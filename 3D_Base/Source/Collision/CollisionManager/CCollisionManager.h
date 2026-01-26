@@ -30,6 +30,7 @@ public:
 		bool hit;
 		D3DXVECTOR3 normal;
 		float penetration;
+		D3DXVECTOR3 boxCenter;
 	};
 
 public:

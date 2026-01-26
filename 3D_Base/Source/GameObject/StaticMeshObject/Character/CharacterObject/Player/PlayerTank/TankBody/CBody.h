@@ -54,6 +54,9 @@ public:
 	//ˆÚ“®—ñ‹“Œ^‚Ìİ’è.
 	void SetMoveState(enMoveState state) { m_MoveState = state; }
 
+	// ˆÚ“®‘¬“x‚ğæ“¾
+	virtual float GetMoveSpeed() { return m_MoveSpeed; }
+
 private:
 	float		m_TurnSpeed;	// ‰ñ“]‘¬“x
 	float		m_MoveSpeed;	// ˆÚ“®‘¬“x

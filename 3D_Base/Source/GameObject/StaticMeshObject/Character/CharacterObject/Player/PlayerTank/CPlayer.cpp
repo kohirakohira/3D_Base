@@ -101,6 +101,9 @@ void CPlayer::Init(int id)
 	//Œp³‚µ‚½‚à‚Ì‚à‰Šú‰»
 	m_IsActive = true;
 	m_IsAlive = true;
+
+	// ˆÚ“®‘¬“xÝ’è
+	SetMoveSpeed(m_pBody->GetMoveSpeed());
 }
 
 void CPlayer::SetPushBack(const D3DXVECTOR3& push)
@@ -403,7 +406,6 @@ void CPlayer::RotateTurretByPad()
 		{
 			rot.y += m_Tuning.turretTurnSpeed;
 		}
-
 	}
 
 	m_pCannon->SetRotation(rot);	
