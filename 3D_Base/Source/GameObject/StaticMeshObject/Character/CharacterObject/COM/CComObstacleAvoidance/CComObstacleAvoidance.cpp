@@ -2,6 +2,15 @@
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/Util/Util.h"
 #include <cmath>
 
+CComObstacleAvoidance::CComObstacleAvoidance()
+    : m_pObstacles      (nullptr)
+    , m_SelfRadius      (1.0f)
+    , m_ProbeDist       (5.0f)
+    , m_ProbeStep       (0.5f)
+    , m_ProbeAngleRad   (0.785f)
+{
+}
+
 bool CComObstacleAvoidance::HasObstacleAhead(
     const D3DXVECTOR3& selfPos,
     float yaw,
