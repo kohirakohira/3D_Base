@@ -162,6 +162,12 @@ public:
 	// サウンドフラグ初期化
 	virtual void ResetSoundFlg();
 
+	// 当たり判定の切り替え関数
+	virtual void ChangeCollision(const D3DXVECTOR3& rot);
+
+	// 当たり判定フラグの取得
+	virtual bool GetCollisionFlg() const { return m_CollisionFlg; }
+
 protected:
 	//車体クラス.
 	std::shared_ptr<CBody>			m_pBody;
@@ -184,5 +190,8 @@ protected:
 
 	// サウンドタイマー
 	float m_SoundTimer;
+
+	// 当たり判定用フラグ
+	bool m_CollisionFlg;
 
 };

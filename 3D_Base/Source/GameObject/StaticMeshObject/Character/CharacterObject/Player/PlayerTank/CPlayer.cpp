@@ -102,6 +102,9 @@ void CPlayer::Init(int id)
 	m_IsActive = true;
 	m_IsAlive = true;
 
+	// 当たり判定の初期化
+	m_CollisionFlg = false;
+
 	// 移動速度設定
 	SetMoveSpeed(m_pBody->GetMoveSpeed());
 }
@@ -114,6 +117,8 @@ void CPlayer::SetPushBack(const D3DXVECTOR3& push)
 
 void CPlayer::Update()
 {
+	// 当たり判定の切り替え
+	ChangeCollision(m_pBody->GetRotation());
 
 	//キーの更新.
 	m_Key->Update();

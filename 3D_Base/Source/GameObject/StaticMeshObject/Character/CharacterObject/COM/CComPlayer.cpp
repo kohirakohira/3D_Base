@@ -98,6 +98,9 @@ void CComPlayer::Create(int id)
     m_IsActive = true;
     m_IsAlive = true;
 
+    // “–‚½‚è”»’è‚Ì‰Šú‰»
+    m_CollisionFlg = false;
+
     // ˆÚ“®‘¬“xİ’è
     SetMoveSpeed(m_pBody->GetMoveSpeed());
 
@@ -322,6 +325,9 @@ void CComPlayer::Update()
     {
         return;
     }
+
+    // “–‚½‚è”»’è‚ÌØ‚è‘Ö‚¦
+    ChangeCollision(m_pBody->GetRotation());
 
     // –³“Gˆ—‚ÌXV
     Muteki();

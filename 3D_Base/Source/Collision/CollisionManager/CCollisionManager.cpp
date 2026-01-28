@@ -360,7 +360,7 @@ void CCollisionManager::CharactertoShot()
 // 木箱とプレイヤー
 void CCollisionManager::WoodBoxtoCharacter()
 {
-#if 0
+#if 1
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		// 押し返しの強さ
@@ -439,83 +439,156 @@ void CCollisionManager::WoodBoxtoCharacter()
 		auto chara = m_pCharacterManager->GetControlPlayer(i);
 		if (!chara) continue;
 		if (chara->GetDeath()) continue;
-
 		auto collider = chara->GetBody()->GetCollider();
-		auto playerBox = std::dynamic_pointer_cast<CBoxCollider>(collider);
-		if (!playerBox) continue;
 
-		//==============================
-		// 左下木箱コライダー
-		//==============================
-		auto boxCollider =
-			std::dynamic_pointer_cast<CBoxCollider>(
-				m_pWoodBoxBottomLeft->GetCollider()
-			);
-		if (!boxCollider) continue;
+		bool isHitBox = false; // 木箱と衝突しているか?
 
-		//==============================
-		// 衝突判定（Hit と penetration だけ使う）
-		//==============================
-		auto result =
-			boxCollider->CheckCollisionBoxDetail(*playerBox);
-
-		if (!result.Hit)
-			continue;
-
-		//==============================
-		// 押し返し方向を「中心 → 中心」で決定
-		//==============================
-		D3DXVECTOR3 boxCenter =
-			m_pWoodBoxBottomLeft->GetPosition();
-
-		D3DXVECTOR3 playerCenter =
-			chara->GetPosition();
-
-		D3DXVECTOR3 dir = playerCenter - boxCenter;
-
-		// Y は使わない
-		dir.y = 0.0f;
-
-		if (D3DXVec3LengthSq(&dir) < 0.00001f)
-			continue;
-
-		//==============================
-		// 軸固定（壁と同じ）
-		//==============================
-		if (fabs(dir.x) > fabs(dir.z))
+		if (chara->GetCollisionFlg() == true)
 		{
-			dir.x = (dir.x > 0.0f) ? 1.0f : -1.0f;
-			dir.z = 0.0f;
+			auto playerBox = std::dynamic_pointer_cast<CBoxCollider>(collider);
+			if (!playerBox) continue;
+
+			//==============================
+			// 木箱コライダー
+			//==============================
+			auto boxCollider =
+				std::dynamic_pointer_cast<CBoxCollider>(
+					m_pWoodBoxBottomLeft->GetCollider()
+				);
+			if (!boxCollider) continue;
+
+
+			//==============================
+			// 衝突判定（Hit と penetration だけ使う）
+			//==============================
+			auto result =
+				boxCollider->CheckCollisionBoxDetail(*playerBox);
+
+			if (!result.Hit)
+				continue;
+
+			//==============================
+			// 押し返し方向を「中心 → 中心」で決定
+			//==============================
+			D3DXVECTOR3 boxCenter =
+				m_pWoodBoxBottomLeft->GetPosition();
+
+			D3DXVECTOR3 playerCenter =
+				chara->GetPosition();
+
+			D3DXVECTOR3 dir = playerCenter - boxCenter;
+
+			// Y は使わない
+			dir.y = 0.0f;
+
+			if (D3DXVec3LengthSq(&dir) < 0.00001f)
+				continue;
+
+			//==============================
+			// 軸固定（壁と同じ）
+			//==============================
+			if (fabs(dir.x) > fabs(dir.z))
+			{
+				dir.x = (dir.x > 0.0f) ? 1.0f : -1.0f;
+				dir.z = 0.0f;
+			}
+			else
+			{
+				dir.z = (dir.z > 0.0f) ? 1.0f : -1.0f;
+				dir.x = 0.0f;
+			}
+
+			//==============================
+			// penetration 下限（貫通防止）
+			//==============================
+			float pushLen = result.Penetration;
+
+			// penetration が小さすぎる or 飛び越え対策
+			const float MIN_PUSH = 0.099f;   // ← プレイヤー半径相当
+			if (pushLen < MIN_PUSH)
+			{
+				pushLen = MIN_PUSH;
+			}
+
+			constexpr float SLOP = 0.001f;
+			//==============================
+			// 押し返し（位置のみ）
+			//==============================
+			auto pos = chara->GetPosition();
+			pos += dir * (pushLen + SLOP);
+
+			chara->GetBody()->SetPosition(pos);
+
+			pos.y += chara->GetTuning().cannonHeight;
+			chara->GetCannon()->SetPosition(pos);
 		}
 		else
 		{
-			dir.z = (dir.z > 0.0f) ? 1.0f : -1.0f;
-			dir.x = 0.0f;
+			if (!chara) continue;
+
+			// キャラが死んでいたらスキップ
+			if (chara->GetDeath())continue;
+
+			auto Coll = chara->GetBody()->GetCollider();
+
+			auto PlayerBox = std::dynamic_pointer_cast<CBoxCollider>(Coll);
+			if (!PlayerBox) continue;
+
+			// コライダーの当たり判定確認
+			auto WoodBox_BottomLeft = m_pWoodBoxBottomLeft->GetCollider()->CheckCollisionBoxDetail(*PlayerBox);
+			auto WoodBox_BottomRight = m_pWallBottom->GetCollider()->CheckCollisionBoxDetail(*PlayerBox);
+			auto WoodBox_Center = m_pWallLeft->GetCollider()->CheckCollisionBoxDetail(*PlayerBox);
+			auto WoodBox_TopLeft = m_pWallRight->GetCollider()->CheckCollisionBoxDetail(*PlayerBox);
+			auto WoodBox_TopRight = m_pWallRight->GetCollider()->CheckCollisionBoxDetail(*PlayerBox);
+
+			// 当たり判定の情報を格納
+			HitInfo hits[] =
+			{
+				{ WoodBox_BottomLeft.Hit,    WoodBox_BottomLeft.Normal,    WoodBox_BottomLeft.Penetration },
+				{ WoodBox_BottomRight.Hit,   WoodBox_BottomRight.Normal,   WoodBox_BottomRight.Penetration },
+				{ WoodBox_Center.Hit,    WoodBox_Center.Normal,    WoodBox_Center.Penetration },
+				{ WoodBox_TopLeft.Hit,    WoodBox_TopLeft.Normal,    WoodBox_TopLeft.Penetration },
+				{ WoodBox_TopRight.Hit,    WoodBox_TopRight.Normal,    WoodBox_TopRight.Penetration }
+			};
+
+			// 押し返し
+			D3DXVECTOR3 push(0, 0, 0);
+
+			for (auto& h : hits)
+			{
+				if (!h.hit) continue;
+
+				isHitBox = true;
+
+				// 各面分、法線方向に押し戻しを加算
+				push += h.normal * h.penetration;
+			}
+
+			if (isHitBox == true)
+			{
+				// 念のため微小量
+				constexpr float SLOP = 0.001f;
+
+				auto pos = chara->GetPosition();
+				pos += push + (D3DXVec3Length(&push) > 0 ? (push / D3DXVec3Length(&push)) * SLOP : D3DXVECTOR3(0, 0, 0));
+
+				// 押し出しを車体:砲塔に設定
+				chara->GetBody()->SetPosition(pos);
+				pos.y += chara->GetTuning().cannonHeight;
+				chara->GetCannon()->SetPosition(pos);
+
+				//// サウンドフラグの判定
+				//if (chara->GetHitWall() == false)
+				//{
+				//	CSoundManager::PlaySE(CSoundManager::SE_Impact);
+				//	chara->SetHitWall(true);
+				//}
+			}
+			else
+			{
+				//chara->SetHitWall(false);
+			}
 		}
-
-		//==============================
-		// penetration 下限（貫通防止）
-		//==============================
-		float pushLen = result.Penetration;
-
-		// penetration が小さすぎる or 飛び越え対策
-		const float MIN_PUSH = 0.099f;   // ← プレイヤー半径相当
-		if (pushLen < MIN_PUSH)
-		{
-			pushLen = MIN_PUSH;
-		}
-
-		constexpr float SLOP = 0.001f;
-		//==============================
-		// 押し返し（位置のみ）
-		//==============================
-		auto pos = chara->GetPosition();
-		pos += dir * (pushLen + SLOP);
-
-		chara->GetBody()->SetPosition(pos);
-
-		pos.y += chara->GetTuning().cannonHeight;
-		chara->GetCannon()->SetPosition(pos);
 	}
 
 #endif

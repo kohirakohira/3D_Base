@@ -32,6 +32,8 @@ CCharacterObjectBase::CCharacterObjectBase()
 
 		0.0f,	// サウンドカウント
 	};
+
+	m_CollisionFlg = false;
 }
 
 CCharacterObjectBase::~CCharacterObjectBase() = default;
@@ -244,5 +246,36 @@ void CCharacterObjectBase::ResetSoundFlg()
 
 		//	m_SoundTimer = 30.f;
 		//}
+	}
+}
+
+// 当たり判定変更関数
+void CCharacterObjectBase::ChangeCollision(const D3DXVECTOR3& rot)
+{
+	float rotY = rot.y;
+
+	// 0～360 に正規化
+	while (rotY < 0.0f)    rotY += 360.0f;
+	while (rotY >= 360.0f) rotY -= 360.0f;
+
+	// 許容角度（±5度）
+	const float eps = 10.0f;
+
+	auto IsNear = [&](float a, float b)
+		{
+			float diff = fabsf(a - b);
+			return diff <= eps || (360.0f - diff) <= eps;
+		};
+
+	if (IsNear(rotY, 0.0f) ||
+		IsNear(rotY, 90.0f) ||
+		IsNear(rotY, 180.0f) ||
+		IsNear(rotY, 270.0f))
+	{
+		m_CollisionFlg = true;
+	}
+	else
+	{
+		m_CollisionFlg = false;
 	}
 }
