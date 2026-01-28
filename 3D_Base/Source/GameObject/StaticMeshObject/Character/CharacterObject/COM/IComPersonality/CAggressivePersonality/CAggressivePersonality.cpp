@@ -1,4 +1,3 @@
-// CAggressivePersonality.cpp
 #include "CAggressivePersonality.h"
 #include "GameObject/StaticMeshObject/Character/CharacterObject/CCharacterObject.h"
 #include "GameObject/StaticMeshObject/Character/CharacterObject/COM/Util/Util.h"
@@ -29,10 +28,23 @@ BehaviorDecision CAggressivePersonality::DecideChaseAction(
     // まっすぐ突っ込む
     D3DXVECTOR3 toTarget = targetPos - selfPos;
     toTarget.y = 0.0f;
-    decision.desiredYaw = std::atan2f(toTarget.x, toTarget.z);
+    float baseYaw = std::atan2f(toTarget.x, toTarget.z);
+
+    //他COMとの重なり回避
+    if (nearbyEnemyCount >= 2)
+    {
+        // 周囲に2体以上いる場合、少し角度をずらす
+        // 自分のIDや位置に基づいてずらす方向を決める（ランダムだと振動する）
+        float offset = (selfPos.x + selfPos.z > 0) ? 0.3f : -0.3f;  // 約17度
+        decision.desiredYaw = baseYaw + offset;
+    }
+    else
+    {
+        decision.desiredYaw = baseYaw;
+    }
 
     //速度は最大
-    decision.moveSpeedMultiplier = 1.2f;
+    decision.moveSpeedMultiplier = 1.0f;
 
     //常に撃つ
     decision.shouldFire = true;
@@ -41,7 +53,7 @@ BehaviorDecision CAggressivePersonality::DecideChaseAction(
     decision.shouldEvade = false;
 
     //距離0でも突っ込む
-    decision.keepDistance = 0.0f;
+    decision.keepDistance = 2.0f;
 
     return decision;
 }
@@ -62,17 +74,14 @@ BehaviorDecision CAggressivePersonality::DecideAttackAction(
     toTarget.y = 0.0f;
     decision.desiredYaw = std::atan2f(toTarget.x, toTarget.z);
 
-    // 近づくほど速く
-    decision.moveSpeedMultiplier = 1.0f + (1.0f / (distanceToTarget + 1.0f)) * 0.5f;
-
-    // 常に撃つ
+    //常に撃つ
     decision.shouldFire = true;
 
-    // HPが低くても回避しない
+    //HPが低くても回避しない
     decision.shouldEvade = false;
 
-    // ベタ付き
-    decision.keepDistance = 2.0f;
+    //3mはたもつ
+    decision.keepDistance = 3.0f;
 
     return decision;
 }

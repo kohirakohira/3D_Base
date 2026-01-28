@@ -71,7 +71,7 @@ BehaviorDecision CPersistentPersonality::DecideAttackAction(
     {
         // í«ê’ÉÇÅ[Éh
         decision.desiredYaw = toYaw;
-        decision.moveSpeedMultiplier = 1.2f;
+        decision.moveSpeedMultiplier = 1.0f;
     }
     else
     {
