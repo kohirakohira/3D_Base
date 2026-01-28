@@ -91,6 +91,9 @@ void CComPlayer::Create(int id)
 	m_Chara.m_HitBox	= false;
 	m_Chara.m_HitBlast	= false;
 
+    //サウンドコントローラーの初期化
+    m_SoundController.SetPlayerID(id);
+
     //継承したものも初期化
     m_IsActive = true;
     m_IsAlive = true;
@@ -134,6 +137,13 @@ void CComPlayer::Create(int id)
     shotCfg.bulletSpeed = 0.8f;
     m_ComShot.SetConfig(shotCfg);
 
+    //照準設定
+    CComAiming::Config aimConfig;
+    aimConfig.turretTurnSpeed = m_Tuning.turretTurnSpeed;
+    aimConfig.cannonHeight = m_Tuning.cannonHeight;
+    aimConfig.smoothFactor = 0.25f;
+    m_Aiming.SetConfig(aimConfig);
+
     m_pCannon->Init();
 
     switch (id)
@@ -144,7 +154,7 @@ void CComPlayer::Create(int id)
         m_TargetSelector.SetForgetDistance(100.0f);     // 広い範囲で認識
         m_TargetSelector.SetStickinessRatio(1.0f);      // 粘着しない
         m_TargetSelector.SetRetargetInterval(30);       // 頻繁に再評価
-        m_ComShot.SetShotCollDown(100);                 // ショットのクールダウン
+        m_ComShot.SetShotCollDown(120);                 // ショットのクールダウン
         break;
 
     case 2:
@@ -162,7 +172,7 @@ void CComPlayer::Create(int id)
         m_TargetSelector.SetForgetDistance(1e9);    //どこまでも追う
         m_TargetSelector.SetStickinessRatio(0.0f);      //絶対に粘着
         m_TargetSelector.SetRetargetInterval(9999);     //再評価しない
-        m_ComShot.SetShotCollDown(60);          
+        m_ComShot.SetShotCollDown(120);          
         break;
 
     default:
@@ -206,45 +216,6 @@ void CComPlayer::SanitizeParams()
     if (m_FireConeDeg < 0.0f)                   m_FireConeDeg = 10.0f;
 }
 
-
-//COM同士の分離ベクトルを計算
-void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
-    D3DXVECTOR3& outSep, float& outNearest)const
-{
-    outSep = D3DXVECTOR3(0, 0, 0);
-    outNearest = 1e9f;  //大きい値.fをつけてるのはfloat型にするから
-
-    if (m_AvoidRadius <= 0.0f)return;   //回避半径が0以下なら何もしない
-
-    const float avoidRadius = m_AvoidRadius;
-    const float avoidRadiusSq = avoidRadius * avoidRadius;
-
-    for (CComPlayer* other : Instances()) {
-        if (other == this) continue;
-        std::shared_ptr<CBody> ob = other ? other->GetBody() : nullptr;
-        if (!ob)continue;   //位置が取れない相手は無視する
-
-        D3DXVECTOR3 offset = selfPos - ob->GetPosition();
-        offset.y = 0.0f; //高さは無視
-
-        const float distSq = offset.x * offset.x + offset.z * offset.z;
-        if (distSq <= 1e-6f) {
-            //ほぼ同一点のため少し押す
-            outSep.x += 0.1f;
-            continue;
-        }
-        //一番近い相手までの距離を更新
-        outNearest = std::min(outNearest, std::sqrtf(distSq));
-
-        if (distSq < avoidRadiusSq) {
-            //近いほど強い反発
-            const float invDistSq = 1.0f / distSq;
-            outSep.x += offset.x * invDistSq;
-            outSep.z += offset.z * invDistSq;
-        }
-    }
-    //正規化は呼び出し側でブレンド時にやる
-}
 
 
 // 本体を常にターゲットへ回頭＋前進
@@ -327,7 +298,7 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
         step *= scale;
     }
 
-    // 前進（ヨーに沿って +Z 基準で）
+    // 前進
     if (step > 0.0f) {
         const D3DXVECTOR3 fwd = Util::ForwardFromYaw(yaw);
         pos += fwd * step;
@@ -339,63 +310,6 @@ void CComPlayer::TickChaseTo(const D3DXVECTOR3& targetPos)
     body->CStaticMeshObject::Update();
 }
 
-void CComPlayer::TickAimTo(const D3DXVECTOR3& targetPos)
-{
-    auto cannon = GetCannon();
-    auto body = GetBody();
-    if (!cannon) return;
-
-    auto target = m_TargetSelector.GetCurrentTarget();
-    if (!target || target->GetDeath())
-    {
-        return; //死亡ターゲットは照準しない
-    }
-
-    //ターゲット位置を平滑化
-    m_SmoothedTargetPos.x += (targetPos.x - m_SmoothedTargetPos.x) * m_AimSmoothFactor;
-    m_SmoothedTargetPos.y += (targetPos.y - m_SmoothedTargetPos.y) * m_AimSmoothFactor;
-    m_SmoothedTargetPos.z += (targetPos.z - m_SmoothedTargetPos.z) * m_AimSmoothFactor;
-
-    //性格クラスから砲塔パラメータを取得
-    TurretParams turretParams;
-    if (m_pPersonality)
-    {
-        turretParams = m_pPersonality->GetTurretParames();
-    }
-
-    // 砲口位置を取得
-    D3DXVECTOR3 muzzle;
-    float currentYaw;
-    m_ComShot.ComputeMuzzle(muzzle, currentYaw, body, cannon);
-
-    // 予測位置を計算
-    D3DXVECTOR3 targetVel = m_TargetSelector.GetTargetVelocity();
-    
-    //予測精度を適用
-    targetVel.x *= turretParams.predictionAccuracy;
-    targetVel.z *= turretParams.predictionAccuracy;
-
-    PredictedShot prediction = m_ComShot.PredictTargetPosition(
-        muzzle, m_SmoothedTargetPos, targetVel);
-
-    // 砲塔の基準位置
-    D3DXVECTOR3 base = body ? body->GetPosition() : cannon->GetPosition();
-    base.y += m_Tuning.cannonHeight;
-
-    // 目標方
-    const D3DXVECTOR3 toAim = prediction.aimPoint - base;
-    const float desiredYaw = std::atan2f(toAim.x, toAim.z);
-
-    //砲塔回転速度を性格で調整
-    float turretSpeed = (m_Tuning.turretTurnSpeed + 0.02f) * turretParams.turretSpeedMultiplier;
-
-    float cyaw = cannon->GetRotation().y;
-    cyaw = Util::Approach(cyaw, cyaw + Util::Wrap(desiredYaw - cyaw), turretSpeed);
-
-    cannon->SetPosition(base);
-    cannon->SetRotation(D3DXVECTOR3(0.0f, cyaw, 0.0f));
-    cannon->CStaticMeshObject::Update();
-}
 
 
 void CComPlayer::Update()
@@ -413,7 +327,7 @@ void CComPlayer::Update()
     Muteki();
 
     SanitizeParams();
-    SyncCannonToBody(); //常に砲塔と車体を同期
+    m_Aiming.SyncToBody(m_pCannon, m_pBody);    //砲塔と車体同期
 
     auto tuning = GetTuning();
 
@@ -537,32 +451,6 @@ void CComPlayer::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& 
     }
 }
 
-// 前方に当たり判定を設置する
-bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
-    const D3DXVECTOR3& forward,
-    float  probeDist,
-    float  step,
-    float& outHitDist)const
-{
-    if (!m_pBoxCollider || m_pBoxCollider->empty()) return false;
-
-    CBoxCollider ghost = selfBox;
-    const D3DXVECTOR3 base = selfBox.GetPosition();
-
-    for (float d = step; d <= probeDist; d += step)
-    {
-        ghost.SetPosition(base + forward * d);
-        for (const auto& object : *m_pBoxCollider)
-        {
-            if (object && ghost.CheckCollisionBox(*object))
-            {
-                outHitDist = d;
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 // 障害物を検知
 bool CComPlayer::SenseObstacleAABB(const CBoxCollider& selfBox, float yaw, D3DXVECTOR3& outAvoid, float& nearest) const
@@ -702,7 +590,14 @@ void CComPlayer::StepSeek()
     //ターゲットがいる時点で砲塔はむく
     if (target)
     {
-        TickAimTo(target->GetPosition());
+        TurretParams turretParams;
+        if (m_pPersonality)
+        {
+            turretParams = m_pPersonality->GetTurretParames();
+        }
+        m_Aiming.AimAt(m_pCannon, m_pBody, target->GetPosition(),
+            m_TargetSelector.GetTargetVelocity(), turretParams, m_ComShot);
+
     }
 
     //当たっているとレイ側が判定する半径
@@ -711,7 +606,7 @@ void CComPlayer::StepSeek()
 
     D3DXVECTOR3 collisonTarget;
 
-    SyncCannonToBody();
+    m_Aiming.SyncToBody(m_pCannon, m_pBody);
 }
 
 #if 1
@@ -724,6 +619,13 @@ void CComPlayer::StepChase()
         StepSeek();
         return;
     }
+
+    TurretParams turretParams;
+    if (m_pPersonality)
+    {
+        turretParams = m_pPersonality->GetTurretParames();
+    }
+
 
     const auto t = GetTuning();
     const D3DXVECTOR3 self = body->GetPosition();
@@ -752,7 +654,9 @@ void CComPlayer::StepChase()
 
         if (FollowPath(t.bodyTurnSpeed, t.moveSpeed))
         {
-            TickAimTo(tp);
+            m_Aiming.AimAt(m_pCannon, m_pBody, tp,
+                m_TargetSelector.GetTargetVelocity(), turretParams, m_ComShot);
+
             TryAutoFire();
             return;
         }
@@ -782,7 +686,8 @@ void CComPlayer::StepChase()
     const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
     SafeAdvance(next, t.moveSpeed * speedMult);
 
-    TickAimTo(tp);
+    m_Aiming.AimAt(m_pCannon, m_pBody, tp,
+        m_TargetSelector.GetTargetVelocity(), turretParams, m_ComShot);
     TryAutoFire();
 }
 
@@ -797,6 +702,13 @@ void CComPlayer::StepAttack()
         StepSeek();
         return;
     }
+
+    TurretParams turretParams;
+    if (m_pPersonality)
+    {
+        turretParams = m_pPersonality->GetTurretParames();
+    }
+
 
     const auto t = GetTuning();
 
@@ -850,7 +762,9 @@ void CComPlayer::StepAttack()
     const float next = SteerWithAvoidAABB(cur, desired, t.bodyTurnSpeed);
     SafeAdvance(next, t.moveSpeed);
 
-    TickAimTo(tp);
+    m_Aiming.AimAt(m_pCannon, m_pBody, tp,
+        m_TargetSelector.GetTargetVelocity(), turretParams, m_ComShot);
+
 
     if (HasObstacleAheadSimple(self, cur, m_ObstacleProbeDist, m_ObstacleProbeStep, hitD))
     {
@@ -894,37 +808,7 @@ void CComPlayer::TryAutoFire()
     }
 }
 
-// 砲塔と車体の同期
-void CComPlayer::SyncCannonToBody()
-{
-    auto body = GetBody();
-    auto cannon = GetCannon();
-    if (!body || !cannon) return;
-
-    D3DXVECTOR3 pos = body->GetPosition();
-    pos.y += m_Tuning.cannonHeight;   // 砲塔の高さオフセット
-    cannon->SetPosition(pos);         // 位置を同期
-}
-
 #if 1
-//危険ゾーン判定
-bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
-{
-    if (!m_pSimpleObstacles) return false;
-
-    for (const auto& z : *m_pSimpleObstacles)
-    {
-        const float dx = pos.x - z.pos.x;
-        const float dz = pos.z - z.pos.z;
-        const float r = z.radius + m_ObstacleRadius; // 自分の大きさも足す
-        if (dx * dx + dz * dz < r * r)
-        {
-            return true; // 危険ゾーンに入っている
-        }
-    }
-    return false;
-}
-
 float CComPlayer::SteerWithAvoidAABB(float curYaw, float desiredYaw, float turnStep)
 {
     auto body = GetBody();
@@ -1072,7 +956,7 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
     {
         // 安全な方向が見つからないなら回転だけして停止
         body->CStaticMeshObject::Update();
-        SyncCannonToBody();
+        m_Aiming.SyncToBody(m_pCannon, m_pBody);
         return;
     }
 
@@ -1125,74 +1009,13 @@ void CComPlayer::SafeAdvance(float nextYaw, float step)
 			// 移動フラグを下ろす
 			SetMove(false);
         }
-        // 危険なら移動しない
     }
-
-    if (GetMove() == true)
-    {
-        if (m_PlayerID == 0)
-        {
-            // 移動効果音再生
-            CSoundManager::PlayLoop(CSoundManager::SE_Move1);
-        }
-        if (m_PlayerID == 1)
-        {
-            // 移動効果音再生
-            CSoundManager::PlayLoop(CSoundManager::SE_Move2);
-        }
-        if (m_PlayerID == 2)
-        {
-            // 移動効果音再生
-            CSoundManager::PlayLoop(CSoundManager::SE_Move3);
-        }
-        if (m_PlayerID == 3)
-        {
-            // 移動効果音再生
-            CSoundManager::PlayLoop(CSoundManager::SE_Move4);
-        }
-    }
-    else
-    {
-        if (m_PlayerID == 0)
-        {
-		    // 停止効果音停止
-		    CSoundManager::Stop(CSoundManager::SE_Move1);
-        }
-        if (m_PlayerID == 1)
-        {
-            // 停止効果音停止
-            CSoundManager::Stop(CSoundManager::SE_Move2);
-        }
-        if (m_PlayerID == 2)
-        {
-            // 停止効果音停止
-            CSoundManager::Stop(CSoundManager::SE_Move3);
-        }
-        if (m_PlayerID == 3)
-        {
-            // 停止効果音停止
-            CSoundManager::Stop(CSoundManager::SE_Move4);
-        }
-    }
+    m_SoundController.UpdateMoveSound(GetMove());
 
     body->CStaticMeshObject::Update();
-    SyncCannonToBody();
+    m_Aiming.SyncToBody(m_pCannon, m_pBody);
 }
 
-void CComPlayer::TickWander()
-{
-    const float WanderDelta = 0.10f;
-    const float WanderClamp = 0.6f;
-
-    // たまにだけ方向を揺らす
-    if ((std::rand() & 31) == 0) // 1/32フレームぐらい
-    {
-        const float sign = (std::rand() & 1) ? +1.f : -1.f;
-        m_WanderAngle += sign * WanderDelta;
-        if (m_WanderAngle > WanderClamp) m_WanderAngle = WanderClamp;
-        if (m_WanderAngle < -WanderClamp) m_WanderAngle = -WanderClamp;
-    }
-}
 
 #endif
 
@@ -1246,60 +1069,6 @@ int CComPlayer::CountNeardyEnemies(float radius, D3DXVECTOR3& outClusterCenter) 
     return count;
 }
 
-// 逃げと攻めをブレンドした方向を計算
-float CComPlayer::ComputeBlendedDirection(
-    const D3DXVECTOR3& self,
-    const D3DXVECTOR3& targetPos,
-    const D3DXVECTOR3& clusterCenter,
-    float escapeWeight,
-    float approachWeight) const
-{
-    // 攻め方向：ターゲットへ向かう
-    D3DXVECTOR3 toTarget = targetPos - self;
-    toTarget.y = 0.0f;
-    float toTargetLen = std::sqrtf(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
-    if (toTargetLen > 1e-6f)
-    {
-        toTarget.x /= toTargetLen;
-        toTarget.z /= toTargetLen;
-    }
-
-    // 逃げ方向：敵の群れの中心から離れる
-    D3DXVECTOR3 escape = self - clusterCenter;
-    escape.y = 0.0f;
-    float escapeLen = std::sqrtf(escape.x * escape.x + escape.z * escape.z);
-    if (escapeLen > 1e-6f)
-    {
-        escape.x /= escapeLen;
-        escape.z /= escapeLen;
-    }
-    else
-    {
-        // 群れの中心と自分が同じ位置なら、ランダムに逃げる
-        escape.x = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
-        escape.z = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
-    }
-
-    // ブレンド
-    D3DXVECTOR3 blended;
-    blended.x = toTarget.x * approachWeight + escape.x * escapeWeight;
-    blended.z = toTarget.z * approachWeight + escape.z * escapeWeight;
-    blended.y = 0.0f;
-
-    // 正規化
-    float blendLen = std::sqrtf(blended.x * blended.x + blended.z * blended.z);
-    if (blendLen > 1e-6f)
-    {
-        blended.x /= blendLen;
-        blended.z /= blendLen;
-    }
-
-    m_ComShot.IsReady();
-
-    // Yaw に変換
-    return std::atan2f(blended.x, blended.z);
-
-}
 
 
 std::shared_ptr<CCharacterObjectBase> CComPlayer::GetRayHitCharacter() const
@@ -1362,8 +1131,10 @@ void CComPlayer::SetPosition(const D3DXVECTOR3& pos)
     }
 }
 
+
 void CComPlayer::FindNearestTarget()
 {
+#if 1
     //m_pAllPlayer から人間プレイヤーを探す
     if (m_pAllPlayer) {
         for (auto& p : *m_pAllPlayer) {
@@ -1375,6 +1146,7 @@ void CComPlayer::FindNearestTarget()
     for (CComPlayer* other : Instances()) {
         // 距離比較してbestを更新
     }
+#endif
 }
 
 
@@ -1407,4 +1179,163 @@ PersonalityType CComPlayer::GetPersonalityType() const
         return m_pPersonality->GetType();
     }
     return PersonalityType::Adaptive;  // デフォルト
+}
+
+
+// 前方に当たり判定を設置する
+bool CComPlayer::HasObstacleAheadWithBox(const CBoxCollider& selfBox,
+    const D3DXVECTOR3& forward,
+    float  probeDist,
+    float  step,
+    float& outHitDist)const
+{
+    if (!m_pBoxCollider || m_pBoxCollider->empty()) return false;
+
+    CBoxCollider ghost = selfBox;
+    const D3DXVECTOR3 base = selfBox.GetPosition();
+
+    for (float d = step; d <= probeDist; d += step)
+    {
+        ghost.SetPosition(base + forward * d);
+        for (const auto& object : *m_pBoxCollider)
+        {
+            if (object && ghost.CheckCollisionBox(*object))
+            {
+                outHitDist = d;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+//危険ゾーン判定
+bool CComPlayer::IsInDangerZone(const D3DXVECTOR3& pos) const
+{
+    if (!m_pSimpleObstacles) return false;
+
+    for (const auto& z : *m_pSimpleObstacles)
+    {
+        const float dx = pos.x - z.pos.x;
+        const float dz = pos.z - z.pos.z;
+        const float r = z.radius + m_ObstacleRadius; // 自分の大きさも足す
+        if (dx * dx + dz * dz < r * r)
+        {
+            return true; // 危険ゾーンに入っている
+        }
+    }
+    return false;
+}
+
+//COM同士の分離ベクトルを計算
+void CComPlayer::ComputeSeparation(const D3DXVECTOR3& selfPos,
+    D3DXVECTOR3& outSep, float& outNearest)const
+{
+    outSep = D3DXVECTOR3(0, 0, 0);
+    outNearest = 1e9f;  //大きい値.fをつけてるのはfloat型にするから
+
+    if (m_AvoidRadius <= 0.0f)return;   //回避半径が0以下なら何もしない
+
+    const float avoidRadius = m_AvoidRadius;
+    const float avoidRadiusSq = avoidRadius * avoidRadius;
+
+    for (CComPlayer* other : Instances()) {
+        if (other == this) continue;
+        std::shared_ptr<CBody> ob = other ? other->GetBody() : nullptr;
+        if (!ob)continue;   //位置が取れない相手は無視する
+
+        D3DXVECTOR3 offset = selfPos - ob->GetPosition();
+        offset.y = 0.0f; //高さは無視
+
+        const float distSq = offset.x * offset.x + offset.z * offset.z;
+        if (distSq <= 1e-6f) {
+            //ほぼ同一点のため少し押す
+            outSep.x += 0.1f;
+            continue;
+        }
+        //一番近い相手までの距離を更新
+        outNearest = std::min(outNearest, std::sqrtf(distSq));
+
+        if (distSq < avoidRadiusSq) {
+            //近いほど強い反発
+            const float invDistSq = 1.0f / distSq;
+            outSep.x += offset.x * invDistSq;
+            outSep.z += offset.z * invDistSq;
+        }
+    }
+    //正規化は呼び出し側でブレンド時にやる
+}
+
+
+//Utilに後でうつす
+// 逃げと攻めをブレンドした方向を計算
+float CComPlayer::ComputeBlendedDirection(
+    const D3DXVECTOR3& self,
+    const D3DXVECTOR3& targetPos,
+    const D3DXVECTOR3& clusterCenter,
+    float escapeWeight,
+    float approachWeight) const
+{
+    // 攻め方向：ターゲットへ向かう
+    D3DXVECTOR3 toTarget = targetPos - self;
+    toTarget.y = 0.0f;
+    float toTargetLen = std::sqrtf(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
+    if (toTargetLen > 1e-6f)
+    {
+        toTarget.x /= toTargetLen;
+        toTarget.z /= toTargetLen;
+    }
+
+    // 逃げ方向：敵の群れの中心から離れる
+    D3DXVECTOR3 escape = self - clusterCenter;
+    escape.y = 0.0f;
+    float escapeLen = std::sqrtf(escape.x * escape.x + escape.z * escape.z);
+    if (escapeLen > 1e-6f)
+    {
+        escape.x /= escapeLen;
+        escape.z /= escapeLen;
+    }
+    else
+    {
+        // 群れの中心と自分が同じ位置なら、ランダムに逃げる
+        escape.x = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
+        escape.z = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
+    }
+
+    // ブレンド
+    D3DXVECTOR3 blended;
+    blended.x = toTarget.x * approachWeight + escape.x * escapeWeight;
+    blended.z = toTarget.z * approachWeight + escape.z * escapeWeight;
+    blended.y = 0.0f;
+
+    // 正規化
+    float blendLen = std::sqrtf(blended.x * blended.x + blended.z * blended.z);
+    if (blendLen > 1e-6f)
+    {
+        blended.x /= blendLen;
+        blended.z /= blendLen;
+    }
+
+    m_ComShot.IsReady();
+
+    // Yaw に変換
+    return std::atan2f(blended.x, blended.z);
+
+}
+
+//Wnderクラス
+void CComPlayer::TickWander()
+{
+    const float WanderDelta = 0.10f;
+    const float WanderClamp = 0.6f;
+
+    // たまにだけ方向を揺らす
+    if ((std::rand() & 31) == 0) // 1/32フレームぐらい
+    {
+        const float sign = (std::rand() & 1) ? +1.f : -1.f;
+        m_WanderAngle += sign * WanderDelta; //DELTA
+
+        if (m_WanderAngle > WanderClamp) m_WanderAngle = WanderClamp;
+        if (m_WanderAngle < -WanderClamp) m_WanderAngle = -WanderClamp;
+    }
 }

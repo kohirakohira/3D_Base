@@ -197,7 +197,7 @@ void CGameResult::Init()
 	m_pSelectIcon->SetScale(1.0f, 1.0f, 1.0f);
 	
 	//選択肢の情報.
-	m_pChoiceIcon->SetPosition(WND_W / 2 + 96, WND_H / 1.5 + 128, 0.0f);
+	m_pChoiceIcon->SetPosition(WND_W / 2 + 110, WND_H / 1.5 + 128, 0.0f);
 	m_pChoiceIcon->SetRotation(0.0f, 0.0f, 0.0f);
 	m_pChoiceIcon->SetScale(1.0f, 1.0f, 1.0f);
 
@@ -260,15 +260,15 @@ HRESULT CGameResult::LoadData()
 	};
 	//選択肢画像のスプライト設定.
 	CSprite2D::SPRITE_STATE C_SIZE = {
-		24,40,		//描画幅,高さ.
-		24,40,		//元画像の幅,高さ.
-		24,40,		//アニメーションをしないので、0でいい.
+		40,80,		//描画幅,高さ.
+		40,80,		//元画像の幅,高さ.
+		40,80,		//アニメーションをしないので、0でいい.
 	};
 	//タイトル画像のスプライト設定.
 	CSprite2D::SPRITE_STATE SELECT_SIZE = {
-		256, 96,		//描画幅,高さ.
-		256, 96,		//元画像の幅,高さ.
-		256, 96			//アニメーションをしないので、0でいい.
+		288,128,		//描画幅,高さ.
+		288,128,		//元画像の幅,高さ.
+		288,128,		//アニメーションをしないので、0でいい.
 	};
 
 	//選択肢スプライトの読み込み.
