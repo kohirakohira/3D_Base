@@ -27,7 +27,7 @@ CCharacterObjectBase::CCharacterObjectBase()
 		false,	// サウンドフラグ：箱に当たっている時
 		false,	// サウンドフラグ：爆風に当たっている時
 
-		0.0f,	// サウンドカウント
+		//0.0f,	// サウンドカウント
 	};
 }
 
