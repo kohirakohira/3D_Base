@@ -97,6 +97,13 @@
     <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.cpp" />
     <ClCompile Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.cpp" />
     <ClCompile Include="Source\Assets\Data\Singleton\FakeLoad\FakeLoad.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComAiming\CComAiming.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComObstacle\CComObstacle.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComSoundController\CComSoundController.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComStateMachine\CComStateMachine.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComTuning\CComTuning.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComWander\CComWander.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComSeparation\CComSeparation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Assets\DebugText\CDebugText.h" />
@@ -181,6 +188,15 @@
     <ClInclude Include="Source\GameObject\UI\SettingUIObjectManager\SettingUIObjectManager.h" />
     <ClInclude Include="Source\GameObject\UI\SettingUIObjectManager\SettingUI\SettingUI.h" />
     <ClInclude Include="Source\Assets\Data\Singleton\FakeLoad\FakeLoad.h" />
+    <ClInclude Include="Source\Assets\Sound\FileReader\CFileReader.h" />
+    <ClInclude Include="Source\Assets\Sound\FileReader\FileType\CFileType.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComAiming\CComAiming.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComObstacle\CComObstacle.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComSoundController\CComSoundController.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComStateMachine\CComStateMachine.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComTuning\CComTuning.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComWander\CComWander.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComSeparation\CComSeparation.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Data\ImGui\Font\arial.ttf" />

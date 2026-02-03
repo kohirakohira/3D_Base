@@ -188,6 +188,7 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComAiming\CComAiming.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComObstacle\CComObstacle.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComSeparation\CComSeparation.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComShot\CComShot.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComSoundController\CComSoundController.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComStateMachine\CComStateMachine.cpp" />
@@ -278,6 +279,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\CCharacterObject.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComAiming\CComAiming.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComObstacle\CComObstacle.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComSeparation\CComSeparation.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComShot\CComShot.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComSoundController\CComSoundController.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\Character\CharacterObject\COM\CComStateMachine\CComStateMachine.h" />
