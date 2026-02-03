@@ -49,10 +49,10 @@ private:
     float Heuristic(int x1, int y1, int x2, int y2) const;
     void SmoothPath(std::deque<D3DXVECTOR3>& path) const;
 
-    int m_GridSize;
-    float m_WorldSize;
-    float m_CellSize;
-    std::vector<std::vector<bool>> m_Grid;
+    int m_GridSize;     //グリッドの1辺のマス数
+    float m_WorldSize;  //ワールドの幅
+    float m_CellSize;   //1マスのセルの大きさ
+    std::vector<std::vector<bool>> m_Grid;  //行と列
 };
 
 //テンプレートにしてManagerでも使えるように

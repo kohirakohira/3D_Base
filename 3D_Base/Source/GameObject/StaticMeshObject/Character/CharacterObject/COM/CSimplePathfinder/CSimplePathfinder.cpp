@@ -14,8 +14,9 @@ void CSimplePathfinder::Initialize(int gridSize, float worldSize)
 {
     m_GridSize = gridSize;
     m_WorldSize = worldSize;
-    m_CellSize = worldSize / gridSize;
+    m_CellSize = worldSize / gridSize;  //1マスがワールド上でなんユニットかを計算
 
+    //基本は全部通行可能状態にしておく
     m_Grid.resize(gridSize, std::vector<bool>(gridSize, true));
 }
 
@@ -42,9 +43,7 @@ D3DXVECTOR3 CSimplePathfinder::GridToWorld(int x, int y) const
     );
 }
 
-//========================================
 // 障害物1つをグリッドに反映
-//========================================
 void CSimplePathfinder::MarkObstacle(const D3DXVECTOR3& pos, float radius)
 {
     int cx, cy;
